@@ -2,7 +2,6 @@
   "name": "myapp",
   "dependencies": {
     "selectize": "~0.12.1",
-    "sifter": "0.5.x",
-    "font-awesome": "~4.4.0"
+    "sifter": "0.5.x"
   }
 }
