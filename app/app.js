@@ -6,8 +6,6 @@ import marked from 'marked';
 
 let App;
 
-Ember.MODEL_FACTORY_INJECTIONS = true;
-
 marked.setOptions({
   renderer: new marked.Renderer(),
   breaks: true
