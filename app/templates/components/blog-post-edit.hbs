@@ -9,7 +9,7 @@
     placeholder="Post author"
   }}</p>
   <p>{{input type="text" value=post.excerpt class="form-control" placeholder="Post exercept"}}</p>
-  <p>{{textarea value=post.body class="form-control" placeholder="Post content"}}</p>
+  <p>{{markdown-editor value=post.body  placeholder="Post content" rows="5"}}</p>
 
   <p><button {{action 'deletePost' class="btn btn-default"}}>Delete</button></p>
 {{else}}
