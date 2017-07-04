@@ -2,3 +2,9 @@ p.spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
 .navbar-btn { float: left; }
 .push { color: red; }
 .push-enabled { color: green; }
+
+.below-the-fold table { margin-bottom: 10px; }
+.below-the-fold table thead { border-top: 2px solid #ddd; border-bottom: 2px solid #ddd; }
+.below-the-fold table thead th { background-color: #f5f5f5; }
+.below-the-fold table th, .below-the-fold table td { background-color: #fff; border: 1px solid #ddd; padding: 8px; }
+
