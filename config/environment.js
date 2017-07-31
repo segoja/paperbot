@@ -1,9 +1,10 @@
 /* eslint-env node */
+'use strict';
 
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'myapp',
-    environment: environment,
+    environment,
     rootURL: '/',
     locationType: 'auto',
     emberpouch: {
