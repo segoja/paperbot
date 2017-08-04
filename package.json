@@ -19,7 +19,6 @@
   "devDependencies": {
     "bower": "^1.8.0",
     "broccoli-asset-rev": "^2.5.0",
-    "broccoli-manifest": "0.0.7",
     "ember-ajax": "^3.0.0",
     "ember-cli": "2.14.2",
     "ember-cli-active-link-wrapper": "0.3.2",
