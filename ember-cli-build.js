@@ -5,7 +5,13 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
   let app = new EmberApp(defaults, {
-    // Add options here
+    // Add fonts to Service Worker asset cache
+    'asset-cache': {
+      include: [
+       'fonts/**.*'
+      ],
+    },
+    // Exclude .png favicons from being fingerprinted
     fingerprint: {
       exclude: [
                  'android-chrome-192x192.png',
