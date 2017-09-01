@@ -14,5 +14,8 @@ cache:
     - $HOME/.npm
     - $HOME/.cache # includes bowers cache
 
-install:
+before_install:
   - npm config set spin false
+
+install:
+  - npm install
