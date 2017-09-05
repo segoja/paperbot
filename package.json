@@ -50,7 +50,7 @@
     "ember-font-awesome": "3.0.5",
     "ember-load-initializers": "^1.0.0",
     "ember-noscript": "^2.3.0",
-    "ember-pouch": "4.2.8",
+    "ember-pouch": "4.2.9",
     "ember-resolver": "^4.2.0",
     "ember-service-worker": "^0.6.7",
     "ember-service-worker-asset-cache": "^0.6.1",
