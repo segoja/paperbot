@@ -11,6 +11,10 @@ module.exports = function(defaults) {
        'fonts/**.*'
       ],
     },
+    'ember-service-worker': {
+      versionStrategy: 'every-build'
+    },
+
     // Exclude .png favicons from being fingerprinted
     fingerprint: {
       exclude: [
