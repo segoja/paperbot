@@ -38,7 +38,7 @@ To setup a CouchDB instance on your own machine:
 * update `config/environment.js` `local_couch` and `remote_couch` to your CouchDB
   instance name.
 * update `config/environment.js` `ENV.rootURL` in the production environment
-* To use deploy create a file `.env.deploy.production` in the root of this project containing something like `db=https://username:password@martinic.cloudant.com/bloggr`
+* To use deploy create a file `.env.deploy.production` in the root of this project containing something like `db=https://username:password@martinic.couchcluster.com/bloggr`
 
 
 ## Running
@@ -92,7 +92,7 @@ After that you can protect your `bloggr` database from unauthorized writes by ad
 }
 ```
 
-For Cloudant you have to create a `_users` database and insert the userdocument from above or use the Hoodie [CouchDB User Management App](http://gr2m.github.io/couchdb-user-management-app/)
+For cloudant you have to create a `_users` database and insert the userdocument from above or use the Hoodie [CouchDB User Management App](http://gr2m.github.io/couchdb-user-management-app/)
 
 ### Secret route
 
