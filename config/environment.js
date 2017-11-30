@@ -47,7 +47,6 @@ module.exports = function(environment) {
     ENV.APP.rootElement = '#ember-testing';
   }
 
-
   ENV.remote_couch = false;  // 'http://localhost:5984/bloggr';
   ENV.local_couch = 'bloggr';
   ENV.authAdapter = 'application';
