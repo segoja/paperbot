@@ -15,8 +15,8 @@ export default Ember.Route.extend({
 
   redirect: function(model, transition) {
     if (transition.targetName === 'posts.index') {
-      if (model.content.get('length') !== 0) {
-        this.transitionTo('post', model.content.sortBy('date').reverse().get('firstObject'));
+      if (model.model.get('length') !== 0) {
+        this.transitionTo('post', model.model.sortBy('date').reverse().get('firstObject'));
       }
     }
   },
