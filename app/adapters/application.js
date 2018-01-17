@@ -1,9 +1,9 @@
-import Ember from 'ember';
 import config from '../config/environment';
 import PouchDB from 'pouchdb';
 import { Adapter } from 'ember-pouch';
-
-const { assert, isEmpty, inject: {service} } = Ember;
+import { assert } from '@ember/debug';
+import { isEmpty } from '@ember/utils';
+import { inject as service } from '@ember/service';
 
 export default Adapter.extend({
   coalesceFindRequests: false,  // Temp fix for embr-data Bug https://github.com/emberjs/data/issues/4463

@@ -1,6 +1,5 @@
-import Ember from 'ember';
-
-const { set, Service } = Ember;
+import { set } from '@ember/object';
+import Service from '@ember/service';
 
 export default Service.extend({
   cloudPush: false,

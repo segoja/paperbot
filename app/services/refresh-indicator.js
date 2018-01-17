@@ -1,6 +1,6 @@
-import Ember from 'ember';
-
-const { get, set, Service } = Ember;
+import { get, set } from '@ember/object';
+import Service from '@ember/service';
+import { later } from '@ember/runloop';
 
 export default Service.extend({
   spin: false,
@@ -9,7 +9,7 @@ export default Service.extend({
     if(!get(this, 'spin')){
       set(this, 'spin', true);
       //Set "spin = false" after a timeout.
-      Ember.run.later(function(){
+      later(function(){
         set(this, 'spin', false);
       }.bind(this), 1000);
     }

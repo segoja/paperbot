@@ -1,5 +1,6 @@
-import Ember from "ember";
+import Controller from '@ember/controller';
+// import { inject } from '@ember/controller';
 
-export default Ember.Controller.extend({
-  posts: Ember.inject.controller()
+export default Controller.extend({
+//  posts: inject.controller()
 });

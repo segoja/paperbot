@@ -1,13 +1,17 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
+import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 
-export default Ember.Component.extend({
-  authorsSorting: ['name'],
-  arrangedContent: Ember.computed.sort('authors', 'authorsSorting'),
+export default Component.extend({
+  authorsSorting: computed(function() {
+    return ['name'];
+  }),
+  arrangedContent: sort('authors', 'authorsSorting'),
 
   pagedContent: pagedArray('arrangedContent', {
-    page: Ember.computed.alias('parent.page'),
-    perPage: Ember.computed.alias('parent.perPage')
+    page: alias('parent.page'),
+    perPage: alias('parent.perPage')
   }),
 
   actions: {

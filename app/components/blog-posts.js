@@ -1,4 +1,6 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
+import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 
@@ -7,12 +9,14 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 // `posts.hbs` gets its params by defining
 // => queryParams: ["page", "perPage", "query"]
 // inside its controller located at `controllers/posts.js`
-export default Ember.Component.extend({
+export default Component.extend({
   // take in `posts` from our view
   // and sort it via `postsSorting`
   // into `arrangedContent`
-  postsSorting: ['date:desc'],
-  arrangedContent: Ember.computed.sort('posts', 'postsSorting'),
+  postsSorting: computed(function() {
+    return ['date:desc'];
+  }),
+  arrangedContent: sort('posts', 'postsSorting'),
 
   // `arrangedContent` is then used by this filter to create `filteredContent`
   filteredContent: computedFilterByQuery(
@@ -27,8 +31,8 @@ export default Ember.Component.extend({
   // => {{#each pagedContent as |post|}}
   // => {{page-numbers content=pagedContent}}
   pagedContent: pagedArray('filteredContent', {
-    page: Ember.computed.alias('parent.page'),
-    perPage: Ember.computed.alias('parent.perPage')
+    page: alias('parent.page'),
+    perPage: alias('parent.perPage')
   }),
 
   // define the actions, used by our view like so:

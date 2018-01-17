@@ -1,7 +1,7 @@
-import Ember from "ember";
+import { helper } from '@ember/component/helper';
 import moment from 'moment';
 
-export default Ember.Helper.helper(function(params) {
+export default helper(function(params) {
   let value = params[0];
   return moment(value).fromNow();
 });

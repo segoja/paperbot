@@ -1,15 +1,17 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
+import { inject as service } from '@ember/service';
+import { get, set } from '@ember/object';
 
-export default Ember.Controller.extend({
-  session: Ember.inject.service('session'),
+export default Controller.extend({
+  session: service(),
 
   actions: {
     authenticate() {
       let { identification, password } = this.getProperties('identification', 'password');
-      this.get('session').authenticate('authenticator:pouch', identification, password).then(() => {
+      get('session').authenticate('authenticator:pouch', identification, password).then(() => {
         this.setProperties({identification: '', password: ''});
       }).catch((reason) => {
-        this.set('errorMessage', reason.message || reason);
+        set('errorMessage', reason.message || reason);
       });
     }
   }
