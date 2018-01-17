@@ -24,3 +24,7 @@ before_install:
 
 install:
   - npm run setup
+
+script:
+  - npm run lint:js
+  - npm test
