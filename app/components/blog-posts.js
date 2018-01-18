@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { computed } from '@ember/object';
+import { get, set, computed } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
@@ -39,10 +39,10 @@ export default Component.extend({
   // => <button {{action 'createPost'}}>Create</button>
   actions: {
     resetPage: function() {
-      this.set('page', 1);
+      set(this, 'page', 1);
     },
     createPost: function() {
-      this.sendAction('createAction');
+      get(this, 'createAction')();
     }
   }
 });

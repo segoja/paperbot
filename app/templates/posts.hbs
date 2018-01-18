@@ -1,1 +1,1 @@
-{{#blog-posts posts=model page=page perPage=perPage query=query createAction="createPost"}}{{outlet}}{{/blog-posts}}
+{{#blog-posts posts=model page=page perPage=perPage query=query createAction=(route-action "createPost")}}{{outlet}}{{/blog-posts}}

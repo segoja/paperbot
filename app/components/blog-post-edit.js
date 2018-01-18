@@ -1,18 +1,19 @@
 import Component from '@ember/component';
+import { get, set } from '@ember/object';
 
 export default Component.extend({
   actions: {
     edit: function() {
-      this.set('isEditing', true);
+      set(this, 'isEditing', true);
     },
 
     doneEditing: function() {
-      this.set('isEditing', false);
-      this.sendAction('saveAction');
+      set(this, 'isEditing', false);
+      get(this, 'saveAction')();
     },
 
     deletePost: function() {
-      this.sendAction('deleteAction');
+      get(this, 'deleteAction')();
     }
   }
 });
