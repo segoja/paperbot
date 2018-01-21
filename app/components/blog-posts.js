@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { get, set, computed } from '@ember/object';
+import { get, set } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
@@ -13,9 +13,7 @@ export default Component.extend({
   // take in `posts` from our view
   // and sort it via `postsSorting`
   // into `arrangedContent`
-  postsSorting: computed(function() {
-    return ['date:desc'];
-  }),
+  postsSorting: Object.freeze(['date:desc']),
   arrangedContent: sort('posts', 'postsSorting'),
 
   // `arrangedContent` is then used by this filter to create `filteredContent`
