@@ -7,6 +7,7 @@ module.exports = function(defaults) {
     // Add fonts to Service Worker asset cache
     'asset-cache': {
       include: [
+       'assets/**/*',
        'fonts/**.*'
       ],
     },
