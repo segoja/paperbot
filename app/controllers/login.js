@@ -8,10 +8,10 @@ export default Controller.extend({
   actions: {
     authenticate() {
       let { identification, password } = this.getProperties('identification', 'password');
-      get('session').authenticate('authenticator:pouch', identification, password).then(() => {
+      get(this, 'session').authenticate('authenticator:pouch', identification, password).then(() => {
         this.setProperties({identification: '', password: ''});
       }).catch((reason) => {
-        set('errorMessage', reason.message || reason);
+        set(this, 'errorMessage', reason.message || reason);
       });
     }
   }
