@@ -6,9 +6,6 @@ module.exports = function(environment) {
     environment,
     rootURL: '/',
     locationType: 'auto',
-    emberpouch: {
-      dontsavehasmany: true
-    },
 
     EmberENV: {
       FEATURES: {
