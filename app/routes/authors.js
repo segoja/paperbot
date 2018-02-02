@@ -3,15 +3,7 @@ import { hash } from 'rsvp';
 
 export default Route.extend({
   model: function() {
-    var store = this.store;
-    return hash({
-      model: store.findAll('author'),
-      posts: store.findAll('post')
-    });
-  },
-
-  setupController: function(controller, models) {
-    controller.setProperties(models);
+    return this.store.findAll('author');
   },
 
   actions: {
