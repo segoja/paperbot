@@ -1,13 +1,7 @@
 {{#if isEditing}}
 	<p><button {{action 'doneEditing'}}>Done</button></p>
 	<p>{{input type="text" value=post.title class="form-control" placeholder="Post title"}}</p>
-	<p>{{ember-selectize
-    content=authors
-    selection=post.author
-    optionValuePath="content.id"
-    optionLabelPath="content.name"
-    placeholder="Post author"
-  }}</p>
+	<p>{{power-select-blockless options=authors selected=post.author onchange=(action (mut post.author)) labelPath="name" placeholder="Post author"}}</p>
   <p>{{input type="text" value=post.excerpt class="form-control" placeholder="Post exercept"}}</p>
   <p>{{markdown-editor value=post.body  placeholder="Post content" rows="5"}}</p>
 

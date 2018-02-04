@@ -25,6 +25,9 @@ module.exports = function(defaults) {
                  'favicon-32x32.png',
                  'mstile-150x150.png'
                ]
+    },
+    'ember-power-select': {
+       theme: 'bootstrap'
     }
   });
 
