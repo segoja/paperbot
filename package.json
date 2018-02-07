@@ -32,7 +32,7 @@
     "ember-cli-deploy-build-plus": "^0.1.10",
     "ember-cli-deploy-couchdb": "^0.1.4",
     "ember-cli-eslint": "^4.2.1",
-    "ember-cli-filter-by-query": "^1.2.0",
+    "ember-cli-filter-by-query": "broerse/ember-cli-filter-by-query#nobower",
     "ember-cli-htmlbars": "^2.0.2",
     "ember-cli-htmlbars-inline-precompile": "^1.0.0",
     "ember-cli-inject-live-reload": "^1.7.0",

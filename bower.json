@@ -1,6 +1,0 @@
-{
-  "name": "myapp",
-  "dependencies": {
-    "sifter": "0.5.x"
-  }
-}
