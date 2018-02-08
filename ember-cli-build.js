@@ -4,12 +4,11 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
   let app = new EmberApp(defaults, {
-    // Add fonts to Service Worker asset cache
-    'asset-cache': {
-      include: [
-       'assets/**/*',
-       'fonts/**.*'
-      ],
+    // Add fonts to Service Worker cache first
+    'esw-cache-first': {
+      patterns: [
+        'fonts/fontawesome(.+)',
+      ]
     },
     'ember-service-worker': {
       versionStrategy: 'every-build'
