@@ -6,7 +6,7 @@ This README outlines the details of collaborating on this Ember application.
 
 ## Working example
 
-[http://bloggr.exmer.com/](http://bloggr.exmer.com/)
+[https://bloggr.exmer.com/](https://bloggr.exmer.com/)
 
 ## Prerequisites
 
@@ -14,17 +14,15 @@ You will need the following things properly installed on your computer.
 
 * [Git](http://git-scm.com/)
 * [Node.js](http://nodejs.org/) (with NPM)
-* [Bower](http://bower.io/)
 * [Ember CLI](http://ember-cli.com/)
-* [PhantomJS](http://phantomjs.org/)
 
 ## Installation
 
 To get up and running with this project:
 
 * `git clone` this repository and cd into it `cd ember-cli-blog`
-* `npm run setup` to install npm and bower dependencies
-* `npm start` to start the server!
+* `npm install` to install npm and bower dependencies
+* `ember s` to start the server!
 
 Data will be stored in an in memory database and if configured, also replicated to a CouchDB instance.
 
@@ -43,7 +41,7 @@ To setup a CouchDB instance on your own machine:
 
 ## Running
 
-* `ember serve`
+* `ember s`
 * Visit your app at [http://localhost:4200](http://localhost:4200).
 
 ## Running Tests
