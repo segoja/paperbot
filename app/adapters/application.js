@@ -6,7 +6,6 @@ import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 export default Adapter.extend({
-  coalesceFindRequests: false,  // Temp fix for embr-data Bug https://github.com/emberjs/data/issues/4463
 
   session: service(),
   cloudState: service(),
