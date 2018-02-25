@@ -53,6 +53,7 @@
     "ember-pouch": "^5.0.0",
     "ember-power-select": "^2.0.0-beta.0",
     "ember-power-select-blockless": "^0.3.1",
+    "ember-maybe-import-regenerator": "^0.1.6",
     "ember-resolver": "^4.2.0",
     "ember-route-action-helper": "^2.0.6",
     "ember-service-worker": "^0.6.9",
@@ -61,7 +62,7 @@
     "ember-service-worker-index": "^0.6.1",
     "ember-simple-auth": "^1.4.0",
     "ember-simple-auth-pouch": "0.1.0-beta.6",
-    "ember-source": "~3.0.0-beta.4",
+    "ember-source": "~3.0.0",
     "eslint-plugin-ember": "^5.0.0",
     "loader.js": "^4.6.0"
   },
