@@ -4,6 +4,10 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
   let app = new EmberApp(defaults, {
+    // IE 11 needs a Polyfill for startsWith
+    'ember-cli-babel': {
+      includePolyfill: true
+    },
     // Add fonts to Service Worker cache first
     'esw-cache-first': {
       patterns: [
