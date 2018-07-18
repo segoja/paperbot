@@ -23,7 +23,12 @@ export default Adapter.extend({
 
     // If we have specified a remote CouchDB instance, then replicate our local database to it
     if ( config.remote_couch ) {
-      const remoteDb = new PouchDB(config.remote_couch);
+      const remoteDb = new PouchDB(config.remote_couch, {
+        fetch: function (url, opts) {
+          opts.credentials = 'include';
+          return PouchDB.fetch(url, opts);
+        }
+      });
 
       const replicationOptions = {
         live: true,
