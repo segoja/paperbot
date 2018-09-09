@@ -26,5 +26,6 @@ install:
   - npm run setup
 
 script:
+  - npm run lint:hbs
   - npm run lint:js
   - npm test
