@@ -17,7 +17,7 @@ export default Controller.extend({
       this.post.set('globals.isEditing', true);
       var newPost = this.store.createRecord('post');
       newPost.set('date' , new Date());
-      this.get('router').transitionTo('posts.post', newPost.save());
+      this.router.transitionTo('posts.post', newPost.save());
     }
   }
 });

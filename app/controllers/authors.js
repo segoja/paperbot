@@ -15,7 +15,7 @@ export default Controller.extend({
     createAuthor: function() {
       this.author.set('globals.isEditing', true);
       var newauthor = this.store.createRecord('author');
-      this.get('router').transitionTo('authors.author', newauthor.save());
+      this.router.transitionTo('authors.author', newauthor.save());
     }
   }
 });

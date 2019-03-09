@@ -36,20 +36,20 @@ export default Adapter.extend({
       };
 
       db.replicate.from(remoteDb, replicationOptions).on('paused', (err) => {
-        this.get('cloudState').setPull(!err);
+        this.cloudState.setPull(!err);
       });
 
       db.replicate.to(remoteDb, replicationOptions).on('denied', (err) => {
         if (!err.id.startsWith('_design/')) {
           //there was an error pushing, probably logged out outside of this app (couch/cloudant dashboard)
-          this.get('session').invalidate();//this cancels the replication
+          this.session.invalidate();//this cancels the replication
 
           throw({message: "Replication failed. Check login?"});//prevent doc from being marked replicated
         }
       }).on('paused',(err) => {
-        this.get('cloudState').setPush(!err);
+        this.cloudState.setPush(!err);
       }).on('error',() => {
-        this.get('session').invalidate();//mark error by loggin out
+        this.session.invalidate();//mark error by loggin out
       });
 
       this.set('remoteDb', remoteDb);
@@ -59,11 +59,11 @@ export default Adapter.extend({
   },
 
   unloadedDocumentChanged: function(obj) {
-    this.get('refreshIndicator').kickSpin();
+    this.refreshIndicator.kickSpin();
 
-    let store = this.get('store');
+    let store = this.store;
     let recordTypeName = this.getRecordTypeName(store.modelFor(obj.type));
-    this.get('db').rel.find(recordTypeName, obj.id).then(function(doc) {
+    this.db.rel.find(recordTypeName, obj.id).then(function(doc) {
       store.pushPayload(recordTypeName, doc);
     });
   }

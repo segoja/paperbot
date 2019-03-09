@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { get, set } from '@ember/object';
+import { set } from '@ember/object';
 
 export default Component.extend({
   actions: {
@@ -9,11 +9,11 @@ export default Component.extend({
 
     doneEditing: function() {
       set(this, 'isEditing', false);
-      get(this, 'saveAction')();
+      this.saveAction();
     },
 
     deletePost: function() {
-      get(this, 'deleteAction')();
+      this.deleteAction();
     }
   }
 });

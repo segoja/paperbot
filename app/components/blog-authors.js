@@ -1,5 +1,4 @@
 import Component from '@ember/component';
-import { get } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 
@@ -14,7 +13,7 @@ export default Component.extend({
 
   actions: {
     createAuthor: function() {
-      get(this, 'createAction')();
+      this.createAction();
     }
   }
 });

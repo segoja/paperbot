@@ -6,12 +6,12 @@ export default Controller.extend({
 
   actions: {
     saveAuthor: function() {
-      this.get('model').save();
+      this.model.save();
     },
 
     deleteAuthor: function() {
-      this.get('model').destroyRecord().then(function() {
-        this.get('router').transitionTo('authors');
+      this.model.destroyRecord().then(function() {
+        this.router.transitionTo('authors');
       }.bind(this));
     }
   }

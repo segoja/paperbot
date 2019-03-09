@@ -12,7 +12,7 @@ export default Controller.extend({
 
     deletePost: function() {
       this.model.destroyRecord().then(function() {
-        this.get('router').transitionTo('posts');
+        this.router.transitionTo('posts');
       }.bind(this));
     }
   }
