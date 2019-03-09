@@ -1,8 +1,21 @@
 import Controller from '@ember/controller';
+import { inject as service } from '@ember/service';
+import { inject } from '@ember/controller';
 
 export default Controller.extend({
+  author: inject(),
+  router: service(),
+
   page: 1,
   perPage: 5,
 
-  queryParams: ["page", "perPage"]
+  queryParams: ["page", "perPage"],
+
+  actions: {
+    createAuthor: function() {
+      this.author.set('globals.isEditing', true);
+      var newauthor = this.store.createRecord('author');
+      this.get('router').transitionTo('author', newauthor.save());
+    }
+  }
 });
