@@ -11,10 +11,10 @@ Router.map(function() {
   this.route('secret');
   this.route('login');
   this.route('posts', function() {
-    this.route('post', { path: ':post_id', resetNamespace: true });
+    this.route('post', { path: ':post_id' });
   });
   this.route('authors', function() {
-    this.route('author', { path: ':author_id', resetNamespace: true });
+    this.route('author', { path: ':author_id' });
   });
 });
 

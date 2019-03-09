@@ -3,7 +3,7 @@ import { inject as service } from '@ember/service';
 import { inject } from '@ember/controller';
 
 export default Controller.extend({
-  post: inject(),
+  post: inject('posts.post'),
   router: service(),
 
   page: 1,
@@ -17,7 +17,7 @@ export default Controller.extend({
       this.post.set('globals.isEditing', true);
       var newPost = this.store.createRecord('post');
       newPost.set('date' , new Date());
-      this.get('router').transitionTo('post', newPost.save());
+      this.get('router').transitionTo('posts.post', newPost.save());
     }
   }
 });

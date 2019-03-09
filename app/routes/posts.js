@@ -17,7 +17,7 @@ export default Route.extend({
   redirect: function(model, transition) {
     if (transition.targetName === 'posts.index') {
       if (model.model.get('length') !== 0) {
-        this.transitionTo('post', model.model.sortBy('date').reverse().get('firstObject'));
+        this.transitionTo('posts.post', model.model.sortBy('date').reverse().get('firstObject'));
       }
     }
   }

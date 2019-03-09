@@ -3,7 +3,7 @@ import { inject as service } from '@ember/service';
 import { inject } from '@ember/controller';
 
 export default Controller.extend({
-  author: inject(),
+  author: inject('authors.author'),
   router: service(),
 
   page: 1,
@@ -15,7 +15,7 @@ export default Controller.extend({
     createAuthor: function() {
       this.author.set('globals.isEditing', true);
       var newauthor = this.store.createRecord('author');
-      this.get('router').transitionTo('author', newauthor.save());
+      this.get('router').transitionTo('authors.author', newauthor.save());
     }
   }
 });

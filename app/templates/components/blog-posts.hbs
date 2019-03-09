@@ -10,7 +10,7 @@
 				<tbody>
 				{{#each pagedContent as |post|}}
 				<tr><td>
-					{{#link-to 'post' post}}
+					{{#link-to 'posts.post' post}}
 						{{post.title}} <small class='muted'>by {{post.author.name}}</small>
 					{{/link-to}}
 				</td></tr>
