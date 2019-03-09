@@ -9,8 +9,9 @@
 /node_modules/
 
 # misc
+/.env*
+/.pnp*
 /.sass-cache
-/.env.deploy.*
 /connect.lock
 /coverage/
 /libpeerconnection.log
