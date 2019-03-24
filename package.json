@@ -14,6 +14,7 @@
     "clean": "rm -Rf ./node_modules ./bower_components",
     "setup": "npm install",
     "build": "ember build",
+    "license": "license-checker --failOn GPL",
     "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test"
@@ -63,6 +64,7 @@
     "ember-simple-auth-pouch": "^0.1.0",
     "ember-source": "~3.8.0",
     "eslint-plugin-ember": "^6.2.0",
+    "license-checker": "^25.0.1",
     "loader.js": "^4.7.0",
     "qunit-dom": "^0.8.4"
   },
