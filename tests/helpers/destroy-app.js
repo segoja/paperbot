@@ -1,5 +1,5 @@
 import { run } from '@ember/runloop';
 
-export default function destroyApp(application) {
+export const helpers = function destroyApp(application) {
   run(application, 'destroy');
 }
