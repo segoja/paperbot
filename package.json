@@ -14,7 +14,7 @@
     "clean": "rm -Rf ./node_modules ./bower_components",
     "setup": "npm install",
     "build": "ember build",
-    "license": "license-checker --failOn GPL",
+    "license": "license-checker --summary --failOn GPL",
     "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test"
