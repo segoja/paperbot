@@ -49,7 +49,7 @@ module.exports = function(environment) {
     ENV.APP.autoboot = false;
   }
 
-  ENV.remote_couch = false;  // 'http://localhost:5984/bloggr';
+  ENV.remote_couch = 'https://martinic.couchcluster.com/bloggr';  // 'http://localhost:5984/bloggr';
   ENV.local_couch = 'bloggr';
   ENV.authAdapter = 'application';
   if (environment === 'production') {
