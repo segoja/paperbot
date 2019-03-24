@@ -15,6 +15,7 @@
     "setup": "npm install",
     "build": "ember build",
     "license": "license-checker --summary --failOn GPL",
+    "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test"
@@ -43,6 +44,7 @@
     "ember-cli-release": "^0.2.9",
     "ember-cli-shims": "^1.2.0",
     "ember-cli-sri": "^2.1.1",
+    "ember-cli-template-lint": "^1.0.0-beta.1",
     "ember-cli-test-loader": "^2.1.0",
     "ember-cli-uglify": "^2.1.0",
     "ember-data": "~3.8.0",
@@ -64,6 +66,7 @@
     "ember-simple-auth-pouch": "^0.1.0",
     "ember-source": "~3.8.0",
     "eslint-plugin-ember": "^6.2.0",
+    "eslint-plugin-node": "^8.0.1",
     "license-checker": "^25.0.1",
     "loader.js": "^4.7.0",
     "qunit-dom": "^0.8.4"

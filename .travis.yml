@@ -28,5 +28,6 @@ install:
 
 script:
   - npm run license
+  - npm run lint:hbs
   - npm run lint:js
   - npm test

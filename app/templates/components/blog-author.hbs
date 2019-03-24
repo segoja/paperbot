@@ -5,7 +5,7 @@
 Posts by {{author.name}}:
 <ul>
   {{#each author.posts as |post|}}
-    {{#link-to 'post' post}}
+    {{#link-to "post" post}}
       <li>{{post.title}}</li>
     {{/link-to}}
   {{/each}}
