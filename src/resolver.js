@@ -22,7 +22,7 @@ moduleConfig.types = Object.assign(moduleConfig.types, {
   // ember-simple-auth
   'session': { definitiveCollection: 'session' },
   'session-store': { definitiveCollection: 'session-store' },
-  'authenticator': { definitiveCollection: 'authenticator' },
+  'authenticator': { definitiveCollection: 'authenticators' },
   // ember-intl
   'ember-intl@adapter': { definitiveCollection: 'main' },
   'ember-intl@translation': { definitiveCollection: 'main' },
@@ -36,7 +36,8 @@ moduleConfig.types = Object.assign(moduleConfig.types, {
 moduleConfig.collections = Object.assign(moduleConfig.collections, {
   authenticators: {
     types: ['authenticator'],
-    defaultType: 'authenticator'
+    defaultType: 'authenticator',
+    group: 'simple-auth'
   }
 });
 
