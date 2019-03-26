@@ -3,6 +3,7 @@
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
+  let config = process.env.EMBER_ENV || 'development';
   let app = new EmberApp(defaults, {
     // IE 11 needs a Polyfill for startsWith
     'ember-cli-babel': {
@@ -15,7 +16,8 @@ module.exports = function(defaults) {
       ]
     },
     'ember-service-worker': {
-      versionStrategy: 'every-build'
+      versionStrategy: 'every-build',
+      enabled: config != 'development'
     },
 
     // Exclude .png favicons from being fingerprinted
