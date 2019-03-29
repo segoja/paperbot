@@ -26,6 +26,8 @@ To get up and running with this project:
 
 Data will be stored in an in memory database and if configured, also replicated to a CouchDB instance.
 
+## Optional Installation
+
 To setup CouchDB data replication, configure `ENV.remote_couch` inside `./config/environment.js` to point to your CouchDB location.
 
 To setup a CouchDB instance on your own machine:
@@ -36,7 +38,7 @@ To setup a CouchDB instance on your own machine:
 * update `config/environment.js` `local_couch` and `remote_couch` to your CouchDB
   instance name.
 * update `config/environment.js` `ENV.rootURL` in the production environment
-* To use deploy create a file `.env.deploy.production` in the root of this project containing something like `db=https://username:password@martinic.couchcluster.com/bloggr`
+* To use deploy create a file `.env.deploy.production` in the root of this project containing something like `db=https://username:password@my.couchcluster.com/bloggr`
 
 
 ## Running
@@ -62,22 +64,20 @@ To deploy to your CouchDB cluster
 
 ## Authentication
 
-ember-simple-auth-pouch authenticator with custom data adapter to setup push replication after login. See authenticators/pouch.js and adapters/application for further details.
+ember-simple-auth-pouch authenticator with custom data adapter to setup push replication after login. See `/src/simple-auth/authenticators/pouch.js` and `/src/data/models/application/adapter.js` for further details.
 
 ## Authorization
 
 ### CouchDB write protected database:
 
-Registration required example for write persmission: Add users in the normal CouchDB way.
+Registration required example for write permission: Add users in the normal CouchDB way.
 For example by adding the following document to the `_users` database:
 ```
 {
   "_id": "org.couchdb.user:test",
   "name": "test",
   "password": "test",
-  "roles": [
-    "bloggr"
-  ],
+  "roles": [],
   "type": "user"
 }
 ```
@@ -85,12 +85,12 @@ For example by adding the following document to the `_users` database:
 After that you can protect your `bloggr` database from unauthorized writes by adding the following design document to the `bloggr` database.
 ```
 {
-   "_id": "_design/only_users_write",
-   "validate_doc_update": "function (newDoc, oldDoc, userCtx) {\n\tif (userCtx.roles.indexOf(\"bloggr\") == -1 && userCtx.roles.indexOf(\"_admin\") == -1) {\n\t\tthrow({unauthorized: \"Only registered users can save data!\"});\n\t}\n}"
+  "_id": "_design/only_users_write",
+  "validate_doc_update": "function (newDoc, oldDoc, userCtx) {\n\tif ([\"test\"].indexOf(userCtx.name) == -1 && userCtx.roles.indexOf(\"_admin\") == -1) {\n\t\tthrow({unauthorized: \"Only registered users can save data!\"});\n\t}\n}"
 }
 ```
 
-For cloudant you have to create a `_users` database and insert the userdocument from above or use the Hoodie [CouchDB User Management App](http://gr2m.github.io/couchdb-user-management-app/)
+For the free [My.CouchCluster](https://couchcluser.com) you have to create a User and a Database and insert the userdocument from above. Change `[\"test\"]` to include your users. Make sure to update your `config/environment.js` `remote_couch` and `rootURL` to match your production settings. Typical `rootURL` values are `/` and `/yourdb/_design/myapp/_rewrite/` If you run your own CouchDB you can use the Hoodie [CouchDB User Management App](https://gr2m.github.io/couchdb-user-management-app/) to create users.
 
 ### Secret route
 
