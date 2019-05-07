@@ -77,7 +77,9 @@ For example by adding the following document to the `_users` database:
   "_id": "org.couchdb.user:test",
   "name": "test",
   "password": "test",
-  "roles": [],
+  "roles": [
+    "user"
+  ],
   "type": "user"
 }
 ```
@@ -86,11 +88,11 @@ After that you can protect your `bloggr` database from unauthorized writes by ad
 ```
 {
   "_id": "_design/only_users_write",
-  "validate_doc_update": "function (newDoc, oldDoc, userCtx) {\n\tif ([\"test\"].indexOf(userCtx.name) == -1 && userCtx.roles.indexOf(\"_admin\") == -1) {\n\t\tthrow({unauthorized: \"Only registered users can save data!\"});\n\t}\n}"
+  "validate_doc_update": "function (newDoc, oldDoc, userCtx) {\n\tif (userCtx.roles.indexOf(\"user\") == -1 && userCtx.roles.indexOf(\"_admin\") == -1) {\n\t\tthrow({unauthorized: \"Only registered users can save data!\"});\n\t}\n}"
 }
 ```
 
-For the free [My.CouchCluster](https://couchcluster.com) you have to create an User and a Database and insert the userdocument from above. Change `[\"test\"]` to include your users. Make sure to update your `config/environment.js` `remote_couch` and `rootURL` to match your production settings. Typical `rootURL` values are `/` and `/yourdb/_design/myapp/_rewrite/` If you run your own CouchDB you can use the Hoodie [CouchDB User Management App](https://gr2m.github.io/couchdb-user-management-app/) to create users.
+For the free [CloudStation](https://cloudstation.com) you have to create an User and a Database and insert the userdocument from above. Make sure to update your `config/environment.js` `remote_couch` and `rootURL` to match your production settings. Typical `rootURL` values are `/` and `/yourdb/_design/myapp/_rewrite/` If you run your own CouchDB you can use the Hoodie [CouchDB User Management App](https://gr2m.github.io/couchdb-user-management-app/) to create users.
 
 ### Secret route
 
