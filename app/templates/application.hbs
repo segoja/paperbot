@@ -3,32 +3,32 @@
   <div class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
-        {{#link-to "application" class="navbar-brand"}}
+        <LinkTo @route="application" class="navbar-brand">
           Bloggr
-        {{/link-to}}
+        </LinkTo>
       </div>
       <div class="navbar-inner">
         <ul class="nav navbar-nav">
-          {{#active-link}}
-            {{#link-to "posts"}}
+          <ActiveLink>
+            <LinkTo @route="posts">
               Posts
-            {{/link-to}}
-          {{/active-link}}
-          {{#active-link}}
-            {{#link-to "authors"}}
+            </LinkTo>
+          </ActiveLink>
+          <ActiveLink>
+            <LinkTo @route="authors">
               Authors
-            {{/link-to}}
-          {{/active-link}}
-          {{#active-link}}
-            {{#link-to "about"}}
+            </LinkTo>
+          </ActiveLink>
+          <ActiveLink>
+            <LinkTo @route="about">
               About
-            {{/link-to}}
-          {{/active-link}}
-          {{#active-link}}
-            {{#link-to "secret"}}
+            </LinkTo>
+          </ActiveLink>
+          <ActiveLink>
+            <LinkTo @route="secret">
               Secret
-            {{/link-to}}
-          {{/active-link}}
+            </LinkTo>
+          </ActiveLink>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li class="push {{if cloudState.cloudPull "push-enabled"}}" title="Pull data">
@@ -52,15 +52,15 @@
               <a href="#" {{action "logout"}}>Logout</a>
             </li>
           {{else}}
-            {{#active-link}}
-              {{#link-to "login"}}
+            <ActiveLink>
+              <LinkTo @route="login">
                 Login
-              {{/link-to}}
-            {{/active-link}}
+              </LinkTo>
+            </ActiveLink>
           {{/if}}
           <li>
             <p class="navbar-btn spinner">
-              {{refresh-indicator spin=isSpinning}}
+              <RefreshIndicator @spin={{isSpinning}} />
             </p>
           </li>
         </ul>

@@ -1,0 +1,2 @@
+2020-01-10T07:36:13.104Z [warn] WARNING: {{format-markdown}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/components/blog-post.hbs
+2020-01-10T07:36:13.107Z [warn] WARNING: {{format-markdown}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/components/blog-post.hbs

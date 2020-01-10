@@ -1,1 +1,1 @@
-{{blog-post post=model authors=posts.authors isEditing=globals.isEditing saveAction=(action "savePost") deleteAction=(action "deletePost")}}
+<BlogPost @post={{model}} @authors={{posts.authors}} @isEditing={{globals.isEditing}} @saveAction={{action "savePost"}} @deleteAction={{action "deletePost"}} />

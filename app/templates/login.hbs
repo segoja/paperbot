@@ -2,11 +2,11 @@
   <p>Login with your CloudStation account. Create one for free <a href="https://cloudstation.com/en/register" title="Create a Free CloudStation account">here</a>.</p>
   <div class="form-group">
     <label class="sr-only" for="identification">Username</label>
-    {{input  class="form-control" id="identification" placeholder="Username" value=identification}}
+    <Input class="form-control" @id="identification" placeholder="Username" @value={{identification}} />
   </div>
   <div class="form-group">
     <label class="sr-only" for="password">Password</label>
-    {{input class="form-control" id="password" placeholder="Password" type="password" value=password}}
+    <Input class="form-control" @id="password" placeholder="Password" @type="password" @value={{password}} />
   </div>
   <button type="submit" class="btn btn-primary">Login</button>
   {{#if errorMessage}}

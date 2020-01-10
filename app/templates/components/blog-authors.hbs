@@ -13,15 +13,15 @@
           {{#each pagedContent as |author|}}
             <tr>
               <td>
-                {{#link-to "authors.author" author}}
+                <LinkTo @route="authors.author" @model={{author}}>
                   &bull; {{author.name}}
-                {{/link-to}}
+                </LinkTo>
               </td>
             </tr>
           {{/each}}
         </tbody>
       </table>
-      {{page-numbers content=pagedContent}}
+      <PageNumbers @content={{pagedContent}} />
     </div>
 
     {{!-- author content --}}
