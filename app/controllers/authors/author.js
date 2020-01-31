@@ -1,18 +1,16 @@
 import Controller from '@ember/controller';
+import { action } from "@ember/object";
 import { inject as service } from '@ember/service';
 
-export default Controller.extend({
-  router: service(),
+export default class AuthorController extends Controller {
+  @service router;
 
-  actions: {
-    saveAuthor: function() {
-      this.model.save();
-    },
-
-    deleteAuthor: function() {
-      this.model.destroyRecord().then(function() {
-        this.router.transitionTo('authors');
-      }.bind(this));
-    }
+  @action saveAuthor() {
+    this.model.save();
   }
-});
+  @action deleteAuthor() {
+    this.model.destroyRecord().then(() => {
+      this.router.transitionTo('authors');
+    });
+  }
+}

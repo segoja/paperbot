@@ -1,13 +1,12 @@
 import Controller from '@ember/controller';
+import { action } from "@ember/object";
 import { inject as service } from '@ember/service';
 
-export default Controller.extend({
-  session: service(),
-  cloudState: service(),
+export default class ApplicationController extends Controller {
+  @service session;
+  @service cloudState;
 
-  actions:{
-    logout: function() {
-      this.session.invalidate();
-    }
+  @action logout() {
+    this.session.invalidate();
   }
-});
+}

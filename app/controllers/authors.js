@@ -1,21 +1,20 @@
 import Controller from '@ember/controller';
+import { action } from "@ember/object";
 import { inject as service } from '@ember/service';
 import { inject } from '@ember/controller';
 
-export default Controller.extend({
-  author: inject('authors.author'),
-  router: service(),
+export default class AuthorController extends Controller {
+  @inject ('authors.author') author;
+  @service router;
 
-  page: 1,
-  perPage: 5,
+  page = 1;
+  perPage = 5;
 
-  queryParams: ["page", "perPage"],
+  queryParams = ["page", "perPage"];
 
-  actions: {
-    createAuthor: function() {
-      this.author.set('globals.isEditing', true);
-      var newauthor = this.store.createRecord('author');
-      this.router.transitionTo('authors.author', newauthor.save());
-    }
+  @action createAuthor() {
+    this.author.set('globals.isEditing', true);
+    let newauthor = this.store.createRecord('author');
+    this.router.transitionTo('authors.author', newauthor.save());
   }
-});
+}
