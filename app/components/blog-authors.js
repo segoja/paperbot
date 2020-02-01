@@ -1,19 +1,21 @@
 import Component from '@ember/component';
+import { action } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 
-export default Component.extend({
-  authorsSorting: Object.freeze(['name']),
-  arrangedContent: sort('authors', 'authorsSorting'),
+export default class BlogAuthors extends Component {
+  authorsSorting = Object.freeze(['name']);
+  @sort (
+    'authors',
+    'authorsSorting'
+  ) arrangedContent;
 
-  pagedContent: pagedArray('arrangedContent', {
-    page: alias('parent.page'),
-    perPage: alias('parent.perPage')
-  }),
+  @pagedArray (
+    'arrangedContent',
+    { page: alias('parent.page'), perPage: alias('parent.perPage')}
+  ) pagedContent;
 
-  actions: {
-    createAuthor: function() {
-      this.createAction();
-    }
+  @action createAuthor() {
+    this.createAction();
   }
-});
+}
