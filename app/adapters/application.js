@@ -5,14 +5,13 @@ import { assert } from '@ember/debug';
 import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
-export default Adapter.extend({
+export default class ApplicationAdapter extends Adapter {
+  @service session;
+  @service cloudState;
+  @service refreshIndicator;
 
-  session: service(),
-  cloudState: service(),
-  refreshIndicator: service(),
-
-  init() {
-    this._super(...arguments);
+  constructor() {
+    super(...arguments);
 
     const localDb = config.local_couch || 'blogger';
 
@@ -56,9 +55,9 @@ export default Adapter.extend({
     }
 
     return this;
-  },
+  }
 
-  unloadedDocumentChanged: function(obj) {
+  unloadedDocumentChanged(obj) {
     this.refreshIndicator.kickSpin();
 
     let store = this.store;
@@ -67,4 +66,4 @@ export default Adapter.extend({
       store.pushPayload(recordTypeName, doc);
     });
   }
-});
+}
