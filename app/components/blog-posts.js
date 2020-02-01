@@ -1,6 +1,5 @@
 import Component from '@ember/component';
 import { action } from '@ember/object';
-import { set } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
@@ -40,7 +39,7 @@ export default class BlogPostsComponent extends Component {
   // define the actions, used by our view like so:
   // => <button {{action 'createPost'}}>Create</button>
   @action resetPage() {
-    set(this, 'page', 1);
+    this.page = 1;
   }
   @action createPost() {
     this.createAction();
