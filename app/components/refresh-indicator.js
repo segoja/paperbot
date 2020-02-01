@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 
-export default class RefreshIndicator extends Component {
+export default class RefreshIndicatorComponent extends Component {
   @service refreshIndicator;
 }

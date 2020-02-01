@@ -10,7 +10,7 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 // `posts.hbs` gets its params by defining
 // => queryParams: ["page", "perPage", "query"]
 // inside its controller located at `controllers/posts.js`
-export default class BlogPosts extends Component {
+export default class BlogPostsComponent extends Component {
   // take in `posts` from our view
   // and sort it via `postsSorting`
   // into `arrangedContent`

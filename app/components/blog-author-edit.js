@@ -2,7 +2,7 @@ import Component from '@ember/component';
 import { action } from '@ember/object';
 import { set } from '@ember/object';
 
-export default class BlogAuthorEdit extends Component {
+export default class BlogAuthorEditComponent extends Component {
   @action edit() {
     set(this, 'isEditing', true);
   }

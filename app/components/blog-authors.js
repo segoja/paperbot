@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 
-export default class BlogAuthors extends Component {
+export default class BlogAuthorsComponent extends Component {
   authorsSorting = Object.freeze(['name']);
   @sort (
     'authors',
