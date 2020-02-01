@@ -1,11 +1,12 @@
 import { set } from '@ember/object';
 import Service from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 
-export default Service.extend({
-  spin: false,
+export default class RefreshIndicatorService extends Service {
+  @tracked spin = false;
 
-  kickSpin: function(){
+  kickSpin(){
     if(!this.spin){
       set(this, 'spin', true);
       //Set "spin = false" after a timeout.
@@ -14,4 +15,4 @@ export default Service.extend({
       }.bind(this), 1000);
     }
   }
-});
+}

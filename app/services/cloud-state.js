@@ -1,15 +1,16 @@
 import { set } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 import Service from '@ember/service';
 
-export default Service.extend({
-  cloudPush: false,
-  cloudPull: false,
+export default class CloudStateService extends Service {
+  @tracked cloudPush = false;
+  @tracked cloudPull = false;
 
-  setPush (val) {
+  setPush(val) {
     set(this, 'cloudPush', (val));
-  },
+  }
 
-  setPull (val) {
+  setPull(val) {
     set(this, 'cloudPull', (val));
   }
-});
+}
