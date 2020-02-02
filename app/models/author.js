@@ -1,9 +1,7 @@
-import DS from "ember-data";
+import { attr, hasMany } from '@ember-data/model';
 import { Model } from 'ember-pouch';
 
-var Author = Model.extend({
-  name: DS.attr('string', {defaultValue: ""}),
-  posts: DS.hasMany('posts')
-});
-
-export default Author;
+export default class AuthorModel extends Model {
+  @attr('string', {defaultValue: ""}) name;
+  @hasMany('posts') posts;
+}
