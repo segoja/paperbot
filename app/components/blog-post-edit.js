@@ -1,4 +1,4 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 
@@ -10,9 +10,9 @@ export default class BlogPostEditComponent extends Component {
   }
   @action doneEditing() {
     this.isEditing = false;
-    this.saveAction();
+    this.args.saveAction();
   }
   @action deletePost() {
-    this.deleteAction();
+    this.args.deleteAction();
   }
 }

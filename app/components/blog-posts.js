@@ -1,4 +1,4 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
@@ -15,7 +15,7 @@ export default class BlogPostsComponent extends Component {
   // into `arrangedContent`
   postsSorting = Object.freeze(['date:desc']);
   @sort (
-    'posts',
+    'args.posts',
     'postsSorting'
   ) arrangedContent;
 
@@ -23,7 +23,7 @@ export default class BlogPostsComponent extends Component {
   @computedFilterByQuery(
     'arrangedContent',
     ['title', 'body', 'authorName', 'excerpt'],
-    'query',
+    'args.queryParamsObj.query',
     { conjunction: 'and', sort: false}
   ) filteredContent;
 
@@ -33,15 +33,15 @@ export default class BlogPostsComponent extends Component {
   // => {{page-numbers content=pagedContent}}
   @pagedArray (
     'filteredContent',
-    { page: alias('parent.page'), perPage: alias('parent.perPage')}
+    { page: alias('parent.args.queryParamsObj.page'), perPage: alias('parent.args.queryParamsObj.perPage')}
   ) pagedContent;
 
   // define the actions, used by our view like so:
   // => <button {{action 'createPost'}}>Create</button>
   @action resetPage() {
-    this.page = 1;
+    this.args.queryParamsObj.page = 1;
   }
   @action createPost() {
-    this.createAction();
+    this.args.createAction();
   }
 }

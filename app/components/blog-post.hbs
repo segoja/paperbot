@@ -1,14 +1,14 @@
-<BlogPostEdit @post={{post}} @authors={{authors}} @isEditing={{isEditing}} @saveAction={{saveAction}} @deleteAction={{deleteAction}} />
+<BlogPostEdit @post={{args.post}} @authors={{args.authors}} @isEditing={{args.isEditing}} @saveAction={{args.saveAction}} @deleteAction={{args.deleteAction}} />
 
-<h1>{{post.title}}</h1>
-<h2>by {{post.author.name}} <small class="muted">({{format-date post.date}})</small></h2>
+<h1>{{args.post.title}}</h1>
+<h2>by {{args.post.author.name}} <small class="muted">({{format-date args.post.date}})</small></h2>
 
 <hr>
 
 <div class="intro">
-  {{format-markdown post.excerpt}}
+  {{format-markdown args.post.excerpt}}
 </div>
 
 <div class="below-the-fold">
-  {{format-markdown post.body}}
+  {{format-markdown args.post.body}}
 </div>

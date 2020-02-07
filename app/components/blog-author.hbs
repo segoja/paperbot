@@ -1,10 +1,10 @@
-<BlogAuthorEdit @author={{author}} @isEditing={{isEditing}} @saveAction={{saveAction}} @deleteAction={{deleteAction}} />
+<BlogAuthorEdit @author={{args.author}} @isEditing={{args.isEditing}} @saveAction={{args.saveAction}} @deleteAction={{args.deleteAction}} />
 
-<h1>{{author.name}}</h1>
+<h1>{{args.author.name}}</h1>
 
-Posts by {{author.name}}:
+Posts by {{args.author.name}}:
 <ul>
-  {{#each author.posts as |post|}}
+  {{#each args.author.posts as |post|}}
     <LinkTo @route="posts.post" @model={{post}}>
       <li>{{post.title}}</li>
     </LinkTo>
