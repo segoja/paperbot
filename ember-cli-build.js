@@ -60,5 +60,7 @@ module.exports = function(defaults) {
     ]
   });
 
+  app.import('node_modules/bootstrap/dist/css/bootstrap.min.css');
+
   return app.toTree();
 };
