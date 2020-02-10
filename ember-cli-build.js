@@ -54,5 +54,11 @@ module.exports = function(defaults) {
     ]
   });
 
+  app.import('node_modules/marked/marked.min.js', {
+    using: [
+      { transformation: 'amd', as: 'marked' }
+    ]
+  });
+
   return app.toTree();
 };
