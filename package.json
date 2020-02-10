@@ -41,7 +41,6 @@
     "ember-cli-inject-live-reload": "^2.0.1",
     "ember-cli-markdown-editor": "^0.1.1",
     "ember-cli-marked": "^0.1.1",
-    "ember-cli-moment-shim": "^3.7.1",
     "ember-cli-pagination": "^3.1.5",
     "ember-cli-release": "^0.2.9",
     "ember-cli-shims": "^1.2.0",
@@ -72,6 +71,7 @@
     "eslint-plugin-node": "^10.0.0",
     "license-checker": "^25.0.1",
     "loader.js": "^4.7.0",
+    "moment": "^2.24.0",
     "qunit-dom": "^1.0.0"
   },
   "engines": {
