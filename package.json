@@ -13,7 +13,7 @@
   "scripts": {
     "clean": "rm -Rf ./node_modules ./bower_components",
     "setup": "npm install",
-    "build": "ember build",
+    "build": "ember build --environment=production",
     "license": "license-checker --summary --failOn GPL",
     "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint .",
@@ -23,28 +23,29 @@
   "devDependencies": {
     "@ember/optional-features": "^1.3.0",
     "@glimmer/component": "^1.0.0",
+    "@glimmer/tracking": "^1.0.0",
     "babel-eslint": "^10.0.3",
     "bootstrap": "^3.3.7",
     "broccoli-asset-rev": "^3.0.0",
     "ember-auto-import": "^1.5.3",
-    "ember-cli": "~3.15.2",
+    "ember-cli": "~3.16.0",
     "ember-cli-active-link-wrapper": "0.5.0",
     "ember-cli-app-version": "^3.2.0",
-    "ember-cli-babel": "^7.13.0",
+    "ember-cli-babel": "^7.17.2",
     "ember-cli-dependency-checker": "^3.2.0",
     "ember-cli-deploy": "^1.0.2",
     "ember-cli-deploy-build-plus": "^0.2.2",
     "ember-cli-deploy-couchdb": "^0.2.0",
     "ember-cli-eslint": "^5.1.0",
     "ember-cli-filter-by-query": "^1.3.1",
-    "ember-cli-htmlbars": "^4.2.0",
-    "ember-cli-inject-live-reload": "^2.0.1",
+    "ember-cli-htmlbars": "^4.2.2",
+    "ember-cli-inject-live-reload": "^2.0.2",
     "ember-cli-markdown-editor": "^0.1.1",
     "ember-cli-pagination": "^3.1.5",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-template-lint": "^1.0.0-beta.3",
     "ember-cli-uglify": "^3.0.0",
-    "ember-data": "~3.15.0",
+    "ember-data": "~3.16.0",
     "ember-export-application-global": "^2.0.1",
     "ember-fetch": "^7.0.0",
     "ember-font-awesome": "^4.0.0-rc.4",
@@ -63,7 +64,7 @@
     "ember-simple-auth": "^3.0.0",
     "ember-simple-auth-pouch": "^0.1.0",
     "ember-source": "~3.16.2",
-    "eslint-plugin-ember": "^7.7.1",
+    "eslint-plugin-ember": "^7.7.2",
     "eslint-plugin-node": "^11.0.0",
     "license-checker": "^25.0.1",
     "loader.js": "^4.7.0",
@@ -72,7 +73,7 @@
     "qunit-dom": "^1.0.0"
   },
   "engines": {
-    "node": "8.* || >= 10.*"
+    "node": "10.* || >= 12"
   },
   "ember": {
     "edition": "octane"
