@@ -1,6 +1,6 @@
-{{#if isEditing}}
+{{#if this.isEditing}}
   <p><button {{action "doneEditing"}}>Done</button></p>
-  <p><Input @type="text" @value={{args.author.name}} placeholder="Author name" class="form-control" /></p>
+  <p><Input @type="text" @value={{this.args.author.name}} placeholder="Author name" class="form-control" /></p>
 
   <p><button {{action "deleteAuthor"}}>Delete</button></p>
 {{else}}

@@ -31,23 +31,23 @@
           </ActiveLink>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li class="push {{if cloudState.cloudPull "push-enabled"}}" title="Pull data">
+          <li class="push {{if this.cloudState.cloudPull "push-enabled"}}" title="Pull data">
             <p class="navbar-btn">
               <i aria-hidden class="fa fa-2x fa-cloud-download"></i>
             </p>
             <p class="navbar-text">
-              Pull {{if cloudState.cloudPull "synced" "not synced"}}
+              Pull {{if this.cloudState.cloudPull "synced" "not synced"}}
             </p>
           </li>
-          <li class="push {{if cloudState.cloudPush "push-enabled"}}" title="Push data">
+          <li class="push {{if this.cloudState.cloudPush "push-enabled"}}" title="Push data">
             <p class="navbar-btn">
               <i aria-hidden class="fa fa-2x fa-cloud-upload"></i>
             </p>
             <p class="navbar-text">
-              Push {{if cloudState.cloudPush "synced" "not synced"}}
+              Push {{if this.cloudState.cloudPush "synced" "not synced"}}
             </p>
           </li>
-          {{#if session.isAuthenticated}}
+          {{#if this.session.isAuthenticated}}
             <li>
               <a href="#" {{action "logout"}}>Logout</a>
             </li>
@@ -60,7 +60,7 @@
           {{/if}}
           <li>
             <p class="navbar-btn spinner">
-              <RefreshIndicator @spin={{isSpinning}} />
+              <RefreshIndicator @spin={{this.isSpinning}} />
             </p>
           </li>
         </ul>

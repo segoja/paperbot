@@ -10,7 +10,7 @@
           </tr>
         </thead>
         <tbody>
-          {{#each pagedContent as |author|}}
+          {{#each this.pagedContent as |author|}}
             <tr>
               <td>
                 <LinkTo @route="authors.author" @model={{author}}>
@@ -21,7 +21,7 @@
           {{/each}}
         </tbody>
       </table>
-      <PageNumbers @content={{pagedContent}} />
+      <PageNumbers @content={{this.pagedContent}} />
     </div>
 
     {{!-- author content --}}
