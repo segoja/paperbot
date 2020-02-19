@@ -49,7 +49,7 @@
           </li>
           {{#if this.session.isAuthenticated}}
             <li>
-              <a href="#" {{action "logout"}}>Logout</a>
+              <a href="#" {{on "click" this.logout}}>Logout</a>
             </li>
           {{else}}
             <ActiveLink>

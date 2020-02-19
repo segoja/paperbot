@@ -5,8 +5,11 @@ import { inject as service } from '@ember/service';
 export default class LoginController extends Controller {
   @service session;
 
-  @action authenticate() {
-    let { identification, password } = this;
+  @action authenticate(event) {
+    const { target } = event;
+    let identification = target.querySelector('#identification').value;
+    let password = target.querySelector('#password').value;
+    event.preventDefault();
     this.session.authenticate('authenticator:pouch', identification, password).then(() => {
       this.setProperties({identification: '', password: ''});
     }).catch((reason) => {

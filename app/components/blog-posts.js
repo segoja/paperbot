@@ -41,7 +41,4 @@ export default class BlogPostsComponent extends Component {
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
   }
-  @action createPost() {
-    this.args.createAction();
-  }
 }

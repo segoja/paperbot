@@ -10,9 +10,6 @@ export default class BlogAuthorEditComponent extends Component {
   }
   @action doneEditing() {
     this.isEditing = false;
-    this.args.saveAction();
-  }
-  @action deleteAuthor() {
-    this.args.deleteAction();
+    this.args.saveAuthor();
   }
 }
