@@ -2,7 +2,7 @@
   <div class="row">
     {{!-- blog post listing --}}
     <div class="col-xs-5">
-      <button type="button" {{on "click" @createPost}}>Create</button> <Input @type="text" @value={{@queryParamsObj.query}} placeholder="Filter Posts" @autofocus="autofocus" @key-press={{action "resetPage"}} />
+      <button type="button" {{on "click" @createPost}}>Create</button> <Input @type="text" @value={{@queryParamsObj.query}} placeholder="Filter Posts" @autofocus="autofocus" @keyDown={{this.resetPage}} />
       <table class="table">
         <thead>
           <tr><th>Recent Posts</th></tr>
