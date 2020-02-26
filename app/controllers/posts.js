@@ -1,7 +1,6 @@
 import Controller from '@ember/controller';
 import { tracked } from '@glimmer/tracking';
 import { action } from "@ember/object";
-import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { inject } from '@ember/controller';
 
@@ -15,11 +14,11 @@ export default class PostsController extends Controller {
   @inject ('posts.post') post;
   @service router;
 
-  @alias ('queryParamsObj.page') page;
-  @alias ('queryParamsObj.perPage') perPage;
-  @alias ('queryParamsObj.query') query;
-
-  queryParams= ["page", "perPage", "query"];
+  queryParams= [
+    {'queryParamsObj.page': 'page'},
+    {'queryParamsObj.perPage': 'perPage'},
+    {'queryParamsObj.query': 'query'}
+  ];
   queryParamsObj = new QueryParamsObj();
 
   @action createPost() {
