@@ -1,9 +1,12 @@
 import config from '../config/environment';
-import PouchDB from 'pouchdb';
+import PouchDB from 'ember-pouch/pouchdb';
 import { Adapter } from 'ember-pouch';
 import { assert } from '@ember/debug';
 import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
+import auth from 'pouchdb-authentication';
+
+PouchDB.plugin(auth);
 
 export default class ApplicationAdapter extends Adapter {
   @service session;
