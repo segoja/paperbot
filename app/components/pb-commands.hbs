@@ -1,0 +1,28 @@
+<div class="container-fluid">
+  <div class="row">
+    {{!-- blog command listing --}}
+    <div class="col-xs-6">
+      <button type="button" {{on "click" @createCommand}}>Create</button> <Input @type="text" @value={{@queryParamsObj.query}} placeholder="Filter Commands" @autofocus="autofocus" @keyDown={{this.resetPage}} />
+      <table class="table">
+        <thead>
+          <tr><th colspan="2">Stream list</th></tr>
+        </thead>
+        <tbody>
+          {{#each this.pagedContent as |command|}}
+            
+              <tr>
+                <td><LinkTo @route="commands.command" @model={{command}}>{{command.name}}</LinkTo></td>
+                <td><LinkTo @route="commands.command" @model={{command}}><small class="muted">{{command.response}}</small></LinkTo></td>
+              </tr>
+            
+          {{/each}}
+        </tbody>
+      </table>
+      <PageNumbers @content={{this.pagedContent}} />
+    </div>
+    {{!-- blog command content --}}
+    <div class="col-xs-6">
+      {{yield}}
+    </div>
+  </div>
+</div>

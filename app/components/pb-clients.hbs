@@ -1,0 +1,32 @@
+<div class="container-fluid">
+  <div class="row">
+    {{!-- client listing --}}
+    <div class="col-xs-5">
+      <button type="button" {{on "click" @createClient}}>Create</button>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Clients</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each this.pagedContent as |client|}}
+            <tr>
+              <td>
+                <LinkTo @route="clients.client" @model={{client}}>
+                  &bull; {{client.username}}
+                </LinkTo>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <PageNumbers @content={{this.pagedContent}} />
+    </div>
+
+    {{!-- client content --}}
+    <div class="col-xs-7">
+      {{yield}}
+    </div>
+  </div>
+</div>

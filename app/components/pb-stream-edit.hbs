@@ -1,0 +1,19 @@
+{{#if this.isEditing}}
+<BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{action "doneEditing"}} as |form|>
+  <form.element @controlType="text" @label="Title" placeholder="Stream title" @property="title" required />
+  <form.element @controlType="text" @label="Channel" placeholder="Stream channel" @property="channel" required />
+  <form.element @controlType="checkbox" @label="Requests" @property="request" />
+   
+  <p><PowerSelectBlockless @options={{@clients}} @selected={{@stream.botclient}} @onchange={{fn (mut @stream.botclient)}} @labelPath="username" @placeholder="Bot client" required /></p>
+  <p><PowerSelectBlockless @options={{@clients}} @selected={{@stream.chatclient}} @onchange={{fn (mut @stream.chatclient)}} @labelPath="username" @placeholder="Chat client" required /></p> 
+
+  <BsButton type="submit">Submit</BsButton>
+ 
+ </BsForm>
+ 
+  <SongQueue class="col" />
+  <TwitchChat class="col" />
+  
+{{else}}
+  <p><button type="button" {{on "click" this.edit}}>Edit</button></p>
+{{/if}}

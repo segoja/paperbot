@@ -9,12 +9,14 @@ module.exports = function(defaults) {
     'ember-cli-babel': {
       includePolyfill: true
     },
+
     // Add fonts to Service Worker cache first
     'esw-cache-first': {
       patterns: [
         'fonts/fontawesome(.+)',
       ]
     },
+
     'ember-service-worker': {
       versionStrategy: 'every-build',
       enabled: config != 'development'
@@ -31,8 +33,14 @@ module.exports = function(defaults) {
                  'mstile-150x150.png'
                ]
     },
+
     'ember-power-select': {
        theme: 'bootstrap'
+    },
+
+    'ember-bootstrap': {
+      'bootstrapVersion': 4,
+      'importBootstrapCSS': true
     }
   });
 

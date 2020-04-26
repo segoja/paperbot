@@ -1,0 +1,14 @@
+<PbCommandEdit @command={{@command}} @isEditing={{@isEditing}} @saveCommand={{@saveCommand}} @deleteCommand={{@deleteCommand}} />
+
+<h1>{{@command.name}}</h1>
+<hr>
+
+<div class="intro">
+  <p>Name: {{@command.name}}</p>
+  <p>Type: {{@command.type}}</p>
+  <p>Cooldown: {{@command.cooldown}} seconds</p>
+  <p>Timer: {{@command.timer}} seconds</p>
+  <p>Response: {{@command.response}}</p>
+  <p>Sound File: {{@command.soundfile}}</p>
+  <p>Volume: {{@command.volume}}%</p>
+</div>

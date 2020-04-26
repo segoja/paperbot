@@ -1,0 +1,19 @@
+{{#if this.isEditing}}
+  <p><button type="button" {{on "click" this.doneEditing}}>Done</button></p>
+  <p><Input @type="text" @value={{@command.name}} class="form-control" placeholder="Type the command name" /></p>
+  <p><Input @type="text" @value={{@command.type}} class="form-control" placeholder="Select the type" /></p>
+  <p><Input @type="text" @value={{@command.cooldown}} class="form-control" placeholder="Cooldown time in seconds" /></p>
+  <p><Input @type="text" @value={{@command.timer}} class="form-control" placeholder="Timer time in seconds" /></p>
+  <p><Textarea @value={{@command.response}} cols="80" rows="6" id="Type the command response..." /></p>
+  <p><Input @type="file" @value={{@command.soundfile}} class="form-control" placeholder="Select the sound file..." /></p>
+  <p><Input @type="text" @value={{@command.soundfile}} class="form-control" placeholder="Select the sound file..." /></p>
+  <p><Input @type="text" @value={{@command.volume}} class="form-control" placeholder="Set the volume for the sound..." /></p>
+  <p><button type="button" {{on "click" @deleteCommand}}>Delete</button></p>
+{{else}}
+  <p><button type="button" {{on "click" this.edit}}>Edit</button></p>
+{{/if}}
+
+
+
+
+

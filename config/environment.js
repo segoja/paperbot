@@ -24,11 +24,11 @@ module.exports = function(environment) {
   };
 
   if (environment === 'development') {
-    // ENV.APP.LOG_RESOLVER = true;
-    // ENV.APP.LOG_ACTIVE_GENERATION = true;
-    // ENV.APP.LOG_TRANSITIONS = true;
-    // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
-    // ENV.APP.LOG_VIEW_LOOKUPS = true;
+     ENV.APP.LOG_RESOLVER = true;
+     ENV.APP.LOG_ACTIVE_GENERATION = true;
+     ENV.APP.LOG_TRANSITIONS = true;
+     ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
+     ENV.APP.LOG_VIEW_LOOKUPS = true;
   }
 
   if (environment === 'test') {
@@ -43,13 +43,14 @@ module.exports = function(environment) {
     ENV.APP.autoboot = false;
   }
 
-  ENV.remote_couch = 'https://my.couchcluster.com/bloggr';  // 'http://localhost:5984/bloggr';
-  ENV.local_couch = 'bloggr';
+  ENV.remote_couch = ''; // 'http://192.168.1.222:5984/paperbot';
+  ENV.local_couch = 'paperbot';
   ENV.authAdapter = 'application';
   if (environment === 'production') {
     ENV.rootURL = '/';
     ENV.remote_couch = 'https://my.couchcluster.com/bloggr';
   }
+  
   if ( ENV.remote_couch ) {
     // @TODO document why `contentSecurityPolicy` is needed, as it does not appear used anywhere else
     var remote_couch_hostname = ENV.remote_couch.substring(0, ENV.remote_couch.indexOf('/', 9))
@@ -57,6 +58,6 @@ module.exports = function(environment) {
       'connect-src': "'self' " + remote_couch_hostname
     };
   }
-
+  
   return ENV;
 };

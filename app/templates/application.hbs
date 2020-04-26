@@ -1,71 +1,30 @@
-<div class="container-fluid">
-  <h1 id="title">Welcome to Ember.js <a href="https://github.com/broerse/ember-cli-blog" title="GitHub Source"><div class="fa fa-github"></div></a></h1>
-  <div class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <LinkTo @route="application" class="navbar-brand">
-          Bloggr
-        </LinkTo>
-      </div>
-      <div class="navbar-inner">
-        <ul class="nav navbar-nav">
-          <ActiveLink>
-            <LinkTo @route="posts">
-              Posts
-            </LinkTo>
-          </ActiveLink>
-          <ActiveLink>
-            <LinkTo @route="authors">
-              Authors
-            </LinkTo>
-          </ActiveLink>
-          <ActiveLink>
-            <LinkTo @route="about">
-              About
-            </LinkTo>
-          </ActiveLink>
-          <ActiveLink>
-            <LinkTo @route="secret">
-              Secret
-            </LinkTo>
-          </ActiveLink>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li class="push {{if this.cloudState.cloudPull "push-enabled"}}" title="Pull data">
-            <p class="navbar-btn">
-              <i aria-hidden class="fa fa-2x fa-cloud-download"></i>
-            </p>
-            <p class="navbar-text">
-              Pull {{if this.cloudState.cloudPull "synced" "not synced"}}
-            </p>
-          </li>
-          <li class="push {{if this.cloudState.cloudPush "push-enabled"}}" title="Push data">
-            <p class="navbar-btn">
-              <i aria-hidden class="fa fa-2x fa-cloud-upload"></i>
-            </p>
-            <p class="navbar-text">
-              Push {{if this.cloudState.cloudPush "synced" "not synced"}}
-            </p>
-          </li>
-          {{#if this.session.isAuthenticated}}
-            <li>
-              <a href="#" {{on "click" this.logout}}>Logout</a>
-            </li>
-          {{else}}
-            <ActiveLink>
-              <LinkTo @route="login">
-                Login
-              </LinkTo>
-            </ActiveLink>
-          {{/if}}
-          <li>
-            <p class="navbar-btn spinner">
-              <RefreshIndicator @spin={{this.isSpinning}} />
-            </p>
-          </li>
-        </ul>
-      </div>
-    </div>
+<BsNavbar
+  @type="dark"
+  @backgroundColor="dark"
+  @collapsed={{true}}
+  @onCollapse={{action (mut collapsed) true}}
+  @onExpand={{action (mut collapsed) false}} as |navbar|>
+  <div class="navbar-header">
+    {{navbar.toggle}}
+    {{#link-to "index" class="navbar-brand"}}Brand{{/link-to}}
   </div>
+  <navbar.content>
+    <navbar.nav as |nav|>
+      <nav.item>
+        <nav.link-to @route="index">Home</nav.link-to>
+      </nav.item>
+      <nav.item>
+        <nav.link-to @route="streams">Streams</nav.link-to>
+      </nav.item>
+      <nav.item>
+        <nav.link-to @route="commands">Commands</nav.link-to>
+      </nav.item>
+      <nav.item>
+        <nav.link-to @route="clients">Clients</nav.link-to>
+      </nav.item>      
+    </navbar.nav>
+  </navbar.content>
+</BsNavbar>
+<main role="main" class="container">
   {{outlet}}
-</div>
+</main>

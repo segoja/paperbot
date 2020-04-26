@@ -1,0 +1,26 @@
+<div class="row">
+  {{!-- stream listing --}}
+  <div class="col-5">
+    <button type="button" {{on "click" @createStream}}>Create</button>
+    <Input @type="text" @value={{@queryParamsObj.query}} placeholder="Filter Streams" @autofocus="autofocus" @keyDown={{this.resetPage}} />
+    <table class="table table-striped  table-dark  table-bordered">
+      <thead class="thead-dark">
+        <tr><th>Stream list</th></tr>
+      </thead>
+      <tbody>
+        {{#each this.pagedContent as |stream|}}
+          <tr>
+            <LinkTo @route="streams.stream" @model={{stream}} @messages={{@messages}} @isEditing={{this.isEditing}}>
+              <td>{{stream.title}}</td><td>#{{stream.channel}}</td><td>{{format-date stream.date }}</td>
+            </LinkTo>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table> 
+    <PageNumbers @content={{this.pagedContent}} />    
+  </div>
+  {{!-- blog stream content --}}
+  <div class="col-7">
+    {{yield}}    
+  </div>
+</div>

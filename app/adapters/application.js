@@ -16,7 +16,7 @@ export default class ApplicationAdapter extends Adapter {
   constructor() {
     super(...arguments);
 
-    const localDb = config.local_couch || 'blogger';
+    const localDb = config.local_couch || 'paperbot';
 
     assert('local_couch must be set', !isEmpty(localDb));
 

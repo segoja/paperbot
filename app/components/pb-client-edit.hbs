@@ -1,0 +1,20 @@
+{{#if this.isEditing}}
+ 
+  <p><button type="button" {{on "click" this.doneEditing}}>Done</button></p>
+  
+  <p><Input @type="checkbox" @checked={{@client.defaultbot}} placeholder="Client default bot user" class="form-control" /></p>
+  <p><Input @type="checkbox" @checked={{@client.defaultchat}} placeholder="Client default chat user" class="form-control" /></p>
+  <p><Input @type="text" @value={{@client.type}} placeholder="Client bot" class="form-control" /></p>
+  
+  <p><Input @type="text" @value={{@client.username}} placeholder="Client name" class="form-control" /></p>
+  <p><Input @type="text" @value={{@client.oauth}} placeholder="Client oauth" class="form-control" /></p>
+  <p><Input @type="text" @value={{@client.channel}} placeholder="Client channel" class="form-control" /></p>
+  
+  <p><Input @type="checkbox" @checked={{@client.debug}} placeholder="Client debug" class="form-control" /></p>
+  <p><Input @type="checkbox" @checked={{@client.reconnect}} placeholder="Client reconnect" class="form-control" /></p>
+  <p><Input @type="checkbox" @checked={{@client.secure}} placeholder="Client secure" class="form-control" /></p>
+
+  <p><button type="button" {{on "click" @deleteClient}}>Delete</button></p>
+{{else}}
+  <p><button type="button" {{on "click" this.edit}}>Edit</button></p>
+{{/if}}

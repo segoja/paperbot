@@ -1,0 +1,15 @@
+<p><button type="button" {{on "click" this.connectTwitch}}>Connect to Twitch</button></p>
+<div class="row">
+  <table class="table table-striped">
+    <thead><tr><th>Recent Messages</th></tr></thead>
+    <tbody>      
+      {{#each this.messages as |message|}}
+        <tr><td>{{message-format message}}</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+  
+  <form {{on "submit" this.sendMessage}}>
+    <Input @type="text" @value={{this.message}} placeholder="Type your message here" @size="19" class="form-control" />
+  </form> 
+</div>

@@ -13,7 +13,7 @@ class QueryParamsObj {
 export default class PostsController extends Controller {
   @inject ('posts.post') post;
   @service router;
-
+  
   queryParams= [
     {'queryParamsObj.page': 'page'},
     {'queryParamsObj.perPage': 'perPage'},
@@ -24,7 +24,8 @@ export default class PostsController extends Controller {
   @action createPost() {
     this.post.set('globals.isEditing', true);
     let newPost = this.store.createRecord('post');
-    newPost.set('date' , new Date());
+    newPost.set('body', this.messages);
+    newPost.set('date', new Date());
     this.router.transitionTo('posts.post', newPost.save());
   }
 }
