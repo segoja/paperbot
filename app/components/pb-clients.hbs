@@ -1,9 +1,24 @@
-<div class="container-fluid">
-  <div class="row">
-    {{!-- client listing --}}
-    <div class="col-xs-5">
-      <button type="button" {{on "click" @createClient}}>Create</button>
-      <table class="table">
+<div class="row">
+  <h1 class="col-md-12">Clients</h1>
+</div>
+<div class="row">
+  {{!-- client listing --}}
+  <div class="col-md-7">
+    <div class="row">
+      <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
+        <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
+          <el.control
+            placeholder="Filter Clients"
+            tabIndex={{5}}
+            class="col-md-12"
+          />
+        </form.element>
+      </BsForm>
+      <BsButton @type="info" @onClick={{fn @createClient}} class="col-md-4">Create</BsButton>
+    </div>
+    <p></p>
+    <div class="row">
+      <table class="table table-striped col-md-12">
         <thead>
           <tr>
             <th>Clients</th>
@@ -23,10 +38,10 @@
       </table>
       <PageNumbers @content={{this.pagedContent}} />
     </div>
+  </div>
 
-    {{!-- client content --}}
-    <div class="col-xs-7">
-      {{yield}}
-    </div>
+  {{!-- client content --}}
+  <div class="col-md-5">
+    {{yield}}
   </div>
 </div>

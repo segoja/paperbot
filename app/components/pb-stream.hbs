@@ -1,21 +1,19 @@
+<h2>{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h2>
+
 <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @isEditing={{@isEditing}} @saveStream={{@saveStream}} @deleteStream={{@deleteStream}} />
-
-<h1>{{@stream.title}}</h1>
-<h2>by {{@stream.channel}} <small class="muted">({{format-date @stream.date}})</small></h2>
-
-<hr>
-
-<div>
-  <table class="table">
-    <thead>
-      <tr><th colspan="2">Chat Log</th></tr>
-    </thead>
-    <tbody>
-      {{#each @stream.chatlog as |message|}}
-        <tr>
-          <tr><td>{{message-format message}}</td></tr>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
-</div>
+{{#if @stream.finished}}
+  <div class="row border border-info rounded">
+    <table class="table table-striped col-md-12">
+      <thead>
+        <tr><th>Chat Log</th></tr>
+      </thead>
+      <tbody>
+        {{#each @stream.chatlog as |message|}}
+          <tr>
+            <tr><td>{{message-format message}}</td></tr>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+{{/if}}

@@ -1,20 +1,28 @@
 {{#if this.isEditing}}
- 
-  <p><button type="button" {{on "click" this.doneEditing}}>Done</button></p>
-  
-  <p><Input @type="checkbox" @checked={{@client.defaultbot}} placeholder="Client default bot user" class="form-control" /></p>
-  <p><Input @type="checkbox" @checked={{@client.defaultchat}} placeholder="Client default chat user" class="form-control" /></p>
-  <p><Input @type="text" @value={{@client.type}} placeholder="Client bot" class="form-control" /></p>
-  
-  <p><Input @type="text" @value={{@client.username}} placeholder="Client name" class="form-control" /></p>
-  <p><Input @type="text" @value={{@client.oauth}} placeholder="Client oauth" class="form-control" /></p>
-  <p><Input @type="text" @value={{@client.channel}} placeholder="Client channel" class="form-control" /></p>
-  
-  <p><Input @type="checkbox" @checked={{@client.debug}} placeholder="Client debug" class="form-control" /></p>
-  <p><Input @type="checkbox" @checked={{@client.reconnect}} placeholder="Client reconnect" class="form-control" /></p>
-  <p><Input @type="checkbox" @checked={{@client.secure}} placeholder="Client secure" class="form-control" /></p>
+  <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{fn this.doneEditing}} as |form|>
+    <form.element @controlType="checkbox" @label="Default bot client" @property="defaultbot" />
+    <form.element @controlType="checkbox" @label="Default chat client" @property="defaultchat" />
+    <div class="form-group row ember-view">
+      <label class="col-form-label col-md-4 ember-view">Client type</label>
+      <PowerSelectBlockless @options={{this.types}} @selected={{@client.type}} @onchange={{fn (mut @client.type)}} @placeholder="Client type" required class="col-md-8" />
+    </div>    
+    
+    <form.element @controlType="text" @label="Username" placeholder="Username" @property="username" required />    
+    <form.element @controlType="text" @label="Oauth" placeholder="Oauth" @property="oauth" required />    
+    <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />    
 
-  <p><button type="button" {{on "click" @deleteClient}}>Delete</button></p>
+    <form.element @controlType="checkbox" @label="Debug" @property="debug" />
+    <form.element @controlType="checkbox" @label="Reconnect" @property="reconnect" />
+    <form.element @controlType="checkbox" @label="Secure" @property="secure" />
+
+    <BsButton type="submit" @type="success">Save</BsButton>
+    <BsButton @type="danger" @onClick={{fn @deleteClient}}>Delete</BsButton>
+  </BsForm>
+
 {{else}}
-  <p><button type="button" {{on "click" this.edit}}>Edit</button></p>
+  <div class="row">
+    <BsButtonGroup class="col-md-12" as |bg|>
+      <bg.button @type="warning" @onClick={{fn this.edit}}>Edit</bg.button>  
+    </BsButtonGroup>
+  </div>
 {{/if}}

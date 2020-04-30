@@ -8,24 +8,22 @@ export default class StreamController extends Controller {
   @inject streams;
   @service router;
   
-  @service twitchChat;
+  @tracked isEditing;
   
-  @tracked isEditing = false;
+  constructor() {
+    super(...arguments);  
+    
+    // These lines is to allow switching to other routes
+    // without losing the active chat history and song queue.
+    this.isViewing = true;
+  }
   
-  @tracked messages = this.twitchChat.messages;
-  @empty ('twitchChat.messages') isChatEmpty;
-
-
   @action saveStream () {
-    /*if(this.isChatEmpty == false){
-      if(this.messages != this.model.chatlog){
-        this.model.chatlog = this.messages;
-      }
-    }*/
     this.model.save();
   }
   @action deleteStream() {
     this.model.destroyRecord().then(() => {
+      this.streams.isViewing = false;
       this.router.transitionTo('streams');
     });
   }

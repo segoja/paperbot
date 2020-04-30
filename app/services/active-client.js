@@ -7,71 +7,15 @@ export default class ActiveClientService extends Service {
   @service store;
   
   @tracked clientlist = this.store.queryRecord('client').then(function(contents) {
-
-  }.bind(this));
   
-  @tracked activebot; 
+  }.bind(this));
   
   constructor() {
     super(...arguments); 
     this.clientlist = this.store.findAll('client');
   }
   
-  get activeBotClient(){    
-    let botclient = '';
-    let optsbot = '';    
-    this.clientlist.forEach((client) => { 
-      let opts = {
-        options: { 
-          debug: client.debug, 
-        },
-        connection: {
-          reconnect: client.reconnect,
-          secure: client.secure
-        },
-        identity: {
-          username: client.username,
-          password: client.oauth
-        },
-        channels: client.channel
-      };
-      
-      if(client.type === 'bot' && client.defaultbot === true){
-        botclient = client;
-        optsbot = opts;
-      }   
-    });
-    return botclient;
-  }
-  
-  get activeChatClient(){    
-    let chatclient = '';
-    let optschat = '';    
-    this.clientlist.forEach((client) => { 
-      let opts = {
-        options: { 
-          debug: client.debug, 
-        },
-        connection: {
-          reconnect: client.reconnect,
-          secure: client.secure
-        },
-        identity: {
-          username: client.username,
-          password: client.oauth
-        },
-        channels: [client.channel]
-      };
-      
-      if(client.type === 'chat' && client.defaultchat === true){
-        chatclient = client;
-        optschat = opts;
-      }   
-    });
-    return chatclient;
-  } 
-
-  get activeBot(){    
+  async activeBot(){    
     let botclient = '';
     let optsbot = '';    
     this.clientlist.forEach((client) => { 
@@ -91,14 +35,13 @@ export default class ActiveClientService extends Service {
       };
       
       if(client.type === 'bot' && client.defaultbot === true){
-        botclient = client;
         optsbot = opts;
       }   
     });
     return optsbot;
   }
   
-  get activeChat(){    
+  async activeChat(){    
     let chatclient = '';
     let optschat = '';    
     this.clientlist.forEach((client) => { 
@@ -118,7 +61,6 @@ export default class ActiveClientService extends Service {
       };
       
       if(client.type === 'chat' && client.defaultchat === true){
-        chatclient = client;
         optschat = opts;
       }   
     });

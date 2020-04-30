@@ -1,19 +1,90 @@
 {{#if this.isEditing}}
-<BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{action "doneEditing"}} as |form|>
-  <form.element @controlType="text" @label="Title" placeholder="Stream title" @property="title" required />
-  <form.element @controlType="text" @label="Channel" placeholder="Stream channel" @property="channel" required />
-  <form.element @controlType="checkbox" @label="Requests" @property="request" />
-   
-  <p><PowerSelectBlockless @options={{@clients}} @selected={{@stream.botclient}} @onchange={{fn (mut @stream.botclient)}} @labelPath="username" @placeholder="Bot client" required /></p>
-  <p><PowerSelectBlockless @options={{@clients}} @selected={{@stream.chatclient}} @onchange={{fn (mut @stream.chatclient)}} @labelPath="username" @placeholder="Chat client" required /></p> 
+  <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneEditing}} as |form|>
+    <form.element @controlType="text" @label="Stream Title" placeholder="Stream title" @property="title" required />
+    <form.element @controlType="text" @label="Stream Channel" placeholder="Stream channel" @property="channel" required />
+    <form.element @controlType="checkbox" @label="Request System" @property="requests" />
+     
+    <div class="form-group row ember-view">
+      <label class="col-form-label col-md-4 ember-view">Bot Client</label>
+      <PowerSelectBlockless @options={{@clients}} @selected={{@stream.botclient}} @onchange={{fn (mut @stream.botclient)}} @labelPath="username" @placeholder="Bot client" required class="col-md-8" />
+    </div>
+    
+    <div class="form-group row ember-view">
+      <label class="col-form-label col-md-4 ember-view">Chat Client</label>
+      <PowerSelectBlockless @options={{@clients}} @selected={{@stream.chatclient}} @onchange={{fn (mut @stream.chatclient)}} @labelPath="username" @placeholder="Chat client" class="col-md-8" required />
+    </div> 
 
-  <BsButton type="submit">Submit</BsButton>
- 
- </BsForm>
- 
-  <SongQueue class="col" />
-  <TwitchChat class="col" />
-  
+    <BsButton type="submit" @type="success">Save</BsButton>
+    <BsButton @type="danger" @onClick={{fn @deleteStream}}>Delete</BsButton>
+  </BsForm>
+  <hr />
 {{else}}
-  <p><button type="button" {{on "click" this.edit}}>Edit</button></p>
+  <div class="row">
+    <BsButtonGroup class="col-md-12" as |bg|>
+      <bg.button @type="warning" @onClick={{fn this.edit}}>Edit</bg.button>  
+    </BsButtonGroup>
+    <BsButtonGroup class="col-md-12" as |bg|>
+      <bg.button @type="primary btn-sm" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</bg.button>
+      <bg.button @type="secondary btn-sm" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</bg.button>
+      <bg.button @type="danger btn-sm" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</bg.button>
+      <bg.button @type="primary btn-sm" @onClick={{fn this.finishStream}} disabled={{@stream.finished}}>Finish Stream</bg.button>      
+    </BsButtonGroup>
+
+  </div>
+  {{#if @stream.requests}}
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-striped ">
+          <thead><tr><th colspan="2">Song Queue</th></tr></thead>
+        </table>
+      </div>
+      <div class="col-md-12 overflow-auto songframe">
+        <table class="table table-striped">
+          <tbody>
+            {{#each this.songs as |element|}}
+              <tr>
+                <td class="col-xs-4">
+                  <span class="{{element.type}}" style="{{element.csscolor}}">
+                  [{{format-date element.timestamp}}] {{element.user}}</span></td>
+                <td class="col-xs-8">{{element.song}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>  
+    </div>
+    
+  {{/if}}
+  
+  {{#if this.disconnectButton}}
+    
+  {{else}}
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-striped ">
+          <thead><tr><th>Recent Messages</th></tr></thead>
+        </table>
+      </div>
+      <div class="col-md-12 overflow-auto chatframe" {{scroll-position this.scrollPosition relative=false}}>
+        <table class="table table-striped ">
+          <tbody>      
+            {{#each this.messages as |message|}}
+              <tr id="{{message.id}}"><td>{{message-format message}} {{autofocus}}</td></tr>
+            {{/each}}
+          </tbody>
+        </table>     
+      </div>
+    </div>
+    <div class="row">
+      <BsForm @formLayout="vertical" @model={{this}} class="col-md-12" @onSubmit={{fn this.sendMessage}} as |form|>
+        <form.element @property="message" as |el|>
+          <el.control 
+            @controlType="text"
+            placeholder="Type your message here"
+            readonly={{this.inputDisabled}}        
+          />
+        </form.element>
+      </BsForm>
+    </div>    
+  {{/if}}
 {{/if}}

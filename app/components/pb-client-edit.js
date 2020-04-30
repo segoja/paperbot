@@ -4,6 +4,8 @@ import { action } from '@ember/object';
 
 export default class PbClientEditComponent extends Component {
   @tracked isEditing;
+  
+  @tracked types = ['bot','chat'];
 
   @action edit() {
     this.isEditing = true;

@@ -1,14 +1,19 @@
-<PbClientEdit @client={{@client}} @isEditing={{@isEditing}} @saveClient={{@saveClient}} @deleteClient={{@deleteClient}} />
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>{{@client.username}}</h2>
+      <PbClientEdit @client={{@client}} @isEditing={{@isEditing}} @saveClient={{@saveClient}} @deleteClient={{@deleteClient}} />
+      
+      <p>Is the default bot: {{@client.defaultbot}}</p>
+      <p>Is the default chat: {{@client.defaultchat}}</p>
+      <p>Client type: {{@client.type}}</p>
 
-<h1>{{@client.username}}</h1>
-
-<p>{{@client.defaultbot}}</p>
-<p>{{@client.defaultchat}}</p>
-<p>{{@client.type}}</p>
-
-<p>{{@client.username}}</p>
-<p>{{@client.oauth}}</p>
-<p>{{@client.channel}}</p>
-<p>{{@client.debug}}</p>
-<p>{{@client.reconnect}}</p>
-<p>{{@client.secure}}</p>
+      <p>Username: {{@client.username}}</p>
+      <p>Oauth: {{@client.oauth}}</p>
+      <p>Channel: {{@client.channel}}</p>
+      <p>Debug: {{@client.debug}}</p>
+      <p>Reconnect: {{@client.reconnect}}</p>
+      <p>Secure: {{@client.secure}}</p>
+    </div>
+  </div>
+</div>

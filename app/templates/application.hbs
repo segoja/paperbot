@@ -4,26 +4,30 @@
   @collapsed={{true}}
   @onCollapse={{action (mut collapsed) true}}
   @onExpand={{action (mut collapsed) false}} as |navbar|>
-  <div class="navbar-header">
-    {{navbar.toggle}}
-    {{#link-to "index" class="navbar-brand"}}Brand{{/link-to}}
+  
+  <div class="container">
+    <div class="navbar-header">
+      <div class="d-md-inline-flex">
+        {{navbar.toggle}}
+        {{#link-to "index" class="navbar-brand"}}Paperbot{{/link-to}}
+      </div>
+      <div class="d-md-inline-flex">
+        <navbar.content>
+          <navbar.nav as |nav|>
+            <nav.item>
+              <nav.link-to @route="streams">Streams</nav.link-to>
+            </nav.item>
+            <nav.item>
+              <nav.link-to @route="commands">Commands</nav.link-to>
+            </nav.item>
+            <nav.item>
+              <nav.link-to @route="clients">Clients</nav.link-to>
+            </nav.item>      
+          </navbar.nav>
+        </navbar.content>
+      </div>
+    </div>
   </div>
-  <navbar.content>
-    <navbar.nav as |nav|>
-      <nav.item>
-        <nav.link-to @route="index">Home</nav.link-to>
-      </nav.item>
-      <nav.item>
-        <nav.link-to @route="streams">Streams</nav.link-to>
-      </nav.item>
-      <nav.item>
-        <nav.link-to @route="commands">Commands</nav.link-to>
-      </nav.item>
-      <nav.item>
-        <nav.link-to @route="clients">Clients</nav.link-to>
-      </nav.item>      
-    </navbar.nav>
-  </navbar.content>
 </BsNavbar>
 <main role="main" class="container">
   {{outlet}}

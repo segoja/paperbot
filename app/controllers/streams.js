@@ -21,11 +21,22 @@ export default class StreamsController extends Controller {
   ];
   queryParamsObj = new QueryParamsObj();
 
+  @tracked isViewing = false;
+  
   @action createStream() {
-    this.stream.set('isEditing', true);
+    this.stream.isEditing = true;
+    this.isViewing = true;
     let newStream = this.store.createRecord('stream');
-    newStream.set('chatlog', this.messages);
     newStream.set('date', new Date());
     this.router.transitionTo('streams.stream', newStream.save());
+  }
+  @action closeStream() {
+    this.stream.isEditing = false;
+    this.isViewing = false;
+    this.router.transitionTo('streams');      
+  }
+  
+  @action loadStream() {
+    this.isViewing = true;
   }
 }

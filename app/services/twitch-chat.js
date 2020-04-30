@@ -12,18 +12,30 @@ export default class TwitchChatService extends Service {
   @service audio;
   @service activeClient;
  
-  @tracked client;
-  @tracked messages = [];
+  @tracked botclient;
+  @tracked chatclient;
+
+  @tracked msglist = [];
+  get messages(){
+    return this.msglist;
+  }
+  
   @tracked queue = []; 
   @tracked channel = '';
-  @tracked username = '';
+  @tracked botUsername = '';
   @tracked password = '';
-  @tracked botStatus = 'disconnected';
+  
+  @tracked botConnected = false;
+  @tracked chatConnected = false;
+
   @tracked commands  = this.store.findAll('command');
   get commandlist(){
     return this.commands;
   }
-  @tracked clientlist = this.store.findAll('client');
+  @tracked clients = this.store.findAll('client');
+  get clientlist(){
+    return this.clients;
+  }
   
   @tracked audiocommandlist = []
   
@@ -32,47 +44,79 @@ export default class TwitchChatService extends Service {
   
   init() {
     super.init(...arguments);
-    
-    this.optsbot = this.activeClient.activeBot;
-    this.optschat = this.activeClient.activeChat;
-
-    this.opts = {
-        options: { 
-          debug: true, 
-        },
-        connection: {
-          reconnect: true,
-          secure: true
-        },
-        identity: {
-          username: this.username,
-          password: this.password
-        },
-        channels: [this.channel]
-       };
-    
-    this.client = new tmi.client(this.opts);
-    // Register our event handlers (defined below)
-    this.client.on('connected', this.onConnectedHandler);
-    this.client.on('message', this.messageHandler);
-    this.client.on('hosting', this.onHostHandler);
-    this.client.connect();
   }
   
-  async connector(options){
-    if(this.botStatus === 'connected'){
-      this.client.disconnect();
+  async connector(options, clientType){
+    
+    // We check what kind of client is connecting
+    if(clientType === "bot"){
+      if(this.botConnected === true){
+        this.botclient.disconnect();
+      }
+      this.channel = options.channels.toString();
+      this.botUsername = options.identity.username.toString();
+      this.botclient = new tmi.client(options);
+      // Register our event handlers (defined below)
+      this.botclient.on('connected', this.onBotConnectedHandler);
+      this.botclient.on('message', this.messageHandler);
+      this.botclient.on('hosting', this.onHostHandler);
+   
+      // Connect the client
+      this.botConnected =  await this.botclient.connect().then(
+        success => {
+          console.log("bot client connected!");
+          return true;
+        }, 
+        error => {
+          console.log("error connecting bot client!");
+          return false;
+        }
+      );
+      return this.botConnected;
     }
-    this.channel = options.channels.toString();
-    this.client = new tmi.client(options);
-    // Register our event handlers (defined below)
-    this.client.on('connected', this.onConnectedHandler);
-    this.client.on('message', this.messageHandler);
-    this.client.on('hosting', this.onHostHandler);
- 
-    this.botStatus = 'connected';
-    // Connect the client
-    this.client.connect();
+    // We check what kind of client is connecting
+    if(clientType === "chat"){
+      if(this.chatConnected === true){
+        this.chatclient.disconnect();
+      }
+      this.channel = options.channels.toString();
+      this.chatclient = new tmi.client(options);
+      // Register our event handlers (defined below)
+      this.chatclient.on('connected', this.onChatConnectedHandler);
+      //this.chatclient.on('message', this.messageHandler);
+   
+      // Connect the client
+      this.chatConnected =  await this.chatclient.connect().then(
+        success => {
+          console.log("chat client connected!");
+          return true;
+        }, 
+        error => {
+          console.log("error connecting chat client!");
+          return false;
+        }
+      );
+      return this.chatConnected;
+    }    
+  }
+  
+  async disconnector(){
+    if(this.botConnected === true){
+      this.botclient.disconnect().then(success => {
+        this.botConnected = false;
+        this.channel = '';
+        this.botUsername = '';
+        console.log("The bot client got disconnected!");
+      });
+    }
+    if(this.chatConnected === true){
+      this.chatclient.disconnect().then(success => {
+        this.chatConnected = false;
+        this.channel = '';
+        console.log("The chat client got disconnected!");        
+      });
+    }
+   return true;
   }
   
   @action onHostHandler (channel, target, viewers) {
@@ -81,16 +125,17 @@ export default class TwitchChatService extends Service {
 
   @action messageHandler(target, tags, msg, self){
     this.lastmessage = {
+      id: tags['id'] ? tags['id'].toString() : 'system',
       timestamp: new Date(),
       body: msg ? msg.toString() : null,
-      user: tags['username'] ? tags['username'].toString() : this.activeClient.activeBot.identity.username,
+      user: tags['username'] ? tags['username'].toString() : this.botUsername,
       color: tags['color'] ? tags['color'].toString() : null,
       csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : null,        
       badges: tags['badges'] ? tags['badges'] : null,
       type: tags['message-type'] ? tags['message-type'] : null,
       usertype: tags['user-type'] ? tags['user-type'].toString() : null,        
     };
-    this.messages.push(this.lastmessage);
+    this.msglist.push(this.lastmessage);
     this.commandHandler(target, tags, msg, self);
   }
 
@@ -105,8 +150,9 @@ export default class TwitchChatService extends Service {
     if(String(commandName).startsWith('!sr ')){
       var song = commandName.replace(/!sr /g, '');
       if(song){
-        this.client.say(target, '@'+tags['username']+ ' requested the song "'+song+'"');
+        this.botclient.say(target, '@'+tags['username']+ ' requested the song "'+song+'"');
         this.lastsongrequest = {
+          id: tags['id'] ? tags['id'].toString() : 'songsys',
           timestamp: new Date,
           song: song, 
           user: tags['username'].toString(),
@@ -132,17 +178,17 @@ export default class TwitchChatService extends Service {
                 
                 let answer = answerraw.replace(/\$param/g, param).trim();
                 
-                this.client.say(target, answer);
+                this.botclient.say(target, answer);
                 
                 console.log(`* Executed ${command.name} command`);
               break;
               case 'audio':
                 this.audio.load(command.soundfile).asSound(command.name).then(() =>{
-                  this.audio.getSound(command.name).play();
-                });
+                    this.audio.getSound(command.name).play();
+                  });
               break;
               default:
-                this.client.say(target, command.response);
+                this.botclient.say(target, command.response);
                 console.log(`* Executed ${command.name} command`);
               break;
             }
@@ -153,9 +199,15 @@ export default class TwitchChatService extends Service {
   }
   
   // Called every time the bot connects to Twitch chat
-  @action onConnectedHandler (addr, port) {
+  @action onBotConnectedHandler (addr, port) {
     console.log(`* Connected to ${addr}:${port}`);
     //alert(this.botclient.username);
-    this.client.say(this.channel, '/me ### Paperbot is here baby! ###');
+    this.botclient.say(this.channel, '/me ### The bot is the house! ###');
+  }  
+  // Called every time the bot connects to Twitch chat
+  @action onChatConnectedHandler (addr, port) {
+    console.log(`* Connected to ${addr}:${port}`);
+    //alert(this.botclient.username);
+    this.botclient.say(this.channel, '/me connected using paperbot\'s client!');
   }
 }

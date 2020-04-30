@@ -23,7 +23,7 @@ export default class StreamsRoute extends Route {
   redirect (model, transition) {
     if (transition.targetName === 'streams.index') {
       if (model.model.get('length') !== 0) {
-        // this.transitionTo('streams.stream', model.model.sortBy('date').reverse().get('firstObject'));
+        this.transitionTo('streams.stream', model.model.sortBy('date').reverse().get('firstObject'));
       }
     }
   }

@@ -6,6 +6,7 @@ export default class StreamModel extends Model {
   @attr('string', {defaultValue: ""}) title;
   @attr('string', {defaultValue: ""}) channel;
   @attr('boolean', {defaultValue: false}) requests;
+  @attr('boolean', {defaultValue: false}) finished;
   @attr('date') date;
   
   @attr chatlog;
@@ -17,4 +18,6 @@ export default class StreamModel extends Model {
   @readOnly('botuser.username') botName;
   @readOnly('chatuser.username') chatName;
 
+  @readOnly('botuser.username') botName;
+  @readOnly('chatuser.username') chatName;
 }
