@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'myapp',
+    modulePrefix: 'paperbot',
     environment,
     rootURL: '/',
     locationType: 'auto',

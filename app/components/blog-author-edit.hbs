@@ -1,8 +1,0 @@
-{{#if this.isEditing}}
-  <p><button type="button" {{on "click" this.doneEditing}}>Done</button></p>
-  <p><Input @type="text" @value={{@author.name}} placeholder="Author name" class="form-control" /></p>
-
-  <p><button type="button" {{on "click" @deleteAuthor}}>Delete</button></p>
-{{else}}
-  <p><button type="button" {{on "click" this.edit}}>Edit</button></p>
-{{/if}}
