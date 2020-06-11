@@ -1,19 +1,23 @@
 <div class="container">
   <div class="row">
+    <h2 class="col">{{@client.username}}</h2>
+    <div class="col-auto"><PbClientEdit @client={{@client}} @isEditing={{@isEditing}} @saveClient={{@saveClient}} @deleteClient={{@deleteClient}}/></div> 
+  </div>
+  <div class="row">
     <div class="col-md-12">
-      <h2>{{@client.username}}</h2>
-      <PbClientEdit @client={{@client}} @isEditing={{@isEditing}} @saveClient={{@saveClient}} @deleteClient={{@deleteClient}} />
-      
-      <p>Is the default bot: {{@client.defaultbot}}</p>
-      <p>Is the default chat: {{@client.defaultchat}}</p>
-      <p>Client type: {{@client.type}}</p>
-
-      <p>Username: {{@client.username}}</p>
-      <p>Oauth: {{@client.oauth}}</p>
-      <p>Channel: {{@client.channel}}</p>
-      <p>Debug: {{@client.debug}}</p>
-      <p>Reconnect: {{@client.reconnect}}</p>
-      <p>Secure: {{@client.secure}}</p>
+      <table class="table table-striped">
+        <tbody>
+          <tr><td>Is the default bot:</td><td>{{@client.defaultbot}}</td></tr>
+          <tr><td>Is the default chat:</td><td>{{@client.defaultchat}}</td></tr>
+          <tr><td>Client type:</td><td>{{@client.type}}</td></tr>
+          <tr><td>Username:</td><td>{{@client.username}}</td></tr>
+          <tr><td>Oauth:</td><td>{{@client.oauth}}</td></tr>
+          <tr><td>Channel:</td><td>{{@client.channel}}</td></tr>
+          <tr><td>Debug:</td><td>{{@client.debug}}</td></tr>
+          <tr><td>Reconnect:</td><td>{{@client.reconnect}}</td></tr>
+          <tr><td>Secure:</td><td>{{@client.secure}}</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

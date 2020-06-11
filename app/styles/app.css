@@ -10,6 +10,34 @@ p.spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
 
 
 .chatframe{
-  min-height: 600px;
-  max-height: 600px;  
+  min-height: 750px;
+  max-height: 750px;  
+}
+
+.queueframe{
+  min-height: 200px;
+  max-height: 200px;  
+}
+
+td.highlight{
+  padding: .75rem;
+  border-top: 1px solid!important;
+  border-bottom: 1px solid!important;
+  border-left: 10px solid!important;
+  padding-top: 1.2rem;
+  padding-bottom: 1.2rem;
+  display: inline-block;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.processed{
+  text-decoration: line-through;
+}
+
+
+img.emoticon{
+  height: 1.5rem!important;
 }

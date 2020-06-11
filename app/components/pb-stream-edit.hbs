@@ -2,18 +2,20 @@
   <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneEditing}} as |form|>
     <form.element @controlType="text" @label="Stream Title" placeholder="Stream title" @property="title" required />
     <form.element @controlType="text" @label="Stream Channel" placeholder="Stream channel" @property="channel" required />
-    <form.element @controlType="checkbox" @label="Request System" @property="requests" />
-     
-    <div class="form-group row ember-view">
-      <label class="col-form-label col-md-4 ember-view">Bot Client</label>
-      <PowerSelectBlockless @options={{@clients}} @selected={{@stream.botclient}} @onchange={{fn (mut @stream.botclient)}} @labelPath="username" @placeholder="Bot client" required class="col-md-8" />
-    </div>
     
-    <div class="form-group row ember-view">
-      <label class="col-form-label col-md-4 ember-view">Chat Client</label>
-      <PowerSelectBlockless @options={{@clients}} @selected={{@stream.chatclient}} @onchange={{fn (mut @stream.chatclient)}} @labelPath="username" @placeholder="Chat client" class="col-md-8" required />
-    </div> 
-
+    <form.element @controlType="checkbox" @label="Request System" @property="requests" />
+    
+    <form.element @controlType="power-select" @property="botclient" @label="Bot Client" @options={{@clients}} required as |client|>
+      <client.control as |option|>
+        {{option.username}}
+      </client.control>
+    </form.element>
+    <form.element @controlType="power-select" @property="chatclient" @label="Chat Client" @options={{@clients}} required as |client|>
+      <client.control as |option|>
+        {{option.username}}
+      </client.control>
+    </form.element>  
+    
     <BsButton type="submit" @type="success">Save</BsButton>
     <BsButton @type="danger" @onClick={{fn @deleteStream}}>Delete</BsButton>
   </BsForm>
@@ -22,43 +24,73 @@
   <div class="row">
     <BsButtonGroup class="col-md-12" as |bg|>
       <bg.button @type="warning" @onClick={{fn this.edit}}>Edit</bg.button>  
-    </BsButtonGroup>
-    <BsButtonGroup class="col-md-12" as |bg|>
       <bg.button @type="primary btn-sm" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</bg.button>
       <bg.button @type="secondary btn-sm" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</bg.button>
       <bg.button @type="danger btn-sm" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</bg.button>
       <bg.button @type="primary btn-sm" @onClick={{fn this.finishStream}} disabled={{@stream.finished}}>Finish Stream</bg.button>      
     </BsButtonGroup>
-
   </div>
-  {{#if @stream.requests}}
+  {{#if (not this.disconnectButton)}}
+    {{#if @stream.requests}}
     <div class="row">
-      <div class="col-md-12">
-        <table class="table table-striped ">
-          <thead><tr><th colspan="2">Song Queue</th></tr></thead>
-        </table>
+      <div class="col">
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-striped ">
+              <thead><tr><th colspan="2">Songs Pending</th></tr></thead>
+            </table>
+          </div>
+          <div class="col-md-12 overflow-auto queueframe" {{scroll-position this.scrollPosition relative=false}}>
+            <table class="table table-striped">
+              <tbody>
+                {{#each this.pendingSongs as |pendingsong|}}
+                  <tr>
+                    <td class="py-1" {{on "click" (fn this.requestStatus pendingsong)}}>
+                      <div class="row">
+                        <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                        <div class="col-auto"><small>{{pendingsong.user}}</small></div>
+                      </div>
+                      <div class="h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
+                      {{autofocus}}
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>  
+        </div>
       </div>
-      <div class="col-md-12 overflow-auto songframe">
-        <table class="table table-striped">
-          <tbody>
-            {{#each this.songs as |element|}}
-              <tr>
-                <td class="col-xs-4">
-                  <span class="{{element.type}}" style="{{element.csscolor}}">
-                  [{{format-date element.timestamp}}] {{element.user}}</span></td>
-                <td class="col-xs-8">{{element.song}}</td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      </div>  
-    </div>
-    
-  {{/if}}
+      <div class="col">
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-striped">
+              <thead><tr><th colspan="2">Songs played</th></tr></thead>
+            </table>
+          </div>
+          <div class="col-md-12 overflow-auto queueframe" {{scroll-position this.scrollPosition relative=false}}>
+            <table class="table table-striped">
+              <tbody>
+                {{#each this.playedSongs as |playedsong|}}
+                  <tr>
+                    <td class="py-1" {{on "click" (fn this.requestStatus playedsong)}}>
+                      <div class="row">
+                        <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                        <div class="col-auto"><small>{{playedsong.user}}</small></div>
+                      </div>
+                      <div class="h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
+                      {{autofocus}}
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>  
+        </div>
+      </div>      
+    </div>  
+    {{/if}}
   
-  {{#if this.disconnectButton}}
-    
-  {{else}}
+
     <div class="row">
       <div class="col-md-12">
         <table class="table table-striped ">
@@ -69,7 +101,11 @@
         <table class="table table-striped ">
           <tbody>      
             {{#each this.messages as |message|}}
-              <tr id="{{message.id}}"><td>{{message-format message}} {{autofocus}}</td></tr>
+              <tr id="{{message.id}}">
+                <td class="chatline {{if message.reward "highlight alert-warning"}}">
+                  {{message-format message}} {{autofocus}}
+                </td>
+              </tr>
             {{/each}}
           </tbody>
         </table>     

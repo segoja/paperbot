@@ -26,3 +26,5 @@
 
 # macos
 .DS_Store
+
+electron-out/

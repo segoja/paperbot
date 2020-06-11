@@ -1,28 +1,42 @@
-<div class="container-fluid">
-  <div class="row">
-    {{!-- blog command listing --}}
-    <div class="col-xs-6">
-      <button type="button" {{on "click" @createCommand}}>Create</button> <Input @type="text" @value={{@queryParamsObj.query}} placeholder="Filter Commands" @autofocus="autofocus" @keyDown={{this.resetPage}} />
-      <table class="table">
+<div class="row">
+  <h1 class="col-md-12">Commands</h1>
+</div>
+<div class="row">
+  {{!-- Command listing --}}
+  <div class="col-md-6">
+    <div class="row">
+      <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
+        <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
+          <el.control
+            placeholder="Filter Commands"
+            tabIndex={{5}}
+            class="col-md-12"
+          />
+        </form.element>
+      </BsForm>
+      <BsButton @type="info" @onClick={{fn @createCommand}} class="col-md-4">Create</BsButton>
+    </div>
+    <p></p>
+    <div class="row">
+      <table class="table table-striped col-md-12">
         <thead>
           <tr><th colspan="2">Stream list</th></tr>
         </thead>
         <tbody>
-          {{#each this.pagedContent as |command|}}
-            
+          {{#each this.pagedContent as |command|}}            
               <tr>
-                <td><LinkTo @route="commands.command" @model={{command}}>{{command.name}}</LinkTo></td>
+                <td><LinkTo @route="commands.command" @model={{command}}>##{{command.name}}</LinkTo></td>
                 <td><LinkTo @route="commands.command" @model={{command}}><small class="muted">{{command.response}}</small></LinkTo></td>
-              </tr>
-            
+              </tr>            
           {{/each}}
         </tbody>
       </table>
       <PageNumbers @content={{this.pagedContent}} />
     </div>
-    {{!-- blog command content --}}
-    <div class="col-xs-6">
-      {{yield}}
-    </div>
+  </div>
+  {{!-- blog command content --}}
+  <div class="col-md-6">
+    {{yield}}
   </div>
 </div>
+

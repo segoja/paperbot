@@ -4,7 +4,7 @@ import { Model } from 'ember-pouch';
 export default class ClientModel extends Model {
   @attr ('boolean', {defaultValue: true}) defaultbot;
   @attr ('boolean', {defaultValue: true}) defaultchat;
-  @attr ('string', {defaultValue: 'bot'}) type;
+  @attr ('string', {defaultValue: ""}) type;
   
   @attr('string', {defaultValue: ""}) username;
   @attr('string', {defaultValue: ""}) oauth;

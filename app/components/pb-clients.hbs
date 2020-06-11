@@ -3,7 +3,7 @@
 </div>
 <div class="row">
   {{!-- client listing --}}
-  <div class="col-md-7">
+  <div class="col-md-4">
     <div class="row">
       <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
         <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
@@ -41,7 +41,7 @@
   </div>
 
   {{!-- client content --}}
-  <div class="col-md-5">
+  <div class="col-md-8">
     {{yield}}
   </div>
 </div>

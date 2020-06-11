@@ -1,24 +1,26 @@
 {{#if this.isEditing}}
-  <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{fn this.doneEditing}} as |form|>
-    <form.element @controlType="checkbox" @label="Default bot client" @property="defaultbot" />
-    <form.element @controlType="checkbox" @label="Default chat client" @property="defaultchat" />
-    <div class="form-group row ember-view">
-      <label class="col-form-label col-md-4 ember-view">Client type</label>
-      <PowerSelectBlockless @options={{this.types}} @selected={{@client.type}} @onchange={{fn (mut @client.type)}} @placeholder="Client type" required class="col-md-8" />
-    </div>    
-    
-    <form.element @controlType="text" @label="Username" placeholder="Username" @property="username" required />    
-    <form.element @controlType="text" @label="Oauth" placeholder="Oauth" @property="oauth" required />    
-    <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />    
-
-    <form.element @controlType="checkbox" @label="Debug" @property="debug" />
-    <form.element @controlType="checkbox" @label="Reconnect" @property="reconnect" />
-    <form.element @controlType="checkbox" @label="Secure" @property="secure" />
-
-    <BsButton type="submit" @type="success">Save</BsButton>
+  <div class="row">
+    <BsButton type="submit" @onClick={{fn this.doneEditing}} @type="success">Save</BsButton>
     <BsButton @type="danger" @onClick={{fn @deleteClient}}>Delete</BsButton>
-  </BsForm>
+  </div>
+  <div class="row">
+    <div class="col">
+      <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{fn this.doneEditing}} as |form|>
+        <form.element @controlType="checkbox" @label="Default bot client" @property="defaultbot" />
+        <form.element @controlType="checkbox" @label="Default chat client" @property="defaultchat" />
+        <form.element @controlType="power-select" @property="type" @label="Client type" @options={{this.types}} as |element|>
+          <element.control placeholder="Select the client type" />
+        </form.element>
+        <form.element @controlType="text" @label="Username" placeholder="Username" @property="username" required />    
+        <form.element @controlType="text" @label="Oauth" placeholder="Oauth" @property="oauth" required />    
+        <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />    
 
+        <form.element @controlType="checkbox" @label="Debug" @property="debug" />
+        <form.element @controlType="checkbox" @label="Reconnect" @property="reconnect" />
+        <form.element @controlType="checkbox" @label="Secure" @property="secure" />
+      </BsForm>
+    </div>
+  </div>
 {{else}}
   <div class="row">
     <BsButtonGroup class="col-md-12" as |bg|>

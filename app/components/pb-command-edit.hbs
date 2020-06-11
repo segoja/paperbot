@@ -1,14 +1,20 @@
 {{#if this.isEditing}}
-  <p><button type="button" {{on "click" this.doneEditing}}>Done</button></p>
-  <p><Input @type="text" @value={{@command.name}} class="form-control" placeholder="Type the command name" /></p>
-  <p><Input @type="text" @value={{@command.type}} class="form-control" placeholder="Select the type" /></p>
-  <p><Input @type="text" @value={{@command.cooldown}} class="form-control" placeholder="Cooldown time in seconds" /></p>
-  <p><Input @type="text" @value={{@command.timer}} class="form-control" placeholder="Timer time in seconds" /></p>
-  <p><Textarea @value={{@command.response}} cols="80" rows="6" id="Type the command response..." /></p>
-  <p><Input @type="file" @value={{@command.soundfile}} class="form-control" placeholder="Select the sound file..." /></p>
-  <p><Input @type="text" @value={{@command.soundfile}} class="form-control" placeholder="Select the sound file..." /></p>
-  <p><Input @type="text" @value={{@command.volume}} class="form-control" placeholder="Set the volume for the sound..." /></p>
-  <p><button type="button" {{on "click" @deleteCommand}}>Delete</button></p>
+ 
+  <BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{fn this.doneEditing}} as |form|>
+    <form.element @controlType="text" @label="Name" placeholder="Type the command name" @property="name" required /> 
+    <form.element @controlType="power-select" @property="type" @label="Type" @options={{this.commandTypes}} as |element| >
+      <element.control placeholder="Select the command type" />
+    </form.element>
+    <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
+    <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
+    <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
+    <form.element @controlType="file" @label="Sound file" placeholder="Select the sound file..." @property="soundfile" required /> 
+    <form.element @controlType="text" @label="Sound file" placeholder="Select the sound file..." @property="soundfile" required /> 
+    <form.element @controlType="text" @label="Volume" placeholder="Select the sound file..." @property="volume" required /> 
+    
+    <BsButton type="submit" @type="success">Done</BsButton>
+    <BsButton @type="danger" @onClick={{fn @deleteCommand}}>Delete</BsButton>
+  </BsForm>
 {{else}}
   <p><button type="button" {{on "click" this.edit}}>Edit</button></p>
 {{/if}}

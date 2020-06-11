@@ -7,6 +7,8 @@ import { run } from '@ember/runloop';
 export default class PbCommandEditComponent extends Component {
   @tracked isEditing;
   
+  commandTypes = ['','param','audio'];
+  
   @action edit(){
     this.isEditing = true;
   }

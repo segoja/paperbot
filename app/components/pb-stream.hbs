@@ -2,18 +2,42 @@
 
 <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @isEditing={{@isEditing}} @saveStream={{@saveStream}} @deleteStream={{@deleteStream}} />
 {{#if @stream.finished}}
-  <div class="row border border-info rounded">
-    <table class="table table-striped col-md-12">
-      <thead>
-        <tr><th>Chat Log</th></tr>
-      </thead>
-      <tbody>
-        {{#each @stream.chatlog as |message|}}
-          <tr>
-            <tr><td>{{message-format message}}</td></tr>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
+  <div class="row">
+    <div class="card border border-info rounded col-md-8 px-0">
+      <table class="card-body table table-striped">
+        <thead>
+          <tr><th>Chat Log</th></tr>
+        </thead>
+        <tbody>
+          {{#each @stream.chatlog as |message|}}
+            <tr id="{{message.id}}">
+              <td class="{{if message.reward "highlight alert-warning"}}">
+                {{message-format message}}
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    <div class="card border border-warning rounded col-md-4 px-0">
+      <table class="card-body table table-striped">
+        <thead>
+          <tr><th colspan="2">Request list</th></tr>
+        </thead>
+        <tbody>
+          {{#each @stream.songqueue as |element|}}
+            <tr>
+              <td class="py-1">
+                <div class="row">
+                  <div class="col"><small>{{moment-format element.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                  <div class="col-auto"><small>{{element.user}}</small></div>
+                </div>
+                <div class="h6 {{if element.processed "processed"}}">{{element.song}}</div>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>    
+    </div>
   </div>
 {{/if}}

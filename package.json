@@ -28,6 +28,9 @@
     "@glimmer/component": "^1.0.0",
     "@glimmer/tracking": "^1.0.0",
     "babel-eslint": "^8.2.6",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
     "bootstrap": "^4.4.1",
     "broccoli-asset-rev": "^3.0.0",
     "ember-audio": "^1.0.0-beta.1",
@@ -63,8 +66,7 @@
     "ember-moment": "^8.0.0",
     "ember-noscript": "^4.0.0",
     "ember-pouch": "^7.0.0",
-    "ember-power-select": "^4.0.0",
-    "ember-power-select-blockless": "^0.5.0",
+    "ember-power-select": "^4.0.2",
     "ember-qunit": "^4.6.0",
     "ember-resolver": "^8.0.0",
     "ember-service-worker": "^0.8.0",
@@ -94,10 +96,6 @@
   },
   "dependencies": {
     "acorn": "^7.1.1",
-    "ember-hifi": "^1.17.0",
-    "tmi.js": "^1.5.0",
-    "twitch": "^4.0.9",
-    "twitch-chat-client": "^4.0.9",
-    "twitch-pubsub-client": "^4.0.9"
+    "tmi.js": "^1.5.0"
   }
 }

@@ -1,8 +1,8 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { action, computed } from '@ember/object';
+import { action, computed, set } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { empty } from '@ember/object/computed';
+import { empty, sort } from '@ember/object/computed';
 
 export default class PbStreamEditComponent extends Component {
   @service activeClient;
@@ -19,7 +19,15 @@ export default class PbStreamEditComponent extends Component {
   @tracked message = "";
   @tracked msglist = [];  
   @tracked songqueue = []; 
-
+  
+  
+  queueSorting = Object.freeze(['timestamp:asc']);
+  @sort (
+    'songqueue',
+    'queueSorting'
+  ) arrangedQueue;
+  
+  
   get disableBotButton(){
     if(this.twitchChat.botConnected === true || this.args.stream.finished === true){
       return true;
@@ -54,13 +62,16 @@ export default class PbStreamEditComponent extends Component {
   
   get messages(){
     return this.msglist.slice(-30);
-  } 
+  }   
   
-  get songs() {
-    return this.songqueue;  
-  }  
+  get pendingSongs() {
+    return this.arrangedQueue.filterBy('processed', false);
+  }
   
-
+  get playedSongs() {
+    return this.arrangedQueue.filterBy('processed', true);
+  }
+  
   constructor() {
     super(...arguments);  
     
@@ -125,11 +136,17 @@ export default class PbStreamEditComponent extends Component {
   }
   
   @action finishStream(){
-     if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
-       this.disconnectClients();
-     }
+    this.args.stream.chatlog = this.msglist;
+    this.args.stream.songqueue = this.songqueue;
+    
+    if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
+     this.disconnectClients();
+    }
+    
     this.args.stream.finished = true;
     this.args.saveStream();
+    
+    this.songqueue = [];
     this.msglist = [];
   }
   
@@ -147,7 +164,6 @@ export default class PbStreamEditComponent extends Component {
     this.message = "";
   }  
 
- 
   // Stream saving actions
   
   @action edit(){
@@ -163,11 +179,18 @@ export default class PbStreamEditComponent extends Component {
       }
       if(this.isQueueEmpty === false){
         if(this.songqueue != this.args.stream.songqueue){
-          this.args.stream.chatlog = this.songqueue;
+          this.args.stream.songqueue = this.songqueue;
         }
       }
     }
     this.isEditing = false;
     this.args.saveStream();
   }  
+  
+  // Song processing related actions
+  
+  @action requestStatus(song) {
+    set(song, 'processed', !song.processed);
+  } 
+  
 }

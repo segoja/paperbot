@@ -15,9 +15,14 @@ export default class TwitchChatService extends Service {
   @tracked botclient;
   @tracked chatclient;
 
-  @tracked msglist = [];
+  @tracked msglist = [];  
   get messages(){
     return this.msglist;
+  }
+  
+  @tracked whisperlist = [];  
+  get whispers(){
+    return this.whisperlist;
   }
   
   @tracked queue = []; 
@@ -57,10 +62,11 @@ export default class TwitchChatService extends Service {
       this.botUsername = options.identity.username.toString();
       this.botclient = new tmi.client(options);
       // Register our event handlers (defined below)
-      this.botclient.on('connected', this.onBotConnectedHandler);
+      // this.botclient.on('connected', this.onBotConnectedHandler);
       this.botclient.on('message', this.messageHandler);
       this.botclient.on('hosting', this.onHostHandler);
-   
+      // this.superHandler(this.botclient);
+
       // Connect the client
       this.botConnected =  await this.botclient.connect().then(
         success => {
@@ -82,7 +88,7 @@ export default class TwitchChatService extends Service {
       this.channel = options.channels.toString();
       this.chatclient = new tmi.client(options);
       // Register our event handlers (defined below)
-      this.chatclient.on('connected', this.onChatConnectedHandler);
+      // this.chatclient.on('connected', this.onChatConnectedHandler);
       //this.chatclient.on('message', this.messageHandler);
    
       // Connect the client
@@ -128,15 +134,39 @@ export default class TwitchChatService extends Service {
       id: tags['id'] ? tags['id'].toString() : 'system',
       timestamp: new Date(),
       body: msg ? msg.toString() : null,
+      parsedbody: this.parseMessage(msg.toString(), tags['emotes']).toString(),    
       user: tags['username'] ? tags['username'].toString() : this.botUsername,
       color: tags['color'] ? tags['color'].toString() : null,
       csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : null,        
       badges: tags['badges'] ? tags['badges'] : null,
       type: tags['message-type'] ? tags['message-type'] : null,
-      usertype: tags['user-type'] ? tags['user-type'].toString() : null,        
+      usertype: tags['user-type'] ? tags['user-type'].toString() : null,
+      reward: tags['msg-id'] ? true : false,
+      emotes: tags['emotes'] ? tags['emotes'] : null,
     };
-    this.msglist.push(this.lastmessage);
-    this.commandHandler(target, tags, msg, self);
+    
+    if(tags['message-type'] != "whisper"){
+      if(tags['custom-reward-id']){
+        this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+msg+'"');
+        this.lastsongrequest = {
+          id: tags['id'] ? tags['id'].toString() : 'songsys',
+          timestamp: new Date,
+          type: tags['message-type'] ? tags['message-type'] : null,
+          song: msg, 
+          user: tags['username'] ? tags['username'].toString() : this.botUsername,
+          color: tags['color'] ? tags['color'].toString() : null,
+          csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : null,
+          emotes: tags['emotes'] ? tags['emotes'] : null,
+          processed: false,
+        };
+        this.queue.push(this.lastsongrequest);
+      } else {
+        this.msglist.push(this.lastmessage);
+        this.commandHandler(target, tags, msg, self);
+      }
+    } else {
+      this.whisperlist.push(this.lastmessage);
+    }
   }
 
   // Called every time a message comes in
@@ -150,14 +180,17 @@ export default class TwitchChatService extends Service {
     if(String(commandName).startsWith('!sr ')){
       var song = commandName.replace(/!sr /g, '');
       if(song){
-        this.botclient.say(target, '@'+tags['username']+ ' requested the song "'+song+'"');
+        this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+song+'"');
         this.lastsongrequest = {
           id: tags['id'] ? tags['id'].toString() : 'songsys',
           timestamp: new Date,
+          type: tags['message-type'] ? tags['message-type'] : null,
           song: song, 
-          user: tags['username'].toString(),
-          color: tags['color'].toString(),
-          csscolor: htmlSafe('color: ' + tags['color']),        
+          user: tags['username'] ? tags['username'].toString() : this.botUsername,
+          color: tags['color'] ? tags['color'].toString() : null,
+          csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : null,
+          emotes: tags['emotes'] ? tags['emotes'] : null,
+          processed: false,
         };
         this.queue.push(this.lastsongrequest);
       }
@@ -197,6 +230,26 @@ export default class TwitchChatService extends Service {
       });        
     }
   }
+
+  @action parseMessage(text, emotes) {
+    var splitText = text.split('');
+    for(var i in emotes) {
+        var e = emotes[i];
+        for(var j in e) {
+            var mote = e[j];
+            if(typeof mote == 'string') {
+                mote = mote.split('-');
+                mote = [parseInt(mote[0]), parseInt(mote[1])];
+                var length =  mote[1] - mote[0],
+                    empty = Array.apply(null, new Array(length + 1)).map(function() { return '' });
+                splitText = splitText.slice(0, mote[0]).concat(empty).concat(splitText.slice(mote[1] + 1, splitText.length));
+                splitText.splice(mote[0], 1, '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + i + '/3.0">');
+            }
+        }
+    }
+    return splitText.join('');
+  }
+
   
   // Called every time the bot connects to Twitch chat
   @action onBotConnectedHandler (addr, port) {
@@ -210,4 +263,213 @@ export default class TwitchChatService extends Service {
     //alert(this.botclient.username);
     this.botclient.say(this.channel, '/me connected using paperbot\'s client!');
   }
+  
+  superHandler(client){
+    client.on("action", (channel, userstate, message, self) => {
+        // Don't listen to my own messages..
+        if (self) return;
+
+        // Do your stuff.
+    });
+
+    client.on("anongiftpaidupgrade", (channel, username, userstate) => {
+        // Do your stuff.
+    });
+
+    client.on("ban", (channel, username, reason, userstate) => {
+        // Do your stuff.
+    });
+
+    client.on("chat", (channel, userstate, message, self) => {
+        // Don't listen to my own messages..
+        if (self) return;
+        // Do your stuff.
+    });
+
+    client.on("cheer", (channel, userstate, message) => {
+        // Do your stuff.
+    });
+
+    client.on("clearchat", (channel) => {
+        // Do your stuff.
+    });
+
+    client.on("connected", (address, port) => {
+        // Do your stuff.
+    });
+
+
+    client.on("connecting", (address, port) => {
+        // Do your stuff.
+    });
+
+
+    client.on("disconnected", (reason) => {
+        // Do your stuff.
+    });
+
+    client.on("emoteonly", (channel, enabled) => {
+        // Do your stuff.
+    });
+
+    client.on("emotesets", (sets, obj) => {
+        // Here are the emotes I can use:
+        console.log(obj);
+    });
+
+    client.on("followersonly", (channel, enabled, length) => {
+        // Do your stuff.
+    });
+
+    client.on("giftpaidupgrade", (channel, username, sender, userstate) => {
+        // Do your stuff.
+    });
+
+
+    client.on("hosted", (channel, username, viewers, autohost) => {
+        // Do your stuff.
+    });
+
+    client.on("hosting", (channel, target, viewers) => {
+        // Do your stuff.
+    });
+
+    client.on("join", (channel, username, self) => {
+        // Do your stuff.
+    });
+
+
+    client.on("logon", () => {
+        // Do your stuff.
+    });
+
+    client.on("message", (channel, userstate, message, self) => {
+        // Don't listen to my own messages..
+        if (self) return;
+
+        // Handle different message types..
+        switch(userstate["message-type"]) {
+            case "action":
+                // This is an action message..
+                break;
+            case "chat":
+                // This is a chat message..
+                break;
+            case "whisper":
+                // This is a whisper..
+                break;
+            default:
+                // Something else ?
+                break;
+        }
+    });
+
+    client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
+        // Do your stuff.
+    });
+
+    // Someone got modded
+    client.on("mod", (channel, username) => {
+        // Do your stuff.
+    });
+
+    // Get the Mod list
+    client.on("mods", (channel, mods) => {
+        // Do your stuff.
+    });
+
+    client.on("notice", (channel, msgid, message) => {
+        // Do your stuff.
+    });
+
+    client.on("part", (channel, username, self) => {
+        // Do your stuff.
+    });
+
+    client.on("ping", () => {
+        // Do your stuff.
+    });
+
+    client.on("pong", (latency) => {
+        // Do your stuff.
+    });
+
+    client.on("r9kbeta", (channel, enabled) => {
+        // Do your stuff.
+    });
+
+    client.on("raided", (channel, username, viewers) => {
+        // Do your stuff.
+    });
+
+    client.on("raw_message", (messageCloned, message) => {
+        console.log(message.raw);
+    });
+
+    client.on("reconnect", () => {
+        // Do your stuff.
+    });
+
+    client.on("resub", (channel, username, months, message, userstate, methods) => {
+        // Do your stuff.
+        let cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
+    });
+
+    client.on("roomstate", (channel, state) => {
+        // Do your stuff.
+    });
+
+    client.on("serverchange", (channel) => {
+        // Do your stuff.
+    });
+
+    client.on("slowmode", (channel, enabled, length) => {
+        // Do your stuff.
+    });
+
+    client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
+        // Do your stuff.
+        let senderCount = ~~userstate["msg-param-sender-count"];
+    });
+
+    client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
+        // Do your stuff.
+        let senderCount = ~~userstate["msg-param-sender-count"];
+    });
+
+    // Subscribers only mode:
+    client.on("subscribers", (channel, enabled) => {
+        // Do your stuff.
+    });
+
+
+    client.on("subscription", (channel, username, method, message, userstate) => {
+        // Do your stuff.
+    });
+
+    client.on("timeout", (channel, username, reason, duration, userstate) => {
+        // Do your stuff.
+    });
+
+    client.on("unhost", (channel, viewers) => {
+        // Do your stuff.
+    });
+
+
+    client.on("unmod", (channel, username) => {
+        // Do your stuff.
+    });
+
+    // Vip list
+    client.on("vips", (channel, vips) => {
+        // Do your stuff.
+    });
+
+    client.on("whisper", (from, userstate, message, self) => {
+        // Don't listen to my own messages..
+        if (self) return;
+
+        // Do your stuff.
+    });
+  }  
 }

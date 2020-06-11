@@ -19,10 +19,11 @@ export default class StreamsController extends Controller {
     {'queryParamsObj.perPage': 'perPage'},
     {'queryParamsObj.query': 'query'}
   ];
+
   queryParamsObj = new QueryParamsObj();
 
   @tracked isViewing = false;
-  
+
   @action createStream() {
     this.stream.isEditing = true;
     this.isViewing = true;
@@ -30,6 +31,7 @@ export default class StreamsController extends Controller {
     newStream.set('date', new Date());
     this.router.transitionTo('streams.stream', newStream.save());
   }
+  
   @action closeStream() {
     this.stream.isEditing = false;
     this.isViewing = false;
