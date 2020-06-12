@@ -2,14 +2,14 @@
   @type="dark"
   @backgroundColor="dark"
   @collapsed={{true}}
-  @onCollapse={{action (mut collapsed) true}}
-  @onExpand={{action (mut collapsed) false}} as |navbar|>
+  @onCollapse={{fn (mut this.collapsed) true}}
+  @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
   
   <div class="container">
     <div class="navbar-header">
       <div class="d-md-inline-flex">
         {{navbar.toggle}}
-        {{#link-to "index" class="navbar-brand"}}Paperbot{{/link-to}}
+        <LinkTo @route="index" class="navbar-brand">Paperbot</LinkTo>
       </div>
       <div class="d-md-inline-flex">
         <navbar.content>
