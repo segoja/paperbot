@@ -10,8 +10,8 @@ p.spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
 
 
 .chatframe{
-  min-height: 750px;
-  max-height: 750px;  
+  min-height: 550px;
+  max-height: 550px;  
 }
 
 .queueframe{

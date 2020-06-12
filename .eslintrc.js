@@ -22,7 +22,8 @@ module.exports = {
   },
   rules: {
     'ember/no-jquery': 0,
-    'ember/no-mixins': 0    
+    'ember/no-mixins': 0, 
+    'no-console': 'off', 
   },
   overrides: [
     // node files

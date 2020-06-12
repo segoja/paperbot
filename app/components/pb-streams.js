@@ -3,15 +3,7 @@ import { action } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
-import { tracked } from '@glimmer/tracking';
-import { inject as service } from '@ember/service';
 
-
-// define the handling of the `templates/components/blog-streams.hbs` view, which is used by `streams.hbs` like so:
-// => {{#blog-streams streams=model page=page perPage=perPage query=query createAction="createStream"}}{{outlet}}{{/blog-streams}}
-// `streams.hbs` gets its params by defining
-// => queryParams: ["page", "perPage", "query"]
-// inside its controller located at `controllers/streams.js`
 export default class PbStreamsComponent extends Component {
   // take in `streams` from our view
   // and sort it via `streamsSorting`

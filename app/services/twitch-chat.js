@@ -3,9 +3,7 @@ import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import tmi from 'tmi.js';
 import { htmlSafe } from '@ember/template';
-import { run } from '@ember/runloop';
-import EmberObject, { action, computed } from "@ember/object";
-import { isEmpty } from '@ember/utils';
+import { action } from "@ember/object";
 
 export default class TwitchChatService extends Service {
   @service store;
@@ -68,12 +66,10 @@ export default class TwitchChatService extends Service {
       // this.superHandler(this.botclient);
 
       // Connect the client
-      this.botConnected =  await this.botclient.connect().then(
-        success => {
+      this.botConnected =  await this.botclient.connect().then(function(){
           console.log("bot client connected!");
           return true;
-        }, 
-        error => {
+        }, function() {
           console.log("error connecting bot client!");
           return false;
         }
@@ -93,11 +89,11 @@ export default class TwitchChatService extends Service {
    
       // Connect the client
       this.chatConnected =  await this.chatclient.connect().then(
-        success => {
+        function() {
           console.log("chat client connected!");
           return true;
         }, 
-        error => {
+        function() {
           console.log("error connecting chat client!");
           return false;
         }
@@ -108,7 +104,7 @@ export default class TwitchChatService extends Service {
   
   async disconnector(){
     if(this.botConnected === true){
-      this.botclient.disconnect().then(success => {
+      this.botclient.disconnect().then(()=>{
         this.botConnected = false;
         this.channel = '';
         this.botUsername = '';
@@ -116,7 +112,7 @@ export default class TwitchChatService extends Service {
       });
     }
     if(this.chatConnected === true){
-      this.chatclient.disconnect().then(success => {
+      this.chatclient.disconnect().then(() => {
         this.chatConnected = false;
         this.channel = '';
         console.log("The chat client got disconnected!");        
@@ -171,8 +167,9 @@ export default class TwitchChatService extends Service {
 
   // Called every time a message comes in
   @action commandHandler (target, tags, msg, self) {
-  //if (self) { return; } // Ignore messages from the bot
-  // Remove whitespace from chat message
+    // Ignore messages from the bot so you don't create command infinite loops
+    if (self) { return; }
+    // Remove whitespace from chat message
     const commandName = msg.trim();
     console.log(tags);
     
@@ -202,7 +199,7 @@ export default class TwitchChatService extends Service {
             return;  
           } else {*/
             switch (command.type) {
-              case 'param':
+              case 'param':{
                 let pattern = new RegExp(`${command.name}`, 'gi');
                 
                 let param = commandName.replace(pattern, '').trim();
@@ -214,16 +211,19 @@ export default class TwitchChatService extends Service {
                 this.botclient.say(target, answer);
                 
                 console.log(`* Executed ${command.name} command`);
-              break;
-              case 'audio':
+                break;
+              }
+              case 'audio':{
                 this.audio.load(command.soundfile).asSound(command.name).then(() =>{
                     this.audio.getSound(command.name).play();
                   });
-              break;
-              default:
+                break;
+              }
+              default:{
                 this.botclient.say(target, command.response);
                 console.log(`* Executed ${command.name} command`);
-              break;
+                break;
+              }
             }
           /*}*/
         }
@@ -263,7 +263,7 @@ export default class TwitchChatService extends Service {
     //alert(this.botclient.username);
     this.botclient.say(this.channel, '/me connected using paperbot\'s client!');
   }
-  
+  /*
   superHandler(client){
     client.on("action", (channel, userstate, message, self) => {
         // Don't listen to my own messages..
@@ -471,5 +471,5 @@ export default class TwitchChatService extends Service {
 
         // Do your stuff.
     });
-  }  
+  }*/  
 }

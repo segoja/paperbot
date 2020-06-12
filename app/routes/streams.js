@@ -1,6 +1,5 @@
 import Route from '@ember/routing/route';
 import { hash } from 'rsvp';
-import { inject as service } from '@ember/service';
 
 export default class StreamsRoute extends Route {
  
@@ -13,7 +12,7 @@ export default class StreamsRoute extends Route {
   }
   
   beforeModel() {
-    this._super(...arguments)
+    super.init(...arguments);
   }
   
   setupController (controller, models) {

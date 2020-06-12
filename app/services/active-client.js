@@ -1,14 +1,11 @@
 import Service from '@ember/service';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import { action } from "@ember/object";
 
 export default class ActiveClientService extends Service {
   @service store;
   
-  @tracked clientlist = this.store.queryRecord('client').then(function(contents) {
-  
-  }.bind(this));
+  @tracked clientlist;
   
   constructor() {
     super(...arguments); 
@@ -16,7 +13,6 @@ export default class ActiveClientService extends Service {
   }
   
   async activeBot(){    
-    let botclient = '';
     let optsbot = '';    
     this.clientlist.forEach((client) => { 
       let opts = {
@@ -42,7 +38,6 @@ export default class ActiveClientService extends Service {
   }
   
   async activeChat(){    
-    let chatclient = '';
     let optschat = '';    
     this.clientlist.forEach((client) => { 
       let opts = {
