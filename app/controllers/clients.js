@@ -6,7 +6,8 @@ import { inject } from '@ember/controller';
 
 class QueryParamsObj {
   @tracked page = 1;
-  @tracked perPage = 5;
+  @tracked perPage = 20;
+  @tracked query = '';
 }
 
 export default class ClientController extends Controller {
@@ -15,13 +16,28 @@ export default class ClientController extends Controller {
 
   queryParams= [
     {'queryParamsObj.page': 'page'},
-    {'queryParamsObj.perPage': 'perPage'}
+    {'queryParamsObj.perPage': 'perPage'},
+    {'queryParamsObj.query': 'query'}
   ];
+  
   queryParamsObj = new QueryParamsObj();
+  
+  @tracked isViewing;
 
   @action createClient() {
-    this.client.set('globals.isEditing', true);
+    this.client.isEditing = true;
+    this.isViewing = true;
     let newclient = this.store.createRecord('client');
     this.router.transitionTo('clients.client', newclient.save());
+  }
+  
+  @action closeClient() {
+    this.client.isEditing = false;
+    this.isViewing = false;
+    this.router.transitionTo('clients');      
+  }
+  
+  @action loadClient() {
+    this.isViewing = true;
   }
 }

@@ -1,5 +1,4 @@
 <h2>{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h2>
-
 <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @isEditing={{@isEditing}} @saveStream={{@saveStream}} @deleteStream={{@deleteStream}} />
 {{#if @stream.finished}}
   <div class="row">

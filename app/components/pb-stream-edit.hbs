@@ -40,7 +40,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPosition relative=false}}>
+          <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPendingPosition relative=false}}>
             {{#each this.pendingSongs as |pendingsong|}}
               <a href="#" {{on "click" (fn this.requestStatus pendingsong)}} class="alert alert-primary d-block text-decoration-none py-0 px-2 my-1">
                 <div class="row">
@@ -48,7 +48,6 @@
                   <div class="col-auto"><small>{{pendingsong.user}}</small></div>
                 </div>
                 <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
-                <Autofocus />
               </a>
             {{/each}}
           </div>  
@@ -61,7 +60,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPosition relative=false}}>
+          <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
             {{#each this.playedSongs as |playedsong|}}
               <a href="#" {{on "click" (fn this.requestStatus playedsong)}} class="alert alert-secondary d-block text-decoration-none py-0 px-2 my-1">
                 <div class="row">
@@ -69,7 +68,6 @@
                   <div class="col-auto"><small>{{playedsong.user}}</small></div>
                 </div>
                 <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
-                <Autofocus />
               </a>
             {{/each}}
           </div>  
@@ -91,7 +89,7 @@
             {{#each this.messages as |message|}}
               <tr id="{{message.id}}">
                 <td class="chatline {{if message.reward "highlight alert-warning"}}">
-                  {{message-format message}} <Autofocus />
+                  {{message-format message}}
                 </td>
               </tr>
             {{/each}}

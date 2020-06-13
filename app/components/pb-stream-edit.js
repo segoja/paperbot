@@ -15,7 +15,7 @@ export default class PbStreamEditComponent extends Component {
   @tracked optschat = this.args.stream.chatclient.get('optsgetter');
   @tracked scrollPosition = 0;
   
-  @tracked isEditing = true;
+  @tracked isEditing;
   @tracked message = "";
   @tracked msglist = [];  
   @tracked songqueue = []; 

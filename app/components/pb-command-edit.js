@@ -5,7 +5,7 @@ import { action } from '@ember/object';
 export default class PbCommandEditComponent extends Component {
   @tracked isEditing;
   
-  commandTypes = ['','param','audio'];
+  commandTypes = ['param','audio'];
   
   @action edit(){
     this.isEditing = true;

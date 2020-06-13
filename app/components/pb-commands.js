@@ -24,7 +24,6 @@ export default class PbCommandsComponent extends Component {
     { page: alias('parent.args.queryParamsObj.page'), perPage: alias('parent.args.queryParamsObj.perPage')}
   ) pagedContent;
 
-
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
   }

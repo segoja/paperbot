@@ -1,9 +1,5 @@
 {{#if this.isEditing}}
   <div class="row">
-    <BsButton type="submit" @onClick={{fn this.doneEditing}} @type="success">Save</BsButton>
-    <BsButton @type="danger" @onClick={{fn @deleteClient}}>Delete</BsButton>
-  </div>
-  <div class="row">
     <div class="col">
       <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{fn this.doneEditing}} as |form|>
         <form.element @controlType="checkbox" @label="Default bot client" @property="defaultbot" />
@@ -19,6 +15,12 @@
         <form.element @controlType="checkbox" @label="Reconnect" @property="reconnect" />
         <form.element @controlType="checkbox" @label="Secure" @property="secure" />
       </BsForm>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <BsButton @type="success" @onClick={{fn this.doneEditing}} >Save</BsButton>
+      <BsButton @type="danger" @onClick={{fn @deleteClient}}>Delete</BsButton>
     </div>
   </div>
 {{else}}

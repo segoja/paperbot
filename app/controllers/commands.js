@@ -19,11 +19,25 @@ export default class CommandsController extends Controller {
     {'queryParamsObj.perPage': 'perPage'},
     {'queryParamsObj.query': 'query'}
   ];
+  
   queryParamsObj = new QueryParamsObj();
 
+  @tracked isViewing = false;
+
   @action createCommand() {
-    this.command.set('globals.isEditing', true);
+    this.command.isEditing = true;
+    this.isViewing = true;
     let newCommand = this.store.createRecord('command');
     this.router.transitionTo('commands.command', newCommand.save());
+  }
+  
+  @action closeCommand() {
+    this.command.isEditing = false;
+    this.isViewing = false;
+    this.router.transitionTo('commands');      
+  }
+  
+  @action loadCommand() {
+    this.isViewing = true;
   }
 }

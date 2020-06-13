@@ -1,9 +1,9 @@
 <div class="row">
-  <h1 class="col-md-12">Clients</h1>
+  <h1 class="col-md">Clients</h1>
 </div>
 <div class="row">
   {{!-- client listing --}}
-  <div class="col-md-4">
+  <div class={{if @isViewing "d-none" "col-md-12"}}>  
     <div class="row">
       <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
         <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
@@ -21,14 +21,14 @@
       <table class="table table-striped col-md-12">
         <thead>
           <tr>
-            <th>Clients</th>
+            <th>Client list</th>
           </tr>
         </thead>
         <tbody>
           {{#each this.pagedContent as |client|}}
             <tr>
               <td>
-                <LinkTo @route="clients.client" @model={{client}}>
+                <LinkTo @route="clients.client" @model={{client}} @isEditing={{this.isEditing}} {{on "click" @loadClient}}>
                   &bull; {{client.username}}
                 </LinkTo>
               </td>
@@ -41,7 +41,8 @@
   </div>
 
   {{!-- client content --}}
-  <div class="col-md-8">
+  <div class={{if @isViewing "col-md-12" "d-none"}}>
+    <BsButton @type="danger pull-right" @onClick={{fn @closeClient}}><i class="fa fa-close"></i></BsButton>               
     {{yield}}
   </div>
 </div>

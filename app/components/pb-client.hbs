@@ -1,8 +1,6 @@
-<div class="container">
-  <div class="row">
-    <h2 class="col">{{@client.username}}</h2>
-    <div class="col-auto"><PbClientEdit @client={{@client}} @isEditing={{@isEditing}} @saveClient={{@saveClient}} @deleteClient={{@deleteClient}}/></div> 
-  </div>
+<h2>{{@client.username}}</h2>
+<PbClientEdit @client={{@client}} @isEditing={{@isEditing}} @saveClient={{@saveClient}} @deleteClient={{@deleteClient}}/>
+{{#unless @isEditing}}
   <div class="row">
     <div class="col-md-12">
       <table class="table table-striped">
@@ -20,4 +18,4 @@
       </table>
     </div>
   </div>
-</div>
+{{/unless}}
