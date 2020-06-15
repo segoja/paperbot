@@ -36,8 +36,4 @@ export default class CommandsController extends Controller {
     this.isViewing = false;
     this.router.transitionTo('commands');      
   }
-  
-  @action loadCommand() {
-    this.isViewing = true;
-  }
 }

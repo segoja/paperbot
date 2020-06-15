@@ -28,7 +28,7 @@
           {{#each this.pagedContent as |client|}}
             <tr>
               <td>
-                <LinkTo @route="clients.client" @model={{client}} @isEditing={{this.isEditing}} {{on "click" @loadClient}}>
+                <LinkTo @route="clients.client" @model={{client}} @isEditing={{this.isEditing}}>
                   &bull; {{client.username}}
                 </LinkTo>
               </td>

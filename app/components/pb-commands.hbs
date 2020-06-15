@@ -2,42 +2,44 @@
   <h1 class="col-md-12">Commands</h1>
 </div>
 <div class="row">
-  {{!-- command listing --}}
-  <div class={{if @isViewing "d-none" "col-md-12"}}>  
-    <div class="row">
-      <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
-        <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
-          <el.control
-            placeholder="Filter Commands"
-            tabIndex={{5}}
-            class="col-md-12"
-          />
-        </form.element>
-      </BsForm>
-      <BsButton @type="info" @onClick={{fn @createCommand}} class="col-md-4">Create</BsButton>
-    </div>
-    <p></p>
-    <div class="row">
-      <table class="table table-striped col-md-12">
-        <thead>
-          <tr><th colspan="2">Stream list</th></tr>
-        </thead>
-        <tbody>
-          {{#each this.pagedContent as |command|}}            
-              <tr>
-                <td><LinkTo @route="commands.command" @model={{command}} @isEditing={{this.isEditing}} {{on "click" @loadCommand}}>##{{command.name}}</LinkTo></td>
-                <td><LinkTo @route="commands.command" @model={{command}} @isEditing={{this.isEditing}} {{on "click" @loadCommand}}><small class="muted">{{command.response}}</small></LinkTo></td>
-              </tr>            
-          {{/each}}
-        </tbody>
-      </table>
-      <PageNumbers @content={{this.pagedContent}} />
-    </div>
-  </div>
+  <div class="col-md-12">
+    {{#unless @isViewing}}  
+      {{!-- command listing --}}
+      <div class="row">
+        <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
+          <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
+            <el.control
+              placeholder="Filter Commands"
+              tabIndex={{5}}
+              class="col-md-12"
+            />
+          </form.element>
+        </BsForm>
+        <BsButton @type="info" @onClick={{fn @createCommand}} class="col-md-4">Create</BsButton>
+      </div>
+      <p></p>
+      <div class="row">
+        <table class="table table-striped col-md-12">
+          <thead>
+            <tr><th colspan="2">Command list</th></tr>
+          </thead>
+          <tbody>
+            {{#each this.pagedContent as |command|}}            
+                <tr>
+                  <td><LinkTo @route="commands.command" @model={{command}} @isEditing={{this.isEditing}}>##{{command.name}}</LinkTo></td>
+                  <td><LinkTo @route="commands.command" @model={{command}} @isEditing={{this.isEditing}}><small class="muted">{{command.response}}</small></LinkTo></td>
+                </tr>            
+            {{/each}}
+          </tbody>
+        </table>
+        <PageNumbers @content={{this.pagedContent}} />
+      </div>
+    {{/unless}}
   {{!-- blog command content --}}
-  <div class={{if @isViewing "col-md-12" "d-none"}}>
-    <BsButton @type="danger pull-right" @onClick={{fn @closeCommand}}><i class="fa fa-close"></i></BsButton>               
-    {{yield}}
+    {{#if @isViewing}}
+      <BsButton @type="danger pull-right" @onClick={{fn @closeCommand}}><i class="fa fa-close"></i></BsButton>               
+      {{yield}}
+    {{/if}}
   </div>
 </div>
 

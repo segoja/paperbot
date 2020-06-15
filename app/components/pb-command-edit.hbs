@@ -17,7 +17,7 @@
   </div>
   <div class="row">
     <div class="col">
-      <BsButton type="submit" @type="success">Done</BsButton>
+      <BsButton type="submit" @type="success" @onClick={{fn this.doneEditing}}>Done</BsButton>
       <BsButton @type="danger" @onClick={{fn @deleteCommand}}>Delete</BsButton>
     </div>
   </div>

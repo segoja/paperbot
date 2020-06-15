@@ -23,7 +23,8 @@ export default class StreamsController extends Controller {
   queryParamsObj = new QueryParamsObj();
 
   @tracked isViewing = false;
-
+  @tracked lastStream;
+  
   @action createStream() {
     this.stream.isEditing = true;
     this.isViewing = true;
@@ -33,12 +34,9 @@ export default class StreamsController extends Controller {
   }
   
   @action closeStream() {
+    //this.lastStream = [];
     this.stream.isEditing = false;
     this.isViewing = false;
-    this.router.transitionTo('streams');      
-  }
-  
-  @action loadStream() {
-    this.isViewing = true;
+    // this.router.transitionTo('streams');      
   }
 }

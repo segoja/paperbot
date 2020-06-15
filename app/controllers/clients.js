@@ -36,8 +36,4 @@ export default class ClientController extends Controller {
     this.isViewing = false;
     this.router.transitionTo('clients');      
   }
-  
-  @action loadClient() {
-    this.isViewing = true;
-  }
 }

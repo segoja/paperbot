@@ -8,16 +8,9 @@ export default class StreamController extends Controller {
   @service router;
   
   @tracked isEditing;
-  
-  constructor() {
-    super(...arguments);  
-    
-    // These lines is to allow switching to other routes
-    // without losing the active chat history and song queue.
-    this.isViewing = true;
-  }
-  
+
   @action saveStream () {
+    this.isEditing = false;
     this.model.save();
   }
   @action deleteStream() {
