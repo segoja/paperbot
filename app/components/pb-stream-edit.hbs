@@ -1,4 +1,4 @@
-{{#if this.isEditing}}
+{{#if @isEditing}}
   <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneEditing}} as |form|>
     <form.element @controlType="text" @label="Stream Title" placeholder="Stream title" @property="title" required />
     <form.element @controlType="text" @label="Stream Channel" placeholder="Stream channel" @property="channel" required />
@@ -23,7 +23,7 @@
 {{else}}
   <div class="row">
     <BsButtonGroup class="col" as |bg|>
-      <bg.button @type="warning" @onClick={{fn this.edit}}>Edit</bg.button>  
+      <bg.button @type="warning" @onClick={{fn @editStream}}>Edit</bg.button>  
       <bg.button @type="primary btn-sm" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</bg.button>
       <bg.button @type="secondary btn-sm" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</bg.button>
       <bg.button @type="danger btn-sm" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</bg.button>

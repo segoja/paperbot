@@ -3,39 +3,47 @@
 </div>
 <div class="row">
   {{!-- stream listing --}}
-  <div class="col-md-12"> 
-    {{#if @isViewing}}
-      <BsButton @type="danger pull-right" @onClick={{fn @closeStream}}><i class="fa fa-close"></i></BsButton>               
-      {{yield}}    
-    {{else}}  
-      <div class="row">
-        <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
-          <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
-            <el.control
-              placeholder="Filter Streams"
-              tabIndex={{5}}
-              class="col-md-12"
-            />
-          </form.element>
-        </BsForm>
-        <BsButton @type="info" @onClick={{fn @createStream}} class="col-md-4">Create</BsButton>
-      </div>
-      <p></p>
-      <div class="row">
-        <table class="table table-striped col-md-12">
-          <thead>
-            <tr><th>Stream list</th><th>Channel</th><th>Date</th></tr>
-          </thead>
-          <tbody>
-            {{#each this.pagedContent as |stream|}}       
-              <tr>
-                <td><LinkTo @route="streams.stream" @model={{stream}} @messages={{@messages}} @isEditing={{this.isEditing}}>->{{stream.title}}</LinkTo></td><td>#{{stream.channel}}</td><td>{{format-date stream.date }}</td>
-              </tr>        
-            {{/each}}
-          </tbody>
-        </table> 
-        <PageNumbers @content={{this.pagedContent}} />
-      </div>
-    {{/if}}
+  <div class="col-12"> 
+    {{#unless @isViewing}}
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
+              <form.element @controlType="text" class="w-100" @property="query" as |el|>
+                <el.control
+                  placeholder="Filter Streams"
+                  tabIndex={{5}}
+                  class="w-100"
+                />
+              </form.element>
+            </BsForm>
+            <div class="col-auto">
+              <BsButton @type="info" @onClick={{fn @createStream}} class="w-100">Add New</BsButton>
+            </div>
+          </div>
+        </div>
+        <div class="card-body mx-0 p-0">
+          <div class="row mx-0">
+            <table class="table table-striped col-12">
+              <thead>
+                <tr><th>Stream list</th><th>Channel</th><th>Date</th></tr>
+              </thead>
+              <tbody>
+                {{#each this.pagedContent as |stream|}}       
+                  <tr>
+                    <td><LinkTo @route="streams.stream" @model={{stream}}>->{{stream.title}}</LinkTo></td><td>#{{stream.channel}}</td><td>{{format-date stream.date }}</td>
+                  </tr>        
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer">
+          <PageNumbers @content={{this.pagedContent}} />
+        </div>
+      </div>   
+    {{else}}
+      {{yield}} 
+    {{/unless}}
   </div>    
 </div>

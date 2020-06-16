@@ -22,21 +22,15 @@ export default class StreamsController extends Controller {
 
   queryParamsObj = new QueryParamsObj();
 
-  @tracked isViewing = false;
   @tracked lastStream;
-  
+  @tracked isViewing;
+
+
   @action createStream() {
     this.stream.isEditing = true;
     this.isViewing = true;
     let newStream = this.store.createRecord('stream');
     newStream.set('date', new Date());
     this.router.transitionTo('streams.stream', newStream.save());
-  }
-  
-  @action closeStream() {
-    //this.lastStream = [];
-    this.stream.isEditing = false;
-    this.isViewing = false;
-    // this.router.transitionTo('streams');      
   }
 }

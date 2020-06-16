@@ -9,10 +9,22 @@ export default class StreamController extends Controller {
   
   @tracked isEditing;
 
+  @action closeStream () {
+    this.streams.lastStream = null;
+    this.streams.isViewing = false;
+    this.isEditing = false;
+    this.router.transitionTo('streams.index');      
+  }
+
+  @action editStream(){
+    this.isEditing = true;
+  } 
+
   @action saveStream () {
     this.isEditing = false;
     this.model.save();
   }
+
   @action deleteStream() {
     this.model.destroyRecord().then(() => {
       this.streams.isViewing = false;

@@ -13,20 +13,18 @@ export default class StreamsRoute extends Route {
   }
 
   setupController (controller, models) {
+    super.setupController(controller, models);
     controller.setProperties(models);
+    
+    this.controllerFor('streams').set('isViewing', false);
   }
 
-  afterModel() {
-    if(this.controllerFor('streams').lastStream && this.controllerFor('streams').isViewing){
-      this.transitionTo('streams.stream', this.controllerFor('streams').lastStream);
-    } else {
-      this.controllerFor('streams').isViewing = false;
-      this.controllerFor('streams').lastStream = [];    
-    }   
-  }  
-  @action willTransition(transition){
-    if(transition.targetName === "streams.index" || transition.targetName === "streams"){
-      transition.abort();
+  redirect (model, transition) {
+    if (transition.targetName === 'streams.index') {
+      if (this.controllerFor('streams').lastStream) {
+        this.transitionTo('streams.stream', this.controllerFor('streams').lastStream);
+      } 
     }
   }
+  
 }

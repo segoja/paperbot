@@ -15,7 +15,6 @@ export default class PbStreamEditComponent extends Component {
   @tracked optschat = this.args.stream.chatclient.get('optsgetter');
   @tracked scrollPosition = 0;
   
-  @tracked isEditing;
   @tracked message = "";
   @tracked msglist = [];  
   @tracked songqueue = []; 
@@ -155,11 +154,7 @@ export default class PbStreamEditComponent extends Component {
     this.message = "";
   }  
 
-  // Stream saving actions
-  
-  @action edit(){
-    this.isEditing = true;
-  } 
+  // Stream saving actions  
   
   @action doneEditing() {
     if(this.args.stream.finished === false){
@@ -174,7 +169,6 @@ export default class PbStreamEditComponent extends Component {
         }
       }
     }
-    this.isEditing = false;
     this.args.saveStream();
   }  
   

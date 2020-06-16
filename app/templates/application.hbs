@@ -1,34 +1,38 @@
-<BsNavbar
-  @type="dark"
-  @backgroundColor="dark"
-  @collapsed={{true}}
-  @onCollapse={{fn (mut this.collapsed) true}}
-  @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
-  
-  <div class="container">
-    <div class="navbar-header">
-      <div class="d-md-inline-flex">
+<header class="mb-5 pb-2">
+  <BsNavbar
+    @type="dark"
+    @backgroundColor="dark"
+    @collapsed={{false}}
+    @fluid={{true}}
+    @position="fixed-top"
+    @toggleBreakpoint=""
+    @onCollapse={{fn (mut this.collapsed) false}}
+    @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
+
+    
+    <div class="container-fluid">
+      <div class="d-inline">
         {{navbar.toggle}}
         <LinkTo @route="index" class="navbar-brand">Paperbot</LinkTo>
       </div>
-      <div class="d-md-inline-flex">
+      <div class="d-inline">
         <navbar.content>
           <navbar.nav as |nav|>
             <nav.item>
-              <nav.link-to @route="streams">Streams</nav.link-to>
+              <nav.link-to @route="streams.index">Streams</nav.link-to>
             </nav.item>
             <nav.item>
-              <nav.link-to @route="commands">Commands</nav.link-to>
+              <nav.link-to @route="commands.index">Commands</nav.link-to>
             </nav.item>
             <nav.item>
-              <nav.link-to @route="clients">Clients</nav.link-to>
+              <nav.link-to @route="clients.index">Clients</nav.link-to>
             </nav.item>      
           </navbar.nav>
         </navbar.content>
       </div>
     </div>
-  </div>
-</BsNavbar>
-<main role="main" class="container h-100">
+  </BsNavbar>
+</header>
+<main role="main" class="container-fluid h-100 px-4">
   {{outlet}}
 </main>
