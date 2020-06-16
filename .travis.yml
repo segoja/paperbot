@@ -3,29 +3,27 @@ language: node_js
 node_js:
   - "10"
 
-sudo: false
+dist: trusty
 
 addons:
-  apt:
-    packages:
-      - xvfb
+  chrome: stable
 
 cache:
   directories:
     - $HOME/.npm
     - $HOME/.cache # includes bowers cache
-    - node_modules
 
-before_install:
-  - "npm config set spin false"
-  - "npm install -g grunt-cli"
+env:
+  global:
+    # See https://git.io/vdao3 for details.
+    - JOBS=1
 
-install:
-  - npm install -g bower
-  - npm install
-  - bower install
-  - export DISPLAY=':99.0'
-  - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+branches:
+  only:
+    - master
 
 script:
+  - npm run license
+  - npm run lint:hbs
+  - npm run lint:js
   - npm test
