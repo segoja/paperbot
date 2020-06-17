@@ -1,112 +1,114 @@
 {{#if @isEditing}}
-  <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneEditing}} as |form|>
-    <form.element @controlType="text" @label="Stream Title" placeholder="Stream title" @property="title" required />
-    <form.element @controlType="text" @label="Stream Channel" placeholder="Stream channel" @property="channel" required />
-    
-    <form.element @controlType="checkbox" @label="Request System" @property="requests" />
-    
-    <form.element @controlType="power-select" @property="botclient" @label="Bot Client" @options={{@clients}} required as |client|>
-      <client.control as |option|>
-        {{option.username}}
-      </client.control>
-    </form.element>
-    <form.element @controlType="power-select" @property="chatclient" @label="Chat Client" @options={{@clients}} required as |client|>
-      <client.control as |option|>
-        {{option.username}}
-      </client.control>
-    </form.element>  
-    
-    <BsButton type="submit" @type="success">Save</BsButton>
-    <BsButton @type="danger" @onClick={{fn @deleteStream}}>Delete</BsButton>
-  </BsForm>
-  <hr />
-{{else}}
-  <div class="row">
-    <BsButtonGroup class="col" as |bg|>
-      <bg.button @type="warning" @onClick={{fn @editStream}}>Edit</bg.button>  
-      <bg.button @type="primary btn-sm" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</bg.button>
-      <bg.button @type="secondary btn-sm" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</bg.button>
-      <bg.button @type="danger btn-sm" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</bg.button>
-      <bg.button @type="primary btn-sm" @onClick={{fn this.finishStream}} disabled={{@stream.finished}}>Finish Stream</bg.button>      
-    </BsButtonGroup>
+  <div class="card-body">
+    <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneEditing}} as |form|>
+      <form.element @controlType="text" @label="Stream Title" placeholder="Stream title" @property="title" required />
+      <form.element @controlType="text" @label="Stream Channel" placeholder="Stream channel" @property="channel" required />
+      
+      <form.element @controlType="checkbox" @label="Request System" @property="requests" />
+      
+      <form.element @controlType="power-select" @property="botclient" @label="Bot Client" @options={{@clients}} required as |client|>
+        <client.control as |option|>
+          {{option.username}}
+        </client.control>
+      </form.element>
+      <form.element @controlType="power-select" @property="chatclient" @label="Chat Client" @options={{@clients}} required as |client|>
+        <client.control as |option|>
+          {{option.username}}
+        </client.control>
+      </form.element>  
+      
+      <BsButton type="submit" @type="success">Save</BsButton>
+      <BsButton @type="danger" @onClick={{fn @deleteStream}}>Delete</BsButton>
+    </BsForm>
   </div>
-  {{#unless this.disconnectButton}}
-    {{#if @stream.requests}}
-    <div class="row mt-3">
-      <div class="col-md">
-        <div class="row">
-          <div class="col">
-            <h6>Songs pending</h6>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPendingPosition relative=false}}>
-            {{#each this.pendingSongs as |pendingsong|}}
-              <a href="#" {{on "click" (fn this.requestStatus pendingsong)}} class="alert alert-primary d-block text-decoration-none py-0 px-2 my-1">
-                <div class="row">
-                  <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
-                  <div class="col-auto"><small>{{pendingsong.user}}</small></div>
-                </div>
-                <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
-              </a>
-            {{/each}}
-          </div>  
-        </div>
-      </div>
-      <div class="col">
-        <div class="row">
-          <div class="col">
-             <h6>Songs played</h6>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
-            {{#each this.playedSongs as |playedsong|}}
-              <a href="#" {{on "click" (fn this.requestStatus playedsong)}} class="alert alert-secondary d-block text-decoration-none py-0 px-2 my-1">
-                <div class="row">
-                  <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
-                  <div class="col-auto"><small>{{playedsong.user}}</small></div>
-                </div>
-                <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
-              </a>
-            {{/each}}
-          </div>  
-        </div>
-      </div>      
-    </div>  
-    {{/if}}
-  
-
+{{else}}
+  <div class="card-body">
     <div class="row">
-      <div class="col-md-12">
-        <table class="table table-striped ">
-          <thead><tr><th>Recent Messages</th></tr></thead>
-        </table>
-      </div>
-      <div class="col-md-12 overflow-auto chatframe" {{scroll-position this.scrollPosition relative=false}}>
-        <table class="table table-striped ">
-          <tbody>      
-            {{#each this.messages as |message|}}
-              <tr id="{{message.id}}">
-                <td class="chatline {{if message.reward "highlight alert-warning"}}">
-                  {{message-format message}}
-                </td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>     
-      </div>
+      <BsButtonGroup class="col" as |bg|>
+        <bg.button @type="info btn-sm" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</bg.button>
+        <bg.button @type="secondary btn-sm" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</bg.button>
+        <bg.button @type="danger btn-sm" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</bg.button>
+        <bg.button @type="success btn-sm" @onClick={{fn this.finishStream}} disabled={{@stream.finished}}>Finish Stream</bg.button>      
+      </BsButtonGroup>
     </div>
-    <div class="row">
-      <BsForm @formLayout="vertical" @model={{this}} class="col-md-12" @onSubmit={{fn this.sendMessage}} as |form|>
-        <form.element @property="message" as |el|>
-          <el.control 
-            @controlType="text"
-            placeholder="Type your message here"
-            readonly={{this.inputDisabled}}        
-          />
-        </form.element>
-      </BsForm>
-    </div>    
-  {{/unless}}
+    {{#unless this.disconnectButton}}
+      {{#if @stream.requests}}
+      <div class="row mt-3">
+        <div class="col-md">
+          <div class="row">
+            <div class="col">
+              <h6>Songs pending</h6>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPendingPosition relative=false}}>
+              {{#each this.pendingSongs as |pendingsong|}}
+                <a href="#" {{on "click" (fn this.requestStatus pendingsong)}} class="alert alert-primary d-block text-decoration-none py-0 px-2 my-1">
+                  <div class="row">
+                    <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                    <div class="col-auto"><small>{{pendingsong.user}}</small></div>
+                  </div>
+                  <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
+                </a>
+              {{/each}}
+            </div>  
+          </div>
+        </div>
+        <div class="col">
+          <div class="row">
+            <div class="col">
+               <h6>Songs played</h6>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
+              {{#each this.playedSongs as |playedsong|}}
+                <a href="#" {{on "click" (fn this.requestStatus playedsong)}} class="alert alert-secondary d-block text-decoration-none py-0 px-2 my-1">
+                  <div class="row">
+                    <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                    <div class="col-auto"><small>{{playedsong.user}}</small></div>
+                  </div>
+                  <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
+                </a>
+              {{/each}}
+            </div>  
+          </div>
+        </div>      
+      </div>  
+      {{/if}}
+    
+
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-striped ">
+            <thead><tr><th>Recent Messages</th></tr></thead>
+          </table>
+        </div>
+        <div class="col-md-12 overflow-auto chatframe" {{scroll-position this.scrollPosition relative=false}}>
+          <table class="table table-striped ">
+            <tbody>      
+              {{#each this.messages as |message|}}
+                <tr id="{{message.id}}">
+                  <td class="chatline {{if message.reward "highlight alert-warning"}}">
+                    {{message-format message}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>     
+        </div>
+      </div>
+      <div class="row">
+        <BsForm @formLayout="vertical" @model={{this}} class="col-md-12" @onSubmit={{fn this.sendMessage}} as |form|>
+          <form.element @property="message" as |el|>
+            <el.control 
+              @controlType="text"
+              placeholder="Type your message here"
+              readonly={{this.inputDisabled}}        
+            />
+          </form.element>
+        </BsForm>
+      </div>    
+    {{/unless}}
+  </div>
 {{/if}}

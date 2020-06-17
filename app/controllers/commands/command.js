@@ -7,22 +7,28 @@ export default class CommandController extends Controller {
   @inject commands;
   @service router;
 
-  @tracked isEditing;
+  @tracked isEditing;  
+  @tracked commandTypes = ['param','audio'];
   
-  constructor() {
-    super(...arguments);  
-    
-    // These lines is to allow switching to other routes
-    // without losing the active chat history and song queue.
-    this.isViewing = true;
+  @action closeCommand() {
+    this.isEditing = false;
+    this.commands.isViewing = false;
+    this.router.transitionTo('commands');      
   }
+  
+  @action editCommand(){
+    this.isEditing = true;
+  }  
   
   @action saveCommand () {
+    this.isEditing = false;
     this.model.save();
   }
+  
   @action deleteCommand() {
     this.model.destroyRecord().then(() => {
       this.commands.isViewing = false;
+      this.isEditing = false;
       this.router.transitionTo('commands');
     });
   }

@@ -8,21 +8,27 @@ export default class ClientController extends Controller {
   @service router;
 
   @tracked isEditing;
-  
-  constructor() {
-    super(...arguments);  
-    
-    // These lines is to allow switching to other routes
-    // without losing the active chat history and song queue.
-    this.isViewing = true;
+  @tracked clientTypes = ['','bot','chat'];
+
+  @action closeClient() {
+    this.isEditing = false;
+    this.clients.isViewing = false;
+    this.router.transitionTo('clients');      
   }
   
-  @action saveClient() {
+  @action editClient(){
+    this.isEditing = true;
+  }  
+  
+  @action saveClient () {
+    this.isEditing = false;
     this.model.save();
   }
+  
   @action deleteClient() {
     this.model.destroyRecord().then(() => {
       this.clients.isViewing = false;
+      this.isEditing =  false;
       this.router.transitionTo('clients');
     });
   }

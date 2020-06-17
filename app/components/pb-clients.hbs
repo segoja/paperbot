@@ -1,48 +1,51 @@
 <div class="row">
-  <h1 class="col-md">Clients</h1>
+  <h1 class="col-md-12">Clients</h1>
 </div>
 <div class="row">
-  {{!-- client listing --}}
-  <div class={{if @isViewing "d-none" "col-md-12"}}>  
-    <div class="row">
-      <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
-        <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
-          <el.control
-            placeholder="Filter Clients"
-            tabIndex={{5}}
-            class="col-md-12"
-          />
-        </form.element>
-      </BsForm>
-      <BsButton @type="info" @onClick={{fn @createClient}} class="col-md-4">Create</BsButton>
-    </div>
-    <p></p>
-    <div class="row">
-      <table class="table table-striped col-md-12">
-        <thead>
-          <tr>
-            <th>Client list</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each this.pagedContent as |client|}}
-            <tr>
-              <td>
-                <LinkTo @route="clients.client" @model={{client}} @isEditing={{this.isEditing}}>
-                  &bull; {{client.username}}
-                </LinkTo>
-              </td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
-      <PageNumbers @content={{this.pagedContent}} />
-    </div>
-  </div>
-
-  {{!-- client content --}}
-  <div class={{if @isViewing "col-md-12" "d-none"}}>
-    <BsButton @type="danger pull-right" @onClick={{fn @closeClient}}><i class="fa fa-close"></i></BsButton>               
-    {{yield}}
+  <div class="col-12">
+    {{#unless @isViewing}}  
+      {{!-- client listing --}}
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
+              <form.element @controlType="text" class="w-100" @property="query" as |el|>
+                <el.control
+                  placeholder="Filter Clients"
+                  tabIndex={{5}}
+                  class="w-100"
+                />
+              </form.element>
+            </BsForm>
+            <div class="col-auto">
+              <BsButton @type="info" @onClick={{fn @createClient}} class="w-100">Add New</BsButton>
+            </div>
+          </div>
+        </div>
+        <div class="card-body mx-0 p-0">
+          <div class="row mx-0">
+            <table class="table table-striped col-12 my-0">
+              <thead>
+                <tr><th>Client list</th></tr>
+              </thead>
+              <tbody>
+                {{#each this.pagedContent as |client|}}            
+                  <tr>
+                    <td><LinkTo @route="clients.client" @model={{client}}>{{if client.username client.username "<<unnamed>>"}}</LinkTo></td>
+                  </tr>            
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer">
+          <PageNumbers @content={{this.pagedContent}} />
+        </div>
+      </div>
+    {{else}}
+      {{!-- Client content --}}
+      {{yield}}
+    {{/unless}}
   </div>
 </div>
+

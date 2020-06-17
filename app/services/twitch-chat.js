@@ -194,7 +194,7 @@ export default class TwitchChatService extends Service {
       console.log(`* Executed ${commandName} command`);        
     } else {        
       this.commandlist.forEach((command) => {
-        if(String(commandName).startsWith(command.name)){
+        if(String(commandName).startsWith(command.name) && command.name != ''){
           /*if (self) { 
             return;  
           } else {*/
@@ -211,6 +211,7 @@ export default class TwitchChatService extends Service {
                 this.botclient.say(target, answer);
                 
                 console.log(`* Executed ${command.name} command`);
+                
                 break;
               }
               case 'audio':{

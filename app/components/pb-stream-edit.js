@@ -151,7 +151,7 @@ export default class PbStreamEditComponent extends Component {
   
   @action sendMessage() {
     this.twitchChat.chatclient.say(this.twitchChat.channel, this.message);
-    this.message = "";
+    // this.message = "";
   }  
 
   // Stream saving actions  

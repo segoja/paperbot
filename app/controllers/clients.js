@@ -30,10 +30,4 @@ export default class ClientController extends Controller {
     let newclient = this.store.createRecord('client');
     this.router.transitionTo('clients.client', newclient.save());
   }
-  
-  @action closeClient() {
-    this.client.isEditing = false;
-    this.isViewing = false;
-    this.router.transitionTo('clients');      
-  }
 }

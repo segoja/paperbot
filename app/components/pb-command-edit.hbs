@@ -1,33 +1,18 @@
-{{#if this.isEditing}}
-  <div class="row">
-    <div class="col">
-      <BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{fn this.doneEditing}} as |form|>
-        <form.element @controlType="text" @label="Name" placeholder="Type the command name" @property="name" required /> 
-        <form.element @controlType="power-select" @property="type" @label="Type" @options={{this.commandTypes}} as |element| >
-          <element.control placeholder="Select the command type" />
-        </form.element>
-        <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
-        <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
-        <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
-        <form.element @controlType="file" @label="Sound file" placeholder="Select the sound file..." @property="soundfile" required /> 
-        <form.element @controlType="text" @label="Sound file" placeholder="Select the sound file..." @property="soundfile" required /> 
-        <form.element @controlType="text" @label="Volume" placeholder="Select the sound file..." @property="volume" required />
-      </BsForm>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <BsButton type="submit" @type="success" @onClick={{fn this.doneEditing}}>Done</BsButton>
-      <BsButton @type="danger" @onClick={{fn @deleteCommand}}>Delete</BsButton>
-    </div>
-  </div>
-{{else}}
-  <div class="row">
-    <BsButtonGroup class="col-md-12" as |bg|>
-      <bg.button @type="warning" @onClick={{fn this.edit}}>Edit</bg.button>  
-    </BsButtonGroup>
-  </div>
-{{/if}}
+<BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{fn this.doneEditing}} as |form|>
+  <form.element @controlType="text" @label="Name" placeholder="Type the command name" @property="name" required /> 
+  <form.element @controlType="power-select" @property="type" @label="Type" @options={{@commandTypes}} as |element| >
+    <element.control placeholder="Select the command type" />
+  </form.element>
+  <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
+  <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
+  <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
+  <form.element @controlType="file" @label="Sound file" placeholder="Select the sound file..." @property="soundfile" required /> 
+  <form.element @controlType="text" @label="Sound file" placeholder="Select the sound file..." @property="soundfile" required /> 
+  <form.element @controlType="text" @label="Volume" placeholder="Select the sound file..." @property="volume" required />
+  
+  <BsButton type="submit" @type="success" @onClick={{fn this.doneEditing}}>Done</BsButton>
+  <BsButton @type="danger" @onClick={{fn @deleteCommand}}>Delete</BsButton>    
+</BsForm>
 
 
 

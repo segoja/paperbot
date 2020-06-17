@@ -1,19 +1,32 @@
-<h2>{{@command.name}} <small class="muted">({{format-date @stream.date}})</small></h2>
-<PbCommandEdit @command={{@command}} @isEditing={{@isEditing}} @saveCommand={{@saveCommand}} @deleteCommand={{@deleteCommand}} />
-{{#unless @isEditing}}
-  <div class="row">
-    <div class="col-md-12">
-      <table class="table table-striped">
-        <tbody>
-          <tr><td>Command:</td><td> {{@command.name}}</td></tr>
-          <tr><td>Type:</td><td> {{@command.type}}</td></tr>
-          <tr><td>Cooldown:</td><td> {{@command.cooldown}} seconds</td></tr>
-          <tr><td>Timer:</td><td> {{@command.timer}} seconds</td></tr>
-          <tr><td>Response:</td><td> {{@command.response}}</td></tr>
-          <tr><td>Sound File:</td><td> {{@command.soundfile}}</td></tr>
-          <tr><td>Volume:</td><td> {{@command.volume}}%</td></tr>
-        </tbody>
-      </table>
-    </div>
+<div class="card">
+  <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded">
+    <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0">{{@command.name}}</h5></div>
+    <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
+      <bg.button @type="secondary rounded-0" @onClick={{fn @editCommand}} disabled={{@isEditing}} ><i class="fa fa-pencil-square-o"></i></bg.button>
+      <bg.button @type="danger" @onClick={{fn @closeCommand}}><i class="fa fa-close"></i></bg.button>
+    </BsButtonGroup>
   </div>
-{{/unless}}
+  {{#if @isEditing}}
+    <div class="card-body">
+      <PbCommandEdit @command={{@command}} @isEditing={{@isEditing}} @commandTypes={{@commandTypes}} @saveCommand={{@saveCommand}} @editCommand={{@editCommand}} @deleteCommand={{@deleteCommand}} />
+    </div>
+  {{else}}
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-striped">
+            <tbody>
+              <tr><td>Command:</td><td> {{@command.name}}</td></tr>
+              <tr><td>Type:</td><td> {{@command.type}}</td></tr>
+              <tr><td>Cooldown:</td><td> {{@command.cooldown}} seconds</td></tr>
+              <tr><td>Timer:</td><td> {{@command.timer}} seconds</td></tr>
+              <tr><td>Response:</td><td> {{@command.response}}</td></tr>
+              <tr><td>Sound File:</td><td> {{@command.soundfile}}</td></tr>
+              <tr><td>Volume:</td><td> {{@command.volume}}%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</div>

@@ -1,16 +1,16 @@
-<header class="mb-5 pb-2">
+<header class="mb-5 pb-4">
   <BsNavbar
     @type="dark"
     @backgroundColor="dark"
     @collapsed={{false}}
-    @fluid={{true}}
+    @fluid={{false}}
     @position="fixed-top"
     @toggleBreakpoint=""
     @onCollapse={{fn (mut this.collapsed) false}}
     @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
 
     
-    <div class="container-fluid">
+    <div class="container">
       <div class="d-inline">
         {{navbar.toggle}}
         <LinkTo @route="index" class="navbar-brand">Paperbot</LinkTo>
@@ -33,6 +33,6 @@
     </div>
   </BsNavbar>
 </header>
-<main role="main" class="container-fluid h-100 px-4">
+<main role="main" class="container h-100 px-4">
   {{outlet}}
 </main>

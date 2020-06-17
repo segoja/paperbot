@@ -1,6 +1,5 @@
 import Route from '@ember/routing/route';
 import { hash } from 'rsvp';
-import { action } from '@ember/object';
 
 export default class StreamsRoute extends Route {
 

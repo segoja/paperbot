@@ -1,10 +1,7 @@
 <div class="row">
-  <h1 class="col-md-12">Streams</h1>
-</div>
-<div class="row">
-  {{!-- stream listing --}}
   <div class="col-12"> 
     {{#unless @isViewing}}
+      {{!-- Stream listing --}}
       <div class="card">
         <div class="card-header">
           <div class="row">
@@ -24,7 +21,7 @@
         </div>
         <div class="card-body mx-0 p-0">
           <div class="row mx-0">
-            <table class="table table-striped col-12">
+            <table class="table table-striped col-12 my-0">
               <thead>
                 <tr><th>Stream list</th><th>Channel</th><th>Date</th></tr>
               </thead>
@@ -43,6 +40,7 @@
         </div>
       </div>   
     {{else}}
+      {{!-- Stream content --}}    
       {{yield}} 
     {{/unless}}
   </div>    

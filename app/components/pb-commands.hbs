@@ -2,44 +2,53 @@
   <h1 class="col-md-12">Commands</h1>
 </div>
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-12">
     {{#unless @isViewing}}  
       {{!-- command listing --}}
-      <div class="row">
-        <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-8" @onchange={{this.resetPage}} as |form|>
-          <form.element @controlType="text" class="row col-md-12" @property="query" as |el|>
-            <el.control
-              placeholder="Filter Commands"
-              tabIndex={{5}}
-              class="col-md-12"
-            />
-          </form.element>
-        </BsForm>
-        <BsButton @type="info" @onClick={{fn @createCommand}} class="col-md-4">Create</BsButton>
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
+              <form.element @controlType="text" class="w-100" @property="query" as |el|>
+                <el.control
+                  placeholder="Filter Commands"
+                  tabIndex={{5}}
+                  class="w-100"
+                />
+              </form.element>
+            </BsForm>
+            <div class="col-auto">
+              <BsButton @type="secondary" @onClick={{fn @createCommand}}>Import</BsButton>
+              <BsButton @type="secondary" @onClick={{fn @createCommand}}>Export</BsButton>
+              <BsButton @type="info" @onClick={{fn @createCommand}}>Add New</BsButton>
+            </div>
+          </div>
+        </div>
+        <div class="card-body mx-0 p-0">
+          <div class="row mx-0">
+            <table class="table table-striped col-12 my-0">
+              <thead>
+                <tr><th colspan="2">Command list</th></tr>
+              </thead>
+              <tbody>
+                {{#each this.pagedContent as |command|}}            
+                  <tr>
+                    <td><LinkTo @route="commands.command" @model={{command}}>##{{command.name}}</LinkTo></td>
+                    <td><LinkTo @route="commands.command" @model={{command}}><small class="muted">{{command.response}}</small></LinkTo></td>
+                  </tr>            
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer">
+          <PageNumbers @content={{this.pagedContent}} />
+        </div>
       </div>
-      <p></p>
-      <div class="row">
-        <table class="table table-striped col-md-12">
-          <thead>
-            <tr><th colspan="2">Command list</th></tr>
-          </thead>
-          <tbody>
-            {{#each this.pagedContent as |command|}}            
-                <tr>
-                  <td><LinkTo @route="commands.command" @model={{command}} @isEditing={{this.isEditing}}>##{{command.name}}</LinkTo></td>
-                  <td><LinkTo @route="commands.command" @model={{command}} @isEditing={{this.isEditing}}><small class="muted">{{command.response}}</small></LinkTo></td>
-                </tr>            
-            {{/each}}
-          </tbody>
-        </table>
-        <PageNumbers @content={{this.pagedContent}} />
-      </div>
-    {{/unless}}
-  {{!-- blog command content --}}
-    {{#if @isViewing}}
-      <BsButton @type="danger pull-right" @onClick={{fn @closeCommand}}><i class="fa fa-close"></i></BsButton>               
+    {{else}}
+      {{!-- Command content --}}
       {{yield}}
-    {{/if}}
+    {{/unless}}
   </div>
 </div>
 
