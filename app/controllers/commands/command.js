@@ -8,7 +8,6 @@ export default class CommandController extends Controller {
   @service router;
 
   @tracked isEditing;  
-  @tracked commandTypes = ['param','audio'];
   
   @action closeCommand() {
     this.isEditing = false;

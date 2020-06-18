@@ -1,1 +1,12 @@
-<PbCommands @commands={{this.model}} @queryParamsObj={{this.queryParamsObj}} @isViewing={{this.isViewing}} @createCommand={{this.createCommand}}>{{outlet}}</PbCommands>
+<PbCommands 
+@commands={{this.model}} 
+@queryParamsObj={{this.queryParamsObj}} 
+@isViewing={{this.isViewing}} 
+@commandTypes={{this.commandTypes}}
+@createCommand={{this.createCommand}} 
+@importCommands={{this.importCommands}} 
+@gridDeleteCommand={{this.gridDeleteCommand}}
+@gridEditCommand={{this.gridEditCommand}}
+>
+  {{outlet}}
+</PbCommands>
