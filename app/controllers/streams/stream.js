@@ -27,6 +27,7 @@ export default class StreamController extends Controller {
 
   @action deleteStream() {
     this.model.destroyRecord().then(() => {
+      this.streams.lastStream = null;
       this.streams.isViewing = false;
       this.isEditing = false;
       this.router.transitionTo('streams');

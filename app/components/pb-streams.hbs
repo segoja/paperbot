@@ -3,9 +3,8 @@
 </div>
 <div class="row">
   <div class="col-12"> 
-    {{#unless @isViewing}}
       {{!-- Stream listing --}}
-      <div class="card">
+      <div class="{{if @isViewing "d-none" "card"}}">
         <div class="card-header">
           <div class="row">
             <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
@@ -24,15 +23,23 @@
         </div>
         <div class="card-body mx-0 p-0">
           <div class="row mx-0">
-            <table class="table table-striped col-12 my-0">
+            <table class="table table-hover col-12 my-0">
               <thead>
-                <tr><th>Stream list</th><th>Channel</th><th>Date</th></tr>
+                <tr><th>Stream list</th><th>Channel</th><th colspan="2">Date</th></tr>
               </thead>
               <tbody>
-                {{#each this.pagedContent as |stream|}}       
-                  <tr>
-                    <td><LinkTo @route="streams.stream" @model={{stream}}>->{{stream.title}}</LinkTo></td><td>#{{stream.channel}}</td><td>{{format-date stream.date }}</td>
-                  </tr>        
+                {{#each this.pagedContent as |stream|}}  
+                  <LinkTo @route="streams.stream" @model={{stream}} @tagName="tr" class="w-100" >
+                    <td>{{if stream.title stream.title "untitled"}}</td>
+                    <td>#{{stream.channel}}</td>
+                    <td>{{format-date stream.date }}</td>
+                    <td class="p-0 m-0 align-middle ml-auto">
+                      <BsButtonGroup @class="float-right mr-3" as |bg|>
+                        <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditStream stream}}><i class="fa fa-pencil-square-o"></i></bg.button>
+                        <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteStream stream}}><i class="fa fa-trash"></i></bg.button>
+                      </BsButtonGroup>
+                    </td>
+                  </LinkTo>       
                 {{/each}}
               </tbody>
             </table>
@@ -42,9 +49,10 @@
           <PageNumbers @content={{this.pagedContent}} />
         </div>
       </div>   
-    {{else}}
-      {{!-- Stream content --}}    
+    
+      {{!-- Stream content --}}
+    {{#if @isViewing}}
       {{yield}} 
-    {{/unless}}
+    {{/if}}
   </div>    
 </div>

@@ -28,9 +28,8 @@ export default class CommandsController extends Controller {
   @tracked commandTypes = ['simple','parameterized','audio'];
 
   @action createCommand() {
-    this.command.isEditing = true;
-    this.isViewing = true;
     let newCommand = this.store.createRecord('command');
+    this.command.isEditing = true;
     this.router.transitionTo('commands.command', newCommand.save());
   }
   
@@ -38,6 +37,7 @@ export default class CommandsController extends Controller {
     let newCommand = this.store.createRecord('command');
     newCommand.set('name', command.name);
     newCommand.set('type', command.type);
+    newCommand.set('active', command.active);
     newCommand.set('cooldown', command.cooldown);
     newCommand.set('timer', command.timer);
     newCommand.set('response', command.response);
@@ -50,6 +50,11 @@ export default class CommandsController extends Controller {
   @action gridEditCommand(command) {
     this.command.isEditing = true;
     this.router.transitionTo('commands.command', command);
+  } 
+
+  @action gridActiveCommand(command) {
+    command.active = !command.active;
+    command.save();
   } 
 
   @action gridDeleteCommand(command) {

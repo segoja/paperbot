@@ -28,7 +28,7 @@ export default class PbCommandsComponent extends Component {
  
   @computedFilterByQuery(
     'filteredByType',
-    ['name','cooldown','timer','response','soundfile','volume'],
+    ['name','type','active','cooldown','timer','response','soundfile','volume'],
     'args.queryParamsObj.query',
     { conjunction: 'and', sort: false}
   ) filteredContent;
@@ -55,7 +55,7 @@ export default class PbCommandsComponent extends Component {
   @action commandImport(file){
     let reader = new FileReader();
     reader.readAsText(file.blob).then((text) => {    
-      let reference = ["name","type","cooldown","timer","response","soundfile","volume"];
+      let reference = ["name","type","active","cooldown","timer","response","soundfile","volume"];
 
       let rows = PapaParse.parse(text,{header: true, skipEmptyLines: true}).data;
       
@@ -84,13 +84,15 @@ export default class PbCommandsComponent extends Component {
     this.filteredContent;
     var csvdata = [];
     if (this.filteredContent !== 0){
-      let header = ["name","type","cooldown","timer","response","soundfile","volume"];
+      let header = ["name","type","active","cooldown","timer","response","soundfile","volume"];
       csvdata.push(header);
       this.filteredContent.forEach((command) => {
-        let csvrow = [command.name, command.type, command.cooldown, command.timer, command.response, command.soundfile, command.volume];
+        let csvrow = [command.name, command.type, command.active, command.cooldown, command.timer, command.response, command.soundfile, command.volume];
         csvdata.push(csvrow);
       });
-    }    
-    this.csv.export(csvdata, {fileName: 'commands.csv', autoQuote: true, withSeparator: false});
+    }
+    
+      //csvdata = PapaParse.unparse(this.filteredContent,{header: true, skipEmptyLines: true,	quoteChar: '"',	escapeChar: '"',	delimiter: ",", newline: "\r\n"});
+      this.csv.export(csvdata, {fileName: 'commands.csv', autoQuote: true, withSeparator: false});
   }
 }

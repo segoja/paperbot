@@ -6,7 +6,7 @@ import { inject } from '@ember/controller';
 
 class QueryParamsObj {
   @tracked page = 1;
-  @tracked perPage = 5;
+  @tracked perPage = 10;
   @tracked query = '';
 }
 
@@ -27,10 +27,22 @@ export default class StreamsController extends Controller {
 
 
   @action createStream() {
-    this.stream.isEditing = true;
-    this.isViewing = true;
     let newStream = this.store.createRecord('stream');
     newStream.set('date', new Date());
+    this.stream.isEditing = true;
     this.router.transitionTo('streams.stream', newStream.save());
   }
+  
+  @action gridEditStream(stream) {
+    this.stream.isEditing = true;
+    this.router.transitionTo('streams.stream', stream);
+  } 
+
+  @action gridDeleteStream(stream) {
+    stream.destroyRecord().then(() => {
+      this.isViewing = false;
+      this.stream.isEditing = false;
+      this.lastStream = null;
+    });
+  } 
 }

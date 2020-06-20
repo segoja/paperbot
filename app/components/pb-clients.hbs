@@ -3,9 +3,8 @@
 </div>
 <div class="row">
   <div class="col-12">
-    {{#unless @isViewing}}  
       {{!-- client listing --}}
-      <div class="card">
+      <div class="{{if @isViewing "d-none" "card"}}">
         <div class="card-header">
           <div class="row">
             <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
@@ -24,15 +23,22 @@
         </div>
         <div class="card-body mx-0 p-0">
           <div class="row mx-0">
-            <table class="table table-striped col-12 my-0">
+            <table class="table table-hover col-12 my-0">
               <thead>
-                <tr><th>Client list</th></tr>
+                <tr><th>Client list</th><th colspan="2">Type</th></tr>
               </thead>
               <tbody>
                 {{#each this.pagedContent as |client|}}            
-                  <tr>
-                    <td><LinkTo @route="clients.client" @model={{client}}>{{if client.username client.username "<<unnamed>>"}}</LinkTo></td>
-                  </tr>            
+                  <LinkTo @route="clients.client" @model={{client}} @tagName="tr" class="w-100" >
+                    <td>{{if client.username client.username "<unnamed>"}}</td>
+                    <td>{{client.type}}</td>
+                    <td class="p-0 m-0 align-middle ml-auto">
+                      <BsButtonGroup @class="float-right mr-3" as |bg|>
+                        <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditClient client}}><i class="fa fa-pencil-square-o"></i></bg.button>
+                        <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteClient client}}><i class="fa fa-trash"></i></bg.button>
+                      </BsButtonGroup>
+                    </td>
+                  </LinkTo>            
                 {{/each}}
               </tbody>
             </table>
@@ -42,10 +48,10 @@
           <PageNumbers @content={{this.pagedContent}} />
         </div>
       </div>
-    {{else}}
+    {{#if @isViewing}}
       {{!-- Client content --}}
       {{yield}}
-    {{/unless}}
+    {{/if}}
   </div>
 </div>
 

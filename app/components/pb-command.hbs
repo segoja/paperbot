@@ -18,6 +18,7 @@
             <tbody>
               <tr><td>Command:</td><td> {{@command.name}}</td></tr>
               <tr><td>Type:</td><td> {{@command.type}}</td></tr>
+              <tr><td>Active:</td><td>{{if @command.active "Yes" "No"}}</td></tr>
               <tr><td>Cooldown:</td><td> {{@command.cooldown}} seconds</td></tr>
               <tr><td>Timer:</td><td> {{@command.timer}} seconds</td></tr>
               <tr><td>Response:</td><td> {{@command.response}}</td></tr>

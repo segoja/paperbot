@@ -1,1 +1,10 @@
-<PbClients @clients={{this.model}} @queryParamsObj={{this.queryParamsObj}} @isViewing={{this.isViewing}} @closeClient={{this.closeClient}} @loadClient={{this.loadClient}} @createClient={{this.createClient}}>{{outlet}}</PbClients>
+<PbClients 
+@clients={{this.model}} 
+@queryParamsObj={{this.queryParamsObj}} 
+@isViewing={{this.isViewing}} 
+@createClient={{this.createClient}}
+@closeClient={{this.closeClient}}
+@gridDeleteClient={{this.gridDeleteClient}}
+@gridEditClient={{this.gridEditClient}}
+
+>{{outlet}}</PbClients>

@@ -4,6 +4,7 @@ import { Model } from 'ember-pouch';
 export default class CommandModel extends Model {
   @attr('string', {defaultValue: ""}) name;
   @attr('string', {defaultValue: ""}) type;
+  @attr('boolean', {defaultValue: false}) active;
   @attr('string', {defaultValue: "0"}) cooldown;
   @attr('string', {defaultValue: "300"}) timer;
   @attr('string', {defaultValue: ""}) response;

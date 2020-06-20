@@ -3,6 +3,7 @@
   <form.element @controlType="power-select" @property="type" @label="Type" @options={{@commandTypes}} as |element| >
     <element.control placeholder="Select the command type" />
   </form.element>
+  <form.element @controlType="checkbox" @label="Active" @property="active" />
   <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
   <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
   <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 

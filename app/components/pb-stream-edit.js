@@ -5,7 +5,6 @@ import { inject as service } from '@ember/service';
 import { empty, sort } from '@ember/object/computed';
 
 export default class PbStreamEditComponent extends Component {
-  @service activeClient;
   @service twitchChat;
   
   @empty ('twitchChat.messages') isChatEmpty;
@@ -18,7 +17,6 @@ export default class PbStreamEditComponent extends Component {
   @tracked message = "";
   @tracked msglist = [];  
   @tracked songqueue = []; 
-  
   
   queueSorting = Object.freeze(['timestamp:asc']);
   @sort (
@@ -51,6 +49,7 @@ export default class PbStreamEditComponent extends Component {
     }
   }
   
+  // With this getter we enable/disable the chat input box according to the chat client status.
   get inputDisabled(){
     if(this.twitchChat.chatConnected === false){
       return true;
@@ -59,6 +58,7 @@ export default class PbStreamEditComponent extends Component {
     }  
   }
   
+  // With this getter we limit the number of messages displayed on screen.
   get messages(){
     return this.msglist.slice(-30);
   }   
@@ -70,6 +70,13 @@ export default class PbStreamEditComponent extends Component {
   get playedSongs() {
     return this.arrangedQueue.filterBy('processed', true);
   }
+  
+  // Whith this getter we control the queue display while keeping the service updated with the settings.
+  get requests(){
+    this.twitchChat.takessongrequests = this.args.stream.requests;    
+    return  this.args.stream.requests;
+  }
+  
   
   constructor() {
     super(...arguments);  
@@ -84,14 +91,12 @@ export default class PbStreamEditComponent extends Component {
     }
   }
 
-
-
   // Bot and Chat related actions:
 
   @action connectBot(){
     if(this.args.stream.channel != ''){
       this.optsbot.channels = [this.args.stream.channel];
-    }    
+    }
     
     this.twitchChat.connector(this.optsbot, "bot").then(()=>{
         //this.inputDisabled = false;

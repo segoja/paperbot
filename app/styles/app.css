@@ -37,6 +37,27 @@ td.highlight{
   text-decoration: line-through;
 }
 
+.ember-power-select-trigger{
+  height: calc(1.5em + 0.75rem + 2px)!important;
+  line-height: 2.25em!important;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #6C757D!important;
+}
+.ember-power-select-placeholder {
+    color: #6C757D;
+}
+/*.ember-power-select-status-icon{
+  background-color: #ededed;
+  line-height: 1.5em;
+}*/
+.ember-power-select-clear-btn {
+ position: static!important;
+ background-color: #ffffff;
+ display: inline-block;
+ width: 1.4em;
+ text-align: center;
+}
 
 img.emoticon{
   height: 1.5rem!important;

@@ -8,7 +8,6 @@ import { action } from "@ember/object";
 export default class TwitchChatService extends Service {
   @service store;
   @service audio;
-  @service activeClient;
  
   @tracked botclient;
   @tracked chatclient;
@@ -44,6 +43,8 @@ export default class TwitchChatService extends Service {
   
   @tracked lastmessage = null;
   @tracked lastsongrequest = null;
+  
+  @tracked takessongrequests;
   
   init() {
     super.init(...arguments);
@@ -142,7 +143,7 @@ export default class TwitchChatService extends Service {
     };
     
     if(tags['message-type'] != "whisper"){
-      if(tags['custom-reward-id']){
+      if(tags['custom-reward-id'] && this.takessongrequests){
         this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+msg+'"');
         this.lastsongrequest = {
           id: tags['id'] ? tags['id'].toString() : 'songsys',
@@ -174,7 +175,7 @@ export default class TwitchChatService extends Service {
     console.log(tags);
     
     // If the command is known, let's execute it      
-    if(String(commandName).startsWith('!sr ')){
+    if(String(commandName).startsWith('!sr ') && this.takessongrequests){
       var song = commandName.replace(/!sr /g, '');
       if(song){
         this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+song+'"');
@@ -199,7 +200,7 @@ export default class TwitchChatService extends Service {
             return;  
           } else {*/
             switch (command.type) {
-              case 'param':{
+              case 'parameterized':{
                 let pattern = new RegExp(`${command.name}`, 'gi');
                 
                 let param = commandName.replace(pattern, '').trim();
@@ -256,13 +257,13 @@ export default class TwitchChatService extends Service {
   @action onBotConnectedHandler (addr, port) {
     console.log(`* Connected to ${addr}:${port}`);
     //alert(this.botclient.username);
-    this.botclient.say(this.channel, '/me ### The bot is the house! ###');
+    //this.botclient.say(this.channel, '/me ### The bot is the house! ###');
   }  
   // Called every time the bot connects to Twitch chat
   @action onChatConnectedHandler (addr, port) {
     console.log(`* Connected to ${addr}:${port}`);
     //alert(this.botclient.username);
-    this.botclient.say(this.channel, '/me connected using paperbot\'s client!');
+    //this.botclient.say(this.channel, '/me connected using paperbot\'s client!');
   }
   /*
   superHandler(client){

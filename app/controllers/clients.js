@@ -25,9 +25,21 @@ export default class ClientController extends Controller {
   @tracked isViewing;
 
   @action createClient() {
-    this.client.isEditing = true;
-    this.isViewing = true;
     let newclient = this.store.createRecord('client');
+    this.client.isEditing = true;
     this.router.transitionTo('clients.client', newclient.save());
   }
+  
+  @action gridEditClient(client) {
+    this.client.isEditing = true;
+    this.router.transitionTo('clients.client', client);
+  } 
+
+  @action gridDeleteClient(client) {
+    client.destroyRecord().then(() => {
+      this.client.isEditing = false;
+      this.isViewing = false;
+    });
+  } 
 }
+

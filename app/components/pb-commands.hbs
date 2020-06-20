@@ -3,21 +3,22 @@
 </div>
 <div class="row">
   <div class="col-12">
-    {{#unless @isViewing}}  
       {{!-- command listing --}}
-      <div class="card">
+      <div class="{{if @isViewing "d-none" "card"}}">
         <div class="card-header">
           <div class="row">
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col form-row" @onchange={{this.resetPage}} as |form|>
-              <form.element @controlType="text" class="col-7" @property="query" as |el|>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
+              <form.element @controlType="text" class="w-100" @property="query" as |el|>
                 <el.control
                   placeholder="Filter by name"
                   tabIndex={{5}}
                   class="w-100"
                 />
               </form.element>
-              <form.element @controlType="power-select" @property="type" class="col-5" @options={{@commandTypes}} as |element| >
-                <element.control  @triggerClass="w-100" @placeholder="Filter by type" class="w-100" as |option|>
+            </BsForm>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-auto pl-0" @onchange={{this.resetPage}} as |form|>
+              <form.element @controlType="power-select" @property="type" class="w-100" @options={{@commandTypes}} as |element| >
+                <element.control  @triggerClass="w-100" @allowClear={{true}} @placeholder="Filter by type" class="w-100" as |option|>
                   <span class="w-100">{{option}}</span>
                 </element.control>
               </form.element>
@@ -33,18 +34,24 @@
           <div class="row mx-0">
             <table class="table table-hover col-12 my-0">
               <thead>
-                <tr><th colspan="3">Command list</th></tr>
+                <tr><th>Command</th><th>Response</th><th>Active</th><th>Admin</th></tr>
               </thead>
               <tbody>
                 {{#each this.pagedContent as |command|}}
-                  <LinkTo @route="commands.command" @tagName="tr" @model={{command}}>                
-                      <td>{{if command.name command.name "unnamed"}}</td>
-                      <td><small class="muted">{{command.response}}</small></td>
-                      <td class="p-0 m-0 align-middle">
-                      <BsButtonGroup @class="mx-auto" as |bg|>
-                        <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditCommand command}}><i class="fa fa-pencil-square-o"></i></bg.button>
-                        <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteCommand command}}><i class="fa fa-trash"></i></bg.button>
-                      </BsButtonGroup></td>
+                  <LinkTo @route="commands.command" @tagName="tr" class="w-100" @model={{command}}>                
+                      <td class="col-auto align-middle">{{if command.name command.name "unnamed"}}</td>
+                      <td class="col align-middle"><small class="muted">{{command.response}}</small></td>
+                      <td class="col-auto py-0 my-0 align-middle">
+                        <BsButton @type="" class="btn-link btn-lg mx-auto" @onClick={{fn @gridActiveCommand command}}>
+                          <i class="w-100 text-secondary {{if command.active "fa fa-check-square" "fa fa-square-o"}}"></i>
+                        </BsButton>
+                      </td>
+                      <td class="col-auto align-middle">
+                        <BsButtonGroup @class="mx-auto" as |bg|>
+                          <bg.button @type="" class="btn-sm alert-secondary" @onClick={{fn @gridEditCommand command}}><i class="fa fa-pencil-square-o"></i></bg.button>
+                          <bg.button @type="" class="btn-sm alert-danger" @onClick={{fn @gridDeleteCommand command}}><i class="fa fa-trash"></i></bg.button>
+                         </BsButtonGroup>
+                      </td>
                   </LinkTo>
                 {{/each}}
               </tbody>
@@ -55,10 +62,10 @@
           <PageNumbers @content={{this.pagedContent}} />
         </div>
       </div>
-    {{else}}
+    {{#if @isViewing}}
       {{!-- Command content --}}
       {{yield}}
-    {{/unless}}
+    {{/if}}
   </div>
 </div>
 
