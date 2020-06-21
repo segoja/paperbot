@@ -79,6 +79,6 @@ export default class PbClientsComponent extends Component {
     }
     
       //csvdata = PapaParse.unparse(this.filteredContent,{header: true, skipEmptyLines: true,	quoteChar: '"',	escapeChar: '"',	delimiter: ",", newline: "\r\n"});
-      this.csv.export(csvdata, {fileName: 'commands.csv', autoQuote: true, withSeparator: false});
+      this.csv.export(csvdata, {fileName: 'clients.csv', autoQuote: true, withSeparator: false});
   }
 }

@@ -14,6 +14,7 @@ class QueryParamsObj {
 export default class CommandsController extends Controller {
   @inject ('commands.command') command;
   @service router;
+  @service audio;
 
   queryParams= [
     {'queryParamsObj.page': 'page'},
@@ -55,9 +56,32 @@ export default class CommandsController extends Controller {
   @action gridActiveCommand(command) {
     command.active = !command.active;
     command.save();
+    if(command.type === 'audio'){
+      if (command.active){
+        this.audio.load(command.soundfile).asSound(command.name).then(
+          function() {
+            console.log(command.soundfile+ " loaded in the soundboard");
+          }, 
+          function() {
+            console.log("error loading "+command.soundfile+" in the soundboard!");
+          }
+        );
+      } else {
+        this.audio.removeFromRegister('sound', command.name);
+        console.log(command.soundfile+ " removed from the soundboard");
+      }
+    }
   } 
 
   @action gridDeleteCommand(command) {
+    if(command.type === 'audio'){
+      if (command.active){
+        this.audio.removeFromRegister('sound', command.name);
+        console.log(command.soundfile+ " removed from the soundboard");
+
+      }
+    }   
+    
     command.destroyRecord().then(() => {
       this.isViewing = false;
       this.command.isEditing = false;

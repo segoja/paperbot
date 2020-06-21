@@ -65,7 +65,7 @@ export default class PbStreamEditComponent extends Component {
   }   
 
   get audiocommandslist(){
-    return this.args.commands.filterBy('active', true).filterBy('type','audio');
+    return this.args.commands.filterBy('type','audio').filterBy('active', true);
   }
   
   get pendingSongs() {
@@ -107,7 +107,6 @@ export default class PbStreamEditComponent extends Component {
     
     this.twitchChat.connector(this.optsbot, "bot").then(()=>{
         //this.inputDisabled = false;
-        this.msgGetter();
         this.twitchChat.botclient.on('message', this.msgGetter);
       }
     );
@@ -118,11 +117,7 @@ export default class PbStreamEditComponent extends Component {
       this.optschat.channels = [this.args.stream.channel];
     }
     
-    this.twitchChat.connector(this.optschat, "chat").then(()=>{
-        this.twitchChat.chatclient.on('message', this.msgGetter);
-        this.msgGetter();
-      }
-    );
+    this.twitchChat.connector(this.optschat, "chat");
   }
   
   @action disconnectClients(){

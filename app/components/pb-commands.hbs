@@ -31,13 +31,14 @@
           <div class="row mx-0">
             <table class="table table-hover table-condensed col-12 my-0">
               <thead>
-                <tr><th class="col-sm-auto">Command</th><th class="col-sm">Response</th><th class="col-sm-auto">Active</th><th class="col-sm-auto">Admin</th></tr>
+                <tr><th class="col-sm-auto">Command</th><th class="col-sm">Response</th><th class="col-sm-auto">Type</th><th class="col-sm-auto">Active</th><th class="col-sm-auto">Admin</th></tr>
               </thead>
               <tbody>
                 {{#each this.pagedContent as |command|}}
                   <LinkTo @route="commands.command" @tagName="tr" class="w-100" @model={{command}}>                
                       <td class="col-sm-auto">{{if command.name command.name "unnamed"}}</td>
                       <td class="col-sm"><small class="muted">{{command.response}}</small></td>
+                      <td class="col-sm"><small class="muted">{{command.type}}</small></td>
                       <td class="col-sm-auto">
                         <BsButton @type="" class="btn-link btn-sm mx-auto" @onClick={{fn @gridActiveCommand command}}>
                           <i class="w-100 text-secondary {{if command.active "fa fa-check-square" "fa fa-square-o"}}"></i>

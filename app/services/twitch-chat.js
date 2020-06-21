@@ -68,15 +68,13 @@ export default class TwitchChatService extends Service {
       this.botUsername = options.identity.username.toString();
       this.botclient = new tmi.client(options);
       // Register our event handlers (defined below)
-      // this.botclient.on('connected', this.onBotConnectedHandler);
+      this.botclient.on('connecting', this.soundboard);
+      this.botclient.on('connected', this.onBotConnectedHandler);
+      this.botclient.on('disconnected', this.unloadSoundboard);
       this.botclient.on('message', this.messageHandler);
       this.botclient.on('hosting', this.onHostHandler);
-      // this.superHandler(this.botclient);
-      
-      this.soundboard();
-      
       // Connect the client
-      this.botConnected =  await this.botclient.connect().then(
+      this.botConnected = await this.botclient.connect().then(
         function(){
           console.log("bot client connected!");
           return true;
@@ -85,9 +83,6 @@ export default class TwitchChatService extends Service {
           return false;
         }
       );
-      if(this.botConnected === true && this.enableSoundboard){
-        this.soundboard();
-      }      
       return this.botConnected;
     }
     // We check what kind of client is connecting
@@ -102,7 +97,7 @@ export default class TwitchChatService extends Service {
       //this.chatclient.on('message', this.messageHandler);
    
       // Connect the client
-      this.chatConnected =  await this.chatclient.connect().then(
+      this.chatConnected = await this.chatclient.connect().then(
         function() {
           console.log("chat client connected!");
           return true;
@@ -135,6 +130,19 @@ export default class TwitchChatService extends Service {
    return true;
   }
 
+  // Called every time the bot connects to Twitch chat
+  @action onBotConnectedHandler (addr, port) {
+    console.log(`* Connected to ${addr}:${port}`);
+    //alert(this.botclient.username);
+    this.botclient.say(this.channel, '/me The bot is the house!');
+  }  
+  // Called every time the bot connects to Twitch chat
+  @action onChatConnectedHandler (addr, port) {
+    console.log(`* Connected to ${addr}:${port}`);
+    //alert(this.botclient.username);
+    //this.botclient.say(this.channel, '/me connected using paperbot\'s client!');
+  }
+
   @action soundboard(){
     console.log("Loading the soundboard...");
     if(this.audiocommandslist.lenght !== 0){
@@ -153,11 +161,25 @@ export default class TwitchChatService extends Service {
     }
   }  
 
+  @action unloadSoundboard(){
+    console.log("Unloading the soundboard...");
+    if(this.audiocommandslist.lenght !== 0){
+      this.audiocommandslist.forEach((command) => {
+        this.audio.removeFromRegister('sound', command.name);
+        console.log(command.soundfile+ " unloaded from the soundboard");
+      });
+    } else {
+      console.log("No sound commands to unload in soundboard!");
+    }
+  }
+
   @action onHostHandler (channel, target, viewers) {
     console.log(channel+" hosted "+target+" with our "+viewers+" viewers.");
   }
 
   @action messageHandler(target, tags, msg, self){
+    console.log(tags);
+
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
       timestamp: new Date(),
@@ -189,12 +211,13 @@ export default class TwitchChatService extends Service {
         };
         this.queue.push(this.lastsongrequest);
       } else {
+        // this.commandHandler(target, tags, msg, self);
         this.msglist.push(this.lastmessage);
-        this.commandHandler(target, tags, msg, self);
       }
     } else {
       this.whisperlist.push(this.lastmessage);
     }
+    this.commandHandler(target, tags, msg, self);
   }
 
   // Called every time a message comes in
@@ -203,7 +226,6 @@ export default class TwitchChatService extends Service {
     if (self) { return; }
     // Remove whitespace from chat message
     const commandName = msg.trim();
-    console.log(tags);
     
     // If the command is known, let's execute it      
     if(String(commandName).startsWith('!sr ') && this.takessongrequests){
@@ -247,7 +269,7 @@ export default class TwitchChatService extends Service {
                 break;
               }
               case 'audio':{
-                if (this.soundBoardEnabled){
+                if (this.soundBoardEnabled && command.active){
                   let sound = this.audio.getSound(command.name);
                   sound.changeGainTo(command.volume).from('percent');
                   sound.play();
@@ -282,22 +304,10 @@ export default class TwitchChatService extends Service {
             }
         }
     }
-    return splitText.join('');
+    return htmlSafe(splitText.join(''));
   }
 
   
-  // Called every time the bot connects to Twitch chat
-  @action onBotConnectedHandler (addr, port) {
-    console.log(`* Connected to ${addr}:${port}`);
-    //alert(this.botclient.username);
-    //this.botclient.say(this.channel, '/me ### The bot is the house! ###');
-  }  
-  // Called every time the bot connects to Twitch chat
-  @action onChatConnectedHandler (addr, port) {
-    console.log(`* Connected to ${addr}:${port}`);
-    //alert(this.botclient.username);
-    //this.botclient.say(this.channel, '/me connected using paperbot\'s client!');
-  }
   /*
   superHandler(client){
     client.on("action", (channel, userstate, message, self) => {

@@ -7,12 +7,22 @@
   <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
   <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
   <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
-  <form.element @controlType="file" @label="Sound file" placeholder="Select the sound file..." @property="soundfile" required /> 
-  <form.element @controlType="text" @label="Sound file" placeholder="Select the sound file..." @property="soundfile" required /> 
+  
+  <div class="form-row">
+   <label class="col-form-label col-md-4">Sound file</label> 
+   <div class="col-md-8">
+     <Input id="file" @type="file" @accept="audio/*" {{on "change" (fn this.getAudioPath @command)}} placeholder="Select the sound file..." class="mx-2" />
+   </div>
+  </div>
+  
+  <form.element @controlType="text" placeholder="Select the sound file..." @property="soundfile" as |el|>
+      <el.control disabled />
+  </form.element>
   <form.element @controlType="text" @label="Volume" placeholder="Select the sound file..." @property="volume" required />
   
   <BsButton type="submit" @type="success" @onClick={{fn this.doneEditing}}>Done</BsButton>
-  <BsButton @type="danger" @onClick={{fn @deleteCommand}}>Delete</BsButton>    
+  <BsButton @type="danger" @onClick={{fn @deleteCommand}}>Delete</BsButton>
+  
 </BsForm>
 
 
