@@ -16,15 +16,16 @@
         <div class="col-md-12">
           <table class="table table-striped">
             <tbody>
-              <tr><td>Is the default bot:</td><td>{{@client.defaultbot}}</td></tr>
-              <tr><td>Is the default chat:</td><td>{{@client.defaultchat}}</td></tr>
-              <tr><td>Client type:</td><td>{{@client.type}}</td></tr>
-              <tr><td>Username:</td><td>{{@client.username}}</td></tr>
-              <tr><td>Oauth:</td><td>{{@client.oauth}}</td></tr>
-              <tr><td>Channel:</td><td>{{@client.channel}}</td></tr>
-              <tr><td>Debug:</td><td>{{@client.debug}}</td></tr>
-              <tr><td>Reconnect:</td><td>{{@client.reconnect}}</td></tr>
-              <tr><td>Secure:</td><td>{{@client.secure}}</td></tr>
+              <tr><th>Username:</th><td>{{@client.username}}</td></tr>
+              <tr><th>Client type:</th><td>{{@client.type}}</td></tr>
+              <tr><th>Oauth:</th><td class="text-break py-0 align-middle"><small>{{@client.oauth}}</small></td></tr>
+              <tr><th>Channel:</th><td>{{@client.channel}}</td></tr>
+
+              <tr><th>Debug:</th><td>{{@client.debug}}</td></tr>
+              <tr><th>Reconnect:</th><td>{{@client.reconnect}}</td></tr>
+              <tr><th>Secure:</th><td>{{@client.secure}}</td></tr>
+              <tr><th>Default bot:</th><td>{{@client.defaultbot}}</td></tr>
+              <tr><th>Default chat:</th><td>{{@client.defaultchat}}</td></tr>
             </tbody>
           </table>
         </div>

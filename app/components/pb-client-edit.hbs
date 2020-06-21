@@ -1,16 +1,21 @@
-<BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{fn this.doneEditing}} as |form|>
-  <form.element @controlType="checkbox" @label="Default bot client" @property="defaultbot" />
-  <form.element @controlType="checkbox" @label="Default chat client" @property="defaultchat" />
+<BsForm @formLayout="vertical" @model={{@client}} @onSubmit={{fn this.doneEditing}} as |form|>
+  <form.element @controlType="text" @label="Username" placeholder="Username" @property="username" required />  
   <form.element @controlType="power-select" @property="type" @label="Client type" @options={{@clientTypes}} as |element|>
     <element.control placeholder="Select the client type" />
-  </form.element>
-  <form.element @controlType="text" @label="Username" placeholder="Username" @property="username" required />    
+  </form.element>   
   <form.element @controlType="text" @label="Oauth" placeholder="Oauth" @property="oauth" required />    
-  <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />    
-
-  <form.element @controlType="checkbox" @label="Debug" @property="debug" />
-  <form.element @controlType="checkbox" @label="Reconnect" @property="reconnect" />
-  <form.element @controlType="checkbox" @label="Secure" @property="secure" />
+  <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />      
+  <div class="form-row">
+    <div class="col">
+      <form.element @controlType="checkbox" @label="Debug" @property="debug" />
+      <form.element @controlType="checkbox" @label="Reconnect" @property="reconnect" />
+      <form.element @controlType="checkbox" @label="Secure" @property="secure" />
+    </div>
+    <div class="col">
+      <form.element @controlType="checkbox" @label="Default bot client" @property="defaultbot" />
+      <form.element @controlType="checkbox" @label="Default chat client" @property="defaultchat" />
+    </div>
+  </div>
   
   <BsButton @type="success" @onClick={{fn this.doneEditing}} >Save</BsButton>
   <BsButton @type="danger" @onClick={{fn @deleteClient}}>Delete</BsButton>      

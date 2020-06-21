@@ -22,18 +22,21 @@
     </BsForm>
   </div>
 {{else}}
-  <div class="card-body">
-    <div class="row">
-      <BsButtonGroup class="col" as |bg|>
+  <div class="card-body p-0 my-0 border-top border-light">
+    <div class="row p-0 m-0">
+      <BsButtonGroup class="col p-0 m-0" as |bg|>
+        <bg.button @type="warning btn-sm" @onClick={{fn this.soundboardToggle}}><i class="fa {{if this.soundBoardEnabled "fa-volume-up" "fa-volume-off"}}"></i></bg.button>          
         <bg.button @type="info btn-sm" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</bg.button>
         <bg.button @type="secondary btn-sm" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</bg.button>
         <bg.button @type="danger btn-sm" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</bg.button>
         <bg.button @type="success btn-sm" @onClick={{fn this.finishStream}} disabled={{@stream.finished}}>Finish Stream</bg.button>      
       </BsButtonGroup>
     </div>
+  </div>
+  <div class="card-body py-0 my-0">
     {{#unless this.disconnectButton}}
       {{#if this.requests}}
-      <div class="row mt-3">
+      <div class="row mt-2">
         <div class="col-md">
           <div class="row">
             <div class="col">

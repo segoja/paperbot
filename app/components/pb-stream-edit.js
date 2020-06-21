@@ -16,8 +16,9 @@ export default class PbStreamEditComponent extends Component {
   
   @tracked message = "";
   @tracked msglist = [];  
-  @tracked songqueue = []; 
-  
+  @tracked songqueue = [];
+  @tracked soundBoardEnabled = true;
+
   queueSorting = Object.freeze(['timestamp:asc']);
   @sort (
     'songqueue',
@@ -62,6 +63,10 @@ export default class PbStreamEditComponent extends Component {
   get messages(){
     return this.msglist.slice(-30);
   }   
+
+  get audiocommandslist(){
+    return this.args.commands.filterBy('active', true).filterBy('type','audio');
+  }
   
   get pendingSongs() {
     return this.arrangedQueue.filterBy('processed', false);
@@ -98,10 +103,12 @@ export default class PbStreamEditComponent extends Component {
       this.optsbot.channels = [this.args.stream.channel];
     }
     
+    this.twitchChat.audiocommands = this.audiocommandslist;
+    
     this.twitchChat.connector(this.optsbot, "bot").then(()=>{
         //this.inputDisabled = false;
-        this.twitchChat.botclient.on('message', this.msgGetter);
         this.msgGetter();
+        this.twitchChat.botclient.on('message', this.msgGetter);
       }
     );
   }
@@ -156,7 +163,7 @@ export default class PbStreamEditComponent extends Component {
   
   @action sendMessage() {
     this.twitchChat.chatclient.say(this.twitchChat.channel, this.message);
-    // this.message = "";
+    this.message = "";
   }  
 
   // Stream saving actions  
@@ -183,4 +190,9 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
   } 
   
+  // Soundboard toggle
+  @action soundboardToggle(){
+    this.soundBoardEnabled = !this.soundBoardEnabled;
+    this.twitchChat.soundBoardEnabled = this.soundBoardEnabled;    
+  }
 }

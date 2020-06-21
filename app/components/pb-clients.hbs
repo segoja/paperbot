@@ -1,12 +1,9 @@
 <div class="row">
-  <h3 class="col-md-12">Clients</h3>
-</div>
-<div class="row">
   <div class="col-12">
       {{!-- client listing --}}
       <div class="{{if @isViewing "d-none" "card"}}">
         <div class="card-header">
-          <div class="row">
+          <div class="row">          
             <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
               <form.element @controlType="text" class="w-100" @property="query" as |el|>
                 <el.control
@@ -17,23 +14,26 @@
               </form.element>
             </BsForm>
             <div class="col-auto">
-              <BsButton @type="info" @onClick={{fn @createClient}} class="w-100">Add New</BsButton>
+              <FileUpload @name="importfile" @accept=".csv" @onfileadd={{fn this.clientImport}} hidden={{false}} class="my-0"><span class="btn btn-secondary ember-view">Import</span></FileUpload>
+              <BsButton @type="secondary" @onClick={{fn this.clientExportFiltered}}>Export</BsButton>
+              <BsButton @type="info" @onClick={{fn @createClient}}>Add New</BsButton>
             </div>
           </div>
         </div>
         <div class="card-body mx-0 p-0">
           <div class="row mx-0">
-            <table class="table table-hover col-12 my-0">
+            <table class="table table-hover table-condensed col-12 my-0 w-100">
               <thead>
-                <tr><th>Client list</th><th colspan="2">Type</th></tr>
+                <tr><th class="col-sm">Client</th><th class="col-sm">Type</th><th class="col-sm">Channel</th><th class="col-sm-auto">Admin</th></tr>
               </thead>
               <tbody>
                 {{#each this.pagedContent as |client|}}            
-                  <LinkTo @route="clients.client" @model={{client}} @tagName="tr" class="w-100" >
-                    <td>{{if client.username client.username "<unnamed>"}}</td>
-                    <td>{{client.type}}</td>
-                    <td class="p-0 m-0 align-middle ml-auto">
-                      <BsButtonGroup @class="float-right mr-3" as |bg|>
+                  <LinkTo @route="clients.client" @model={{client}} @tagName="tr" class="w-100">
+                    <td class="col-sm align-top">{{if client.username client.username "<unnamed>"}}</td>
+                    <td class="col-sm align-top">{{client.type}}</td>
+                    <td class="col-sm align-top">{{client.channel}}</td>
+                    <td class="col-sm-auto align-top">
+                      <BsButtonGroup @class="mx-auto" as |bg|>
                         <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditClient client}}><i class="fa fa-pencil-square-o"></i></bg.button>
                         <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteClient client}}><i class="fa fa-trash"></i></bg.button>
                       </BsButtonGroup>

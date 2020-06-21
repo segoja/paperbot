@@ -1,4 +1,4 @@
-<header class="mb-5 pb-4">
+<header class="mb-5 pb-4 px-0">
   <BsNavbar
     @type="dark"
     @backgroundColor="dark"
@@ -10,7 +10,6 @@
     @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
 
     
-    <div class="container">
       <div class="d-inline">
         {{navbar.toggle}}
         <LinkTo @route="index" class="navbar-brand">Paperbot</LinkTo>
@@ -30,9 +29,8 @@
           </navbar.nav>
         </navbar.content>
       </div>
-    </div>
   </BsNavbar>
 </header>
-<main role="main" class="container h-100 px-4">
+<main role="main" class="container h-100 px-0">
   {{outlet}}
 </main>

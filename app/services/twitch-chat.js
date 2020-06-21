@@ -35,11 +35,17 @@ export default class TwitchChatService extends Service {
     return this.commands;
   }
   @tracked clients = this.store.findAll('client');
+  
   get clientlist(){
     return this.clients;
   }
+
+  @tracked audiocommands;
+  get audiocommandslist(){
+    return this.audiocommands;
+  }
   
-  @tracked audiocommandlist = []
+  @tracked soundBoardEnabled = true;
   
   @tracked lastmessage = null;
   @tracked lastsongrequest = null;
@@ -57,6 +63,7 @@ export default class TwitchChatService extends Service {
       if(this.botConnected === true){
         this.botclient.disconnect();
       }
+      
       this.channel = options.channels.toString();
       this.botUsername = options.identity.username.toString();
       this.botclient = new tmi.client(options);
@@ -65,9 +72,12 @@ export default class TwitchChatService extends Service {
       this.botclient.on('message', this.messageHandler);
       this.botclient.on('hosting', this.onHostHandler);
       // this.superHandler(this.botclient);
-
+      
+      this.soundboard();
+      
       // Connect the client
-      this.botConnected =  await this.botclient.connect().then(function(){
+      this.botConnected =  await this.botclient.connect().then(
+        function(){
           console.log("bot client connected!");
           return true;
         }, function() {
@@ -75,6 +85,9 @@ export default class TwitchChatService extends Service {
           return false;
         }
       );
+      if(this.botConnected === true && this.enableSoundboard){
+        this.soundboard();
+      }      
       return this.botConnected;
     }
     // We check what kind of client is connecting
@@ -100,9 +113,9 @@ export default class TwitchChatService extends Service {
         }
       );
       return this.chatConnected;
-    }    
+    }
   }
-  
+
   async disconnector(){
     if(this.botConnected === true){
       this.botclient.disconnect().then(()=>{
@@ -121,7 +134,25 @@ export default class TwitchChatService extends Service {
     }
    return true;
   }
-  
+
+  @action soundboard(){
+    console.log("Loading the soundboard...");
+    if(this.audiocommandslist.lenght !== 0){
+      this.audiocommandslist.forEach((command) => {
+        this.audio.load(command.soundfile).asSound(command.name).then(
+          function() {
+            console.log(command.soundfile+ " loaded in the soundboard");
+          }, 
+          function() {
+            console.log("error loading "+command.soundfile+" in the soundboard!");
+          }
+        );
+      });
+    } else {
+      console.log("No sound commands to load in soundboard!");
+    }
+  }  
+
   @action onHostHandler (channel, target, viewers) {
     console.log(channel+" hosted "+target+" with our "+viewers+" viewers.");
   }
@@ -216,9 +247,11 @@ export default class TwitchChatService extends Service {
                 break;
               }
               case 'audio':{
-                this.audio.load(command.soundfile).asSound(command.name).then(() =>{
-                    this.audio.getSound(command.name).play();
-                  });
+                if (this.soundBoardEnabled){
+                  let sound = this.audio.getSound(command.name);
+                  sound.changeGainTo(command.volume).from('percent');
+                  sound.play();
+                }
                 break;
               }
               default:{

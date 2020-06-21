@@ -2,12 +2,13 @@ import { attr } from '@ember-data/model';
 import { Model } from 'ember-pouch';
 
 export default class ClientModel extends Model {
+  @attr('string', {defaultValue: ""}) username;
+  @attr ('string', {defaultValue: ""}) type;
+  @attr('string', {defaultValue: ""}) oauth;
+  
   @attr ('boolean', {defaultValue: true}) defaultbot;
   @attr ('boolean', {defaultValue: true}) defaultchat;
-  @attr ('string', {defaultValue: ""}) type;
   
-  @attr('string', {defaultValue: ""}) username;
-  @attr('string', {defaultValue: ""}) oauth;
   @attr('string', {defaultValue: ""}) channel;
   @attr ('boolean', {defaultValue: true}) debug;
   @attr ('boolean', {defaultValue: true}) reconnect;

@@ -6,7 +6,7 @@
       <bg.button @type="danger" @onClick={{fn @closeStream}}><i class="fa fa-close"></i></bg.button>
     </BsButtonGroup>
   </div>
-  <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @isEditing={{@isEditing}} @editStream={{@editStream}} @saveStream={{@saveStream}} @deleteStream={{@deleteStream}} />
+  <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @commands={{@commands}} @isEditing={{@isEditing}} @editStream={{@editStream}} @saveStream={{@saveStream}} @deleteStream={{@deleteStream}} />
   {{#unless @isEditing}}  
     {{#if @stream.finished}}
       <div class="card-body pt-0">

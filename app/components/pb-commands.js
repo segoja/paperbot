@@ -80,7 +80,7 @@ export default class PbCommandsComponent extends Component {
     });
   }
   
-  @action exportFiltered() {
+  @action commandExportFiltered() {
     this.filteredContent;
     var csvdata = [];
     if (this.filteredContent !== 0){
