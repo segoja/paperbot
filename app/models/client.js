@@ -27,7 +27,7 @@ export default class ClientModel extends Model {
         username: this.username ? this.username : null,
         password: this.oauth ? this.oauth : null
       },
-      channels: [this.channel ? this.channel : null]
+      //channels: [this.channel ? this.channel : null]
     };
     return opts;
   }

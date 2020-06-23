@@ -100,13 +100,14 @@ export default class PbStreamEditComponent extends Component {
 
   @action connectBot(){
     if(this.args.stream.channel != ''){
-      this.optsbot.channels = [this.args.stream.channel];
+      // this.optsbot.channels = [this.args.stream.channel];
+      this.twitchChat.channel = this.args.stream.channel;
     }
     
     this.twitchChat.audiocommands = this.audiocommandslist;
+    this.twitchChat.commands = this.args.commands;
     
     this.twitchChat.connector(this.optsbot, "bot").then(()=>{
-        //this.inputDisabled = false;
         this.twitchChat.botclient.on('message', this.msgGetter);
       }
     );
@@ -114,9 +115,9 @@ export default class PbStreamEditComponent extends Component {
   
   @action connectChat(){
     if(this.args.stream.channel != ''){
-      this.optschat.channels = [this.args.stream.channel];
+      //this.optschat.channels = [this.args.stream.channel];
+      this.twitchChat.channel = this.args.stream.channel;
     }
-    
     this.twitchChat.connector(this.optschat, "chat");
   }
   
@@ -179,9 +180,9 @@ export default class PbStreamEditComponent extends Component {
     this.args.saveStream();
   }  
   
-  // Song processing related actions
-  
-  @action requestStatus(song) {
+  // Song processing related actions  
+  @action requestStatus(song) {    
+    // We use set in order to make sure the context updates properly.
     set(song, 'processed', !song.processed);
   } 
   
