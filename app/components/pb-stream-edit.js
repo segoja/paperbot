@@ -13,17 +13,27 @@ export default class PbStreamEditComponent extends Component {
   @tracked optsbot = this.args.stream.botclient.get('optsgetter');
   @tracked optschat = this.args.stream.chatclient.get('optsgetter');
   @tracked scrollPosition = 0;
+  @tracked scrollPlayedPosition = 0;
+  @tracked scrollPendingPosition = 0;
   
   @tracked message = "";
   @tracked msglist = [];  
   @tracked songqueue = [];
   @tracked soundBoardEnabled = true;
 
-  queueSorting = Object.freeze(['timestamp:asc']);
+  queueAscSorting = Object.freeze(['timestamp:asc']);
+  
   @sort (
     'songqueue',
-    'queueSorting'
-  ) arrangedQueue;
+    'queueAscSorting'
+  ) arrangedAscQueue;
+  
+  queueDescSorting = Object.freeze(['timestamp:desc']);    
+  @sort (
+    'songqueue',
+    'queueDescSorting'
+  ) arrangedDescQueue;
+  
   
   
   get disableBotButton(){
@@ -69,11 +79,11 @@ export default class PbStreamEditComponent extends Component {
   }
   
   get pendingSongs() {
-    return this.arrangedQueue.filterBy('processed', false);
+    return this.arrangedDescQueue.filterBy('processed', false);
   }
   
   get playedSongs() {
-    return this.arrangedQueue.filterBy('processed', true);
+    return this.arrangedAscQueue.filterBy('processed', true);
   }
   
   // Whith this getter we control the queue display while keeping the service updated with the settings.
@@ -157,6 +167,8 @@ export default class PbStreamEditComponent extends Component {
     this.msglist = this.twitchChat.messages;    
     this.songqueue = this.twitchChat.queue;
     this.scrollPosition = 1500;
+    this.scrollPlayedPosition = this.pendingSongs.get('length');
+    this.scrollPendingPosition = this.playedSongs.get('length');
   }
   
   @action sendMessage() {
@@ -186,6 +198,8 @@ export default class PbStreamEditComponent extends Component {
   @action requestStatus(song) {    
     // We use set in order to make sure the context updates properly.
     set(song, 'processed', !song.processed);
+    this.scrollPlayedPosition = this.pendingSongs.get('length');
+    this.scrollPendingPosition = this.playedSongs.get('length');
   } 
   
   // Soundboard toggle

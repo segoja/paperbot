@@ -509,6 +509,8 @@ export default class TwitchChatService extends Service {
 
   
   @action superHandler(client){
+    console.log(client);
+/*
     client.on("action", (channel, userstate, message, self) => {
         // Don't listen to my own messages..
         if (self) return;
@@ -526,18 +528,19 @@ export default class TwitchChatService extends Service {
         console.log(userstate);
         console.log(username+' - '+reason);
     });
-
+*/
     /*client.on("chat", (channel, userstate, message, self) => {
         // Don't listen to my own messages..
         if (self) return;
         // Do your stuff.
     });*/
-
+/*
     client.on("cheer", (channel, userstate, message) => {
         // Do your stuff.
         console.log(userstate);        
         console.log(message);
     });
+*/
     /*
     client.on("clearchat", (channel) => {
         // Do your stuff.
@@ -556,7 +559,7 @@ export default class TwitchChatService extends Service {
     client.on("disconnected", (reason) => {
         // Do your stuff.
     });*/
-
+/*
     client.on("emoteonly", (channel, enabled) => {
         // Do your stuff.
     });
@@ -594,6 +597,7 @@ export default class TwitchChatService extends Service {
     client.on("logon", () => {
         // Do your stuff.
     });
+*/
     /*
     client.on("message", (channel, userstate, message, self) => {
         // Don't listen to my own messages..
@@ -615,7 +619,7 @@ export default class TwitchChatService extends Service {
                 break;
         }
     });*/
-
+/*
     client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
         // Do your stuff.
     });
@@ -735,5 +739,6 @@ export default class TwitchChatService extends Service {
 
         // Do your stuff.
     });
+    */
   }
 }

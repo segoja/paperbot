@@ -22,7 +22,7 @@
     </BsForm>
   </div>
 {{else}}
-  <div class="card-body p-0 my-0 border-top border-light">
+  <div class="card-body px-0 pt-0 pb-2 border-top border-light">
     <div class="row p-0 m-0">
       <BsButtonGroup class="col p-0 m-0" as |bg|>
         <bg.button @type="warning btn-sm" @onClick={{fn this.soundboardToggle}} disabled={{this.disconnectButton}}><i class="fa {{if this.soundBoardEnabled "fa-volume-up" "fa-volume-off"}}"></i></bg.button>          
@@ -33,85 +33,86 @@
       </BsButtonGroup>
     </div>
   </div>
-  <div class="card-body py-0 my-0">
     {{#unless this.disconnectButton}}
       {{#if this.requests}}
-      <div class="row mt-2">
-        <div class="col-md">
-          <div class="row">
-            <div class="col">
-              <h6>Songs pending</h6>
+          <div class="card-body pb-0 mb-0 h-50 flex-column flex-fill d-flex">
+            <div class="row h-100 overflow-hidden">
+              <div class="col-sm col-md-6 h-100 flex-column flex-fill d-flex">
+                <div class="row">
+                  <div class="col alert-dark">
+                    <h6 class="d-inline py-1 my-1">Songs pending</h6>
+                  </div>
+                </div>
+                <div class="row h-100 overflow-hidden">
+                  <div class="col-md queueframe" {{scroll-position this.scrollPendingPosition relative=false}}>
+                    {{#each this.pendingSongs as |pendingsong|}}
+                      <span {{on "click" (fn this.requestStatus pendingsong)}} class="alert-primary d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
+                        <div class="row">
+                          <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                          <div class="col-auto"><small>{{pendingsong.user}}</small></div>
+                        </div>
+                        <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
+                      </span>
+                    {{/each}}
+                  </div>  
+                </div>
+              </div>
+              <div class="col-md-6 d-sm-none d-md-flex h-100 flex-column flex-fill ">
+                <div class="row">
+                  <div class="col alert-dark">
+                     <h6 class="d-inline py-1 my-1">Songs played</h6>
+                  </div>
+                </div>
+                <div class="row h-100 overflow-hidden">
+                  <div class="col-md queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
+                    {{#each this.playedSongs as |playedsong|}}
+                      <span {{on "click" (fn this.requestStatus playedsong)}} class="alert-secondary d-flex flex-column text-decoration-none py-0 px-2 my-1">
+                        <div class="row">
+                          <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                          <div class="col-auto"><small>{{playedsong.user}}</small></div>
+                        </div>
+                        <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
+                      </span>
+                    {{/each}}
+                  </div>  
+                </div>
+              </div>      
             </div>
           </div>
-          <div class="row">
-            <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPendingPosition relative=false}}>
-              {{#each this.pendingSongs as |pendingsong|}}
-                <a href="#" {{on "click" (fn this.requestStatus pendingsong)}} class="alert alert-primary d-block text-decoration-none py-0 px-2 my-1">
-                  <div class="row">
-                    <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
-                    <div class="col-auto"><small>{{pendingsong.user}}</small></div>
-                  </div>
-                  <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
-                </a>
-              {{/each}}
-            </div>  
-          </div>
-        </div>
-        <div class="col">
-          <div class="row">
-            <div class="col">
-               <h6>Songs played</h6>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md overflow-auto queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
-              {{#each this.playedSongs as |playedsong|}}
-                <a href="#" {{on "click" (fn this.requestStatus playedsong)}} class="alert alert-secondary d-block text-decoration-none py-0 px-2 my-1">
-                  <div class="row">
-                    <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
-                    <div class="col-auto"><small>{{playedsong.user}}</small></div>
-                  </div>
-                  <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
-                </a>
-              {{/each}}
-            </div>  
-          </div>
-        </div>      
-      </div>  
       {{/if}}
     
-
-      <div class="row">
-        <div class="col-md-12">
-          <table class="table table-striped ">
-            <thead><tr><th>Recent Messages</th></tr></thead>
-          </table>
+      <div class="card-body py-0 my-0 h-50 flex-column flex-fill d-flex">
+        <div class="row">
+          <div class="col-md-12 alert-dark">
+            <h6 class="d-inline py-1 my-1">Recent Messages</h6>
+          </div>
         </div>
-        <div class="col-md-12 overflow-auto chatframe" {{scroll-position this.scrollPosition relative=false}}>
-          <table class="table table-striped ">
-            <tbody>      
-              {{#each this.messages as |message|}}
-                <tr id="{{message.id}}">
-                  <td class="chatline {{if message.reward "highlight alert-warning"}}">
-                    {{message-format message}}
-                  </td>
-                </tr>
-              {{/each}}
-            </tbody>
-          </table>     
+        <div class="row h-100 overflow-hidden">
+          <div class="col-md-12 chatframe" {{scroll-position this.scrollPosition relative=true}}>
+            {{#each this.messages as |message|}}
+              <div class="row" id="{{message.id}}">
+                <div class="col chatline py-2 {{if message.reward "highlight alert-warning"}}">
+                  {{message-format message}}
+                </div>
+              </div>
+            {{/each}}     
+          </div>
         </div>
       </div>
-      <div class="row">
-        <BsForm @formLayout="vertical" @model={{this}} class="col-md-12" @onSubmit={{fn this.sendMessage}} as |form|>
-          <form.element @property="message" as |el|>
-            <el.control 
-              @controlType="text"
-              placeholder="Type your message here"
-              readonly={{this.inputDisabled}}        
-            />
-          </form.element>
-        </BsForm>
-      </div>    
     {{/unless}}
-  </div>
+    {{#unless this.disconnectButton}}  
+      <div class="card-footer flex-column flex-fill d-flex"> 
+        <div class="row">
+          <BsForm @formLayout="vertical" @model={{this}} class="col-md-12" @onSubmit={{fn this.sendMessage}} as |form|>
+            <form.element @property="message" as |el|>
+              <el.control 
+                @controlType="text"
+                placeholder="Type your message here"
+                readonly={{this.inputDisabled}}        
+              />
+            </form.element>
+          </BsForm>
+        </div>      
+      </div>
+    {{/unless}}
 {{/if}}

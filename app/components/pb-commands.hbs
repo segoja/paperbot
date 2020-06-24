@@ -1,10 +1,10 @@
-<div class="row">
-  <div class="col-12">
+<div class="row pt-5">
+  <div class="col-12 pt-3">
       {{!-- command listing --}}
       <div class="{{if @isViewing "d-none" "card"}}">
         <div class="card-header">
           <div class="row">
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md col-sm-6 col-12" @onchange={{this.resetPage}} as |form|>
               <form.element @controlType="text" class="w-100" @property="query" as |el|>
                 <el.control
                   placeholder="Filter by name"
@@ -13,7 +13,7 @@
                 />
               </form.element>
             </BsForm>
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-auto pl-0" @onchange={{this.resetPage}} as |form|>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-auto col-sm-6 col-12" @onchange={{this.resetPage}} as |form|>
               <form.element @controlType="power-select" @property="type" class="w-100" @options={{@commandTypes}} as |element| >
                 <element.control  @triggerClass="w-100" @allowClear={{true}} @placeholder="Filter by type" class="w-100" as |option|>
                   <span class="w-100">{{option}}</span>
@@ -31,16 +31,16 @@
           <div class="row mx-0">
             <table class="table table-hover table-condensed col-12 my-0">
               <thead>
-                <tr><th class="col-sm-auto">Command</th><th class="col-sm">Response</th><th class="col-sm-auto">Type</th><th class="col-sm-auto">Active</th><th class="col-sm-auto">Admin</th></tr>
+                <tr><th class="col-sm-auto">Command</th><th class="col-md d-none d-lg-table-cell">Response</th><th class="col-sm-auto">Type</th><th class="col-sm-auto">Active</th><th class="col-sm-auto">Admin</th></tr>
               </thead>
               <tbody>
                 {{#each this.pagedContent as |command|}}
                   <LinkTo @route="commands.command" @tagName="tr" class="w-100" @model={{command}}>                
                       <td class="col-sm-auto">{{if command.name command.name "unnamed"}}</td>
-                      <td class="col-sm"><small class="muted">{{command.response}}</small></td>
+                      <td class="col-md d-none d-lg-table-cell"><small class="muted">{{command.response}}</small></td>
                       <td class="col-sm"><small class="muted">{{command.type}}</small></td>
                       <td class="col-sm-auto">
-                        <BsButton @type="" class="btn-link btn-sm mx-auto" @onClick={{fn @gridActiveCommand command}}>
+                        <BsButton @type="" class="btn-link btn-md mx-auto" @onClick={{fn @gridActiveCommand command}}>
                           <i class="w-100 text-secondary {{if command.active "fa fa-check-square" "fa fa-square-o"}}"></i>
                         </BsButton>
                       </td>

@@ -55,7 +55,7 @@ export default class PbCommandsComponent extends Component {
   @action commandImport(file){
     let reader = new FileReader();
     reader.readAsText(file.blob).then((text) => {    
-      let reference = ["name","type","active","cooldown","timer","response","soundfile","volume"];
+      let reference = ["name","type","active","admin","mod","vip","sub","cooldown","timer","response","soundfile","volume"];
 
       let rows = PapaParse.parse(text,{header: true, skipEmptyLines: true}).data;
       
@@ -84,10 +84,10 @@ export default class PbCommandsComponent extends Component {
     this.filteredContent;
     var csvdata = [];
     if (this.filteredContent !== 0){
-      let header = ["name","type","active","cooldown","timer","response","soundfile","volume"];
+      let header = ["name","type","active","admin","mod","vip","sub","cooldown","timer","response","soundfile","volume"];
       csvdata.push(header);
       this.filteredContent.forEach((command) => {
-        let csvrow = [command.name, command.type, command.active, command.cooldown, command.timer, command.response, command.soundfile, command.volume];
+        let csvrow = [command.name, command.type, command.active, command.admin, command.mod, command.vip, command.sub, command.cooldown, command.timer, command.response, command.soundfile, command.volume];
         csvdata.push(csvrow);
       });
     }

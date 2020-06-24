@@ -1,0 +1,73 @@
+@import "ember-bootstrap/bootstrap";
+@import 'ember-power-select';
+
+$enable-responsive-font-sizes: true;
+
+html,body{
+    height:100%;
+}
+
+.flex-fill {
+    flex:1;
+} 
+
+.chatframe, .queueframe{
+  max-height: 100% !important;
+  overflow-y: scroll;
+}
+.chatframe::-webkit-scrollbar {
+  display: none;
+} 
+
+.queueframe::-webkit-scrollbar {
+}
+
+
+.chatframe .row:nth-of-type(odd) {
+  background-color: WhiteSmoke;
+}
+.chatframe .row:nth-of-type(even) {
+  background: #FFFFFF; 
+}
+
+div.highlight{
+  border-left: 4px solid!important;
+  padding-left: 11px;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.75em;
+}
+
+.processed{
+  text-decoration: line-through;
+}
+
+.ember-power-select-trigger{
+  height: calc(1.5em + 0.75rem + 2px)!important;
+  line-height: 2.25em!important;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #6C757D!important;
+}
+.ember-power-select-placeholder {
+    color: #6C757D;
+}
+/*.ember-power-select-status-icon{
+  background-color: #ededed;
+  line-height: 1.5em;
+}*/
+
+.ember-power-select-clear-btn {
+ position: static!important;
+ background-color: #ffffff;
+ display: inline-block;
+ width: 1.4em;
+ text-align: center;
+}
+
+img.twitch-emoticon{
+  height: 1.5rem!important;
+}
+img.twitch-badge{
+  height: 1.25rem!important;
+}

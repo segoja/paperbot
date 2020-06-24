@@ -40,7 +40,12 @@ module.exports = function(defaults) {
 
     'ember-bootstrap': {
       'bootstrapVersion': 4,
-      'importBootstrapCSS': true
+      'importBootstrapCSS': false,
+      'insertEmberWormholeElementToDom': false
+    },
+    
+    sassOptions: {
+
     }
   });
 
