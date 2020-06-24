@@ -10,8 +10,8 @@ p.spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
 
 
 .chatframe{
-  min-height: 550px;
-  max-height: 550px;  
+  min-height: 550px!important;
+  max-height: 550px!important;  
 }
 
 .queueframe{
@@ -24,13 +24,11 @@ td.highlight{
   border-top: 1px solid!important;
   border-bottom: 1px solid!important;
   border-left: 10px solid!important;
-  padding-top: 1.2rem;
-  padding-bottom: 1.2rem;
   display: inline-block;
   width: 100%;
   font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.2;
+  font-weight: 400;
+  line-height: 1.2em;
 }
 
 .processed{
@@ -59,6 +57,9 @@ td.highlight{
  text-align: center;
 }
 
-img.emoticon{
+img.twitch-emoticon{
   height: 1.5rem!important;
+}
+img.twitch-badge{
+  height: 1.25rem!important;
 }

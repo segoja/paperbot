@@ -4,6 +4,7 @@ import { tracked } from '@glimmer/tracking';
 import tmi from 'tmi.js';
 import { htmlSafe } from '@ember/template';
 import { action } from "@ember/object";
+import { assign } from '@ember/polyfills';
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -46,7 +47,12 @@ export default class TwitchChatService extends Service {
   
   @tracked takessongrequests;
   
-  @tracked channelBadges;
+  @tracked channelBadges = [];
+  @tracked globalBadges = [];
+  get allbadges(){
+    let pack = assign(this.globalBadges, this.channelBadges);
+    return pack;    
+  }
   
   defaultColors = [
         ('Red', 'rgb(255, 0, 0)'),
@@ -103,11 +109,10 @@ export default class TwitchChatService extends Service {
       );
       if(this.botConnected){
         this.botclient.join(this.channel);
-        this.superHandler(this.botclient);
-        this.chanId = this.twitchNameToUser(this.channel);
-        this.channelBadges = this.getBadges(this.chanId);
+        // this.superHandler(this.botclient);
+        this.twitchNameToUser(this.channel);
+        console.log(this.badgespack);
       }
-      
       return this.botConnected;
     }
     // We check what kind of client is connecting
@@ -203,7 +208,8 @@ export default class TwitchChatService extends Service {
 
   @action messageHandler(target, tags, msg, self){
     console.log(tags);
-
+    // this.parseBadges(tags['badges']);
+    
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
       timestamp: new Date(),
@@ -214,6 +220,7 @@ export default class TwitchChatService extends Service {
       color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
       csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),        
       badges: tags['badges'] ? tags['badges'] : null,
+      htmlbadges:  tags['badges'] ? this.parseBadges(tags['badges']).toString(): '',
       type: tags['message-type'] ? tags['message-type'] : null,
       usertype: tags['user-type'] ? tags['user-type'].toString() : null,
       reward: tags['msg-id'] ? true : false,
@@ -272,49 +279,114 @@ export default class TwitchChatService extends Service {
         this.queue.push(this.lastsongrequest);
       }
       console.log(`* Executed ${commandName} command`);        
-    } else {        
+    } else {
       this.commandlist.forEach((command) => {
-        if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
-          /*if (self) { 
-            return;  
-          } else {*/
-            switch (command.type) {
-              case 'parameterized':{
-                let pattern = new RegExp(`${command.name}`, 'gi');
-                
-                let param = commandName.replace(pattern, '').trim();
-                
-                let answerraw = command.response;
-                
-                let answer = answerraw.replace(/\$param/g, param).trim();
-                
-                this.botclient.say(target, answer);
-                
-                console.log(`* Executed ${command.name} command`);
-                
-                break;
-              }
-              case 'audio':{
-                if (this.soundBoardEnabled){
-                  let sound = this.audio.getSound(command.name);
-                  sound.changeGainTo(command.volume).from('percent');
-                  sound.play();
+          if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
+            /*if (self) { 
+              return;  
+            } else {*/
+            if(this.commandPermissionHandler(command, tags) === true){
+              switch (command.type) {
+                case 'parameterized':{
+                  let pattern = new RegExp(`${command.name}`, 'gi');
+                  
+                  let param = commandName.replace(pattern, '').trim();
+                  
+                  let answerraw = command.response;
+                  
+                  let answer = answerraw.replace(/\$param/g, param).trim();
+                  
+                  this.botclient.say(target, answer);
+                  
+                  console.log(`* Executed ${command.name} command`);
+                  
+                  break;
                 }
-                break;
+                case 'audio':{
+                  if (this.soundBoardEnabled){
+                    let sound = this.audio.getSound(command.name);
+                    sound.changeGainTo(command.volume).from('percent');
+                    sound.play();
+                  }
+                  break;
+                }
+                default:{
+                  this.botclient.say(target, command.response);
+                  console.log(`* Executed ${command.name} command`);
+                  break;
+                }
               }
-              default:{
-                this.botclient.say(target, command.response);
-                console.log(`* Executed ${command.name} command`);
-                break;
-              }
-            }
-          /*}*/
-        }
+            } else{ 
+              console.log("Not authorized to use "+command.name+" command.")
+            } 
+            /*}*/
+          }
+
       });        
     }
   }
 
-
+  
+  @action commandPermissionHandler(command, tags){
+    if(tags['badges'] != null){
+      var admin = false;      
+      var mod = false;
+      var vip = false;
+      var sub = false;      
+      
+      for(var category in tags['badges']) {
+        switch (category) {
+          case 'broadcaster':{
+            admin = true;
+            break;
+          }
+          case 'moderator':{
+            mod = true;
+            break;
+          }
+          case 'vip':{
+            vip = true;
+            break;
+          }
+          case 'subscriber':{
+            sub = true;
+            break;
+          }          
+        }
+      }
+      //console.log('User -> admin: '+admin+', mod: '+mod+', vip: '+vip+', sub: '+sub+'');
+      //console.log('Command -> admin: '+command.admin+', mod: '+command.mod+', vip: '+command.vip+', sub: '+command.sub+'');
+      
+      if(command.admin === true && admin === true){
+        return true;
+      }
+      
+      if(command.mod === true && (mod === true || admin === true)){
+        return true;
+      }
+      
+      if(command.vip === true && (vip === true|| mod === true || admin === true)){
+        return true;
+      }
+      
+      if(command.sub === true && (sub === true || vip === true || mod === true || admin === true)){
+        return true
+      }
+      
+      if(command.sub === false && command.vip === false && command.mod === false && command.admin === false){
+        return true;
+      } 
+    }
+    if(tags['badges'] === null && (command.sub === true || command.vip === true || command.mod === true || command.admin === true)){      
+      return false;
+    }
+    
+    if(command.sub === false && command.vip === false && command.mod === false && command.admin === false){      
+      return true;
+    }    
+    return false;
+  }
+  
     /**
      * Sets the default color based on the nick.
      */
@@ -329,22 +401,23 @@ export default class TwitchChatService extends Service {
       return color ;
     }
 
-  @action parseBadges(emotes) {
-    for(var i in emotes) {
-        var e = emotes[i];
-        for(var j in e) {
-            var mote = e[j];
-            if(typeof mote == 'string') {
-                mote = mote.split('-');
-                mote = [parseInt(mote[0]), parseInt(mote[1])];
-                var length =  mote[1] - mote[0],
-                    empty = Array.apply(null, new Array(length + 1)).map(function() { return '' });
-                splitText = splitText.slice(0, mote[0]).concat(empty).concat(splitText.slice(mote[1] + 1, splitText.length));
-                splitText.splice(mote[0], 1, '<img class="emoticon" src="https://static-cdn.jtvnw.net/badges/v1/' + i + '/3">');
-            }
-        }
-    }
-    return htmlSafe(splitText.join(''));
+  @action parseBadges(userbadges) {
+    var htmlbadges = '';
+    // console.log(userbadges);
+    for(var category in userbadges) {
+      // console.log("this is the first index: "+category);
+      var badge = userbadges[category];
+      // console.log("this is the second index: "+badge);        
+
+      if (this.allbadges[category]['versions'][badge]){
+        
+        let description = this.allbadges[category]['versions'][badge]['description'];
+        let url = this.allbadges[category]['versions'][badge]['image_url_4x'];
+        
+        htmlbadges = htmlbadges+'<img class="twitch-badge" title="'+description+'" src="'+url+'">';            
+      }
+    }    
+    return htmlSafe(htmlbadges);    
   }
 
   @action parseMessage(text, emotes) {
@@ -359,7 +432,7 @@ export default class TwitchChatService extends Service {
                 var length =  mote[1] - mote[0],
                     empty = Array.apply(null, new Array(length + 1)).map(function() { return '' });
                 splitText = splitText.slice(0, mote[0]).concat(empty).concat(splitText.slice(mote[1] + 1, splitText.length));
-                splitText.splice(mote[0], 1, '<img class="emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + i + '/3.0">');
+                splitText.splice(mote[0], 1, '<img class="twitch-emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' + i + '/3.0">');
             }
         }
     }
@@ -369,49 +442,69 @@ export default class TwitchChatService extends Service {
   // Badge retrieving system: //
   // ************************ //
 
-    @action formQuerystring(qs = {}) {
-      return Object.keys(qs)
-        .map(key => `${key}=${qs[key]}`)
-        .join('&');
-    }
+  formQuerystring(qs = {}) {
+    return Object.keys(qs)
+      .map(key => `${key}=${qs[key]}`)
+      .join('&');
+  }
 
-    async request({ base = '', endpoint = '', qs, headers = {}, method = 'get' }) {
-      let opts = {
-          method,
-          headers: new Headers(headers)
-        };
-      return fetch(base + endpoint + '?' + this.formQuerystring(qs), opts)
-      .then(res => res.json());
-    }
+  request({ base = '', endpoint = '', qs, headers = {}, method = 'get' }) {
+    let opts = {
+        method,
+        headers: new Headers(headers)
+      };
+    return fetch(base + endpoint + '?' + this.formQuerystring(qs), opts)
+    .then(res => res.json());
+  }
 
 
-  @action kraken(opts) {
+  kraken(opts) {
     let defaults = {
         base: 'https://api.twitch.tv/kraken/',
         headers: {
-          'Client-ID': this.botPassword,
+          'Client-ID': this.botUsername,
+          'Authorization': 'OAuth '+this.botPassword,          
           Accept: 'application/vnd.twitchtv.v5+json'
         }
       };
+    
     return this.request(Object.assign(defaults, opts));
   }
   
-  @action twitchNameToUser(username) {
-    return this.kraken({
+  twitchNameToUser(username) {
+    let opts = {
       endpoint: 'users',
-      qs: { login: username.toString() }
-    })
-    .then(({ users }) => users[0] || null);
+      qs: { login: username }
+    };
+    
+    this.kraken(opts).then((data) => {
+      // console.log(username+' id number is: '+data.users[0]._id);
+      this.chanId = data.users[0]._id;
+      //console.log(this.chanId);
+      this.getBadges(this.chanId);
+      this.getBadges('');
+    });
   }
   
-  @action getBadges(channel) {
+  getBadges(channel) {
     let opts = {
       base: 'https://badges.twitch.tv/v1/badges/',
       endpoint: (channel ? `channels/${channel}` : 'global') + '/display',
       qs: { language: 'en' }
     };
     
-    return this.kraken(opts).then(data => data.badge_sets);
+    this.kraken(opts).then((data) => {
+      //console.log('Getting badges!');
+      //console.log(data.badge_sets);
+      if(channel){
+        this.channelBadges = data.badge_sets;        
+      } else {
+        this.globalBadges = data.badge_sets;
+      }
+      if(this.channelBadges && this.globalBadges){
+        //console.log(this.allbadges);
+      }
+    });
   }
 
   

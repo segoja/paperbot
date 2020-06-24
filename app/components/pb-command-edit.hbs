@@ -3,12 +3,21 @@
   <form.element @controlType="power-select" @property="type" @label="Type" @options={{@commandTypes}} as |element| >
     <element.control placeholder="Select the command type" />
   </form.element>
-  <form.element @controlType="checkbox" @label="Active" @property="active" />
+  <form.element @controlType="checkbox" @label="Active" @class="pl-1" @property="active" />
   <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
   <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
+  <div class="form-group row ember-view">
+    <label class="col-md-4">Permissions</label>
+    <div class="col-sm pl-0">
+      <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" @class="form-check form-check-inline" @property="admin" />
+      <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" @class="form-check form-check-inline" @property="mod" />
+      <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" @class="form-check form-check-inline" @property="sub" />
+      <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  @class="form-check form-check-inline" @property="vip" />
+    </div>
+  </div>
   <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
   
-  <div class="form-row">
+  <div class="form-group row ember-view">
    <label class="col-form-label col-md-4">Sound file</label> 
    <div class="col-md-8">
      <Input id="file" @type="file" @accept="audio/*" {{on "change" (fn this.getAudioPath @command)}} placeholder="Select the sound file..." class="mx-2" />

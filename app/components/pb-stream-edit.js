@@ -143,7 +143,9 @@ export default class PbStreamEditComponent extends Component {
     
     this.args.stream.finished = true;
     this.args.saveStream();
-    
+    this.twitchChat.whisperlist = [];
+    this.twitchChat.msglist = [];
+    this.twitchChat.queue = [];    
     this.songqueue = [];
     this.msglist = [];
   }
