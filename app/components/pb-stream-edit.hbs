@@ -46,13 +46,13 @@
                 <div class="row h-100 overflow-hidden">
                   <div class="col-md queueframe" {{scroll-position this.scrollPendingPosition relative=false}}>
                     {{#each this.pendingSongs as |pendingsong|}}
-                      <span {{on "click" (fn this.requestStatus pendingsong)}} class="alert-primary d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
+                      <div role="button" {{on "click" (fn this.requestStatus pendingsong)}} class="alert-primary d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                         <div class="row">
                           <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
                           <div class="col-auto"><small>{{pendingsong.user}}</small></div>
                         </div>
                         <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
-                      </span>
+                      </div>
                     {{/each}}
                   </div>  
                 </div>
@@ -66,13 +66,13 @@
                 <div class="row h-100 overflow-hidden">
                   <div class="col-md queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
                     {{#each this.playedSongs as |playedsong|}}
-                      <span {{on "click" (fn this.requestStatus playedsong)}} class="alert-secondary d-flex flex-column text-decoration-none py-0 px-2 my-1">
+                      <div role="button" {{on "click" (fn this.requestStatus playedsong)}} class="alert-secondary d-flex flex-column text-decoration-none py-0 px-2 my-1">
                         <div class="row">
                           <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
                           <div class="col-auto"><small>{{playedsong.user}}</small></div>
                         </div>
                         <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
-                      </span>
+                      </div>
                     {{/each}}
                   </div>  
                 </div>
