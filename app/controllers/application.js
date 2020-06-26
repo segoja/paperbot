@@ -1,29 +1,41 @@
 import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
-
+import { action } from '@ember/object';
+import { enable as DarkmodeEnable, disable as DarkmodeDisable,  auto as followSystemColorScheme } from 'darkreader';
 export default class ApplicationController extends Controller {
   @service cloudState;
   @service audio;
   @service store;
+  @service router;  
+  @service headData;
   
-  get soundboard(){
-    let audiocommandslist = this.store.findAll('command').filterBy('type','audio').filterBy('active', true);
-    
-    console.log("Loading the soundboard...");
-    if(audiocommandslist.lenght !== 0){
-      audiocommandslist.forEach((command) => {
-        this.audio.load(command.soundfile).asSound(command.name).then(
-          function() {
-            console.log(command.soundfile+ " loaded in the soundboard");
-          }, 
-          function() {
-            console.log("error loading "+command.soundfile+" in the soundboard!");
-          }
-        );
-      });
+  get darkmode(){
+    if(this.model.get('lenght') != 0){
+      if (this.model.filterBy('isdefault', true).get('firstObject'));
+      var config = this.model.filterBy('isdefault', true).get('firstObject');
+      return config.darkmode;
     } else {
-      console.log("No sound commands to load in soundboard!");
+      return this.headData.darkMode;
     }
-    return "Soundboard ON";
-  }  
+  }
+
+  @action toggleMode(){
+
+    if(this.model.get('lenght') != 0){
+      if (this.model.filterBy('isdefault', true).get('firstObject'));
+      var config = this.model.filterBy('isdefault', true).get('firstObject');
+      config.darkmode = !config.darkmode;
+      config.save();
+      this.headData.set('darkMode', this.darkMode);      
+    } else {
+      this.headData.set('darkMode', !this.darkMode);
+    }
+
+    /*followSystemColorScheme();
+    if (this.headData.darkMode){
+      DarkmodeDisable();
+    } else {
+      DarkmodeEnable ({brightness: 100, contrast: 100, sepia: 0});
+    }*/    
+  }
 }

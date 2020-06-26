@@ -5,6 +5,15 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function(defaults) {
   let config = process.env.EMBER_ENV || 'development';
   let app = new EmberApp(defaults, {
+    outputPaths: {
+      app: {
+        css: {
+          'app': '/assets/paperbot.css', // FOR LIGHT THEME => app.scss
+          'dark': '/assets/paperbot-dark.css' // FOR DAR THEME => dark.scss
+        }
+      }
+    },    
+    
     // IE 11 needs a Polyfill for startsWith
     'ember-cli-babel': {
       includePolyfill: true
@@ -43,10 +52,21 @@ module.exports = function(defaults) {
       'importBootstrapCSS': false,
       'insertEmberWormholeElementToDom': false
     },
+    'ember-cli-bootswatch': {
+      theme: 'pulse',
+      importSass: true,
+      importCss: false,
+      // importJS: ['button','tooltip']
+    },
     
     sassOptions: {
 
     }
+    
+    
+    
+    
+    
   });
 
   // Use `app.import` to add additional libraries to the generated

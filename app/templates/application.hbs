@@ -1,3 +1,4 @@
+<HeadLayout />
 <header class="mb-5 pb-4 px-0">
   <BsNavbar
     @type="dark"
@@ -13,10 +14,15 @@
       <div class="d-inline">
         {{navbar.toggle}}
         <LinkTo @route="index" class="navbar-brand">Paperbot</LinkTo>
-      </div>
+      </div>     
       <div class="d-inline">
         <navbar.content>
           <navbar.nav as |nav|>
+            <nav.item>
+              <span role="button" {{on "click" this.toggleMode}} class="btn navbar-brand my-2 my-sm-0">
+                <i class="fa {{if this.headData.darkMode "fa-moon-o active" "fa-sun-o"}}"></i>
+              </span>
+            </nav.item>
             <nav.item>
               <nav.link-to @route="streams.index">Streams</nav.link-to>
             </nav.item>
@@ -25,7 +31,10 @@
             </nav.item>
             <nav.item>
               <nav.link-to @route="clients.index">Clients</nav.link-to>
-            </nav.item>      
+            </nav.item> 
+            <nav.item>
+              <nav.link-to @route="settings.index">Settings</nav.link-to>
+            </nav.item>             
           </navbar.nav>
         </navbar.content>
       </div>

@@ -1,0 +1,59 @@
+<div class="row pt-5">
+  <div class="col-12 pt-3">
+      {{!-- config listing --}}
+      <div class="{{if @isViewing "d-none" "card"}}">
+        <div class="card-header">
+          <div class="row">          
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
+              <form.element @controlType="text" class="w-100" @property="query" as |el|>
+                <el.control
+                  placeholder="Filter Configs"
+                  tabIndex={{5}}
+                  class="w-100"
+                />
+              </form.element>
+            </BsForm>
+            <div class="col-auto">
+              <FileUpload @name="importfile" @accept=".csv" @onfileadd={{fn this.configImport}} hidden={{false}} class="my-0"><span class="btn btn-secondary ember-view">Import</span></FileUpload>
+              <BsButton @type="secondary" @onClick={{fn this.configExportFiltered}}>Export</BsButton>
+              <BsButton @type="info" @onClick={{fn @createConfig}}>Add New</BsButton>
+            </div>
+          </div>
+        </div>
+        <div class="card-body mx-0 p-0">
+          <div class="row mx-0">
+            <table class="table table-hover table-condensed col-12 my-0 w-100">
+              <thead>
+                <tr><th class="col-sm-auto w-25">Config</th><th class="col-md d-none d-lg-table-cell">Folder</th><th class="col-sm-auto w-25">CouchDB User</th><th class="col-sm-auto">Dark</th><th class="col-sm-auto">Default</th><th class="col-sm-auto">Admin</th></tr>
+              </thead>
+              <tbody>
+                {{#each this.pagedContent as |config|}}            
+                  <LinkTo @route="settings.config" @model={{config}} @tagName="tr" class="w-100">
+                    <td class="col-sm-auto w-25">{{if config.name config.name "<unnamed>"}}</td>
+                    <td class="col-md-auto d-none d-lg-table-cell w-50">{{config.soundsfolder}}</td>
+                    <td class="col-sm-auto w-25">{{config.couchdbuser}}</td>
+                    <td class="col-sm-auto">{{config.darkmode}}</td>
+                    <td class="col-sm-auto">{{config.isdefault}}</td>
+                    <td class="col-sm-auto">
+                      <BsButtonGroup @class="mx-auto" as |bg|>
+                        <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditConfig config}}><i class="fa fa-pencil-square-o"></i></bg.button>
+                        <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteConfig config}}><i class="fa fa-trash"></i></bg.button>
+                      </BsButtonGroup>
+                    </td>
+                  </LinkTo>            
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer">
+          <PageNumbers @content={{this.pagedContent}} />
+        </div>
+      </div>
+    {{#if @isViewing}}
+      {{!-- Config content --}}
+      {{yield}}
+    {{/if}}
+  </div>
+</div>
+
