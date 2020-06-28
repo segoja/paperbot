@@ -13,6 +13,7 @@ class QueryParamsObj {
 export default class SettingsController extends Controller {
   @inject ('settings.config') config; 
   @service router;
+  @service headData;
 
   queryParams= [
     {'queryParamsObj.page': 'page'},

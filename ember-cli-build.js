@@ -59,14 +59,13 @@ module.exports = function(defaults) {
       // importJS: ['button','tooltip']
     },
     
+    fontawesome: {
+      defaultPrefix: 'fas' // fas for Solid, fab for brands, fal for light(pro)
+    },
+    
     sassOptions: {
 
-    }
-    
-    
-    
-    
-    
+    },
   });
 
   // Use `app.import` to add additional libraries to the generated

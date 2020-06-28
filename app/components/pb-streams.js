@@ -4,7 +4,6 @@ import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 
-
 export default class PbStreamsComponent extends Component {
 
   // take in `streams` from our view

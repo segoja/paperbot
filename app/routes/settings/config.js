@@ -11,8 +11,10 @@ export default class ConfigRoute extends Route {
   beforeModel(){
     this.controllerFor('settings').isViewing = true;
   }
-  @action willTransition(){
-    this.controllerFor('settings').isViewing = false;
-  }
-  
+
+  @action willTransition (transition) {
+    if (transition.targetName === 'settings.index') {
+      transition.abort();
+    }
+  }  
 }

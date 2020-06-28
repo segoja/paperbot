@@ -22,7 +22,7 @@ export default class PbStreamEditComponent extends Component {
   @tracked soundBoardEnabled = true;
 
   queueAscSorting = Object.freeze(['timestamp:asc']);
-  
+ 
   @sort (
     'songqueue',
     'queueAscSorting'
@@ -33,8 +33,6 @@ export default class PbStreamEditComponent extends Component {
     'songqueue',
     'queueDescSorting'
   ) arrangedDescQueue;
-  
-  
   
   get disableBotButton(){
     if(this.twitchChat.botConnected === true || this.args.stream.finished === true){
@@ -92,9 +90,11 @@ export default class PbStreamEditComponent extends Component {
     return  this.args.stream.requests;
   }
   
-  
+    
   constructor() {
     super(...arguments);  
+    
+
     
     // These lines is to allow switching to other routes
     // without losing the active chat history and song queue.
@@ -103,7 +103,8 @@ export default class PbStreamEditComponent extends Component {
 
     if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
       this.twitchChat.botclient.on('message', this.msgGetter);
-    }
+    } 
+    
   }
 
   // Bot and Chat related actions:
@@ -207,4 +208,36 @@ export default class PbStreamEditComponent extends Component {
     this.soundBoardEnabled = !this.soundBoardEnabled;
     this.twitchChat.soundBoardEnabled = this.soundBoardEnabled;    
   }
+  
+  
+  // Pannels interaction
+  @tracked cpanpending = false;
+  @tracked cpanplayed = false;
+  @tracked cpanmessages = false;
+
+  
+  @action closePan(pannel){
+    if (pannel === "pending"){
+      this.cpanpending = !this.cpanpending;
+    }
+    if (pannel === "played"){
+      this.cpanplayed = !this.cpanplayed;
+    } 
+    if (pannel === "messages"){
+      this.cpanmessages = !this.cpanmessages;
+    }     
+  }
+
+  @action togglePan(pannel){
+    if (pannel === "pending"){
+      this.cpanpending = !this.cpanpending;
+    }
+    if (pannel === "played"){
+      this.cpanplayed = !this.cpanplayed;
+    } 
+    if (pannel === "messages"){
+      this.cpanmessages = !this.cpanmessages;
+    }
+  }
+  
 }

@@ -1,10 +1,10 @@
 <div class="card">
   <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded">
     <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0">{{@config.name}}</h5></div>
-    <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
-      <bg.button @type="secondary rounded-0" @onClick={{fn @editConfig}} disabled={{@isViewing}} ><i class="fa fa-pencil-square-o"></i></bg.button>
-      <bg.button @type="danger" @onClick={{fn @closeConfig}}><i class="fa fa-close"></i></bg.button>
-    </BsButtonGroup>
+    {{!-- <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
+      <bg.button @type="secondary rounded-0" @onClick={{fn @editConfig}} disabled={{@isViewing}} ><FaIcon @icon="edit" /></bg.button>
+      <bg.button @type="danger" @onClick={{fn @closeConfig}}><FaIcon @icon="times" /></bg.button>
+    </BsButtonGroup> --}}
   </div>
     <div class="card-body">
       <BsForm @formLayout="vertical" @model={{@config}}  @onSubmit={{fn this.doneEditing}} as |form|>
@@ -14,7 +14,7 @@
            <Input id="folder" @type="file" webkitdirectory directory {{on "change" (fn this.getSoundsFolder @config)}} placeholder="Select your sounds folder" class="d-block ml-0" />
         </div>        
         <form.element @controlType="text" @property="soundsfolder"  as |el|>
-          <el.control disabled />
+          <el.control disabled class="alert-light" />
         </form.element>
         <form.element @controlType="text" @label="CouchDB username" placeholder="Username" @property="couchdbuser" required /> 
         <form.element @controlType="text" @label="CouchDB password" placeholder="Username" @property="couchdbpassword" required /> 
@@ -23,7 +23,7 @@
         <form.element @controlType="checkbox" @label="Default config" @property="isdefault" required /> 
 
         <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>
-        <BsButton @type="danger" @onClick={{fn @deleteConfig}}>Delete</BsButton>           
+       {{!-- <BsButton @type="danger" @onClick={{fn @deleteConfig}}>Delete</BsButton> --}}        
       </BsForm>
     </div>
 </div>

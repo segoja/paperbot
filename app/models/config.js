@@ -10,4 +10,9 @@ export default class ConfigModel extends Model {
 
   @attr('boolean', {defaultValue: false}) darkmode;
   @attr('boolean', {defaultValue: false}) isdefault;
+  
+  
+  get switcher(){
+    return this.darkmode;
+  }
 }

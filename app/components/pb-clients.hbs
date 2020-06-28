@@ -34,8 +34,8 @@
                     <td class="col-sm align-top">{{client.channel}}</td>
                     <td class="col-sm-auto align-top">
                       <BsButtonGroup @class="mx-auto" as |bg|>
-                        <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditClient client}}><i class="fa fa-pencil-square-o"></i></bg.button>
-                        <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteClient client}}><i class="fa fa-trash"></i></bg.button>
+                        <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditClient client}}><FaIcon @icon="edit" /></bg.button>
+                        <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteClient client}}><FaIcon @icon="trash" /></bg.button>
                       </BsButtonGroup>
                     </td>
                   </LinkTo>            

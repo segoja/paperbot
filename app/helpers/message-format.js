@@ -8,13 +8,13 @@ export default helper(function([message]) {
   var output = "";
   switch (message.type) {
     case 'action':
-      output = '<span class="'+ message.type +'" style="color: '+ message.color +';">['+ moment(message.timestamp).format("HH:mm:ss")+'] '+message.htmlbadges+' <strong>' + message.displayname +':</strong> '+ message.parsedbody +'</span>';
+      output = '<span class="'+ message.type +'" style="color: '+ message.color +';"><small>['+ moment(message.timestamp).format("HH:mm:ss")+']</small> '+message.htmlbadges+' <strong>' + message.displayname +':</strong> '+ message.parsedbody +'</span>';
     break;
     case 'chat':
-      output = '<span class="'+ message.type +'" style="color: '+ message.color +';">['+ moment(message.timestamp).format("HH:mm:ss")+'] '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;  
+      output = '<span class="'+ message.type +'" style="color: '+ message.color +';"><small>['+ moment(message.timestamp).format("HH:mm:ss")+']</small> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;  
     break;
     default:
-      output = '<span class="'+ message.type +'" style="color: '+ message.color +';">['+ moment(message.timestamp).format("HH:mm:ss")+'] '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;
+      output = '<span class="'+ message.type +'" style="color: '+ message.color +';"><small>['+ moment(message.timestamp).format("HH:mm:ss")+']</small> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;
     break;
   }
   return htmlSafe(output);

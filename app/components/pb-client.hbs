@@ -2,8 +2,8 @@
   <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded">
     <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0">{{@client.username}}</h5></div>
     <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
-      <bg.button @type="secondary rounded-0" @onClick={{fn @editClient}} disabled={{@isEditing}} ><i class="fa fa-pencil-square-o"></i></bg.button>
-      <bg.button @type="danger" @onClick={{fn @closeClient}}><i class="fa fa-close"></i></bg.button>
+      <bg.button @type="secondary rounded-0" @onClick={{fn @editClient}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>
+      <bg.button @type="danger" @onClick={{fn @closeClient}}><FaIcon @icon="times" /></bg.button>
     </BsButtonGroup>
   </div>
   {{#if @isEditing}}

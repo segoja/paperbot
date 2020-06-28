@@ -13,16 +13,11 @@
     
       <div class="d-inline">
         {{navbar.toggle}}
-        <LinkTo @route="index" class="navbar-brand">Paperbot</LinkTo>
+        <LinkTo @route="application" class="navbar-brand">Paperbot</LinkTo>
       </div>     
       <div class="d-inline">
         <navbar.content>
           <navbar.nav as |nav|>
-            <nav.item>
-              <span role="button" {{on "click" this.toggleMode}} class="btn navbar-brand my-2 my-sm-0">
-                <i class="fa {{if this.headData.darkMode "fa-moon-o active" "fa-sun-o"}}"></i>
-              </span>
-            </nav.item>
             <nav.item>
               <nav.link-to @route="streams.index">Streams</nav.link-to>
             </nav.item>
@@ -34,12 +29,17 @@
             </nav.item> 
             <nav.item>
               <nav.link-to @route="settings.index">Settings</nav.link-to>
-            </nav.item>             
+            </nav.item>    
+            <nav.item>
+              <span role="button" {{on "click" this.toggleMode}} class="nav-link {{if this.headData.darkMode "bulboff" "bulbon active"}}" title="{{if this.headData.darkMode "Dark mode" "Light mode"}}">
+                <FaIcon @icon="{{if this.headData.darkMode "lightbulb" "lightbulb"}}" />
+              </span>
+            </nav.item>            
           </navbar.nav>
         </navbar.content>
       </div>
   </BsNavbar>
 </header>
-<main role="main" class="container px-0">
+<main role="main" class="container px-0 pb-3">
   {{outlet}}
 </main>

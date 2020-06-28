@@ -41,13 +41,13 @@
                       <td class="col-sm"><small class="muted">{{command.type}}</small></td>
                       <td class="col-sm-auto">
                         <BsButton @type="" class="btn-link btn-md mx-auto" @onClick={{fn @gridActiveCommand command}}>
-                          <i class="w-100 text-secondary {{if command.active "fa fa-check-square" "fa fa-square-o"}}"></i>
+                          <FaIcon class="text-secondary" @icon="{{if command.active "check-square" "square"}}" />
                         </BsButton>
                       </td>
                       <td class="col-sm-auto">
                         <BsButtonGroup @class="mx-auto" as |bg|>
-                          <bg.button @type="" class="btn-sm alert-secondary" @onClick={{fn @gridEditCommand command}}><i class="fa fa-pencil-square-o"></i></bg.button>
-                          <bg.button @type="" class="btn-sm alert-danger" @onClick={{fn @gridDeleteCommand command}}><i class="fa fa-trash"></i></bg.button>
+                          <bg.button @type="" class="btn-sm alert-secondary" @onClick={{fn @gridEditCommand command}}><FaIcon @icon="edit" /></bg.button>
+                          <bg.button @type="" class="btn-sm alert-danger" @onClick={{fn @gridDeleteCommand command}}><FaIcon @icon="trash" /></bg.button>
                          </BsButtonGroup>
                       </td>
                   </LinkTo>

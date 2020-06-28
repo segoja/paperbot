@@ -11,17 +11,32 @@ html,body{
     flex:1;
 } 
 
+.dragpanel{
+  min-height: 33%!important;
+  max-height: 100%!important;  
+}
+
+.h-33{
+  height: 33%!important;
+}
+
+@media (min-width: 576px){
+  .pending {
+    min-height: 50%!important;
+    height: calc(inherit-50%)!important;
+    max-height: 100%!important;
+  }
+}
+
 .chatframe, .queueframe{
   max-height: 100% !important;
   overflow-y: scroll;
 }
 .chatframe::-webkit-scrollbar {
-  display: none;
 } 
 
 .queueframe::-webkit-scrollbar {
 }
-
 
 .chatframe .row:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.1);
@@ -72,4 +87,8 @@ img.twitch-emoticon{
 }
 img.twitch-badge{
   height: 1.25rem!important;
+}
+
+.bulboff{
+  filter: brightness(65%);  
 }

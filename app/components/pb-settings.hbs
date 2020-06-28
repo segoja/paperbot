@@ -16,7 +16,7 @@
             <div class="col-auto">
               <FileUpload @name="importfile" @accept=".csv" @onfileadd={{fn this.configImport}} hidden={{false}} class="my-0"><span class="btn btn-secondary ember-view">Import</span></FileUpload>
               <BsButton @type="secondary" @onClick={{fn this.configExportFiltered}}>Export</BsButton>
-              <BsButton @type="info" @onClick={{fn @createConfig}}>Add New</BsButton>
+              {{!-- <BsButton @type="info" @onClick={{fn @createConfig}}>Add New</BsButton> --}}
             </div>
           </div>
         </div>
@@ -36,8 +36,8 @@
                     <td class="col-sm-auto">{{config.isdefault}}</td>
                     <td class="col-sm-auto">
                       <BsButtonGroup @class="mx-auto" as |bg|>
-                        <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditConfig config}}><i class="fa fa-pencil-square-o"></i></bg.button>
-                        <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteConfig config}}><i class="fa fa-trash"></i></bg.button>
+                        <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditConfig config}}><FaIcon @icon="edit" /></bg.button>
+                        <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteConfig config}}><FaIcon @icon="trash" /></bg.button>
                       </BsButtonGroup>
                     </td>
                   </LinkTo>            

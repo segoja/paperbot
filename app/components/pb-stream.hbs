@@ -2,51 +2,51 @@
   <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded">
     <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0">{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
     <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
-      <bg.button @type="secondary rounded-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><i class="fa fa-pencil-square-o"></i></bg.button>
-      <bg.button @type="danger" @onClick={{fn @closeStream}}><i class="fa fa-close"></i></bg.button>
+      <bg.button @type="secondary rounded-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>
+      <bg.button @type="danger" @onClick={{fn @closeStream}}><FaIcon @icon="times" /></bg.button>
     </BsButtonGroup>
   </div>
   <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @commands={{@commands}} @isEditing={{@isEditing}} @editStream={{@editStream}} @saveStream={{@saveStream}} @deleteStream={{@deleteStream}} />
   {{#unless @isEditing}}  
     {{#if @stream.finished}}
-      <div class="card-body pt-0">
-        <div class="row">
-          <div class="col-md-8">
-            <table class="table table-sm table-striped">
-              <thead>
-                <tr><th>Chat Log</th></tr>
-              </thead>
-              <tbody>
+      <div class="card-body pt-0 pb-1 h-100">
+        <div class="row h-100 overflow-hidden">
+          <div class="col-md h-100 flex-column d-flex overflow-hidden border border-round">
+            <div class="row alert-dark">
+              <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Chat log</h6></div>
+            </div>
+            <div class="row h-100 overflow-hidden">
+              <div class="col chatframe">
                 {{#each @stream.chatlog as |message|}}
-                  <tr id="{{message.id}}">
-                    <td class="{{if message.reward "highlight alert-warning"}}">
+                  <div class="row" id="{{message.id}}">
+                    <div class="col chatline py-2 {{if message.reward "highlight alert-warning"}}">
                       {{message-format message}}
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 {{/each}}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
-          <div class="col-md-4">
-            <table class="table table-sm table-striped">
-              <thead>
-                <tr><th colspan="2">Request list</th></tr>
-              </thead>
-              <tbody>
-                {{#each @stream.songqueue as |element|}}
-                  <tr>
-                    <td class="py-1">
+          {{#if @stream.requests}}
+            <div class="col-5 h-100 flex-column d-flex overflow-hidden border border-round">
+              <div class="row alert-dark">
+                <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Request list</h6></div>
+              </div>
+              <div class="row h-100 overflow-hidden">
+                <div class="col-md queueframe">
+                  {{#each @stream.songqueue as |song|}}
+                    <div class="alert-light d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                       <div class="row">
-                        <div class="col"><small>{{moment-format element.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
-                        <div class="col-auto"><small>{{element.displayname}}</small></div>
+                        <div class="col"><small>{{moment-format song.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                        <div class="col-auto"><small>{{song.user}}</small></div>
                       </div>
-                      <div class="h6 {{if element.processed "processed"}}">{{element.song}}</div>
-                    </td>
-                  </tr>
-                {{/each}}
-              </tbody>
-            </table>    
-          </div>
+                      <div class="alert-heading h6 {{if song.processed "processed"}}">{{song.song}}</div>
+                    </div>
+                  {{/each}}
+                </div>  
+              </div>  
+            </div>
+          {{/if}}
         </div>
       </div>
     {{/if}}

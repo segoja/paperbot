@@ -4,8 +4,10 @@ import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 
 export default class ConfigController extends Controller {
+  @inject application;
   @inject settings;
   @service router;
+  @service headData;
 
   @tracked isEditing;
 
@@ -20,9 +22,14 @@ export default class ConfigController extends Controller {
   }  
   
   @action saveConfig () {
-    this.settings.isViewing = false;
+    // this.settings.isViewing = false;
     this.isEditing = false;
+    if(this.model.isdefault){
+      this.application.darkreader(this.model.darkmode);
+      this.headData.set('darkMode', this.model.darkmode);
+    }
     this.model.save();
+    this.router.transitionTo('settings.config', this.model);
   }
   
   @action deleteConfig() {
