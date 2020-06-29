@@ -17,17 +17,16 @@
   </div>
   <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
   
-  <div class="form-group row ember-view">
-   <label class="col-form-label col-md-4">Sound file</label> 
-   <div class="col-md-8">
-     <Input id="file" @type="file" @accept="audio/*" {{on "change" (fn this.getAudioPath @command)}} placeholder="Select the sound file..." class="mx-2" />
-   </div>
-  </div>
-  
-  <form.element @controlType="text" placeholder="Select the sound file..." @property="soundfile" as |el|>
-      <el.control disabled />
+  <form.element @controlType="text" @property="soundfile"  @label="Sound file" as |el|>
+    <div class="input-group">
+      <el.control disabled class="alert-light" @placeholder="Select the sound file..." />
+      <div class="input-group-append">
+        <BsButton @type="secondary" @onClick={{fn this.getAudioPath @command}}>Select file</BsButton>        
+      </div>
+    </div>
   </form.element>
-  <form.element @controlType="text" @label="Volume" placeholder="Select the sound file..." @property="volume" required />
+
+  <form.element @controlType="text" @label="Volume" placeholder="Set the volume" @property="volume" required />
   
   <BsButton type="submit" @type="success" @onClick={{fn this.doneEditing}}>Done</BsButton>
   <BsButton @type="danger" @onClick={{fn @deleteCommand}}>Delete</BsButton>

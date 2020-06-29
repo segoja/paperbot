@@ -8,13 +8,14 @@
   </div>
     <div class="card-body">
       <BsForm @formLayout="vertical" @model={{@config}}  @onSubmit={{fn this.doneEditing}} as |form|>
-        <form.element @controlType="text" @label="Name" placeholder="Config name" @property="name" required /> 
-        <div class="form-group">
-         <label class="ember-view">Base soundboard folder</label> 
-           <Input id="folder" @type="file" webkitdirectory directory {{on "change" (fn this.getSoundsFolder @config)}} placeholder="Select your sounds folder" class="d-block ml-0" />
-        </div>        
-        <form.element @controlType="text" @property="soundsfolder"  as |el|>
-          <el.control disabled class="alert-light" />
+        <form.element @controlType="text" @label="Name" placeholder="Config name" @property="name" required />          
+        <form.element @controlType="text" @property="soundsfolder"  @label="Base soundboard folder" as |el|>
+          <div class="input-group">
+            <el.control disabled class="alert-light" />
+            <div class="input-group-append">
+              <BsButton @type="secondary" @onClick={{fn this.opendialogfiles @config}}>Select folder</BsButton>        
+            </div>
+          </div>
         </form.element>
         <form.element @controlType="text" @label="CouchDB username" placeholder="Username" @property="couchdbuser" required /> 
         <form.element @controlType="password" @label="CouchDB password" placeholder="Username" @property="couchdbpassword" required /> 

@@ -1,3 +1,4 @@
+/* global require */
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 
@@ -8,10 +9,11 @@ export default class PbCommandEditComponent extends Component {
   }
   
   @action getAudioPath(command){
-    if(document.getElementById("file").files[0]){
-      command.soundfile = document.getElementById("file").files[0].path;
-    }
-    // command.save();
-    // console.log(dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }))
+    let dialog = require('electron').remote.dialog;    
+    dialog.showOpenDialog({ properties: ['openFile'] }).then((file) => {
+      console.log(file);
+      command.soundfile = file.filePaths[0];
+      
+    });
   }
 }

@@ -116,13 +116,14 @@
     </div>
     {{/unless}}
     {{#unless this.disconnectButton}}  
-      <div class="card-footer flex-column flex-fill d-flex"> 
-        <div class="row">
-          <BsForm @formLayout="vertical" @model={{this}} class="col-md-12" @onSubmit={{fn this.sendMessage}} as |form|>
-            <form.element @property="message" as |el|>
+      <div class="card-footer flex-column flex-fill d-flex px-1 py-1 my-0"> 
+        <div class="row my-0">
+          <BsForm @formLayout="vertical" @model={{this}} class="col-md-12 my-0" @onSubmit={{fn this.sendMessage}} as |form|>
+            <form.element @property="message" class="my-0 py-0" as |el|>
               <el.control 
                 @controlType="text"
                 placeholder="Type your message here"
+                 class="my-0 py-0"
                 readonly={{this.inputDisabled}}        
               />
             </form.element>

@@ -49,9 +49,13 @@ app.on('ready', () => {
     webPreferences: {
       webSecurity: false,
       allowRunningInsecureContent: false,
+      nodeIntegration: true,
     },
     
   });
+mainWindow.setMenu(null);
+mainWindow.setMenuBarVisibility(false);
+mainWindow.setAutoHideMenuBar(true);
 
   // If you want to open up dev tools programmatically, call
   // mainWindow.openDevTools();
