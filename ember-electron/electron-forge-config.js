@@ -1,4 +1,4 @@
-module.exports = {
+﻿module.exports = {
   "make_targets": {
     "win32": [
       "squirrel"

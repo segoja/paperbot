@@ -22,21 +22,23 @@
     </BsForm>
   </div>
 {{else}}
-  <div class="card-body px-0 pt-0 pb-2 border-top border-light">
+  <div class="card-body px-0 pt-0 pb-2 border-top-0 border-light">
     <div class="row p-0 m-0">
-      <BsButtonGroup class="col p-0 m-0" as |bg|>
-        <bg.button @type="warning btn-sm" @onClick={{fn this.soundboardToggle}} disabled={{this.disconnectButton}}><FaIcon @icon="{{if this.soundBoardEnabled "volume-up" "volume-mute"}}" /></bg.button>          
-        <bg.button @type="info btn-sm" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</bg.button>
-        <bg.button @type="secondary btn-sm" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</bg.button>
-        <bg.button @type="danger btn-sm" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</bg.button>
-        <bg.button @type="success btn-sm" @onClick={{fn this.finishStream}} disabled={{@stream.finished}}>Finish Stream</bg.button>      
+      <BsButtonGroup class="col p-0 m-0 border border-dark rounded-0 border-dark bg-dark" as |bg|>
+        <bg.button @class="btn-sm border border-dark border-left-0" @type="warning rounded-0" @onClick={{fn this.soundboardToggle}} disabled={{this.disconnectButton}}>
+          <FaIcon @icon="{{if this.soundBoardEnabled "volume-up" "volume-mute"}}" />
+        </bg.button>          
+        <bg.button @class="btn-sm border border-dark" @type="info" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</bg.button>
+        <bg.button @class="btn-sm border border-dark" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</bg.button>
+        <bg.button @class="btn-sm border border-dark" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</bg.button>
+        <bg.button @class="btn-sm border border-dark border-right-0" @type="success rounded-0" @onClick={{fn this.finishStream}} disabled={{@stream.finished}}>Finish Stream</bg.button>      
       </BsButtonGroup>
     </div>
   </div>        
     {{#unless this.disconnectButton}}         
     <div class="card-body py-0 mb-0 flex-column flex-fill d-flex h-100 overflow-hidden">
       <EmberDragula class="row flex-fill d-flex h-100 overflow-hidden" as |d|>
-        <d.Container class="col-7 h-100 border border-rounded">
+        <d.Container class="col h-100 border border-rounded">
           <div id="chat" class="row {{unless this.cpanmessages "h-100 dragpanel"}} overflow-hidden border-bottom">            
             <div class="col {{unless this.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
               <div class="row alert-dark">
@@ -59,7 +61,7 @@
             </div>
           </div>
         </d.Container>
-        <d.Container class="col-5 h-100 border border-rounded">
+        <d.Container class="col-sm-auto col-md-5 col-lg-5 h-100 border border-rounded">
           {{#if this.requests}}
             <div id="pending" class="row {{unless this.cpanpending "h-50 dragpanel"}} overflow-hidden border-bottom">            
               <div class="col {{unless this.cpanpending "h-100"}} flex-column flex-fill d-flex overflow-hidden">

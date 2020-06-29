@@ -16,7 +16,11 @@ module.exports = function(environment) {
         Date: false
       }
     },
-
+    fontawesome: {
+      warnIfNoIconsIncluded: false,
+      defaultPrefix: 'fas', // fas for Solid, fab for brands, fal for light(pro)
+      // ...
+    }, 
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
@@ -43,12 +47,12 @@ module.exports = function(environment) {
     ENV.APP.autoboot = false;
   }
 
-  ENV.remote_couch = ''; // 'http://192.168.1.222:5984/paperbot';
+  // ENV.remote_couch = ''; // 'http://192.168.1.222:5984/paperbot';
   ENV.local_couch = 'paperbot';
   ENV.authAdapter = 'application';
   if (environment === 'production') {
-    ENV.rootURL = '/';
-    ENV.remote_couch = 'https://my.couchcluster.com/bloggr';
+    // ENV.rootURL = '/';
+    // ENV.remote_couch = 'https://my.couchcluster.com/bloggr';
   }
   
   if ( ENV.remote_couch ) {

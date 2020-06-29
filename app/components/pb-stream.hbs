@@ -1,9 +1,9 @@
-<div class="card {{unless @isEditing "h-100 flex-fill"}}">
-  <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded">
+<div class="card {{unless @isEditing (if this.twitchChat.botConnected "h-100 flex-fill")}}">
+  <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded-top">
     <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0">{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
     <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
-      <bg.button @type="secondary rounded-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>
-      <bg.button @type="danger" @onClick={{fn @closeStream}}><FaIcon @icon="times" /></bg.button>
+      <bg.button @type="dark rounded-0 border-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>
+      <bg.button @type="dark rounded-0 rounded-top-right border-0" @onClick={{fn @closeStream}}><FaIcon @icon="times" /></bg.button>
     </BsButtonGroup>
   </div>
   <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @commands={{@commands}} @isEditing={{@isEditing}} @editStream={{@editStream}} @saveStream={{@saveStream}} @deleteStream={{@deleteStream}} />

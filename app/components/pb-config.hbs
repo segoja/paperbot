@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded">
+  <div class="card-header bg-dark text-white row py-2 m-0 border-0 rounded-top">
     <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0">{{@config.name}}</h5></div>
     {{!-- <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
       <bg.button @type="secondary rounded-0" @onClick={{fn @editConfig}} disabled={{@isViewing}} ><FaIcon @icon="edit" /></bg.button>
@@ -17,7 +17,7 @@
           <el.control disabled class="alert-light" />
         </form.element>
         <form.element @controlType="text" @label="CouchDB username" placeholder="Username" @property="couchdbuser" required /> 
-        <form.element @controlType="text" @label="CouchDB password" placeholder="Username" @property="couchdbpassword" required /> 
+        <form.element @controlType="password" @label="CouchDB password" placeholder="Username" @property="couchdbpassword" required /> 
         <form.element @controlType="text" @label="CouchDB url" placeholder="Username" @property="couchdburl" required /> 
         <form.element @controlType="checkbox" @label="Dark mode" @property="darkmode" required /> 
         <form.element @controlType="checkbox" @label="Default config" @property="isdefault" required /> 

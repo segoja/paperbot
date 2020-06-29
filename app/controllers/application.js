@@ -25,9 +25,9 @@ export default class ApplicationController extends Controller {
   @action darkreader(status){
     if(status){
       DarkReader.enable({
-          brightness: 85,
-          contrast: 85,
-          sepia: 25
+          brightness: 100,
+          contrast: 100,
+          sepia: 0
       });      
     } else {
       DarkReader.disable(); 
@@ -39,17 +39,15 @@ export default class ApplicationController extends Controller {
     if(this.model){
       var config = this.model.filterBy('isdefault', true).get('firstObject');
       if(config !== undefined){
-        config.darkmode = !config.switcher;
+        config.darkmode = !config.darkmode;
         config.save();
         this.headData.set('darkMode', this.darkmode);
         this.darkreader(this.darkmode);
       } else {
-        alert("No hay na!");
         this.headData.set('darkMode', !this.darkmode);
         this.darkreader(!this.darkmode);
       }
     } else {
-      alert("No hay na!");
       this.headData.set('darkMode', !this.darkmode);
       this.darkreader(!this.darkmode);
     }

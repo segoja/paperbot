@@ -6,7 +6,9 @@ $enable-responsive-font-sizes: true;
 html,body{
     height:100%;
 }
-
+:root {
+  --main-scrollbar-color: red;
+}
 .flex-fill {
     flex:1;
 } 
@@ -31,6 +33,7 @@ html,body{
 .chatframe, .queueframe{
   max-height: 100% !important;
   overflow-y: scroll;
+  scrollbar-color: var(--main-scrollbar-color);
 }
 .chatframe::-webkit-scrollbar {
 } 
@@ -57,6 +60,13 @@ div.highlight{
 
 .processed{
   text-decoration: line-through;
+}
+
+.rounded-top-right {
+    border-top-right-radius: 0.25rem!important;
+}
+.rounded-top-left {
+    border-top-left-radius: 0.25rem!important;
 }
 
 .ember-power-select-trigger{
