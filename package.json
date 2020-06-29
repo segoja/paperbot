@@ -5,7 +5,7 @@
   "description": "Paperbot",
   "repository": "",
   "license": "MIT",
-  "author": "papercat84",
+  "author": "segoja",
   "directories": {
     "doc": "doc",
     "test": "tests"
