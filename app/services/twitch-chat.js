@@ -23,6 +23,9 @@ export default class TwitchChatService extends Service {
   }
   
   @tracked queue = []; 
+  @tracked events = []; 
+  @tracked modactions = []; 
+
   @tracked channel = '';
   @tracked botUsername = '';
   @tracked botPassword = '';
@@ -44,7 +47,8 @@ export default class TwitchChatService extends Service {
   
   @tracked lastmessage = null;
   @tracked lastsongrequest = null;
-  
+  @tracked lastevent = null;
+  @tracked lastmodaction = null;
   @tracked takessongrequests;
   
   @tracked channelBadges = [];
@@ -506,77 +510,34 @@ export default class TwitchChatService extends Service {
       }
     });
   }
-
+  
+  
+  
+  
+  
+/*
   
   @action superHandler(client){
     console.log(client);
-/*
-    client.on("action", (channel, userstate, message, self) => {
-        // Don't listen to my own messages..
-        if (self) return;
-        console.log(userstate);
-        console.log(message);
-        // Do your stuff.
-    });
-
-    client.on("anongiftpaidupgrade", (channel, username, userstate) => {
-        // Do your stuff.
-    });
 
     client.on("ban", (channel, username, reason, userstate) => {
         // Do your stuff.
         console.log(userstate);
         console.log(username+' - '+reason);
     });
-*/
-    /*client.on("chat", (channel, userstate, message, self) => {
-        // Don't listen to my own messages..
-        if (self) return;
-        // Do your stuff.
-    });*/
-/*
-    client.on("cheer", (channel, userstate, message) => {
-        // Do your stuff.
-        console.log(userstate);        
-        console.log(message);
-    });
-*/
-    /*
+
+
     client.on("clearchat", (channel) => {
         // Do your stuff.
     });
 
-    client.on("connected", (address, port) => {
-        // Do your stuff.
-    });
-
-
-    client.on("connecting", (address, port) => {
-        // Do your stuff.
-    });
-
-
-    client.on("disconnected", (reason) => {
-        // Do your stuff.
-    });*/
-/*
     client.on("emoteonly", (channel, enabled) => {
         // Do your stuff.
-    });
-
-    client.on("emotesets", (sets, obj) => {
-        // Here are the emotes I can use:
-        console.log(obj);
     });
 
     client.on("followersonly", (channel, enabled, length) => {
         // Do your stuff.
     });
-
-    client.on("giftpaidupgrade", (channel, username, sender, userstate) => {
-        // Do your stuff.
-    });
-
 
     client.on("hosted", (channel, username, viewers, autohost) => {
         // Do your stuff.
@@ -586,40 +547,6 @@ export default class TwitchChatService extends Service {
         // Do your stuff.
     });
 
-    client.on("join", (channel, username, self) => {
-        // Do your stuff.
-      if(self){
-        this.botclient.say(this.channel, '/me The bot is the house!');
-      }
-
-    });
-  
-    client.on("logon", () => {
-        // Do your stuff.
-    });
-*/
-    /*
-    client.on("message", (channel, userstate, message, self) => {
-        // Don't listen to my own messages..
-        if (self) return;
-
-        // Handle different message types..
-        switch(userstate["message-type"]) {
-            case "action":
-                // This is an action message..
-                break;
-            case "chat":
-                // This is a chat message..
-                break;
-            case "whisper":
-                // This is a whisper..
-                break;
-            default:
-                // Something else ?
-                break;
-        }
-    });*/
-/*
     client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
         // Do your stuff.
     });
@@ -629,31 +556,10 @@ export default class TwitchChatService extends Service {
         // Do your stuff.
     });
 
-    // Get the Mod list
-    client.on("mods", (channel, mods) => {
-        // Do your stuff.
-    });
-
     client.on("notice", (channel, msgid, message) => {
         // Do your stuff.
         console.log(msgid+' - '+message);
         
-    });
-
-    client.on("part", (channel, username, self) => {
-        // Do your stuff.
-    });
-
-    client.on("ping", () => {
-        // Do your stuff.
-    });
-
-    client.on("pong", (latency) => {
-        // Do your stuff.
-    });
-
-    client.on("r9kbeta", (channel, enabled) => {
-        // Do your stuff.
     });
 
     client.on("raided", (channel, username, viewers) => {
@@ -661,59 +567,17 @@ export default class TwitchChatService extends Service {
         console.log(username+' - '+viewers);
     });
 
-    client.on("raw_message", (messageCloned, message) => {
-       // console.log(message.raw);
-    });
-
-    client.on("reconnect", () => {
-        // Do your stuff.
-    });
-
-    client.on("resub", (channel, username, months, message, userstate, methods) => {
-        // Do your stuff.
-        let cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
-        console.log(userstate);
-        console.log(methods);
-        
-
-        console.log(username+' juscribed for '+cumulativeMonths+' and his curren streak is '+months+' consecutive months!');
-    });
-
-    client.on("roomstate", (channel, state) => {
-        // Do your stuff.
-    });
-
-    client.on("serverchange", (channel) => {
-        // Do your stuff.
-    });
 
     client.on("slowmode", (channel, enabled, length) => {
         // Do your stuff.
     });
 
-    client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
-        // Do your stuff.
-        let senderCount = ~~userstate["msg-param-sender-count"];
-    });
-
-    client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
-        // Do your stuff.
-        let senderCount = ~~userstate["msg-param-sender-count"];
-    });
 
     // Subscribers only mode:
     client.on("subscribers", (channel, enabled) => {
         // Do your stuff.
     });
 
-
-    client.on("subscription", (channel, username, method, message, userstate) => {
-        // Do your stuff.
-        console.log(userstate);
-        console.log(username+' just juscribed with'+method);
-        console.log(message);
-
-    });
 
     client.on("timeout", (channel, username, reason, duration, userstate) => {
         // Do your stuff.
@@ -739,6 +603,5 @@ export default class TwitchChatService extends Service {
 
         // Do your stuff.
     });
-    */
-  }
+  } */
 }
