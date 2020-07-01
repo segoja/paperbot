@@ -75,7 +75,8 @@ export default class TwitchChatService extends Service {
         ('BlueViolet', 'rgb(138, 43, 226)'),
         ('SpringGreen', 'rgb(0, 255, 127)'),
     ];
-  
+ 
+  @tracked streamlabs;
   
   
   init() {
@@ -129,6 +130,8 @@ export default class TwitchChatService extends Service {
       // Register our event handlers (defined below)
       // this.chatclient.on('connected', this.onChatConnectedHandler);
       // this.chatclient.on('message', this.messageHandler);
+      this.chatUsername = options.identity.username.toString();
+      this.chatPassword = options.identity.password.replace(/oauth:/g, '');
    
       // Connect the client
       this.chatConnected = await this.chatclient.connect().then(

@@ -1,6 +1,7 @@
 /* @import 'node_modules/bootswatch/dist/slate/_variables.scss'; */
 @import 'ember-bootstrap/bootstrap';
 @import 'ember-power-select';
+@import 'ember-resizable';
 /* @import 'node_modules/bootswatch/dist/slate/_bootswatch.scss'; */
 
 $enable-responsive-font-sizes: true;
@@ -14,6 +15,10 @@ html,body{
 .flex-fill {
     flex:1;
 } 
+.card-body {
+  min-height: auto!important;
+}
+
 
 .dragpanel{
   min-height: 33%!important;

@@ -43,7 +43,7 @@ export default class PbStreamEditComponent extends Component {
   }
   
   get disableChatButton(){
-    if(this.twitchChat.chatConnected === true || this.args.stream.finished === true){
+    if(this.twitchChat.botConnected === false || this.twitchChat.chatConnected === true || this.args.stream.finished === true){
       return true;
     } else {
       return false;
@@ -239,5 +239,17 @@ export default class PbStreamEditComponent extends Component {
       this.cpanmessages = !this.cpanmessages;
     }
   }
+  
+  @tracked extraPanRight = false;
+
+  @action toggleExtraPanRight() {
+    this.extraPanRight = !this.extraPanRight;
+  }  
+  
+  @tracked extraPanLeft = false;
+
+  @action toggleExtraPanLeft() {
+    this.extraPanLeft = !this.extraPanLeft;
+  }  
   
 }
