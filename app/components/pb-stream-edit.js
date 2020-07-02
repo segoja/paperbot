@@ -203,6 +203,22 @@ export default class PbStreamEditComponent extends Component {
     this.scrollPendingPosition = this.playedSongs.get('length');
   } 
   
+  @action nextSong(){
+    if(this.pendingSongs.get('length') != 0){
+      let firstSong = this.pendingSongs[this.pendingSongs.length-1];
+      set(firstSong, 'processed', true);
+      this.scrollPlayedPosition = this.pendingSongs.get('length');
+      this.scrollPendingPosition = this.playedSongs.get('length');
+    }
+  }
+  @action prevSong(){
+    if(this.playedSongs.get('length') != 0){
+      let firstSong = this.playedSongs[this.playedSongs.length-1];
+      set(firstSong, 'processed', false);
+      this.scrollPlayedPosition = this.pendingSongs.get('length');
+      this.scrollPendingPosition = this.playedSongs.get('length');
+    }
+  }
   // Soundboard toggle
   @action soundboardToggle(){
     this.soundBoardEnabled = !this.soundBoardEnabled;
@@ -240,13 +256,13 @@ export default class PbStreamEditComponent extends Component {
     }
   }
   
-  @tracked extraPanRight = false;
+  @tracked extraPanRight = true;
 
   @action toggleExtraPanRight() {
     this.extraPanRight = !this.extraPanRight;
   }  
   
-  @tracked extraPanLeft = false;
+  @tracked extraPanLeft = true;
 
   @action toggleExtraPanLeft() {
     this.extraPanLeft = !this.extraPanLeft;

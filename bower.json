@@ -1,0 +1,6 @@
+{
+  "name": "paperbot",
+  "dependencies": {
+    "dragula": "^3.5.4"
+  }
+}

@@ -1,5 +1,5 @@
 ﻿/* eslint-env node */
-const { app, BrowserWindow, protocol } = require('electron');
+const { app, BrowserWindow, protocol, open } = require('electron');
 const { dirname, join, resolve } = require('path');
 const protocolServe = require('electron-protocol-serve');
 
@@ -53,6 +53,15 @@ app.on('ready', () => {
     },
     
   });
+  
+  
+// The following opens all external links with target _blank into the default system browser.  
+mainWindow.webContents.on('new-window', function(event, url){
+  event.preventDefault();
+  open(url);
+});
+ 
+  
 // The following disables the window's menu.
 // mainWindow.setMenu(null);
 // mainWindow.setMenuBarVisibility(false);

@@ -2,8 +2,19 @@
   <form.element @controlType="text" @label="Username" placeholder="Username" @property="username" required />  
   <form.element @controlType="power-select" @property="type" @label="Client type" @options={{@clientTypes}} as |element|>
     <element.control placeholder="Select the client type" />
-  </form.element>   
-  <form.element @controlType="password" @label="Oauth" placeholder="Oauth" @property="oauth" required />    
+  </form.element>  
+
+  <form.group>
+    <label class="control-label">
+      Oauth 
+      <span role="btn">
+        <FaIcon @icon="question-circle" class="text-info" />
+        <BsTooltip>Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank">Here</a></BsTooltip>
+      </span>
+    </label>
+    <input value={{@client.password}} class="form-control" type="text" placeholder="Oauth" >
+  </form.group>
+  
   <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />      
   <div class="form-row">
     <div class="col">
