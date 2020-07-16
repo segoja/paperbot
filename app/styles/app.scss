@@ -109,3 +109,22 @@ img.twitch-badge{
 .bulboff{
   filter: brightness(65%);  
 }
+
+div.pan-buttons-row{
+  height:  0.7em!important;
+  overflow: hidden; 
+}
+.pan-buttons-row div.row{
+  height: inherit;
+  overflow: hidden;
+}
+.pan-buttons-row div.col, .pan-buttons-row div.col-5 {
+  height: inherit;
+  overflow: hidden;
+}
+
+.pan-buttons-row svg{
+  margin-top: -0.2em!important;
+  vertical-align: top;
+  align: center;
+}

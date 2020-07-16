@@ -256,16 +256,45 @@ export default class PbStreamEditComponent extends Component {
     }
   }
   
+  
+  
   @tracked extraPanRight = true;
 
   @action toggleExtraPanRight() {
     this.extraPanRight = !this.extraPanRight;
+  }   
+  
+  @tracked extraPanRightTop = true;
+
+  @action toggleExtraPanRightTop() {
+    this.extraPanRightTop = !this.extraPanRightTop;
   }  
+  
+  @tracked extraPanRightBottom = true;
+
+  @action toggleExtraPanRightBottom() {
+    this.extraPanRightBottom = !this.extraPanRightBottom;
+  }    
+  
+  
+  
   
   @tracked extraPanLeft = true;
 
   @action toggleExtraPanLeft() {
     this.extraPanLeft = !this.extraPanLeft;
+  }
+  
+  @tracked extraPanLeftTop = true;
+
+  @action toggleExtraPanLeftTop() {
+    this.extraPanLeftTop = !this.extraPanLeftTop;
   }  
   
+  @tracked extraPanLeftBottom = false;
+
+  @action toggleExtraPanLeftBottom() {
+    this.extraPanLeftBottom = !this.extraPanLeftBottom;
+  }  
+
 }

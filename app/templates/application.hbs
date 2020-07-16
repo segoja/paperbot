@@ -1,10 +1,11 @@
 ﻿<HeadLayout />
-<header class="">
+<header>
   <BsNavbar
     @type="dark"
+    @class="px-3"
     @backgroundColor="dark"
     @collapsed={{true}}
-    @fluid={{false}}
+    @fluid={{true}}
     @position="fixed-top"
     @toggleBreakpoint="sm"
     @onCollapse={{fn (mut this.collapsed) true}}

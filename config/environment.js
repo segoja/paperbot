@@ -4,8 +4,8 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'paperbot',
     environment,
-    rootURL: '/',
-    locationType: 'auto',
+    rootURL: process.env.CORBER ? '' : '/',
+    locationType: process.env.CORBER ? 'hash' : 'auto',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
