@@ -58,7 +58,16 @@ module.exports = function(defaults) {
       importCss: false,
       // importJS: ['button','tooltip']
     },
-    
+    'svgJar': {
+      strategy: 'inline',
+      optimizer: {
+        plugins: [
+          { removeTitle: false },
+          { removeDesc: { removeAny: false } },
+          { removeViewBox: false }
+        ]
+      },
+    },
     /*fontawesome: {
       defaultPrefix: 'fas' // fas for Solid, fab for brands, fal for light(pro)
     },*/
