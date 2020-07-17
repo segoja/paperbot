@@ -43,8 +43,8 @@ app.on('window-all-closed', () => {
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
-    width: 1920,
-    height: 1080,
+    width: 1280,
+    height: 720,
     
     webPreferences: {
       webSecurity: false,
@@ -56,15 +56,15 @@ app.on('ready', () => {
   
   
 // The following opens all external links with target _blank into the default system browser.  
-mainWindow.webContents.on('new-window', function(event, url){
-  event.preventDefault();
-  open(url);
-});
+  mainWindow.webContents.on('new-window', function(event, url){
+    event.preventDefault();
+    open(url);
+  });
  
   
 // The following disables the window's menu.
-// mainWindow.setMenu(null);
-// mainWindow.setMenuBarVisibility(false);
+  mainWindow.setMenu(null);
+  mainWindow.setMenuBarVisibility(false);
 
   // If you want to open up dev tools programmatically, call
   // mainWindow.openDevTools();

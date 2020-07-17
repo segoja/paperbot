@@ -25,14 +25,14 @@ module.exports = {
         protocol: ['paperbot'],
         protocolName: 'Paperbot',
         overwrite: true,
-        icon: path.join(__dirname, '../ember/paperbot.ico')
+        icon: 'public/paperbot'
     },
     electronWinstallerConfig: {
         name: 'Paperbot',
-        icon: path.join(__dirname, '../ember/paperbot'),
+        icon: 'public/paperbot',
         authors: 'Papercat Creations',
         exe: 'Paperbot.exe',
-        setupIcon: path.join(__dirname, '../ember/favicon.ico'),
+        setupIcon: 'K:/work/ember/paperbot/public/paperbot.ico',
         title: 'Paperbot',
         noMsi: true,
     }
