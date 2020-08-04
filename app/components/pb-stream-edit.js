@@ -1,12 +1,16 @@
+/* global require */
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { empty, sort } from '@ember/object/computed';
+import { denodeify } from 'rsvp';
+import moment from 'moment';
 
 export default class PbStreamEditComponent extends Component {
   @service twitchChat;
-  
+  @service globalConfig;
+
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.queue') isQueueEmpty;
 
@@ -19,7 +23,7 @@ export default class PbStreamEditComponent extends Component {
   @tracked message = "";
   @tracked msglist = [];  
   @tracked songqueue = [];
-  @tracked soundBoardEnabled = true;
+  @tracked soundBoardEnabled = false;
 
   queueAscSorting = Object.freeze(['timestamp:asc']);
  
@@ -170,6 +174,42 @@ export default class PbStreamEditComponent extends Component {
     this.scrollPosition = 1500;
     this.scrollPlayedPosition = this.pendingSongs.get('length');
     this.scrollPendingPosition = this.playedSongs.get('length');
+    if(this.queueToFile){
+      // var queuehtml = document.getElementById("songqueue").innerHTML;
+      this.fileContent();
+    }
+  }
+
+  @action fileContent(){
+    console.log("Escribiendo a disco!");      
+    if (this.queueToFile){
+      var fs = require('fs');
+      var writeFile = denodeify(fs.writeFile);
+      var readFile = denodeify(fs.readFile);
+      
+      console.log();
+      // alert(this.globalConfig.config.soundsfolder);
+      var html = readFile("ember/queue/queue-header.html", 'utf8').then((data)=>{
+        this.pendingSongs.forEach((pendingsong)=>{          
+          data = data.concat("\n\t\t\t<div class=\"alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white\">");
+          data = data.concat("\n\t\t\t\t<div class=\"alert-heading h4\">"+pendingsong.song+"</div>");
+          data = data.concat("\n\t\t\t\t<div class=\"row\">");
+          data = data.concat("\n\t\t\t\t\t<div class=\"col h6\">"+moment(pendingsong.timestamp).format("YYYY/MM/DD HH:mm:ss")+"</div>");
+          data = data.concat("\n\t\t\t\t\t<div class=\"col-auto h6\">"+pendingsong.user+"</div>");
+          data = data.concat("\n\t\t\t\t</div>");
+          data = data.concat("\n\t\t\t</div>");          
+        });
+        return readFile("ember/queue/queue-footer.html", 'utf8').then((footer)=>{
+          // console.log(footer);
+          return data.concat(footer);
+        });
+      });
+      console.log(html);
+      if(this.globalConfig.config.soundsfolder != ''){
+        let pathstring = this.globalConfig.config.overlayfolder+'\\queue.html';
+        return writeFile(pathstring, html);         
+      }
+    }    
   }
   
   @action sendMessage() {
@@ -201,6 +241,7 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = this.pendingSongs.get('length');
     this.scrollPendingPosition = this.playedSongs.get('length');
+    this.msgGetter();
   } 
   
   @action nextSong(){
@@ -209,7 +250,9 @@ export default class PbStreamEditComponent extends Component {
       set(firstSong, 'processed', true);
       this.scrollPlayedPosition = this.pendingSongs.get('length');
       this.scrollPendingPosition = this.playedSongs.get('length');
+      this.fileContent();
     }
+
   }
   @action prevSong(){
     if(this.playedSongs.get('length') != 0){
@@ -217,6 +260,7 @@ export default class PbStreamEditComponent extends Component {
       set(firstSong, 'processed', false);
       this.scrollPlayedPosition = this.pendingSongs.get('length');
       this.scrollPendingPosition = this.playedSongs.get('length');
+      this.fileContent();
     }
   }
   // Soundboard toggle
@@ -297,4 +341,9 @@ export default class PbStreamEditComponent extends Component {
     this.extraPanLeftBottom = !this.extraPanLeftBottom;
   }  
 
+
+  @tracked queueToFile = false;
+  @action queueWriter(){
+    this.queueToFile = !this.queueToFile;
+  }
 }

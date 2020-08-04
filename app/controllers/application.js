@@ -9,7 +9,8 @@ export default class ApplicationController extends Controller {
   @service store;
   @service router;  
   @service headData;
-  
+  @service globalConfig;
+
   get darkmode(){
     if(this.model){
       var config = this.model.filterBy('isdefault', true).get('firstObject');
@@ -33,7 +34,13 @@ export default class ApplicationController extends Controller {
       DarkReader.disable(); 
     }
   }
-    
+  
+  get loadConfig(){
+    var config = this.model.filterBy('isdefault', true).get('firstObject');
+    this.globalConfig.config = config;
+    return '';    
+  }
+  
   @action toggleMode(){
     
     if(this.model){

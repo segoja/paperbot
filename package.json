@@ -111,7 +111,7 @@
     "edition": "octane"
   },
   "ember-electron": {
-     "icon": "paperbot"
+    "icon": "paperbot"
   },
   "dependencies": {
     "acorn": "^7.1.1",

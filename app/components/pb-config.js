@@ -18,7 +18,7 @@ export default class PbConfigComponent extends Component {
     let dialog = require('electron').remote.dialog;
     dialog.showOpenDialog({ properties: ['openDirectory'] }).then((folder) => {
       console.log(folder);
-      config.soundsfolder = folder.filePaths[0];
+      config.overlayfolder = folder.filePaths[0];
     });
   }
 }

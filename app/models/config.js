@@ -3,7 +3,7 @@ import { attr } from '@ember-data/model';
 
 export default class ConfigModel extends Model {
   @attr('string', {defaultValue: ""}) name;
-  @attr('string', {defaultValue: ""}) soundsfolder;
+  @attr('string', {defaultValue: ""}) overlayfolder;
   @attr('string', {defaultValue: ""}) couchdbuser;
   @attr('string', {defaultValue: ""}) couchdbpassword;
   @attr('string', {defaultValue: ""}) couchdburl;
