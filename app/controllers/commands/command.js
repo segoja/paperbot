@@ -18,7 +18,7 @@ export default class CommandController extends Controller {
   
   @action editCommand(){
     this.isEditing = true;
-  }  
+  }
   
   @action saveCommand () {
     this.isEditing = false;

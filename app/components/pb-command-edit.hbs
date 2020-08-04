@@ -19,15 +19,27 @@
   
   <form.element @controlType="text" @property="soundfile"  @label="Sound file" as |el|>
     <div class="input-group">
+      <div class="input-group-prepend">
+        <BsButton @type="secondary" @onClick={{fn this.soundPreview}}><FaIcon @icon="{{if this.loadPreview "play" "volume-mute"}}" /></BsButton>        
+      </div>
       <el.control disabled class="alert-light" @placeholder="Select the sound file..." />
       <div class="input-group-append">
         <BsButton @type="secondary" @onClick={{fn this.getAudioPath @command}}>Select file</BsButton>        
       </div>
     </div>
   </form.element>
-
-  <form.element @controlType="text" @label="Volume" placeholder="Set the volume" @property="volume" required />
-  
+  <div class="form-group row ember-view">
+    <label class="col-md-4">Volume:</label>    
+    <div class="col-sm">
+      <div class="input-group alert-light bg-light rounded">
+        <Input @type="range" min="1" max="100" @value={{@command.volume}} class="form-control slider" />
+        <div class="input-group-append">
+          <Input @type="text" @value={{@command.volume}} class="form-control rounded-0" />
+        </div>
+      </div>
+    </div>
+  </div>
+ 
   <BsButton type="submit" @type="success" @onClick={{fn this.doneEditing}}>Done</BsButton>
   <BsButton @type="danger" @onClick={{fn @deleteCommand}}>Delete</BsButton>
   

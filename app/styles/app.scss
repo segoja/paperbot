@@ -135,3 +135,41 @@ svg.logo{
  width: 27px;
  vertical-align: top;
 }
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  background: #efefef;
+  border: 1px solid #ced4da;
+  outline: none;
+  padding: 0px;
+  color: #efefef;
+  opacity: 1;
+  vertical-align: middle;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::hover, .slider:active, .slider:visited {
+  opacity: 1;
+  background: #ededed;  
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1em;
+  height: 2.3em;
+  background: #5a6268;
+  border-left: 1px solid #ced4da;
+  border-right: 1px solid #ced4da;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 1em;
+  height: 1.5em;
+  background: #5a6268;
+  border-left: 1px solid #ced4da;
+  border-right: 1px solid #ced4da;
+  cursor: pointer;
+}
