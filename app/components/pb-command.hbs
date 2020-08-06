@@ -2,32 +2,57 @@
   <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded-top">
     <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0">{{@command.name}}</h5></div>
     <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
-      <bg.button @type="dark rounded-0 border-0" @onClick={{fn @editCommand}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>
       <bg.button @type="dark rounded-0 rounded-top-right border-0" @onClick={{fn @closeCommand}}><FaIcon @icon="times" /></bg.button>
     </BsButtonGroup>
   </div>
-  {{#if @isEditing}}
-    <div class="card-body">
-      <PbCommandEdit @command={{@command}} @isEditing={{@isEditing}} @commandTypes={{@commandTypes}} @saveCommand={{@saveCommand}} @editCommand={{@editCommand}} @deleteCommand={{@deleteCommand}} />
-    </div>
-  {{else}}
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-12">
-          <table class="table table-striped">
-            <tbody>
-              <tr><td>Command:</td><td> {{@command.name}}</td></tr>
-              <tr><td>Type:</td><td> {{@command.type}}</td></tr>
-              <tr><td>Active:</td><td>{{if @command.active "Yes" "No"}}</td></tr>
-              <tr><td>Cooldown:</td><td> {{@command.cooldown}} seconds</td></tr>
-              <tr><td>Timer:</td><td> {{@command.timer}} seconds</td></tr>
-              <tr><td>Response:</td><td> {{@command.response}}</td></tr>
-              <tr><td>Sound File:</td><td> {{@command.soundfile}}</td></tr>
-              <tr><td>Volume:</td><td> {{@command.volume}}%</td></tr>
-            </tbody>
-          </table>
+  <div class="card-body">
+    <BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{fn @saveCommand}} as |form|>
+      <form.element @controlType="text" @label="Name" placeholder="Type the command name" @property="name" required /> 
+      <form.element @controlType="power-select" @property="type" @label="Type" @options={{@commandTypes}} as |element| >
+        <element.control placeholder="Select the command type" />
+      </form.element>
+      <form.element @controlType="checkbox" @label="Active" @class="pl-1" @property="active" />
+      <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
+      <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
+      <div class="form-group row ember-view">
+        <label class="col-md-4">Permissions</label>
+        <div class="col-sm pl-0">
+          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" @class="form-check form-check-inline" @property="admin" />
+          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" @class="form-check form-check-inline" @property="mod" />
+          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" @class="form-check form-check-inline" @property="sub" />
+          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  @class="form-check form-check-inline" @property="vip" />
         </div>
       </div>
-    </div>
-  {{/if}}
+      <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
+      
+      <form.element @controlType="text" @property="soundfile"  @label="Sound file" as |el|>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <BsButton @type="secondary" @onClick={{fn this.soundPreview}}><FaIcon @icon="{{if this.loadPreview "play-circle" "volume-mute"}}" /></BsButton>        
+          </div>
+          <el.control disabled class="alert-light" @placeholder="Select the sound file..." />
+          <div class="input-group-append">
+            <BsButton @type="secondary" @onClick={{fn this.getAudioPath @command}}>Select file</BsButton>        
+          </div>
+        </div>
+      </form.element>
+      <div class="form-group row ember-view">
+        <label class="col-md-4">Volume:</label>    
+        <div class="col-sm">
+          <div class="input-group alert-light bg-light rounded">
+            <Input @type="range" min="1" max="100" @value={{@command.volume}} class="form-control slider" />
+            <div class="input-group-append">
+              <Input @type="text" @value={{@command.volume}} class="form-control rounded-0" />
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <BsButton @type="success" @onClick={{fn @saveAndReturnCommand}}><FaIcon @icon="save" /> Save & Return</BsButton> 
+      <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
+      <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" @class={{if this.saving "spin"}} /> <span>Command saved!</span></div>
+      <BsButton @type="danger" @onClick={{fn @deleteCommand}} class="float-right">Delete</BsButton>
+      
+    </BsForm>
+  </div>
 </div>

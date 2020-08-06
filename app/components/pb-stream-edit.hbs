@@ -1,6 +1,6 @@
 {{#if @isEditing}}
   <div class="card-body">
-    <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneEditing}} as |form|>
+    <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneAndReturnEditing}} as |form|>
       <form.element @controlType="text" @label="Stream Title" placeholder="Stream title" @property="title" required />
       <form.element @controlType="text" @label="Stream Channel" placeholder="Stream channel" @property="channel" required />
       
@@ -16,24 +16,25 @@
           {{option.username}}
         </client.control>
       </form.element>  
-      
-      <BsButton type="submit" @type="success">Save</BsButton>
-      <BsButton @type="danger" @onClick={{fn @deleteStream}}>Delete</BsButton>
+      <BsButton @type="success" @onClick={{fn this.doneAndReturnEditing}}><FaIcon @icon="save" /> Save & Return</BsButton> 
+      <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
+      <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" @class={{if this.saving "spin"}} /> <span>Stream updated!</span></div>
+      <BsButton @type="danger" @onClick={{fn @deleteStream}} class="float-right">Delete</BsButton>
     </BsForm>
   </div>
 {{else}}
   <div class="card-body p-0 m-0 border-top-0 border-light">
     <div class="row p-0 m-0 border border-dark rounded-0 border-dark bg-dark">
-      <BsButton @class="btn-sm border border-dark col-sm-auto {{if this.soundBoardEnabled "disabled"}}" @type="warning rounded-0" @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
+      <BsButton @class="btn-sm border border-dark col-1 col-sm-auto {{if this.soundBoardEnabled "disabled"}}" @type="warning rounded-0" @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
         <FaIcon @icon="{{if this.soundBoardEnabled "volume-up" "volume-mute"}}" />
       </BsButton>     
-      <BsButton @class="btn-sm border border-dark col-sm-auto {{if this.queueToFile "disabled"}}" @type="danger rounded-0" @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
+      <BsButton @class="btn-sm border border-dark col-1 col-sm-auto {{if this.queueToFile "disabled"}}" @type="danger rounded-0" @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
         <FaIcon @icon="{{if this.queueToFile "file-alt" "file"}}" />
       </BsButton>
-      <BsButton @class="btn-sm border border-dark col-sm" @type="info" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</BsButton>
-      <BsButton @class="btn-sm border border-dark col-sm" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</BsButton>
-      <BsButton @class="btn-sm border border-dark col-sm" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</BsButton>
-      <BsButton @class="btn-sm border border-dark col-sm" @type="success rounded-0" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false @stream.finished}}>Finish Stream</BsButton>      
+      <BsButton @class="btn-sm border border-dark col-5 col-sm" @type="info" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</BsButton>
+      <BsButton @class="btn-sm border border-dark col-5 col-sm" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</BsButton>
+      <BsButton @class="btn-sm border border-dark col-6 col-sm" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</BsButton>
+      <BsButton @class="btn-sm border border-dark col-6 col-sm" @type="success rounded-0" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false @stream.finished}}>Finish Stream</BsButton>      
     </div>
   </div>
   {{#unless @stream.finished}}  
@@ -165,10 +166,10 @@
       </div>
     {{/if}}
     {{#unless this.disconnectButton}}  
-      <div class="card-footer flex-column flex-fill d-flex px-1 py-1 my-0"> 
-        <div class="row my-0">
-          <BsForm @formLayout="vertical" @model={{this}} class="col-md-12 my-0" @onSubmit={{fn this.sendMessage}} as |form|>
-            <form.element @property="message" class="my-0 py-0" as |el|>
+      <div class="card-footer flex-column flex-fill d-flex p-0 my-0"> 
+        <div class="row m-0">
+          <BsForm @formLayout="vertical" @model={{this}} class="col-md-12 my-1 mx-0 py-0 px-2" @onSubmit={{fn this.sendMessage}} as |form|>
+            <form.element @property="message" class="m-0 p-0" as |el|>
               <el.control 
                 @controlType="text"
                 placeholder="Type your message here"

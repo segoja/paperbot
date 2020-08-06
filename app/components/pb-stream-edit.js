@@ -6,6 +6,7 @@ import { inject as service } from '@ember/service';
 import { empty, sort } from '@ember/object/computed';
 import { denodeify } from 'rsvp';
 import moment from 'moment';
+import { later } from '@ember/runloop';
 
 export default class PbStreamEditComponent extends Component {
   @service twitchChat;
@@ -13,7 +14,8 @@ export default class PbStreamEditComponent extends Component {
 
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.queue') isQueueEmpty;
-
+  
+  @tracked saving = false;
   @tracked optsbot = this.args.stream.botclient.get('optsgetter');
   @tracked optschat = this.args.stream.chatclient.get('optsgetter');
   @tracked scrollPosition = 0;
@@ -233,6 +235,24 @@ export default class PbStreamEditComponent extends Component {
       }
     }
     this.args.saveStream();
+    this.saving = true;
+    later(() => { this.saving = false; }, 500);    
+  }  
+
+  @action doneAndReturnEditing() {
+    if(this.args.stream.finished === false){
+      if(this.isChatEmpty === false){
+        if(this.msglist != this.args.stream.chatlog){
+          this.args.stream.chatlog = this.msglist;
+        }
+      }
+      if(this.isQueueEmpty === false){
+        if(this.songqueue != this.args.stream.songqueue){
+          this.args.stream.songqueue = this.songqueue;
+        }
+      }
+    }
+    this.args.saveAndReturnStream(); 
   }  
   
   // Song processing related actions  

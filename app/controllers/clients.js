@@ -47,13 +47,11 @@ export default class ClientController extends Controller {
   }
 
   @action gridEditClient(client) {
-    this.client.isEditing = true;
     this.router.transitionTo('clients.client', client);
   } 
 
   @action gridDeleteClient(client) {
     client.destroyRecord().then(() => {
-      this.client.isEditing = false;
       this.isViewing = false;
     });
   } 

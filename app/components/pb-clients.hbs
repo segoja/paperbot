@@ -1,32 +1,32 @@
-<div class="row pt-5">
-  <div class="col-12 pt-3">
+<div class="row h-100 flex-fill m-0 pt-3 pb-0 px-0">
+  <div class="col-12 h-100 flex-fill p-0 m-0"> 
       {{!-- client listing --}}
-      <div class="{{if @isViewing "d-none" "card"}}">
+      <div class="{{if @isViewing "d-none" "card h-100 flex-fill"}}">
         <div class="card-header">
           <div class="row">          
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col" @onchange={{this.resetPage}} as |form|>
-              <form.element @controlType="text" class="w-100" @property="query" as |el|>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-12 col-sm px-1" @onchange={{this.resetPage}} as |form|>
+              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" as |el|>
                 <el.control
                   placeholder="Filter Clients"
                   tabIndex={{5}}
-                  class="w-100"
+                  class="w-100 m-0"
                 />
               </form.element>
             </BsForm>
-            <div class="col-auto">
+            <div class="col-auto mx-1 px-0 float-right">
               <FileUpload @name="importfile" @accept=".csv" @onfileadd={{fn this.clientImport}} hidden={{false}} class="my-0"><span class="btn btn-secondary ember-view">Import</span></FileUpload>
               <BsButton @type="secondary" @onClick={{fn this.clientExportFiltered}}>Export</BsButton>
               <BsButton @type="info" @onClick={{fn @createClient}}>Add New</BsButton>
             </div>
           </div>
         </div>
-        <div class="card-body mx-0 p-0">
-          <div class="row mx-0">
-            <table class="table table-hover table-condensed col-12 my-0 w-100">
+        <div class="card-body mx-0 p-0 flex-fill d-flex h-100 overflow-hidden">
+          <div class="row mx-0 flex-fill d-flex h-100 overflow-hidden">
+            <table class="table table-hover table-condensed col-12 my-0 h-100 flex-fill d-flex flex-column px-0">
               <thead>
                 <tr><th class="col-sm">Client</th><th class="col-sm">Type</th><th class="col-sm">Channel</th><th class="col-sm-auto">Admin</th></tr>
               </thead>
-              <tbody>
+              <tbody class="listframe">
                 {{#each this.pagedContent as |client|}}            
                   <LinkTo @route="clients.client" @model={{client}} @tagName="tr" class="w-100">
                     <td class="col-sm align-top">{{if client.username client.username "<unnamed>"}}</td>

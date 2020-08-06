@@ -7,28 +7,29 @@ export default class ClientController extends Controller {
   @inject clients;
   @service router;
 
-  @tracked isEditing;
   @tracked clientTypes = ['','bot','chat'];
 
   @action closeClient() {
-    this.isEditing = false;
     this.clients.isViewing = false;
     this.router.transitionTo('clients');      
   }
   
   @action editClient(){
-    this.isEditing = true;
   }  
+
+  @action saveAndReturnClient(){
+    this.saveClient();
+    this.router.transitionTo('clients');
+    
+  }
   
   @action saveClient () {
-    this.isEditing = false;
     this.model.save();
   }
   
   @action deleteClient() {
     this.model.destroyRecord().then(() => {
       this.clients.isViewing = false;
-      this.isEditing =  false;
       this.router.transitionTo('clients');
     });
   }

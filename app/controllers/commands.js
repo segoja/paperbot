@@ -30,7 +30,6 @@ export default class CommandsController extends Controller {
 
   @action createCommand() {
     let newCommand = this.store.createRecord('command');
-    this.command.isEditing = true;
     this.router.transitionTo('commands.command', newCommand.save());
   }
   
@@ -49,7 +48,6 @@ export default class CommandsController extends Controller {
   }
   
   @action gridEditCommand(command) {
-    this.command.isEditing = true;
     this.router.transitionTo('commands.command', command);
   } 
 
@@ -84,7 +82,6 @@ export default class CommandsController extends Controller {
     
     command.destroyRecord().then(() => {
       this.isViewing = false;
-      this.command.isEditing = false;
     });
   }  
 }

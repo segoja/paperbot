@@ -1,11 +1,16 @@
 /* global require */
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { later } from '@ember/runloop';
 
 export default class PbConfigComponent extends Component {
+  @tracked saving = false;
 
-  @action doneEditing() {
+  @action doneEditing() {  
     this.args.saveConfig();
+    this.saving = true;
+    later(() => { this.saving = false; }, 500);    
   }
 
   @action opendialogfiles(config){
