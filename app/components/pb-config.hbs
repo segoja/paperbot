@@ -11,7 +11,7 @@
         <form.element @controlType="text" @label="Name" placeholder="Config name" @property="name" required />          
         <form.element @controlType="text" @property="overlayfolder"  @label="Folder to place queue overlay file" as |el|>
           <div class="input-group">
-            <el.control disabled class="alert-light" />
+            <el.control disabled class="alert-secondary" />
             <div class="input-group-append">
               <BsButton @type="secondary" @onClick={{fn this.opendialogfiles @config}}>Select folder</BsButton>        
             </div>
