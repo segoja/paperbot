@@ -9,7 +9,6 @@ module.exports = function(defaults) {
       app: {
         css: {
           'app': '/assets/paperbot.css', // FOR LIGHT THEME => app.scss
-          'dark': '/assets/paperbot-dark.css' // FOR DAR THEME => dark.scss
         }
       }
     },    

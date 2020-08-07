@@ -63,8 +63,8 @@ app.on('ready', () => {
  
   
 // The following disables the window's menu.
-  //mainWindow.setMenu(null);
-  //mainWindow.setMenuBarVisibility(false);
+  mainWindow.setMenu(null);
+  mainWindow.setMenuBarVisibility(false);
 
   // If you want to open up dev tools programmatically, call
   // mainWindow.openDevTools();

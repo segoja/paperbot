@@ -25,16 +25,22 @@
 {{else}}
   <div class="card-body p-0 m-0 border-top-0 border-light">
     <div class="row p-0 m-0 border border-dark rounded-0 border-dark bg-dark">
-      <BsButton @class="btn-sm border border-dark col-1 col-sm-auto {{if this.soundBoardEnabled "disabled"}}" @type="warning rounded-0" @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
-        <FaIcon @icon="{{if this.soundBoardEnabled "volume-up" "volume-mute"}}" />
-      </BsButton>     
-      <BsButton @class="btn-sm border border-dark col-1 col-sm-auto {{if this.queueToFile "disabled"}}" @type="danger rounded-0" @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
-        <FaIcon @icon="{{if this.queueToFile "file-alt" "file"}}" />
-      </BsButton>
-      <BsButton @class="btn-sm border border-dark col-5 col-sm" @type="info" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</BsButton>
-      <BsButton @class="btn-sm border border-dark col-5 col-sm" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</BsButton>
-      <BsButton @class="btn-sm border border-dark col-6 col-sm" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Bot & Chat</BsButton>
-      <BsButton @class="btn-sm border border-dark col-6 col-sm" @type="success rounded-0" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false @stream.finished}}>Finish Stream</BsButton>      
+      <div class="col-1 row p-0 m-0">
+        <BsButton @class="btn-sm mx-0 border border-dark col-12 col-sm-6 {{if this.soundBoardEnabled "disabled"}}" @type="warning rounded-0" @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
+          <FaIcon @icon="{{if this.soundBoardEnabled "volume-up" "volume-mute"}}" />
+        </BsButton>     
+        <BsButton @class="btn-sm mx-0 border border-dark col-12 col-sm-6 {{if this.queueToFile "disabled"}}" @type="danger rounded-0" @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
+          <FaIcon @icon="{{if this.queueToFile "file-alt" "file"}}" />
+        </BsButton>
+      </div>
+      <div class="col row p-0 m-0">
+        <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="info" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}>Connect Bot Client</BsButton>
+        <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}>Connect Chat Client</BsButton>
+      </div>
+      <div class="col row p-0 m-0 text-nowrap">
+        <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Clients</BsButton>
+        <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="success" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false @stream.finished}}>Finish Stream</BsButton>
+      </div>
     </div>
   </div>
   {{#unless @stream.finished}}  

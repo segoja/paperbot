@@ -1,8 +1,8 @@
 ﻿<HeadLayout />
-<header>
+<header class="m-0 p-0">
   <BsNavbar
     @type="dark"
-    @class="px-3"
+    @class="px-3 my-0 py-1"
     @backgroundColor="dark"
     @collapsed={{true}}
     @fluid={{true}}
@@ -13,7 +13,7 @@
 
       <div class="navbar-header">
         {{navbar.toggle}}
-        <LinkTo @route="application" class="navbar-brand">Paperbot <span>{{svg-jar "papercat-gray-icon" class="logo" }}</span></LinkTo>{{this.loadConfig}}
+        <LinkTo @route="application" class="navbar-brand my-0 py-0">Paperbot <span>{{svg-jar "papercat-gray-icon" class="logo" }}</span></LinkTo>{{this.loadConfig}}
       </div>     
       <navbar.content>
         <navbar.nav class="ml-auto" as |nav|>

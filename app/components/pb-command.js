@@ -1,6 +1,6 @@
 /* global require */
 import Component from '@glimmer/component';
-import { action } from '@ember/object';
+import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
@@ -26,6 +26,10 @@ export default class PbCommandComponent extends Component {
       }
     });
   }  
+      
+  @tracked soundClip;
+  
+  @tracked isPlaying =  false;
   
   get loadPreview(){
     if(this.args.command.soundfile){
@@ -36,9 +40,43 @@ export default class PbCommandComponent extends Component {
     }
   }
   
-  @action soundPreview(){
-    var sound = this.audio.getSound('preview');
-    sound.changeGainTo(this.args.command.volume).from('percent');
-    sound.play();
+  @action stopSound(){
+    if(this.soundClip.isPlaying){
+      this.soundClip.stop(); 
+      this.isPlaying = false;
+    }
+  }
+  
+  @action adjustVolume(volume){
+    if(this.args.command.soundfile){
+      if(volume === ''){
+        volume = 0;
+        set(this.args.command, "volume", 0);
+      }
+      if(volume > 100){
+        volume = 100;
+        set(this.args.command, "volume", 100);
+      }
+      if(isNaN(volume)){
+        volume = 100;
+        set(this.args.command, "volume", 100);
+      }
+      if(this.soundClip){    
+        this.soundClip.changeGainTo(volume).from('percent');
+      }
+    }
+  }
+  
+  @action playSound(){
+    if(this.args.command.soundfile){
+      this.soundClip = this.audio.getSound('preview');
+      this.soundClip.changeGainTo(this.args.command.volume).from('percent');    
+      // We get the sound duratiaon in miliseconds.
+      var duration = this.soundClip.duration.raw*1000;
+      this.isPlaying = true;
+      later(() => { this.isPlaying = false; }, duration);
+      
+      this.soundClip.play();
+    }
   }
 }
