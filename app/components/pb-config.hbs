@@ -7,8 +7,20 @@
     </BsButtonGroup> --}}
   </div>
     <div class="card-body">
-      <BsForm @formLayout="vertical" @model={{@config}}  @onSubmit={{fn this.doneEditing}} as |form|>
-        <form.element @controlType="text" @label="Name" placeholder="Config name" @property="name" required />          
+      <BsForm @formLayout="horizontal" @model={{@config}}  @onSubmit={{fn this.doneEditing}} as |form|>
+        {{!-- <form.element @controlType="text" @label="Name" placeholder="Config name" @property="name" required /> --}}
+        <form.element @controlType="text" @label="Default channel" placeholder="Default channel name" @property="defchannel" required />          
+
+        <form.element @controlType="power-select" @property="defbotclient" @label="Default bot client" @options={{@clients}} required as |client|>
+          <client.control as |option|>
+            {{option.username}}
+          </client.control>
+        </form.element>
+        <form.element @controlType="power-select" @property="defchatclient" @label="Default chat client" @options={{@clients}} required as |client|>
+          <client.control as |option|>
+            {{option.username}}
+          </client.control>
+        </form.element>
         <form.element @controlType="text" @property="overlayfolder"  @label="Folder to place queue overlay file" as |el|>
           <div class="input-group">
             <el.control disabled class="alert-secondary" />
@@ -17,6 +29,7 @@
             </div>
           </div>
         </form.element>
+         
         <form.element @controlType="text" @label="CouchDB username" placeholder="Username" @property="couchdbuser" required /> 
         <form.element @controlType="password" @label="CouchDB password" placeholder="Password" @property="couchdbpassword" required /> 
         <form.element @controlType="text" @label="CouchDB url" placeholder="Username" @property="couchdburl" required /> 

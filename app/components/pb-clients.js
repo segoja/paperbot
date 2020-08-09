@@ -21,7 +21,7 @@ export default class PbClientsComponent extends Component {
 
   @computedFilterByQuery(
     'arrangedContent',
-    ['username','type'],
+    ['username'],
     'args.queryParamsObj.query',
     { conjunction: 'and', sort: false}
   ) filteredContent;
@@ -40,7 +40,7 @@ export default class PbClientsComponent extends Component {
   @action clientImport(file){
     let reader = new FileReader();
     reader.readAsText(file.blob).then((text) => {    
-      let reference = ['username','type','oauth','defaultbot','defaultchat','channel','debug','reconnect','secure'];
+      let reference = ['username','oauth','channel','debug','reconnect','secure'];
 
       let rows = PapaParse.parse(text,{header: true, skipEmptyLines: true}).data;
       
@@ -70,10 +70,10 @@ export default class PbClientsComponent extends Component {
     this.filteredContent;
     var csvdata = [];
     if (this.filteredContent !== 0){
-      let header = ['username','type','oauth','defaultbot','defaultchat','channel','debug','reconnect','secure'];
+      let header = ['username','oauth','channel','debug','reconnect','secure'];
       csvdata.push(header);
       this.filteredContent.forEach((client) => {
-        let csvrow = [client.username,client.type,client.oauth,client.defaultbot,client.defaultchat,client.channel,client.debug,client.reconnect,client.secure];
+        let csvrow = [client.username,client.oauth,client.channel,client.debug,client.reconnect,client.secure];
         csvdata.push(csvrow);
       });
     }

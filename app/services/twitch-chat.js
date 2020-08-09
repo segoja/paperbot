@@ -49,6 +49,7 @@ export default class TwitchChatService extends Service {
   @tracked lastsongrequest = null;
   @tracked lastevent = null;
   @tracked lastmodaction = null;
+  @tracked lastSoundCommand = null;
   @tracked takessongrequests;
   
   @tracked channelBadges = [];
@@ -152,11 +153,13 @@ export default class TwitchChatService extends Service {
   }
 
   async disconnector(){
+    var isDisconnected = false;
     if(this.botConnected === true){
       this.botclient.disconnect().then(()=>{
         this.botConnected = false;
         this.channel = '';
         this.botUsername = '';
+        isDisconnected = true;
         console.log("The bot client got disconnected!");
       });
     }
@@ -164,10 +167,36 @@ export default class TwitchChatService extends Service {
       this.chatclient.disconnect().then(() => {
         this.chatConnected = false;
         this.channel = '';
+        isDisconnected = true;
         console.log("The chat client got disconnected!");        
       });
     }
-   return true;
+    return isDisconnected;     
+  }
+  async disconnectBot(){
+    var isDisconnected = false;
+    if(this.botConnected === true){
+      this.botclient.disconnect().then(()=>{
+        this.botConnected = false;
+        this.channel = '';
+        this.botUsername = '';
+        isDisconnected = true;
+        console.log("The bot client got disconnected!");
+      });
+    }
+   return isDisconnected;
+  }
+  async disconnectChat(){
+    var isDisconnected = false;
+    if(this.chatConnected === true){
+      this.chatclient.disconnect().then(() => {
+        this.chatConnected = false;
+        this.channel = '';
+        isDisconnected = true;
+        console.log("The chat client got disconnected!");        
+      });
+    }
+   return isDisconnected;
   }
 
   // Called every time the bot connects to Twitch chat
@@ -313,6 +342,7 @@ export default class TwitchChatService extends Service {
                   if (this.soundBoardEnabled){
                     let sound = this.audio.getSound(command.name);
                     sound.changeGainTo(command.volume).from('percent');
+                    this.lastSoundCommand = sound;
                     sound.play();
                   }
                   break;

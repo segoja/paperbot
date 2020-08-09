@@ -13,6 +13,7 @@ class QueryParamsObj {
 export default class StreamsController extends Controller {
   @inject ('streams.stream') stream;
   @service router;
+  @service globalConfig;
   
   queryParams= [
     {'queryParamsObj.page': 'page'},
@@ -29,6 +30,18 @@ export default class StreamsController extends Controller {
   @action createStream() {
     let newStream = this.store.createRecord('stream');
     newStream.set('date', new Date());
+    
+    // Set the stream with the default values if they are set in config.
+    if(this.globalConfig.config.defbotclient){
+      newStream.set('botclient', this.globalConfig.config.defbotclient);
+    }
+    if(this.globalConfig.config.defchatclient){
+      newStream.set('chatclient', this.globalConfig.config.defchatclient);
+    }
+    if(this.globalConfig.config.defchannel){
+      newStream.set('channel', this.globalConfig.config.defchannel);
+    }
+    
     this.stream.isEditing = true;
     this.router.transitionTo('streams.stream', newStream.save());
   }

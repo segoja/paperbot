@@ -56,15 +56,18 @@ app.on('ready', () => {
   
   
 // The following opens all external links with target _blank into the default system browser.  
+  const shell = require('electron').shell;
+  
   mainWindow.webContents.on('new-window', function(event, url){
     event.preventDefault();
-    open(url);
+    shell.openExternal(url)
   });
- 
+  
+
   
 // The following disables the window's menu.
-  mainWindow.setMenu(null);
-  mainWindow.setMenuBarVisibility(false);
+  // mainWindow.setMenu(null);
+  // mainWindow.setMenuBarVisibility(false);
 
   // If you want to open up dev tools programmatically, call
   // mainWindow.openDevTools();

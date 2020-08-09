@@ -1,13 +1,10 @@
 import Controller, { inject }  from '@ember/controller';
 import { action } from "@ember/object";
-import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 
 export default class ClientController extends Controller {
   @inject clients;
   @service router;
-
-  @tracked clientTypes = ['','bot','chat'];
 
   @action closeClient() {
     this.clients.isViewing = false;

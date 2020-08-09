@@ -34,10 +34,7 @@ export default class ClientController extends Controller {
   @action importClients(client){
     let newClient = this.store.createRecord('client');
     newClient.set('username',client.username);
-    newClient.set('type',client.type);
     newClient.set('oauth',client.oauth);
-    newClient.set('defaultbot',client.defaultbot);
-    newClient.set('defaultchat',client.defaultchat);
     newClient.set('channel',client.channel);
     newClient.set('debug',client.debug);
     newClient.set('reconnect',client.reconnect);

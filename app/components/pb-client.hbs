@@ -6,29 +6,25 @@
     </BsButtonGroup>
   </div>
   <div class="card-body">
-    <BsForm @formLayout="vertical" @model={{@client}} @onSubmit={{fn @saveClient}} as |form|>
+    <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{fn @saveClient}} as |form|>
       <form.element @controlType="text" @label="Username" placeholder="Username" @property="username" required />  
-      <form.element @controlType="power-select" @property="type" @label="Client type" @options={{@clientTypes}} as |element|>
-        <element.control placeholder="Select the client type" />
-      </form.element>  
 
-      <form.group>
-        <label class="control-label">
+      <div class="form-group row">
+        <label class="control-label col-form-label col-md-4">
           Oauth 
           <span role="btn">
             <FaIcon @icon="question-circle" class="text-info" />
             <BsTooltip>Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer">Here</a></BsTooltip>
           </span>
-        </label>  
-        <form.element @controlType={{if this.isMasked "password" "text"}} @property="oauth" required as |el| >
-          <div class="input-group">
-            <el.control @placeholder="Paste your Oauth here including Oauth: " />
-            <div class="input-group-append">
-              <BsButton @type="outline-secondary" @onClick={{fn this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></BsButton>        
-            </div>
-          </div>        
-        </form.element>
-      </form.group>
+        </label>
+        <div class="input-group col-md-8">
+          <Input @type={{if this.isMasked "password" "text"}} @value={{@client.oauth}} {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control" @placeholder="Paste your Oauth here including Oauth: "/>          
+          <div class="input-group-append">
+            <BsButton @type="outline-secondary" @onClick={{fn this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></BsButton>        
+          </div>
+        </div>
+      </div>
+
 
 
       <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />      
@@ -37,10 +33,6 @@
           <form.element @controlType="checkbox" @label="Debug" @property="debug" />
           <form.element @controlType="checkbox" @label="Reconnect" @property="reconnect" />
           <form.element @controlType="checkbox" @label="Secure" @property="secure" />
-        </div>
-        <div class="col">
-          <form.element @controlType="checkbox" @label="Default bot client" @property="defaultbot" />
-          <form.element @controlType="checkbox" @label="Default chat client" @property="defaultchat" />
         </div>
       </div>      
       <BsButton @type="success" @onClick={{fn @saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 

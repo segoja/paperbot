@@ -11,6 +11,7 @@ import { later } from '@ember/runloop';
 export default class PbStreamEditComponent extends Component {
   @service twitchChat;
   @service globalConfig;
+  @service audio;
 
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.queue') isQueueEmpty;
@@ -137,7 +138,31 @@ export default class PbStreamEditComponent extends Component {
     }
     this.twitchChat.connector(this.optschat, "chat");
   }
-  
+
+  @action disconnectBot(){
+    this.twitchChat.disconnectBot().then(
+      function(){
+        console.log("Bot client disconnected!");    
+        // 
+      }, 
+      function(){
+        console.log("Error disconnecting!");        
+      }
+    );
+  }
+  @action disconnectChat(){
+    this.twitchChat.disconnectChat().then(
+      function(){
+        console.log("Chat client disconnected!");    
+        // 
+      }, 
+      function(){
+        console.log("Error disconnecting!");        
+      }
+    );
+  }
+
+
   @action disconnectClients(){
     this.twitchChat.disconnector().then(
       function(){
@@ -286,6 +311,11 @@ export default class PbStreamEditComponent extends Component {
   // Soundboard toggle
   @action soundboardToggle(){
     this.soundBoardEnabled = !this.soundBoardEnabled;
+    if(this.soundBoardEnabled === false){
+      if(this.twitchChat.lastSoundCommand != null){
+        this.twitchChat.lastSoundCommand.stop();
+      }
+    }
     this.twitchChat.soundBoardEnabled = this.soundBoardEnabled;    
   }
   
