@@ -33,7 +33,16 @@
             <span role="button" {{on "click" this.toggleMode}} class="nav-link {{if this.headData.darkMode "bulboff" "bulbon active"}}" title="{{if this.headData.darkMode "Dark mode" "Light mode"}}">
               <FaIcon @icon="{{if this.headData.darkMode "lightbulb" "lightbulb"}}" />
             </span>
-          </nav.item>            
+          </nav.item>
+          <li class="nav-item">
+            <span role="button" class="nav-link" {{on "click" this.handleExport}}>Export Database</span>
+          </li>
+          <li class="nav-item">
+            <FileUpload @name="uploadfile" @accept="file/json" @onfileadd={{fn this.handleImport}} hidden={{false}} class="my-0" ><span class="nav-link">Import Database</span></FileUpload>
+          </li> 
+          <li class="nav-item">
+            <span role="button" class="nav-link" {{on "click" this.wipeDatabase}}>Wipe DB</span>
+          </li>   
         </navbar.nav>
       </navbar.content>
   </BsNavbar>

@@ -48,8 +48,66 @@ export default class ClientController extends Controller {
   } 
 
   @action gridDeleteClient(client) {
-    client.destroyRecord().then(() => {
-      this.isViewing = false;
+    var streambotList = [];
+    //get and unlink the client streams
+    client.botclientstreams.forEach((stream)=>{
+      // We get the streams
+      streambotList.push(stream);    
+    }).then(()=>{
+      // We unlink them all from the model
+      client.botclientstreams.removeObjects(streambotList).then(()=>{
+        // We save each stream to update the relationship.
+        streambotList.forEach((stream)=>{
+          stream.save();
+        });
+      }).then(()=>{
+        var streamchatList = [];
+        client.chatclientstreams.forEach((stream)=>{
+          // We get the streams
+          streamchatList.push(stream);    
+        }).then(()=>{
+          // We unlink them all from the model
+          client.chatclientstreams.removeObjects(streamchatList).then(()=>{
+            // We save each stream to update the relationship.
+            streamchatList.forEach((stream)=>{
+              stream.save();
+            });
+          }).then(()=>{
+            var configdefbotList = [];
+            client.botclientconfigs.forEach((config)=>{
+              // We get the configs
+              configdefbotList.push(config);    
+            }).then(()=>{
+              // We unlink them all from the model
+              client.botclientconfigs.removeObjects(configdefbotList).then(()=>{
+                // We save each config to update the relationship.
+                configdefbotList.forEach((config)=>{
+                  config.save();
+                });
+              }).then(()=>{
+                var configdefchatList = [];
+                client.chatclientconfigs.forEach((config)=>{
+                  // We get the configs
+                  configdefchatList.push(config);    
+                }).then(()=>{
+                  // We unlink them all from the model
+                  client.chatclientconfigs.removeObjects(configdefchatList).then(()=>{
+                    // We save each config to update the relationship.
+                    configdefchatList.forEach((config)=>{
+                      config.save();
+                    });
+                  }).then(()=>{
+                    this.isViewing = false;
+                    client.destroyRecord().then(() => {
+                      this.router.transitionTo('clients');
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
     });
   } 
 }

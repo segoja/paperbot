@@ -10,13 +10,12 @@ export default class ConfigModel extends Model {
 
   @attr('string', {defaultValue: ""}) defchannel;
 
-  @belongsTo('client') defbotclient;
-  @belongsTo('client') defchatclient;
+  @belongsTo('client', { inverse: 'botclientconfigs', save: true }) defbotclient;
+  @belongsTo('client', { inverse: 'chatclientconfigs', save: true }) defchatclient;
 
   @attr('boolean', {defaultValue: false}) darkmode;
   @attr('boolean', {defaultValue: false}) isdefault;
-  
-  
+    
   get switcher(){
     return this.darkmode;
   }

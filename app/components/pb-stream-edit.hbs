@@ -6,13 +6,13 @@
       
       <form.element @controlType="checkbox" @label="Request System" @property="requests" />
       
-      <form.element @controlType="power-select" @property="botclient" @label="Bot Client" @options={{@clients}} required as |client|>
-        <client.control as |option|>
+      <form.element @controlType="power-select" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{fn @setBotClient}} required as |client|>
+        <client.control @allowClear={{true}} @placeholder="Select the Bot Client for the stream" as |option|>
           {{option.username}}
         </client.control>
       </form.element>
-      <form.element @controlType="power-select" @property="chatclient" @label="Chat Client" @options={{@clients}} required as |client|>
-        <client.control as |option|>
+      <form.element @controlType="power-select" @property="chatclient" @label="Chat Client" @options={{@clients}} selected={{this.globalConfig.config.defchatclient}}  @onChange={{fn @setChatClient}}  required as |client|>
+        <client.control @allowClear={{true}} @placeholder="Select the Chat Client for the stream" as |option|>
           {{option.username}}
         </client.control>
       </form.element>  

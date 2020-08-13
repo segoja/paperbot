@@ -1,7 +1,17 @@
 import Route from '@ember/routing/route';
 
 export default class IndexRoute extends Route {
-  beforeModel () {
-    this.transitionTo('streams');
+  model () {
+    return this.store.findAll('config');      
   }
+
+  afterModel(model) {    
+    if (model.get('length') !== 0) {
+      // this.transitionTo('settings.config', model.filterBy('default', true).get('firstObject'));
+      this.transitionTo('streams.index');
+    } else {
+      this.transitionTo('settings.config', this.store.createRecord('config', {id: 'myconfig', name: "Default settings", isdefault: true}));
+    }
+  }
+ 
 }

@@ -26,7 +26,7 @@ export default class SettingsRoute extends Route {
         this.controllerFor('settings').isViewing = false;
         this.transitionTo('settings.config', model.model.get('firstObject'));
       } else {
-        this.transitionTo('settings.config', this.store.createRecord('config', {id: 'myconfig', name: "Default settings"}));
+        this.transitionTo('settings.config', this.store.createRecord('config', {id: 'myconfig', name: "Default settings", isdefault: true}));
       }
     }
   }

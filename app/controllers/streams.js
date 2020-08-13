@@ -25,25 +25,46 @@ export default class StreamsController extends Controller {
 
   @tracked lastStream;
   @tracked isViewing;
+  
+  
+  async defaultSetter(stream){
+    
+    stream.set('date', new Date());
 
+    
+    if(this.globalConfig.defchannel != null){
+      console.log(this.globalConfig.defchannel);
+      stream.set('channel', this.globalConfig.defchannel);
+    }
+    
+    if(this.globalConfig.defbotclient != null){
+      var botclient = await this.store.peekRecord('client', this.globalConfig.defbotclient);
+      if(botclient){
+        console.log(this.globalConfig.defbotclient);
+        stream.set('botclient', botclient);
+        await botclient.save().then(()=>stream.save());
+      } 
+    }
+    
+    if(this.globalConfig.defchatclient != null){
+      var chatclient = await this.store.peekRecord('client', this.globalConfig.defchatclient);
+      if(chatclient){
+        console.log(this.globalConfig.defchatclient);
+        stream.set('chatclient', chatclient);
+        await chatclient.save().then(()=>stream.save());
+      }   
+    }
+    
+    this.router.transitionTo('streams.stream', stream);
+  }
 
   @action createStream() {
-    let newStream = this.store.createRecord('stream');
-    newStream.set('date', new Date());
-    
-    // Set the stream with the default values if they are set in config.
-    if(this.globalConfig.config.defbotclient){
-      newStream.set('botclient', this.globalConfig.config.defbotclient);
-    }
-    if(this.globalConfig.config.defchatclient){
-      newStream.set('chatclient', this.globalConfig.config.defchatclient);
-    }
-    if(this.globalConfig.config.defchannel){
-      newStream.set('channel', this.globalConfig.config.defchannel);
-    }
-    
+    var newStream = this.store.createRecord('stream');
     this.stream.isEditing = true;
-    this.router.transitionTo('streams.stream', newStream.save());
+
+    newStream.save().then((stream)=>{
+      return this.defaultSetter(stream);
+    });
   }
   
   @action gridEditStream(stream) {

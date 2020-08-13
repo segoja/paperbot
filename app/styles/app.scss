@@ -97,7 +97,12 @@ div.highlight{
   font-size: 1rem;
   font-weight: 400;
   color: #6C757D!important;
+  border: 1px solid #ced4da!important;
 }
+.border-form-control{
+  border: 1px solid #ced4da!important;
+}
+
 .ember-power-select-placeholder {
     color: #6C757D;
 }

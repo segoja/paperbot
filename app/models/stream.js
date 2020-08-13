@@ -12,8 +12,8 @@ export default class StreamModel extends Model {
   @attr chatlog;
   @attr songqueue;
   
-  @belongsTo('client') botclient;
-  @belongsTo('client') chatclient;
+  @belongsTo('client', { inverse: 'botclientstreams', save: true }) botclient;
+  @belongsTo('client', { inverse: 'chatclientstreams', save: true }) chatclient;
   
   @readOnly('botuser.username') botName;
   @readOnly('chatuser.username') chatName;

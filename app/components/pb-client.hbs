@@ -18,14 +18,12 @@
           </span>
         </label>
         <div class="input-group col-md-8">
-          <Input @type={{if this.isMasked "password" "text"}} @value={{@client.oauth}} {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control" @placeholder="Paste your Oauth here including Oauth: "/>          
+          <Input @type={{if this.isMasked "password" "text"}} @value={{@client.oauth}} class="form-control" @placeholder="Paste your Oauth here including Oauth: "/>          
           <div class="input-group-append">
-            <BsButton @type="outline-secondary" @onClick={{fn this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></BsButton>        
+            <BsButton @type="outline-secondary border-form-control" @onClick={{fn this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></BsButton>        
           </div>
         </div>
       </div>
-
-
 
       <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />      
       <div class="form-row">

@@ -1,4 +1,4 @@
-import { attr } from '@ember-data/model';
+import { attr, hasMany } from '@ember-data/model';
 import { Model } from 'ember-pouch';
 
 export default class ClientModel extends Model {
@@ -9,6 +9,12 @@ export default class ClientModel extends Model {
   @attr ('boolean', {defaultValue: true}) debug;
   @attr ('boolean', {defaultValue: true}) reconnect;
   @attr ('boolean', {defaultValue: true}) secure;
+  
+  @hasMany('stream', {inverse: 'botclient', save: true }) botclientstreams;
+  @hasMany('stream', {inverse: 'chatclient', save: true }) chatclientstreams;
+  
+  @hasMany('config', {inverse: 'defbotclient', save: true }) botclientconfigs;
+  @hasMany('config', {inverse: 'defchatclient', save: true }) chatclientconfigs;
 
   get optsgetter(){
     let opts = {

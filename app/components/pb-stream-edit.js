@@ -232,7 +232,7 @@ export default class PbStreamEditComponent extends Component {
         });
       });
       console.log(html);
-      if(this.globalConfig.config.soundsfolder != ''){
+      if(this.globalConfig.config.overlayfolder != ''){
         let pathstring = this.globalConfig.config.overlayfolder+'\\queue.html';
         return writeFile(pathstring, html);         
       }

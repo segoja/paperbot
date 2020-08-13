@@ -21,7 +21,7 @@ export default class ApplicationRoute extends Route  {
       }
     } else {
       this.controllerFor('application').darkreader(false);
-      this.headData.darkMode = false;  
+      this.headData.darkMode = false;
     }
     
     this.headData.title = 'Paperbot, a Twitch.tv bot by Papercat84';
