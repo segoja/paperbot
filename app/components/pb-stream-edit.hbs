@@ -35,19 +35,19 @@
       </div>
       <div class="col row p-0 m-0">
         {{#if this.disableBotButton}}
-          <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="info" @onClick={{fn this.disconnectBot}}><FaIcon @icon="unlink" /> Disconnect Bot Client</BsButton>
+          <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="info" @onClick={{fn this.disconnectBot}}><FaIcon @icon="cog" class="spin" /> Bot Client</BsButton>
         {{else}}      
-          <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="info" @onClick={{fn this.connectBot}}><FaIcon @icon="link" /> Connect Bot Client</BsButton>
+          <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="info" @onClick={{fn this.connectBot}} disabled={{this.disableBotButton}}><FaIcon @icon="cog" /> Bot Client</BsButton>
         {{/if}}
         {{#if this.disableChatButton}}
           {{#if this.disableBotButton}}
-            <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" @onClick={{fn this.disconnectChat}}><FaIcon @icon="unlink" /> Disconnect Chat Client</BsButton>
+            <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" @onClick={{fn this.disconnectChat}} ><FaIcon @icon="cog" class="spin" /> Chat Client</BsButton>
           {{else}}
-            <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}><FaIcon @icon="link" /> Connect Chat Client</BsButton>
+            <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}><FaIcon @icon="cog" /> Chat Client</BsButton>
           {{/if}}
         {{else}}
           {{#if this.disableBotButton}}
-            <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}><FaIcon @icon="link" /> Connect Chat Client</BsButton>
+            <BsButton @class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" @onClick={{fn this.connectChat}} disabled={{this.disableChatButton}}><FaIcon @icon="cog" /> Chat Client</BsButton>
           {{/if}}
         {{/if}}
       </div>
@@ -60,7 +60,7 @@
   {{#unless @stream.finished}}  
     {{#if this.twitchChat.botConnected}}
       {{#if this.requests}}
-        {{on-key 'F7' this.nextSong}}{{on-key 'F9' this.prevSong}}
+        {{on-key "F7" this.nextSong}}{{on-key "F9" this.prevSong}}
       {{/if}}
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">

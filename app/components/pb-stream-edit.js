@@ -42,7 +42,7 @@ export default class PbStreamEditComponent extends Component {
   ) arrangedDescQueue;
   
   get disableBotButton(){
-    if(this.twitchChat.botConnected === true || this.args.stream.finished === true){
+    if(this.twitchChat.botConnected === true || this.args.stream.finished === true && this.args.stream.botclient != ''){
       return true;
     } else {
       return false;
@@ -50,7 +50,7 @@ export default class PbStreamEditComponent extends Component {
   }
   
   get disableChatButton(){
-    if(this.twitchChat.botConnected === false || this.twitchChat.chatConnected === true || this.args.stream.finished === true){
+    if(this.twitchChat.botConnected === false || this.twitchChat.chatConnected === true || this.args.stream.finished === true && this.args.stream.chatclient != ''){
       return true;
     } else {
       return false;

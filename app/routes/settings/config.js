@@ -3,7 +3,7 @@ import { action } from "@ember/object";
 
 export default class ConfigRoute extends Route {
 
-  model (params) {
+  async model (params) {
     // Using peekRecord the promise is instanctly solved, so we can do checks. wooooooo
     return this.store.findRecord('config', params.config_id);
   }  

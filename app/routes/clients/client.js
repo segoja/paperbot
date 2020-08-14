@@ -2,7 +2,7 @@ import Route from '@ember/routing/route';
 import { action } from "@ember/object";
 
 export default class ClientRoute extends Route {
-  model (params) {
+  async model (params) {
     return this.store.findRecord('client', params.client_id);
   }
   beforeModel(){

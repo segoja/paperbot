@@ -1,7 +1,7 @@
 import Controller, { inject }  from '@ember/controller';
 import { action } from "@ember/object";
 import { inject as service } from '@ember/service';
-import { all   } from 'rsvp';
+import { all } from 'rsvp';
 
 export default class ClientController extends Controller {
   @inject clients;
@@ -33,72 +33,50 @@ export default class ClientController extends Controller {
   
   async unlinkChildren(){
     
-   //collect the promises for deletion
+   // collect the children before deletion
     var childrenList = [];
-    //get and destroy the posts comments
-    this.model.botclientstreams.then((streams) => {
-      console.log(streams);
-      this.model.botclientstreams.removeObjects(streams);
-        streams.forEach((stream) => {
-          console.log(stream.date);
-          stream.botclient = '';
-          stream.save().then((savedstream)=> {
-            console.log(savedstream.date);
-            childrenList.push(savedstream);
-          });
-        });        
-    }).then(()=>{
-      this.model.chatclientstreams.then((streams) => {
-      console.log(streams);
-      this.model.chatclientstreams.removeObjects(streams);
-        streams.forEach((stream) => {
-          console.log(stream.date);
-          stream.chatclient = '';
-          stream.save().then((savedstream)=> {
-            console.log(savedstream.date);
-            childrenList.push(savedstream);
-          });
-        });
-      }).then(()=>{
-        this.model.botclientconfigs.then((configs) => {
-          console.log(configs);
-          this.model.botclientconfigs.removeObjects(configs);
-          configs.forEach((config) => {
-            console.log(config.name);
-            config.defbotclient =  '';
-            config.save().then((savedconfig)=> {
-              console.log(savedconfig.name);
-              childrenList.push(savedconfig);
-            });
-          });
-        });        
-      }).then(()=>{
-        this.model.chatclientconfigs.then((configs) => {
-          console.log(configs);
-          this.model.chatclientconfigs.removeObjects(configs);
-          configs.forEach((config) => {
-            console.log(config.name);
-            config.defchatclient = '';
-            config.save().then((savedconfig)=> {
-              console.log(savedconfig.name);
-              childrenList.push(savedconfig);
-            });
-          });
-        });        
-      }).then(()=>{
-        console.log(all(childrenList));
-        return all(childrenList);        
-      });
+    
+    var botclientstreams = await this.model.botclientstreams;
+    botclientstreams.forEach(async (stream) => {
+      childrenList.push(stream);
     });
+    
+    var chatclientstreams = await this.model.chatclientstreams;
+    chatclientstreams.forEach(async (stream) => {
+      childrenList.push(stream);
+    });
+      
+    var botclientconfigs = await this.model.botclientconfigs;
+    botclientconfigs.forEach(async (config) => {
+      childrenList.push(config);
+    });
+
+    var chatclientconfigs = await this.model.chatclientconfigs;
+    chatclientconfigs.forEach(async (config) => {
+      childrenList.push(config);
+    });
+    
+    var processed = all(childrenList);
+    return processed;
   }
   
   @action deleteClient() {
-    //Wait for children to be destroyed then destroy the client
-    this.unlinkChildren().then(() => {
-      this.clients.isViewing = false;
+    //Wait for children to be destroyed then destroy the client      
+    this.unlinkChildren().then((children)=>{
       this.model.destroyRecord().then(() => {
-        this.router.transitionTo('clients');
-      });
+        this.clients.isViewing = false;
+        var prevchildId = null;
+        children.map(async (child)=>{
+          // We check for duplicated in the child list.
+          // Makes no sense to save same model twice without changes (if you do you will get error).
+          if(prevchildId != child.id){
+            console.log("The id of the child: "+child.id);
+            prevchildId = child.id;
+            return await child.save();      
+          }          
+        });
+        this.router.transitionTo('clients');        
+      }); 
     });
   }
 }

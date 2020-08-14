@@ -2,7 +2,7 @@ import Route from '@ember/routing/route';
 import { action } from '@ember/object';
 
 export default class StreamRoute extends Route {
-  model (params) {
+  async model (params) {
     return this.store.findRecord('stream', params.stream_id);
   }
   
