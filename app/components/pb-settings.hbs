@@ -42,7 +42,7 @@
                     <td class="col-sm-auto">{{config.darkmode}}</td>
                     <td class="col-sm-auto">{{config.isdefault}}</td>
                     <td class="col-sm-auto">
-                      <BsButtonGroup @class="mx-auto" as |bg|>
+                      <BsButtonGroup class="mx-auto" as |bg|>
                         <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditConfig config}}><FaIcon @icon="edit" /></bg.button>
                         <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteConfig config}}><FaIcon @icon="trash" /></bg.button>
                       </BsButtonGroup>

@@ -11,16 +11,21 @@
       <form.element @controlType="power-select" @property="type" @label="Type" @options={{@commandTypes}} as |element| >
         <element.control placeholder="Select the command type" @allowClear={{true}} />
       </form.element>
-      <form.element @controlType="checkbox" @label="Active" @class="pl-1" @property="active" />
+      <div class="form-group row my-0">
+        <label class="col-md-4">Active</label>
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="" class="form-check form-check-inline" @property="active" />
+        </div>
+      </div>
       <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
       <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
       <div class="form-group row ember-view">
         <label class="col-md-4">Permissions</label>
         <div class="col-sm pl-0">
-          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" @class="form-check form-check-inline" @property="admin" />
-          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" @class="form-check form-check-inline" @property="mod" />
-          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" @class="form-check form-check-inline" @property="sub" />
-          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  @class="form-check form-check-inline" @property="vip" />
+          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check form-check-inline" @property="admin" />
+          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check form-check-inline" @property="mod" />
+          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check form-check-inline" @property="sub" />
+          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check form-check-inline" @property="vip" />
         </div>
       </div>
       <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
@@ -49,7 +54,7 @@
       
       <BsButton @type="success" @onClick={{fn @saveAndReturnCommand}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
-      <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" @class={{if this.saving "spin"}} /> <span>Command saved!</span></div>
+      <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Command saved!</span></div>
       <BsButton @type="danger" @onClick={{fn @deleteCommand}} class="float-right">Delete</BsButton>
       
     </BsForm>

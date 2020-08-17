@@ -60,7 +60,7 @@
         <form.element @controlType="checkbox" @label="Default config" @property="isdefault" required /> 
 
         <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>
-        <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" @class={{if this.saving "spin"}} /> <span>Config saved!</span></div>
+        <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Config saved!</span></div>
       </BsForm>
     </div>
 </div>

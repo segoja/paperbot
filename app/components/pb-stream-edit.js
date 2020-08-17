@@ -42,7 +42,7 @@ export default class PbStreamEditComponent extends Component {
   ) arrangedDescQueue;
   
   get disableBotButton(){
-    if(this.twitchChat.botConnected === true || this.args.stream.finished === true && this.args.stream.botclient != ''){
+    if(this.args.stream.finished === true || this.args.stream.botclient === '' || this.args.stream.channel === ''){
       return true;
     } else {
       return false;
@@ -50,7 +50,7 @@ export default class PbStreamEditComponent extends Component {
   }
   
   get disableChatButton(){
-    if(this.twitchChat.botConnected === false || this.twitchChat.chatConnected === true || this.args.stream.finished === true && this.args.stream.chatclient != ''){
+    if(this.twitchChat.botConnected === false || this.args.stream.finished === true || this.args.stream.chatclient === '' || this.args.stream.channel === ''){
       return true;
     } else {
       return false;
@@ -58,7 +58,7 @@ export default class PbStreamEditComponent extends Component {
   }
   
   get disconnectButton(){
-    if(this.twitchChat.chatConnected === false && this.twitchChat.botConnected === false){
+    if(this.twitchChat.botConnected === false){
       return true;
     } else {
       return false;
@@ -142,13 +142,18 @@ export default class PbStreamEditComponent extends Component {
   @action disconnectBot(){
     this.twitchChat.disconnectBot().then(
       function(){
-        console.log("Bot client disconnected!");    
+        console.log("Bot client disconnected!");
+
+
         // 
       }, 
       function(){
         console.log("Error disconnecting!");        
       }
     );
+    if(this.twitchChat.chatConnected){
+      this.disconnectChat();          
+    }
   }
   @action disconnectChat(){
     this.twitchChat.disconnectChat().then(
@@ -391,6 +396,13 @@ export default class PbStreamEditComponent extends Component {
     this.extraPanLeftBottom = !this.extraPanLeftBottom;
   }  
 
+  get noPanels(){
+    if(!this.extraPanLeft && !this.extraPanRight){
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @tracked queueToFile = false;
   @action queueWriter(){

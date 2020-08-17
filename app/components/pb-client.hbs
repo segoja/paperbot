@@ -35,7 +35,7 @@
       </div>      
       <BsButton @type="success" @onClick={{fn @saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
-      <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" @class={{if this.saving "spin"}} /> <span>Client saved!</span></div>      
+      <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Client saved!</span></div>      
       <BsButton @type="danger" @onClick={{fn @deleteClient}} class="float-right">Delete</BsButton>      
     </BsForm>
   </div>

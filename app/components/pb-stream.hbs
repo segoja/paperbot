@@ -3,10 +3,10 @@
     <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0 text-truncate">{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
     <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
       {{#unless @isEditing}}
-        <bg.button @type="dark rounded-0 border-0" @onClick={{fn this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
+        <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
       {{/unless}}
-      <bg.button @type="dark rounded-0 border-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>
-      <bg.button @type="dark rounded-0 rounded-top-right border-0" @onClick={{fn @closeStream}}><FaIcon @icon="times" /></bg.button>
+      <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>
+      <bg.button @type="dark" class="rounded-0 rounded-top-right border-0" @onClick={{fn @closeStream}}><FaIcon @icon="times" /></bg.button>
     </BsButtonGroup>
   </div>
   {{#if this.restore}}

@@ -44,13 +44,13 @@
                       <td class="col col-lg-auto">{{if command.name command.name "unnamed"}}</td>
                       <td class="d-none d-lg-table-cell col-lg"><small class="muted">{{command.response}}</small></td>
                       <td class="col-sm">{{command.type}}</td>
-                      <td class="col-sm">
-                        <BsButton @type="" class="btn-link btn-md mx-auto py-0 my-0 self-align-center" @onClick={{fn @gridActiveCommand command}}>
+                      <td class="col-sm text-center align-middle">
+                        <span role="button" class="mx-auto py-0 my-0" {{on "click" (fn @gridActiveCommand command)}}>
                           <FaIcon class="text-secondary" @icon="{{if command.active "check-square" "square"}}" />
-                        </BsButton>
+                        </span>
                       </td>
                       <td class="col-sm">
-                        <BsButtonGroup @class="mx-auto" as |bg|>
+                        <BsButtonGroup class="mx-auto" as |bg|>
                           <bg.button @type="" class="btn-sm alert-secondary" @onClick={{fn @gridEditCommand command}}><FaIcon @icon="edit" /></bg.button>
                           <bg.button @type="" class="btn-sm alert-danger" @onClick={{fn @gridDeleteCommand command}}><FaIcon @icon="trash" /></bg.button>
                         </BsButtonGroup>
