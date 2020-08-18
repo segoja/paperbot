@@ -14,7 +14,7 @@ export default class PbStreamEditComponent extends Component {
   @service audio;
 
   @empty ('twitchChat.messages') isChatEmpty;
-  @empty ('twitchChat.queue') isQueueEmpty;
+  @empty ('twitchChat.songqueue') isQueueEmpty;
   
   @tracked saving = false;
   @tracked optsbot = this.args.stream.botclient.get('optsgetter');
@@ -24,8 +24,9 @@ export default class PbStreamEditComponent extends Component {
   @tracked scrollPendingPosition = 0;
   
   @tracked message = "";
-  @tracked msglist = [];  
-  @tracked songqueue = [];
+  @tracked msglist;  
+  @tracked songqueue;
+  
   @tracked soundBoardEnabled = false;
 
   queueAscSorting = Object.freeze(['timestamp:asc']);
@@ -94,20 +95,19 @@ export default class PbStreamEditComponent extends Component {
   // Whith this getter we control the queue display while keeping the service updated with the settings.
   get requests(){
     this.twitchChat.takessongrequests = this.args.stream.requests;    
-    return  this.args.stream.requests;
+    return this.args.stream.requests;
   }
   
     
   constructor() {
-    super(...arguments);  
-    
-
-    
+    super(...arguments);
     // These lines is to allow switching to other routes
     // without losing the active chat history and song queue.
     this.msglist = this.twitchChat.messages;
-    this.songqueue = this.twitchChat.queue;
-
+    this.songqueue = this.twitchChat.songqueue;
+    this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
+    this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
+    
     if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
       this.twitchChat.botclient.on('message', this.msgGetter);
     } 
@@ -143,8 +143,6 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.disconnectBot().then(
       function(){
         console.log("Bot client disconnected!");
-
-
         // 
       }, 
       function(){
@@ -181,8 +179,8 @@ export default class PbStreamEditComponent extends Component {
   }
   
   @action finishStream(){
-    this.args.stream.chatlog = this.msglist;
-    this.args.stream.songqueue = this.songqueue;
+    this.args.stream.chatlog = this.twitchChat.messages;
+    this.args.stream.songqueue = this.twitchChat.songqueue;
     
     if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
      this.disconnectClients();
@@ -192,7 +190,7 @@ export default class PbStreamEditComponent extends Component {
     this.args.saveStream();
     this.twitchChat.whisperlist = [];
     this.twitchChat.msglist = [];
-    this.twitchChat.queue = [];    
+    this.twitchChat.songqueue = [];    
     this.songqueue = [];
     this.msglist = [];
   }
@@ -202,10 +200,10 @@ export default class PbStreamEditComponent extends Component {
   @action msgGetter() {
     // this.status = true;
     this.msglist = this.twitchChat.messages;    
-    this.songqueue = this.twitchChat.queue;
+    this.songqueue = this.twitchChat.songqueue;
     this.scrollPosition = 1500;
-    this.scrollPlayedPosition = this.pendingSongs.get('length');
-    this.scrollPendingPosition = this.playedSongs.get('length');
+    this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
+    this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     if(this.queueToFile){
       // var queuehtml = document.getElementById("songqueue").innerHTML;
       this.fileContent();
