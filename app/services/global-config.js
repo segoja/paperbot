@@ -29,8 +29,12 @@ export default class GlobalConfigService extends Service {
   }
   
   get defchannel(){
-    if(this.config != ''){
-      return this.config.defchannel;
+    if(this.config != undefined){
+      if(this.config.defchannel != undefined){
+        return this.config.defchannel;        
+      } else {
+        return null
+      }
     } else {
       return null;
     }

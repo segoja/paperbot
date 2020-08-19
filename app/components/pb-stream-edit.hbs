@@ -9,6 +9,12 @@
           <form.element @controlType="checkbox" @label="" @property="requests" class="form-check form-check-inline"  />
         </div>
       </div>
+      <div class="form-group row my-0">
+        <label class="col-md-4">Event list</label>
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="" @property="events" class="form-check form-check-inline"  />
+        </div>
+      </div>      
       <form.element @controlType="power-select" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{fn @setBotClient}} required as |client|>
         <client.control @allowClear={{true}} @placeholder="Select the Bot Client for the stream" as |option|>
           {{option.username}}
@@ -80,7 +86,33 @@
           </div>
          <div class="{{if this.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
           <div class="{{if this.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
-            <div class="row m-0 p-0 {{if this.extraPanLeftTop (if this.extraPanLeftBottom "h-50" "h-100") "d-none"}} border">          
+            <div class="row m-0 p-0 {{if this.extraPanLeftTop (if this.extraPanLeftBottom "h-25" "h-100") "d-none"}} border">          
+              <d.Container class="col h-100 border m-0 p-0">                
+                  <div id="events" class="row {{unless this.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                    <div class="col {{unless this.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
+                      <div class="row bg-secondary text-light">
+                        <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Events</h6></div>
+                        <BsButtonGroup class="col-auto px-0" as |bg|>
+                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
+                        </BsButtonGroup>
+                      </div>
+                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanevents}}>
+                        <div class="col-md queueframe" {{scroll-position this.scrollPendingPosition relative=false}} id="songqueue">
+                          {{#each this.events as |event|}}
+                            <div class="alert-warning d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
+                              <div class="row">
+                                <div class="col"><small>{{moment-format event.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                              </div>
+                              <div class="alert-heading h6">{{event.parsedbody}}</div>
+                            </div>
+                          {{/each}}
+                        </div>  
+                      </BsCollapse>  
+                    </div>
+                  </div>
+              </d.Container>
+            </div>
+            <div class="row m-0 p-0 {{if this.extraPanLeftBottom (if this.extraPanLeftTop "h-75" "h-100") "d-none"}} border">
               <d.Container class="col h-100 border m-0 p-0">
                 <div id="chat" class="row {{unless this.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                   <div class="col {{unless this.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
@@ -103,11 +135,6 @@
                     </BsCollapse>  
                   </div>
                 </div>
-              </d.Container>
-            </div>
-            <div class="row m-0 p-0 {{if this.extraPanLeftBottom (if this.extraPanLeftTop "h-50" "h-100") "d-none"}} border">
-              <d.Container class="col h-100 border m-0 p-0">
-
               </d.Container>
             </div>
           </div>

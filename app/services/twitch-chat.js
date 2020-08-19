@@ -23,6 +23,11 @@ export default class TwitchChatService extends Service {
     return this.whisperlist;
   }
   
+  @tracked eventlist = []; 
+  get events(){
+    return this.eventlist;
+  } 
+  
   @tracked songqueue = []; 
   
   queueAscSorting = Object.freeze(['timestamp:asc']); 
@@ -45,7 +50,8 @@ export default class TwitchChatService extends Service {
     return this.arrangedAscQueue.filterBy('processed', true);
   }
   
-  @tracked events = []; 
+
+  
   @tracked modactions = []; 
 
   @tracked channel = '';
@@ -137,7 +143,7 @@ export default class TwitchChatService extends Service {
       );
       if(this.botConnected){
         this.botclient.join(this.channel);
-        // this.superHandler(this.botclient);
+        this.superHandler(this.botclient);
         this.twitchNameToUser(this.channel);
         console.log(this.badgespack);
       }
@@ -265,7 +271,7 @@ export default class TwitchChatService extends Service {
   }
 
   @action messageHandler(target, tags, msg, self){
-    console.log(tags);
+    // console.log(tags);
     // this.parseBadges(tags['badges']);
     
     this.lastmessage = {
@@ -571,106 +577,88 @@ export default class TwitchChatService extends Service {
   
   
   @action superHandler(client){
-    console.log(client);
 
-    this.botclient.on("ban", (channel, username, reason, userstate) => {
+    client.on("ban", (channel, username, reason, userstate) => {
         // Do your stuff.
         console.log(userstate);
         console.log(username+' - '+reason);
     });
 
 
-    this.botclient.on("clearchat", (channel) => {
+    client.on("clearchat", (channel) => {
         // Do your stuff.
         console.log("the channel "+channel+" has been cleared.");
     });
 
-    this.botclient.on("emoteonly", (channel, enabled) => {
+    client.on("emoteonly", (channel, enabled) => {
         // Do your stuff.
         console.log(channel+" is in emotes only mode? "+enabled);      
     });
 
-    this.botclient.on("followersonly", (channel, enabled, length) => {
+    client.on("followersonly", (channel, enabled, length) => {
         // Do your stuff.
         console.log(channel+" is in followers only mode for "+lenght+"? "+enabled);
     });
 
-    this.botclient.on("hosted", (channel, username, viewers, autohost) => {
-        // Do your stuff.
-        console.log(channel+" has been hosted by "+username+" with "+viewers+" viewers. The raid is autohost? "+autohost);
-    });
-
-    this.botclient.on("hosting", (channel, target, viewers) => {
+    client.on("hosting", (channel, target, viewers) => {
         // Do your stuff.
         console.log(channel+" is hosting "+target+" with "+viewers+" viewers");
     });
 
-    this.botclient.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
+    client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
         // Do your stuff.
-        console.log(channel+" deleted "+username+" message: "+deletedMessagee+" - "+userstate);
+        console.log(channel+" deleted "+username+" message: "+deletedMessage+" - "+userstate);
     });
 
     // Someone got modded
-    this.botclient.on("mod", (channel, username) => {
+    client.on("mod", (channel, username) => {
         // Do your stuff.
         console.log(channel+" modded "+username+"!");
     });
 
-    this.botclient.on("notice", (channel, msgid, message) => {
+    client.on("notice", (channel, msgid, message) => {
         // Do your stuff.
     console.log(channel+' - ['+msgid+']: '+message);    
     });
 
-    this.botclient.on("raided", (channel, username, viewers) => {
-        // Do your stuff.
-        console.log(channel+" has been raided by "+username+" with "+viewers+" viewers.");
-    });
-
-
-    this.botclient.on("slowmode", (channel, enabled, length) => {
+    client.on("slowmode", (channel, enabled, length) => {
         // Do your stuff.
         console.log(channel+" is now in slow mode for "+lenght+"? "+enabled);
     });
     
-    this.botclient.on("subscription", (channel, username, method, message, userstate) => {
-        // Do your stuff.
-        console.log(method);
-        console.log(userstate);
-        console.log(username+" subscribed to "+channel+" by "+method+" message: "+message+" userstate: "+userstate);
-    });
     
     // Subscribers only mode:
-    this.botclient.on("subscribers", (channel, enabled) => {
+    client.on("subscribers", (channel, enabled) => {
         // Do your stuff.
         console.log(channel+" is in subscribers only mode? "+enabled);
 
     });
 
 
-    this.botclient.on("timeout", (channel, username, reason, duration, userstate) => {
+    client.on("timeout", (channel, username, reason, duration, userstate) => {
         // Do your stuff.
         console.log(channel+" set timeout "+username+" because "+reason+" for "+duration+" - "+userstate);
     });
 
-    this.botclient.on("unhost", (channel, viewers) => {
+    client.on("unhost", (channel, viewers) => {
         // Do your stuff.
         console.log(channel+" stopped hosting the stream with "+viewers+" viewers");
     });
 
 
-    this.botclient.on("unmod", (channel, username) => {
+    client.on("unmod", (channel, username) => {
         // Do your stuff.
         console.log(channel+" unmodded "+username+"  :(");
     });
 
     // Vip list
-    this.botclient.on("vips", (channel, vips) => {
+    client.on("vips", (channel, vips) => {
         // Do your stuff.
         console.log(channel);
         console.log(vips);
     });
 
-    this.botclient.on("whisper", (from, userstate, message, self) => {
+    client.on("whisper", (from, userstate, message, self) => {
         // Don't listen to my own messages..
         if (self) return;
 
@@ -678,7 +666,46 @@ export default class TwitchChatService extends Service {
     });
     
     
+    // Stream events you would get in streamlabels event list.
     
+    
+    client.on("cheer", (channel, userstate, message) => {
+        // Do your stuff.
+        this.eventHandler(channel+" got cheered by "+userstate['display-name']+" with "+userstate['bits']+" and the message: "+message);
+    });
+    
+    client.on("hosted", (channel, username, viewers, autohost) => {
+        // Do your stuff.
+        this.eventHandler(channel+" has been hosted by "+username+" with "+viewers+" viewers. The raid is autohost? "+autohost);
+    });
+    
+    client.on("raided", (channel, username, viewers) => {
+        // Do your stuff.
+        this.eventHandler(channel+" has been raided by "+username+" with "+viewers+" viewers.");
+    });
+    
+    client.on("resub", (channel, username, months, message, userstate, methods) => {
+        // Do your stuff.
+        this.eventHandler(username+" resubscribed "+channel+"'s channel for "+userstate["msg-param-cumulative-months"]+" months.");
+    });
+
+    client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
+        // Do your stuff.
+        this.eventHandler(username+" gifted "+recipient+" a sub.");
+    });
+    
+    client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
+        // Do your stuff.
+        // let senderCount = ~~userstate["msg-param-sender-count"];
+        this.eventHandler(username+" gifted "+numbOfSubs+" a subs.");
+    });
+
+    client.on("subscription", (channel, username, method, message, userstate) => {
+        // Do your stuff.
+        console.log(method);
+        console.log(userstate);
+        this.eventHandler(username+" subscribed to "+channel+" by "+method['plan']+" for "+userstate["msg-param-cumulative-months"]+" months.");
+    });
   }
   
   @tracked lastEvent = null;
@@ -698,6 +725,6 @@ export default class TwitchChatService extends Service {
       reward: false,
       emotes: null,
     };
-    this.msglist.push(this.lastmessage);
+    this.eventlist.push(this.lastevent);
   }
 }

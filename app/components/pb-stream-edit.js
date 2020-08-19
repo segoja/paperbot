@@ -15,6 +15,8 @@ export default class PbStreamEditComponent extends Component {
 
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.songqueue') isQueueEmpty;
+  @empty ('twitchChat.events') isEventsEmpty;
+    
   
   @tracked saving = false;
   @tracked optsbot = this.args.stream.botclient.get('optsgetter');
@@ -24,8 +26,9 @@ export default class PbStreamEditComponent extends Component {
   @tracked scrollPendingPosition = 0;
   
   @tracked message = "";
-  @tracked msglist;  
-  @tracked songqueue;
+  @tracked eventlist = [];  
+  @tracked msglist = [];
+  @tracked songqueue = [];
   
   @tracked soundBoardEnabled = false;
 
@@ -79,6 +82,11 @@ export default class PbStreamEditComponent extends Component {
   get messages(){
     return this.msglist.slice(-30);
   }   
+  // With this getter we limit the number of messages displayed on screen.
+  get events(){
+    return this.eventlist;
+  }   
+
 
   get audiocommandslist(){
     return this.args.commands.filterBy('type','audio').filterBy('active', true);
@@ -103,6 +111,7 @@ export default class PbStreamEditComponent extends Component {
     super(...arguments);
     // These lines is to allow switching to other routes
     // without losing the active chat history and song queue.
+    this.eventlist = this.twitchChat.events;
     this.msglist = this.twitchChat.messages;
     this.songqueue = this.twitchChat.songqueue;
     this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
@@ -110,8 +119,16 @@ export default class PbStreamEditComponent extends Component {
     
     if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
       this.twitchChat.botclient.on('message', this.msgGetter);
-    } 
-    
+    }
+    if(this.twitchChat.botConnected === true){
+      this.twitchChat.botclient.on("cheer", this.eventGetter);
+      this.twitchChat.botclient.on("hosted", this.eventGetter);
+      this.twitchChat.botclient.on("raided", this.eventGetter);
+      this.twitchChat.botclient.on("resub", this.eventGetter);
+      this.twitchChat.botclient.on("subgift", this.eventGetter);
+      this.twitchChat.botclient.on("submysterygift", this.eventGetter);
+      this.twitchChat.botclient.on("subscription", this.eventGetter);
+    }    
   }
 
   // Bot and Chat related actions:
@@ -127,6 +144,13 @@ export default class PbStreamEditComponent extends Component {
     
     this.twitchChat.connector(this.optsbot, "bot").then(()=>{
         this.twitchChat.botclient.on('message', this.msgGetter);
+        this.twitchChat.botclient.on("cheer", this.eventGetter);
+        this.twitchChat.botclient.on("hosted", this.eventGetter);
+        this.twitchChat.botclient.on("raided", this.eventGetter);
+        this.twitchChat.botclient.on("resub", this.eventGetter);
+        this.twitchChat.botclient.on("subgift", this.eventGetter);
+        this.twitchChat.botclient.on("submysterygift", this.eventGetter);
+        this.twitchChat.botclient.on("subscription", this.eventGetter);
       }
     );
   }
@@ -181,13 +205,15 @@ export default class PbStreamEditComponent extends Component {
   @action finishStream(){
     this.args.stream.chatlog = this.twitchChat.messages;
     this.args.stream.songqueue = this.twitchChat.songqueue;
-    
+    this.args.stream.eventlog = this.twitchChat.events;
+
     if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
      this.disconnectClients();
     }
     
     this.args.stream.finished = true;
     this.args.saveStream();
+    this.twitchChat.eventlist = [];    
     this.twitchChat.whisperlist = [];
     this.twitchChat.msglist = [];
     this.twitchChat.songqueue = [];    
@@ -198,17 +224,26 @@ export default class PbStreamEditComponent extends Component {
   // This action gets triggered every time the channel receives a 
   // message and updates both the chatlog and the song queue.
   @action msgGetter() {
-    // this.status = true;
     this.msglist = this.twitchChat.messages;    
     this.songqueue = this.twitchChat.songqueue;
     this.scrollPosition = 1500;
     this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     if(this.queueToFile){
-      // var queuehtml = document.getElementById("songqueue").innerHTML;
       this.fileContent();
     }
   }
+
+  // This action gets triggered every time the an event gets triggered in the channel
+  @action eventGetter() {
+    this.eventlist = this.twitchChat.events;
+    this.scrollEventPosition = 1500;
+    //if(this.queueToFile){
+      //this.fileContent();
+    //}
+  }
+
+
 
   @action fileContent(){
     console.log("Escribiendo a disco!");      
@@ -261,6 +296,11 @@ export default class PbStreamEditComponent extends Component {
           this.args.stream.songqueue = this.songqueue;
         }
       }
+      if(this.isEventsEmpty === false){
+        if(this.eventlist != this.args.stream.eventlog){
+          this.args.stream.eventlog = this.eventlist;
+        }
+      }      
     }
     this.args.saveStream();
     this.saving = true;
@@ -279,6 +319,11 @@ export default class PbStreamEditComponent extends Component {
           this.args.stream.songqueue = this.songqueue;
         }
       }
+      if(this.isEventsEmpty === false){
+        if(this.eventlist != this.args.stream.eventlog){
+          this.args.stream.eventlog = this.eventlist;
+        }
+      } 
     }
     this.args.saveAndReturnStream(); 
   }  
@@ -327,7 +372,7 @@ export default class PbStreamEditComponent extends Component {
   @tracked cpanpending = false;
   @tracked cpanplayed = false;
   @tracked cpanmessages = false;
-
+  @tracked cpanevents = false;
   
   @action closePan(pannel){
     if (pannel === "pending"){
@@ -338,7 +383,10 @@ export default class PbStreamEditComponent extends Component {
     } 
     if (pannel === "messages"){
       this.cpanmessages = !this.cpanmessages;
-    }     
+    }
+    if (pannel === "events"){
+      this.cpanevents = !this.cpanevents;
+    }      
   }
 
   @action togglePan(pannel){
@@ -351,10 +399,11 @@ export default class PbStreamEditComponent extends Component {
     if (pannel === "messages"){
       this.cpanmessages = !this.cpanmessages;
     }
+    if (pannel === "events"){
+      this.cpanevents = !this.cpanevents;
+    }    
   }
-  
-  
-  
+
   @tracked extraPanRight = true;
 
   @action toggleExtraPanRight() {
@@ -382,13 +431,13 @@ export default class PbStreamEditComponent extends Component {
     this.extraPanLeft = !this.extraPanLeft;
   }
   
-  @tracked extraPanLeftTop = true;
+  @tracked extraPanLeftTop = false;
 
   @action toggleExtraPanLeftTop() {
     this.extraPanLeftTop = !this.extraPanLeftTop;
   }  
   
-  @tracked extraPanLeftBottom = false;
+  @tracked extraPanLeftBottom = true;
 
   @action toggleExtraPanLeftBottom() {
     this.extraPanLeftBottom = !this.extraPanLeftBottom;
