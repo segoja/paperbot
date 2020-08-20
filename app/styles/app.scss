@@ -52,21 +52,29 @@ html,body{
   padding-bottom: 0px;
 }
 
-.chatframe, .queueframe{
+.chatframe, .queueframe, eventsframe{
   max-height: 100% !important;
   overflow-y: scroll;
   scrollbar-color: var(--main-scrollbar-color);
 }
+
+.eventsframe::-webkit-scrollbar {
+  display: none;
+} 
+
 .chatframe::-webkit-scrollbar {
+  display: none;
 } 
 
 .queueframe::-webkit-scrollbar {
+  display: none;
 }
 
 .chatframe .row:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.1);
   border-bottom-color: rgb(14, 14, 16);
 }
+
 .chatframe .row:nth-of-type(even) {
   background-color: rgba(0, 0, 0, 0);
   border-bottom-color: rgb(14, 14, 16);
@@ -78,6 +86,14 @@ div.highlight{
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.75em;
+}
+
+div.system{
+  border-left: 4px solid!important;
+  padding-left: 11px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.25em;
 }
 
 .processed{

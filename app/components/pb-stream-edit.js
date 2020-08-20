@@ -121,6 +121,25 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.botclient.on('message', this.msgGetter);
     }
     if(this.twitchChat.botConnected === true){
+      // Chat events:
+      this.twitchChat.botclient.on("ban", this.msgGetter);
+      this.twitchChat.botclient.on("clearchat", this.msgGetter);
+      this.twitchChat.botclient.on("emoteonly", this.msgGetter);
+      this.twitchChat.botclient.on("follow", this.msgGetter);
+      this.twitchChat.botclient.on("followersonly", this.msgGetter);
+      this.twitchChat.botclient.on("hosting", this.msgGetter);
+      this.twitchChat.botclient.on("messagedeleted", this.msgGetter);
+      this.twitchChat.botclient.on("mod", this.msgGetter);
+      this.twitchChat.botclient.on("notice", this.msgGetter);
+      this.twitchChat.botclient.on("slowmode", this.msgGetter);
+      this.twitchChat.botclient.on("subscribers", this.msgGetter);
+      this.twitchChat.botclient.on("timeout", this.msgGetter);
+      this.twitchChat.botclient.on("unban", this.msgGetter);
+      this.twitchChat.botclient.on("unhost", this.msgGetter);
+      this.twitchChat.botclient.on("unmod", this.msgGetter);
+      this.twitchChat.botclient.on("whisper", this.msgGetter);
+      
+      //  Stream events:
       this.twitchChat.botclient.on("cheer", this.eventGetter);
       this.twitchChat.botclient.on("hosted", this.eventGetter);
       this.twitchChat.botclient.on("raided", this.eventGetter);
@@ -143,8 +162,28 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.commands = this.args.commands;
     
     this.twitchChat.connector(this.optsbot, "bot").then(()=>{
+        // Chat events:
         this.twitchChat.botclient.on('message', this.msgGetter);
+        this.twitchChat.botclient.on("unban", this.msgGetter);
+        this.twitchChat.botclient.on("ban", this.msgGetter);
+        this.twitchChat.botclient.on("clearchat", this.msgGetter);
+        this.twitchChat.botclient.on("emoteonly", this.msgGetter);
+        this.twitchChat.botclient.on("follow", this.msgGetter);
+        this.twitchChat.botclient.on("followersonly", this.msgGetter);
+        this.twitchChat.botclient.on("hosting", this.msgGetter);
+        this.twitchChat.botclient.on("messagedeleted", this.msgGetter);
+        this.twitchChat.botclient.on("mod", this.msgGetter);
+        this.twitchChat.botclient.on("notice", this.msgGetter);
+        this.twitchChat.botclient.on("slowmode", this.msgGetter);
+        this.twitchChat.botclient.on("subscribers", this.msgGetter);
+        this.twitchChat.botclient.on("timeout", this.msgGetter);
+        this.twitchChat.botclient.on("unhost", this.msgGetter);
+        this.twitchChat.botclient.on("unmod", this.msgGetter);
+        this.twitchChat.botclient.on("whisper", this.msgGetter);
+        
+        //  Stream events:
         this.twitchChat.botclient.on("cheer", this.eventGetter);
+        this.twitchChat.botclient.on("follow", this.eventGetter);
         this.twitchChat.botclient.on("hosted", this.eventGetter);
         this.twitchChat.botclient.on("raided", this.eventGetter);
         this.twitchChat.botclient.on("resub", this.eventGetter);

@@ -5,17 +5,35 @@ import moment from 'moment';
 export default helper(function([message]) {
   //if (!message) { return; } // return nothing when params is empty
 
-  var output = "";
+  var pre = "";
+  
+  if (message.type != "system"){
+    if (message.reward){
+      pre = '<div class="col chatline py-2 highlight alert-warning">';
+    }  else {
+      pre = '<div class="col chatline py-2">';
+    }       
+  } else { 
+    pre = '<div class="col chatline py-2 system alert-light">';
+  }   
+
+  var body = "";
   switch (message.type) {
+    case 'system':
+      body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong> '+ message.parsedbody +'</span>';
+    break;
     case 'action':
-      output = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong> '+ message.parsedbody +'</span>';
+      body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong> '+ message.parsedbody +'</span>';
     break;
     case 'chat':
-      output = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;  
+      body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;  
     break;
     default:
-      output = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;
+      body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;
     break;
   }
-  return htmlSafe(output);
+  
+  var post = "</div>";
+  
+  return htmlSafe(pre+body+post);
 });

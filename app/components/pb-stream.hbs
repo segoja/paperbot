@@ -55,6 +55,7 @@
                 </div>
               {{/if}}            
             </div>
+            
             <div class="row m-0 p-0 {{if @stream.events "h-50" "h-100"}} {{unless @stream.requests "d-none"}}">
               {{#if @stream.requests}}
                 <div class="col h-100 flex-column d-flex overflow-hidden border border-round">
@@ -76,11 +77,9 @@
                   </div>  
                 </div>
               {{/if}}
-            </div>          
+            </div>
+            
           </div>
-          
-
-
         </div>
       </div>
     {{/if}}

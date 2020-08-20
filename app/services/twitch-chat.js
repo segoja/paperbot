@@ -580,75 +580,77 @@ export default class TwitchChatService extends Service {
 
     client.on("ban", (channel, username, reason, userstate) => {
         // Do your stuff.
-        console.log(userstate);
-        console.log(username+' - '+reason);
+        this.chateventHandler(username+" has been banned.");
     });
 
+    client.on("unban", (channel, username, reason, userstate) => {
+        // Do your stuff.
+        this.chateventHandler(username+" has been unbanned by "+userstate['display-name']);
+    });
 
     client.on("clearchat", (channel) => {
         // Do your stuff.
-        console.log("the channel "+channel+" has been cleared.");
+        this.chateventHandler("the channel "+channel+" has been cleared.");
     });
 
     client.on("emoteonly", (channel, enabled) => {
         // Do your stuff.
-        console.log(channel+" is in emotes only mode? "+enabled);      
+        this.chateventHandler(channel+" is in emotes only mode? "+enabled);      
     });
 
     client.on("followersonly", (channel, enabled, length) => {
         // Do your stuff.
-        console.log(channel+" is in followers only mode for "+lenght+"? "+enabled);
+        this.chateventHandler(channel+" is in followers only mode for "+lenght+"? "+enabled);
     });
 
     client.on("hosting", (channel, target, viewers) => {
         // Do your stuff.
-        console.log(channel+" is hosting "+target+" with "+viewers+" viewers");
+        this.chateventHandler(channel+" is hosting "+target+" with "+viewers+" viewers");
     });
 
     client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
         // Do your stuff.
-        console.log(channel+" deleted "+username+" message: "+deletedMessage+" - "+userstate);
+        this.chateventHandler(channel+" deleted "+username+" message: "+deletedMessage+" - "+userstate);
     });
 
     // Someone got modded
     client.on("mod", (channel, username) => {
         // Do your stuff.
-        console.log(channel+" modded "+username+"!");
+        this.chateventHandler(channel+" modded "+username+"!");
     });
 
     client.on("notice", (channel, msgid, message) => {
         // Do your stuff.
-    console.log(channel+' - ['+msgid+']: '+message);    
+        console.log("we got a notice!");
+        this.chateventHandler(message);    
     });
 
     client.on("slowmode", (channel, enabled, length) => {
         // Do your stuff.
-        console.log(channel+" is now in slow mode for "+lenght+"? "+enabled);
-    });
-    
+        this.chateventHandler(channel+" is now in slow mode for "+lenght+"? "+enabled);
+    });    
     
     // Subscribers only mode:
     client.on("subscribers", (channel, enabled) => {
         // Do your stuff.
-        console.log(channel+" is in subscribers only mode? "+enabled);
+        this.chateventHandler(channel+" is in subscribers only mode? "+enabled);
 
     });
 
-
     client.on("timeout", (channel, username, reason, duration, userstate) => {
         // Do your stuff.
-        console.log(channel+" set timeout "+username+" because "+reason+" for "+duration+" - "+userstate);
+        this.chateventHandler(channel+" set timeout "+username+" because "+reason+" for "+duration+" - "+userstate);
     });
 
     client.on("unhost", (channel, viewers) => {
         // Do your stuff.
-        console.log(channel+" stopped hosting the stream with "+viewers+" viewers");
+        this.chateventHandler(channel+" stopped hosting the stream with "+viewers+" viewers");
     });
 
 
     client.on("unmod", (channel, username) => {
         // Do your stuff.
-        console.log(channel+" unmodded "+username+"  :(");
+        this.chateventHandler(channel+" unmodded "+username+"  :(");
     });
 
     // Vip list
@@ -667,11 +669,19 @@ export default class TwitchChatService extends Service {
     
     
     // Stream events you would get in streamlabels event list.
-    
+    client.on("anongiftpaidupgrade", (channel, username, userstate) => {
+        // Do your stuff.
+        this.eventHandler(username+" got upgraded to "+userstate["msg-param-cumulative-months"]+"");
+    });
     
     client.on("cheer", (channel, userstate, message) => {
         // Do your stuff.
         this.eventHandler(channel+" got cheered by "+userstate['display-name']+" with "+userstate['bits']+" and the message: "+message);
+    });
+    
+    client.on("follow", (channel, userstate) => {
+        // Do your stuff.
+        this.eventHandler(channel+" got a new follower");
     });
     
     client.on("hosted", (channel, username, viewers, autohost) => {
@@ -708,19 +718,39 @@ export default class TwitchChatService extends Service {
     });
   }
   
-  @tracked lastEvent = null;
-  @action eventHandler(notice){
-    this.lastevent = {
+  @action chateventHandler(notice){
+    this.lastmessage = {
       id: 'system',
       timestamp: new Date(),
+      body: null,
       parsedbody: this.parseMessage(notice, []).toString(),    
-      user: "system",
-      displayname: "system",      
+      user: "[Info]",
+      displayname: "[Info]",      
+      color: "inherit",
+      csscolor: htmlSafe('color: inherit'),        
+      badges: null,
+      htmlbadges:  '',
+      type: "system",
+      usertype: null,
+      reward: false,
+      emotes: null
+    };
+    this.msglist.push(this.lastmessage);
+  }
+
+  @tracked lastEvent = null;
+  @action eventHandler(event){
+    this.lastevent = {
+      id: 'event',
+      timestamp: new Date(),
+      parsedbody: this.parseMessage(event, []).toString(),    
+      user: "event",
+      displayname: "event",      
       color: "#cccccc",
       csscolor: htmlSafe('color: #cccccc'),        
       badges: null,
       htmlbadges:  '',
-      type: "system",
+      type: "event",
       usertype: null,
       reward: false,
       emotes: null,
