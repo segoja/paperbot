@@ -32,35 +32,36 @@
     </BsForm>
   </div>
 {{else}}
-  <div class="card-body p-0 m-0 border-top-0 border-light">
-    <div class="row p-0 m-0 border border-dark rounded-0 border-dark bg-dark">
-      <div class="col-1 row p-0 m-0">
-        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6" @type="warning rounded-0" @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
+  <div class="card-body p-0 m-0 border-top-0 border-trans">
+    <div class="row p-0 m-0 border border-dark rounded-0 bg-dark">
+      <div class="col-2 row p-0 m-0 bg-dark">
+        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.soundBoardEnabled "info" "secondary"}} @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
           <FaIcon @icon="{{if this.soundBoardEnabled "volume-up" "volume-mute"}}" />
         </BsButton>     
-        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6" @type="danger rounded-0" @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
+        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.queueToFile "warning" "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
           <FaIcon @icon="{{if this.queueToFile "file-alt" "file"}}" />
         </BsButton>
       </div>
-      <div class="col row p-0 m-0">
+      <div class="col row p-0 m-0 rounded-0 bg-dark">
         {{#if this.disableBotButton}}
-          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0" @type="info" disabled={{this.disableBotButton}}><FaIcon @icon="play" /> Bot Client</BsButton>
+          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type={{if this.twitchChat.botConnected "primary" "secondary"}} disabled={{this.disableBotButton}}><FaIcon @icon="play" /> Bot Client</BsButton>
         {{else}}      
-          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0" @type="info" @onClick={{fn (if this.twitchChat.botConnected this.disconnectBot this.connectBot)}}>
+          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type={{if this.twitchChat.botConnected "primary" "secondary"}} @onClick={{fn (if this.twitchChat.botConnected this.disconnectBot this.connectBot)}}>
             <FaIcon @icon={{if this.twitchChat.botConnected "stop" "play"}} /> Bot Client
           </BsButton>
         {{/if}}
         {{#if this.disableChatButton}}
-          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" disabled={{this.disableChatButton}} ><FaIcon @icon="play" /> Chat Client</BsButton>
+          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type={{if this.twitchChat.chatConnected "success" "secondary"}} disabled={{this.disableChatButton}} ><FaIcon @icon="play" /> Chat Client</BsButton>
         {{else}}
-          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0" @type="secondary" @onClick={{fn (if this.twitchChat.chatConnected this.disconnectChat this.connectChat)}}>
+          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type={{if this.twitchChat.chatConnected "success" "secondary"}} @onClick={{fn (if this.twitchChat.chatConnected this.disconnectChat this.connectChat)}}>
             <FaIcon @icon={{if this.twitchChat.chatConnected "stop" "play"}} /> Chat Client
           </BsButton>
         {{/if}}
       </div>
-      <div class="col row p-0 m-0 text-nowrap">
-        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Clients</BsButton>
-        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="success" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false @stream.finished}}>Finish Stream</BsButton>
+      <div class="col row p-0 m-0 rounded-0 text-nowrap bg-dark">
+        {{!-- <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Clients</BsButton> --}}
+        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="danger" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished false true)}}><FaIcon @icon="save" /> Finish Stream</BsButton>
+        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0 text-black" @type="warning" @onClick={{fn @editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
       </div>
     </div>
   </div>
@@ -74,9 +75,11 @@
           <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftTop}}>
             <FaIcon @icon={{if this.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
           </div>
-          <div role="button" class="{{if this.requests (if this.extraPanRight (if this.extraPanLeft "col-5" "col") "d-none")}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
-            <FaIcon @icon={{if this.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-          </div>
+          {{#if this.requests}}
+            <div role="button" class="{{if this.extraPanRight (if this.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
+              <FaIcon @icon={{if this.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            </div>
+          {{/if}}
         </div>
       </div>
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
@@ -91,13 +94,13 @@
                   <div id="events" class="row {{unless this.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                     <div class="col {{unless this.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
-                        <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Events</h6></div>
+                        <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Events</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
                           <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
                       </div>
                       <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanevents}}>
-                        <div class="col-md eventsframe" {{scroll-position this.scrollPendingPosition relative=false}} id="eventlist">
+                        <div class="col-md eventsframe" {{scroll-position this.scrollEventsPosition relative=true}} id="eventlist">
                           {{#each this.events as |event|}}
                             <div class="alert-warning d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                               <div class="row">
@@ -117,7 +120,7 @@
                 <div id="chat" class="row {{unless this.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                   <div class="col {{unless this.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
                     <div class="row  bg-secondary text-light">
-                      <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Recent messages</h6></div>
+                      <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Recent messages</h6></div>
                       <BsButtonGroup class="col-auto px-0" as |bg|>
                         <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "messages"}} ><FaIcon @icon="{{if this.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
                       </BsButtonGroup>
@@ -143,7 +146,7 @@
                   <div id="pending" class="row {{unless this.cpanpending "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                     <div class="col {{unless this.cpanpending "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
-                        <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Songs pending</h6></div>
+                        <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Songs pending</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
                           <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "pending"}} ><FaIcon @icon="{{if this.cpanpending "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
@@ -172,7 +175,7 @@
                   <div id="played" class="row {{unless this.cpanplayed "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                     <div class="col {{unless this.cpanplayed "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
-                        <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Songs played</h6></div>
+                        <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Songs played</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
                           <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "played"}} ><FaIcon @icon="{{if this.cpanplayed "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
@@ -206,22 +209,24 @@
           <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftBottom}}>
             <FaIcon @icon={{if this.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
           </div>
-          <div role="button" class="{{if this.requests (if this.extraPanRight (if this.extraPanLeft "col-5" "col") "d-none")}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
-            <FaIcon @icon={{if this.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-          </div>
+          {{#if this.requests}}
+            <div role="button" class="{{if this.extraPanRight (if this.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
+              <FaIcon @icon={{if this.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            </div>
+          {{/if}}
         </div>
       </div>
     {{/if}}
     {{#unless this.disconnectButton}}  
       <div class="card-footer flex-column flex-fill d-flex p-0 my-0 alert-secondary"> 
         <div class="row m-0">
-          <BsForm @formLayout="vertical" @model={{this}} class="col-md-12 my-1 mx-0 py-0 px-2" @onSubmit={{fn this.sendMessage}} as |form|>
+          <BsForm @formLayout="vertical" @model={{this}} class="col-md-12 my-1 mx-0 py-0 px-3" @onSubmit={{fn this.sendMessage}} as |form|>
             <form.element @property="message" class="m-0 p-0" as |el|>
               <el.control 
                 @controlType="text"
                 autocomplete="off"
                 placeholder="Type your message here"
-                 class="my-0 py-0 rounded-0 chatinput"
+                 class="my-0 py-0 rounded-0 chatinput border-dark"
                 readonly={{this.inputDisabled}}        
               />
             </form.element>

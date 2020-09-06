@@ -284,7 +284,7 @@ export default class TwitchChatService extends Service {
       color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
       csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),        
       badges: tags['badges'] ? tags['badges'] : null,
-      htmlbadges:  tags['badges'] ? this.parseBadges(tags['badges']).toString(): '',
+      htmlbadges:  tags['badges'] ? this.parseBadges(tags['badges']).toString() : '',
       type: tags['message-type'] ? tags['message-type'] : null,
       usertype: tags['user-type'] ? tags['user-type'].toString() : null,
       reward: tags['msg-id'] ? true : false,
@@ -473,14 +473,13 @@ export default class TwitchChatService extends Service {
       // console.log("this is the first index: "+category);
       var badge = userbadges[category];
       // console.log("this is the second index: "+badge);        
-
-      if (this.allbadges[category]['versions'][badge]){
-        
-        let description = this.allbadges[category]['versions'][badge]['description'];
-        let url = this.allbadges[category]['versions'][badge]['image_url_4x'];
-        
-        htmlbadges = htmlbadges+'<img class="twitch-badge" title="'+description+'" src="'+url+'">';            
-      }
+        if (this.allbadges[category]['versions'][badge] !== 'undefined'){
+          
+          let description = this.allbadges[category]['versions'][badge]['description'];
+          let url = this.allbadges[category]['versions'][badge]['image_url_4x'];
+          
+          htmlbadges = htmlbadges+'<img class="twitch-badge" title="'+description+'" src="'+url+'">';            
+        }    
     }    
     return htmlSafe(htmlbadges);    
   }
@@ -580,43 +579,64 @@ export default class TwitchChatService extends Service {
 
     client.on("ban", (channel, username, reason, userstate) => {
         // Do your stuff.
-        this.chateventHandler(username+" has been banned.");
+        this.chateventHandler("<strong>@"+username+"</strong> has been banned.");
     });
 
     client.on("unban", (channel, username, reason, userstate) => {
         // Do your stuff.
-        this.chateventHandler(username+" has been unbanned by "+userstate['display-name']);
+        this.chateventHandler("<strong>@"+username+"</strong> has been unbanned.");
     });
 
     client.on("clearchat", (channel) => {
         // Do your stuff.
-        this.chateventHandler("the channel "+channel+" has been cleared.");
+        this.chateventHandler("<strong>"+channel+"</strong> room has been cleared.");
     });
 
     client.on("emoteonly", (channel, enabled) => {
         // Do your stuff.
-        this.chateventHandler(channel+" is in emotes only mode? "+enabled);      
+        let message = "";
+        if(enabled){  
+          message = "<strong#"+channel+"</strong> enabled emotes only mode";
+        } else {
+          message = "<strong>"+channel+"</strong> disabled emotes only mode";
+        }        
+        this.chateventHandler(message);      
     });
 
     client.on("followersonly", (channel, enabled, length) => {
         // Do your stuff.
-        this.chateventHandler(channel+" is in followers only mode for "+lenght+"? "+enabled);
+        let message = "";
+        if(enabled){
+          if(lenght){
+            message = "<strong>"+channel+"</strong> enabled followers only mode for "+lenght+"s.";
+          } else {
+            message = "<strong>"+channel+"</strong> enabled followers only mode";
+          }
+        } else {
+          message = "<strong>"+channel+"</strong> disabled followers only mode";
+        }
+        this.chateventHandler(message);
     });
 
     client.on("hosting", (channel, target, viewers) => {
         // Do your stuff.
-        this.chateventHandler(channel+" is hosting "+target+" with "+viewers+" viewers");
+        this.chateventHandler("<strong>"+channel+"</strong> is hosting <strong>@"+target+"</strong> with <strong>"+viewers+"</strong> viewers");
     });
 
     client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
         // Do your stuff.
-        this.chateventHandler(channel+" deleted "+username+" message: "+deletedMessage+" - "+userstate);
+        this.msglist.slice(-60).map((msg)=>{
+          if (msg['id'] == userstate["target-msg-id"]){
+            msg['type'] = 'deleted';
+          }
+        });
+        this.chateventHandler("<strong>"+channel+"</strong> deleted <strong>@"+username+"</strong> message: "+deletedMessage);
     });
 
     // Someone got modded
     client.on("mod", (channel, username) => {
         // Do your stuff.
-        this.chateventHandler(channel+" modded "+username+"!");
+        this.chateventHandler("<strong>"+channel+"</strong> modded <strong>@"+username+"</strong>!");
     });
 
     client.on("notice", (channel, msgid, message) => {
@@ -627,30 +647,53 @@ export default class TwitchChatService extends Service {
 
     client.on("slowmode", (channel, enabled, length) => {
         // Do your stuff.
-        this.chateventHandler(channel+" is now in slow mode for "+lenght+"? "+enabled);
+        let message = "";
+        if(enabled){
+          if(lenght){
+            message = "<strong>"+channel+"</strong> enabled slow mode for "+lenght+"s.";
+          } else {
+            message = "<strong>"+channel+"</strong> enabled slow mode";
+          }
+        } else {
+          message = "<strong>"+channel+"</strong> disabled slow mode";
+        }
+        this.chateventHandler(message);
     });    
     
     // Subscribers only mode:
     client.on("subscribers", (channel, enabled) => {
         // Do your stuff.
-        this.chateventHandler(channel+" is in subscribers only mode? "+enabled);
-
+        let message = "";
+        if(enabled){  
+          message = "<strong>"+channel+"</strong> enabled subscribers only mode";
+        } else {
+          message = "<strong>"+channel+"</strong> disabled subscribers only mode";
+        }
+        this.chateventHandler(message);
     });
 
     client.on("timeout", (channel, username, reason, duration, userstate) => {
         // Do your stuff.
-        this.chateventHandler(channel+" set timeout "+username+" because "+reason+" for "+duration+" - "+userstate);
+        console.log(userstate);
+        let message = "";
+        if(reason){
+          message = "<strong>@"+username+"</strong> has been timed out for "+duration+"s because: "+reason;
+        } else {
+          message = "<strong>@"+username+"</strong> has been timed out for "+duration+"s";
+        }
+        
+        this.chateventHandler(message);
     });
 
     client.on("unhost", (channel, viewers) => {
         // Do your stuff.
-        this.chateventHandler(channel+" stopped hosting the stream with "+viewers+" viewers");
+        this.chateventHandler(""+channel+" stopped hosting the stream with "+viewers+" viewers");
     });
 
 
     client.on("unmod", (channel, username) => {
         // Do your stuff.
-        this.chateventHandler(channel+" unmodded "+username+"  :(");
+        this.chateventHandler(""+channel+" unmodded @"+username+"  :(");
     });
 
     // Vip list
@@ -671,50 +714,102 @@ export default class TwitchChatService extends Service {
     // Stream events you would get in streamlabels event list.
     client.on("anongiftpaidupgrade", (channel, username, userstate) => {
         // Do your stuff.
-        this.eventHandler(username+" got upgraded to "+userstate["msg-param-cumulative-months"]+"");
+        this.eventHandler("@"+username+" got upgraded to "+userstate["msg-param-cumulative-months"]+"");
     });
     
     client.on("cheer", (channel, userstate, message) => {
         // Do your stuff.
-        this.eventHandler(channel+" got cheered by "+userstate['display-name']+" with "+userstate['bits']+" and the message: "+message);
+        this.eventHandler(""+channel+" got cheered by @"+userstate['display-name']+" with "+userstate['bits']+" and the message: "+message);
     });
     
     client.on("follow", (channel, userstate) => {
         // Do your stuff.
-        this.eventHandler(channel+" got a new follower");
+        this.eventHandler(""+channel+" got a new follower");
     });
     
     client.on("hosted", (channel, username, viewers, autohost) => {
         // Do your stuff.
-        this.eventHandler(channel+" has been hosted by "+username+" with "+viewers+" viewers. The raid is autohost? "+autohost);
+        this.eventHandler(""+channel+" has been hosted by @"+username+" with "+viewers+" viewers. The raid is autohost? "+autohost);
     });
     
     client.on("raided", (channel, username, viewers) => {
         // Do your stuff.
-        this.eventHandler(channel+" has been raided by "+username+" with "+viewers+" viewers.");
+        this.eventHandler(""+channel+" has been raided by @"+username+" with "+viewers+" viewers.");
     });
     
-    client.on("resub", (channel, username, months, message, userstate, methods) => {
+    client.on("resub", (channel, username, streakMonths, msg, tags, methods) => {
         // Do your stuff.
-        this.eventHandler(username+" resubscribed "+channel+"'s channel for "+userstate["msg-param-cumulative-months"]+" months.");
+        
+        let plan = "";
+        if(methods['plan'] != null){
+          switch (methods['plan']) {
+            case 'Prime':{
+              plan = "Prime";
+              break;
+            }
+            case '1000':{
+              plan = "Tier 1";
+              break;
+            }
+            case '2000':{
+              plan = "Tier 2";
+              break;
+            }
+            case '3000':{
+              plan = "Tier 3";
+              break;
+            }         
+          }
+        }
+        this.eventHandler("@"+username+" subscribed at "+plan+". They've subscribed for "+tags["msg-param-cumulative-months"]+" months!");        
     });
 
-    client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
-        // Do your stuff.
-        this.eventHandler(username+" gifted "+recipient+" a sub.");
-    });
+
     
     client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
         // Do your stuff.
-        // let senderCount = ~~userstate["msg-param-sender-count"];
-        this.eventHandler(username+" gifted "+numbOfSubs+" a subs.");
+        console.log("Mistery gifted: =============================")
+        console.log(methods);
+        console.log(userstate);
+        this.eventHandler("@"+username+" gifted "+numbOfSubs+" of subs.");
     });
-
+    
+    client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
+        // Do your stuff.
+        console.log("Sub gifted: =============================")
+        console.log(methods);
+        console.log(userstate);        
+        this.eventHandler("@"+username+" gifted @"+recipient+" a sub.");
+    });
+    
     client.on("subscription", (channel, username, method, message, userstate) => {
         // Do your stuff.
+        console.log("Subscribed: =============================")
         console.log(method);
         console.log(userstate);
-        this.eventHandler(username+" subscribed to "+channel+" by "+method['plan']+" for "+userstate["msg-param-cumulative-months"]+" months.");
+        console.log(message);
+        var plan = '';
+        if(method['plan'] != null){
+          switch (method['plan']) {
+            case 'Prime':{
+              plan = "Prime";
+              break;
+            }
+            case '1000':{
+              plan = "Tier 1";
+              break;
+            }
+            case '2000':{
+              plan = "Tier 2";
+              break;
+            }
+            case '3000':{
+              plan = "Tier 3";
+              break;
+            }         
+          }
+        }
+        this.eventHandler("@"+username+" subscribed to "+channel+" with "+plan+".");
     });
   }
   

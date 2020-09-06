@@ -52,7 +52,7 @@ html,body{
   padding-bottom: 0px;
 }
 
-.chatframe, .queueframe, eventsframe{
+.chatframe, .queueframe, .eventsframe{
   max-height: 100% !important;
   overflow-y: scroll;
   scrollbar-color: var(--main-scrollbar-color);
@@ -91,9 +91,10 @@ div.highlight{
 div.system{
   border-left: 4px solid!important;
   padding-left: 11px;
-  font-size: 0.8rem;
+  font-size: 12px;
   font-weight: 400;
   line-height: 1.25em;
+  color: #721c24;
 }
 
 .processed{
@@ -253,4 +254,18 @@ svg.logo{
 .chatinput{
   outline: none;
   box-shadow:none !important;
+}
+
+.border-trans {
+  border-color: rgba(128,128,128, 1)!important;
+}
+
+.dropdown-item {
+  padding: 0.25rem 0.75rem;
+}
+
+
+span.deleted {
+  color: #ccc!important;
+  text-decoration: line-through;
 }

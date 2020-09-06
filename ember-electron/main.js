@@ -3,7 +3,10 @@ const { app, BrowserWindow, protocol, open } = require('electron');
 const { dirname, join, resolve } = require('path');
 const protocolServe = require('electron-protocol-serve');
 
+if(require('electron-squirrel-startup')) return;
+
 let mainWindow = null;
+
 
 // Registering a protocol & schema to serve our Ember application
 if (typeof protocol.registerSchemesAsPrivileged === 'function') {
@@ -66,8 +69,8 @@ app.on('ready', () => {
 
   
 // The following disables the window's menu.
-  // mainWindow.setMenu(null);
-  // mainWindow.setMenuBarVisibility(false);
+  mainWindow.setMenu(null);
+  mainWindow.setMenuBarVisibility(false);
 
   // If you want to open up dev tools programmatically, call
   // mainWindow.openDevTools();
@@ -100,6 +103,7 @@ app.on('ready', () => {
     mainWindow = null;
   });
 });
+
 
 // Handle an unhandled error in the main thread
 //

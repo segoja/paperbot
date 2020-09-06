@@ -23,6 +23,7 @@
     "test:ember": "ember test"
   },
   "devDependencies": {
+    "@electron-forge/maker-wix": "^6.0.0-beta.53",
     "@ember/optional-features": "^1.3.0",
     "@ember/render-modifiers": "^1.0.2",
     "@fortawesome/ember-fontawesome": "^0.2.1",
@@ -41,6 +42,7 @@
     "devtron": "^1.4.0",
     "electron-forge": "^5.2.4",
     "electron-prebuilt-compile": "8.2.0",
+    "electron-wix-msi": "^3.0.0",
     "ember-audio": "^1.0.0-beta.1",
     "ember-auto-import": "^1.6.0",
     "ember-bootstrap": "^4.0.0",

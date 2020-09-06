@@ -26,23 +26,31 @@
           <nav.item>
             <nav.link-to @route="clients.index">Clients</nav.link-to>
           </nav.item> 
-          <nav.item>
-            <nav.link-to @route="settings.index">Settings</nav.link-to>
-          </nav.item>    
+          <nav.dropdown class={{if this.headData.darkMode "bg-dark"}} as |dd| >
+            <dd.toggle><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
+            <dd.menu class={{if this.headData.darkMode "bg-dark"}} as |ddm|>            
+              <ddm.item>
+                <ddm.link-to @route="settings.index" class="font-weight-bold"><h6>Change Settings <FaIcon @icon="wrench" /></h6></ddm.link-to>
+              </ddm.item>
+              <ddm.item>
+                <hr class="dropdown-divider">
+              </ddm.item>
+              <ddm.item>
+                <span role="button" class="dropdown-item {{if this.headData.darkMode "bg-dark"}}" {{on "click" this.handleExport}}>Export Database</span>
+              </ddm.item>
+              <ddm.item>
+                <FileUpload @name="uploadfile" @accept="file/json" @onfileadd={{fn this.handleImport}} hidden={{false}} class="my-0" ><span class="dropdown-item {{if this.headData.darkMode "bg-dark"}}">Import Database</span></FileUpload>
+              </ddm.item>
+              <ddm.item>
+                <span role="button" class="dropdown-item {{if this.headData.darkMode "bg-dark"}}" {{on "click" this.wipeDatabase}}>Wipe DB</span>
+              </ddm.item>
+            </dd.menu>
+          </nav.dropdown>
           <nav.item>
             <span role="button" {{on "click" this.toggleMode}} class="nav-link {{if this.headData.darkMode "bulboff" "bulbon active"}}" title="{{if this.headData.darkMode "Dark mode" "Light mode"}}">
               <FaIcon @icon="{{if this.headData.darkMode "lightbulb" "lightbulb"}}" />
             </span>
-          </nav.item>
-          <li class="nav-item">
-            <span role="button" class="nav-link" {{on "click" this.handleExport}}>Export Database</span>
-          </li>
-          <li class="nav-item">
-            <FileUpload @name="uploadfile" @accept="file/json" @onfileadd={{fn this.handleImport}} hidden={{false}} class="my-0" ><span class="nav-link">Import Database</span></FileUpload>
-          </li> 
-          <li class="nav-item">
-            <span role="button" class="nav-link" {{on "click" this.wipeDatabase}}>Wipe DB</span>
-          </li>   
+          </nav.item>           
         </navbar.nav>
       </navbar.content>
   </BsNavbar>

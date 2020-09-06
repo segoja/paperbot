@@ -80,7 +80,7 @@ export default class PbStreamEditComponent extends Component {
   
   // With this getter we limit the number of messages displayed on screen.
   get messages(){
-    return this.msglist.slice(-30);
+    return this.msglist.slice(-60);
   }   
   // With this getter we limit the number of messages displayed on screen.
   get events(){
@@ -242,22 +242,24 @@ export default class PbStreamEditComponent extends Component {
   }
   
   @action finishStream(){
-    this.args.stream.chatlog = this.twitchChat.messages;
-    this.args.stream.songqueue = this.twitchChat.songqueue;
-    this.args.stream.eventlog = this.twitchChat.events;
+    if(this.args.stream.finished != true){
+      this.args.stream.chatlog = this.twitchChat.messages;
+      this.args.stream.songqueue = this.twitchChat.songqueue;
+      this.args.stream.eventlog = this.twitchChat.events;
 
-    if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
-     this.disconnectClients();
+      if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
+       this.disconnectClients();
+      }
+      
+      this.args.stream.finished = true;
+      this.args.saveStream();
+      this.twitchChat.eventlist = [];    
+      this.twitchChat.whisperlist = [];
+      this.twitchChat.msglist = [];
+      this.twitchChat.songqueue = [];    
+      this.songqueue = [];
+      this.msglist = [];
     }
-    
-    this.args.stream.finished = true;
-    this.args.saveStream();
-    this.twitchChat.eventlist = [];    
-    this.twitchChat.whisperlist = [];
-    this.twitchChat.msglist = [];
-    this.twitchChat.songqueue = [];    
-    this.songqueue = [];
-    this.msglist = [];
   }
   
   // This action gets triggered every time the channel receives a 
@@ -265,7 +267,8 @@ export default class PbStreamEditComponent extends Component {
   @action msgGetter() {
     this.msglist = this.twitchChat.messages;    
     this.songqueue = this.twitchChat.songqueue;
-    this.scrollPosition = 1500;
+    this.scrollPosition = this.messages.get('length');
+    this.scrollEventsPosition = this.twitchChat.eventlist.get('length');
     this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     if(this.queueToFile){
@@ -276,7 +279,7 @@ export default class PbStreamEditComponent extends Component {
   // This action gets triggered every time the an event gets triggered in the channel
   @action eventGetter() {
     this.eventlist = this.twitchChat.events;
-    this.scrollEventPosition = 1500;
+    this.scrollEventsPosition = this.twitchChat.eventlist.get('length');
     //if(this.queueToFile){
       //this.fileContent();
     //}

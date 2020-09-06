@@ -56,9 +56,18 @@
         <form.element @controlType="text" @label="CouchDB username" placeholder="Username" @property="couchdbuser" required /> 
         <form.element @controlType="password" @label="CouchDB password" placeholder="Password" @property="couchdbpassword" required  /> 
         <form.element @controlType="text" @label="CouchDB url" placeholder="Username" @property="couchdburl" required /> 
-        <form.element @controlType="checkbox" @label="Dark mode" @property="darkmode" required /> 
-        <form.element @controlType="checkbox" @label="Default config" @property="isdefault" required /> 
-
+        <div class="form-group row my-0">
+          <label class="col-md-4">Dark mode</label>
+          <div class="col-sm">
+            <form.element @controlType="checkbox" @label="" @property="darkmode" class="form-check form-check-inline" required />
+          </div>
+        </div>
+        <div class="form-group row my-0">
+          <label class="col-md-4">Default config</label>
+          <div class="col-sm">
+            <form.element @controlType="checkbox" @label="" @property="isdefault" class="form-check form-check-inline" required />
+          </div>
+        </div> 
         <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>
         <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Config saved!</span></div>
       </BsForm>

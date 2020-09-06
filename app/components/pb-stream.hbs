@@ -5,7 +5,7 @@
       {{#unless @isEditing}}
         <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
       {{/unless}}
-      <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>
+      {{!-- <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>--}}
       <bg.button @type="dark" class="rounded-0 rounded-top-right border-0" @onClick={{fn @closeStream}}><FaIcon @icon="times" /></bg.button>
     </BsButtonGroup>
   </div>
@@ -18,13 +18,13 @@
         <div class="row p-0 m-0 h-100 d-flex flex-fill overflow-hidden">
           <div class="col-md h-100 flex-column d-flex overflow-hidden border border-round">
             <div class="row alert-dark">
-              <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Chat log</h6></div>
+              <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Chat log</h6></div>
             </div>
             <div class="row h-100 overflow-hidden">
               <div class="col chatframe">
                 {{#each @stream.chatlog as |message|}}
                   <div class="row" id="{{message.id}}">
-                    <div class="col chatline py-2 {{if message.reward "highlight alert-warning"}}">
+                    <div class="col chatline py-0 {{if message.reward "highlight alert-warning"}}">
                       {{message-format message}}
                     </div>
                   </div>
@@ -38,10 +38,10 @@
               {{#if @stream.events}}
                 <div class="col h-100 flex-column d-flex overflow-hidden border border-round">
                   <div class="row alert-dark">
-                    <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Event list</h6></div>
+                    <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Event list</h6></div>
                   </div>
                   <div class="row h-100 overflow-hidden">
-                    <div class="col-md queueframe">
+                    <div class="col-md eventsframe">
                       {{#each @stream.eventlog as |event|}}
                         <div class="alert-warning d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                           <div class="row">
@@ -60,7 +60,7 @@
               {{#if @stream.requests}}
                 <div class="col h-100 flex-column d-flex overflow-hidden border border-round">
                   <div class="row alert-dark">
-                    <div class="col d-block align-self-center pr-0 pl-3"><h6 class="my-0">Request list</h6></div>
+                    <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Request list</h6></div>
                   </div>
                   <div class="row h-100 overflow-hidden">
                     <div class="col-md queueframe">
