@@ -674,7 +674,7 @@ export default class TwitchChatService extends Service {
 
     client.on("timeout", (channel, username, reason, duration, userstate) => {
         // Do your stuff.
-        console.log(userstate);
+        // console.log(userstate);
         let message = "";
         if(reason){
           message = "<strong>@"+username+"</strong> has been timed out for "+duration+"s because: "+reason;
@@ -768,26 +768,26 @@ export default class TwitchChatService extends Service {
     
     client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
         // Do your stuff.
-        console.log("Mistery gifted: =============================")
+        /*console.log("Mistery gifted: =============================")
         console.log(methods);
-        console.log(userstate);
+        console.log(userstate);*/
         this.eventHandler("@"+username+" gifted "+numbOfSubs+" of subs.");
     });
     
     client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
         // Do your stuff.
-        console.log("Sub gifted: =============================")
+        /*console.log("Sub gifted: =============================")
         console.log(methods);
-        console.log(userstate);        
+        console.log(userstate);*/      
         this.eventHandler("@"+username+" gifted @"+recipient+" a sub.");
     });
     
     client.on("subscription", (channel, username, method, message, userstate) => {
         // Do your stuff.
-        console.log("Subscribed: =============================")
+        /*console.log("Subscribed: =============================")
         console.log(method);
         console.log(userstate);
-        console.log(message);
+        console.log(message);*/
         var plan = '';
         if(method['plan'] != null){
           switch (method['plan']) {

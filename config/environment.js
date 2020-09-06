@@ -4,8 +4,8 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'paperbot',
     environment,
-    rootURL: '/',
-    locationType: 'auto',
+    rootURL: process.env.EMBER_CLI_ELECTRON ? '' : '/',
+    locationType: process.env.EMBER_CLI_ELECTRON ? 'hash' : 'auto',
     emberPouch: {
       saveHasMany: true,
     },

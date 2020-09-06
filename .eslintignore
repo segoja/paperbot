@@ -22,3 +22,5 @@
 
 # corber
 corber/cordova
+# ember-electron
+/electron-app/
