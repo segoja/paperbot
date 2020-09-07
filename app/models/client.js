@@ -6,7 +6,7 @@ export default class ClientModel extends Model {
   @attr('string', {defaultValue: ""}) oauth;
   
   @attr('string', {defaultValue: ""}) channel;
-  @attr ('boolean', {defaultValue: true}) debug;
+  @attr ('boolean', {defaultValue: false}) debug;
   @attr ('boolean', {defaultValue: true}) reconnect;
   @attr ('boolean', {defaultValue: true}) secure;
   

@@ -60,8 +60,8 @@
       </div>
       <div class="col row p-0 m-0 rounded-0 text-nowrap bg-dark">
         {{!-- <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Clients</BsButton> --}}
-        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="danger" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished false true)}}><FaIcon @icon="save" /> Finish Stream</BsButton>
-        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0 text-black" @type="warning" @onClick={{fn @editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
+        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="danger" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished this.disconnectButton true)}}><FaIcon @icon="save" /> Finish Stream</BsButton>
+        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0 text-editstream" @type="warning" @onClick={{fn @editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
       </div>
     </div>
   </div>

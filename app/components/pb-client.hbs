@@ -25,14 +25,27 @@
         </div>
       </div>
 
-      <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />      
-      <div class="form-row">
-        <div class="col">
-          <form.element @controlType="checkbox" @label="Debug" @property="debug" />
-          <form.element @controlType="checkbox" @label="Reconnect" @property="reconnect" />
-          <form.element @controlType="checkbox" @label="Secure" @property="secure" />
+      <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />  
+      
+      <div class="form-group row my-0">
+        <label class="col-md-4">Debug</label>
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="" @property="debug" class="form-check form-check-inline" />
         </div>
-      </div>      
+      </div>
+      <div class="form-group row my-0">
+        <label class="col-md-4">Reconnect</label>
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="" @property="reconnect" class="form-check form-check-inline" />
+        </div>
+      </div>
+      <div class="form-group row my-0">
+        <label class="col-md-4">Secure</label>
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="" @property="secure" class="form-check form-check-inline" />
+        </div>
+      </div> 
+      
       <BsButton @type="success" @onClick={{fn @saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Client saved!</span></div>      
