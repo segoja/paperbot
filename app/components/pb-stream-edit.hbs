@@ -72,9 +72,13 @@
       {{/if}}
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
-          <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftTop}}>
-            <FaIcon @icon={{if this.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-          </div>
+          {{#if @stream.events}}
+            <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftTop}}>
+              <FaIcon @icon={{if this.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            </div>
+          {{else}}
+            <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
+          {{/if}}
           {{#if this.requests}}
             <div role="button" class="{{if this.extraPanRight (if this.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
               <FaIcon @icon={{if this.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
@@ -89,33 +93,37 @@
           </div>
          <div class="{{if this.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
           <div class="{{if this.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
-            <div class="row m-0 p-0 {{if this.extraPanLeftTop (if this.extraPanLeftBottom "h-25" "h-100") "d-none"}} border">          
-              <d.Container class="col h-100 border m-0 p-0">                
-                  <div id="events" class="row {{unless this.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                    <div class="col {{unless this.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
-                      <div class="row bg-secondary text-light">
-                        <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Events</h6></div>
-                        <BsButtonGroup class="col-auto px-0" as |bg|>
-                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
-                        </BsButtonGroup>
-                      </div>
-                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanevents}}>
-                        <div class="col-md eventsframe" {{scroll-position this.scrollEventsPosition relative=true}} id="eventlist">
-                          {{#each this.events as |event|}}
-                            <div class="alert-warning d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
-                              <div class="row">
-                                <div class="col"><small>{{moment-format event.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+              <div class="row m-0 p-0 {{if @stream.events (if this.extraPanLeftTop (if this.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
+                <d.Container class="col h-100 border m-0 p-0">
+                   {{#if @stream.events}}
+                      <div id="events" class="row {{unless this.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                        <div class="col {{unless this.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
+                          <div class="row bg-secondary text-light">
+                            <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Events</h6></div>
+                            <BsButtonGroup class="col-auto px-0" as |bg|>
+                              <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
+                            </BsButtonGroup>
+                          </div>                          
+                          <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanevents}}>
+                            {{#unless this.cpanevents}}                                                          
+                              <div class="col-md eventsframe" {{scroll-position this.scrollEventsPosition relative=true}} id="eventlist">
+                                {{#each this.events as |event|}}
+                                  <div class="alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
+                                    <div class="row">
+                                      <div class="col"><small>{{moment-format event.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                                    </div>
+                                    <div class="alert-heading h6">{{event.parsedbody}}</div>
+                                  </div>
+                                {{/each}}
                               </div>
-                              <div class="alert-heading h6">{{event.parsedbody}}</div>
-                            </div>
-                          {{/each}}
-                        </div>  
-                      </BsCollapse>  
-                    </div>
-                  </div>
-              </d.Container>
-            </div>
-            <div class="row m-0 p-0 {{if this.extraPanLeftBottom (if this.extraPanLeftTop "h-75" "h-100") "d-none"}} border">
+                            {{/unless}}  
+                          </BsCollapse>                          
+                        </div>
+                      </div>
+                    {{/if}}
+                </d.Container>
+              </div>          
+            <div class="row m-0 p-0 {{if this.extraPanLeftBottom (if this.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
               <d.Container class="col h-100 border m-0 p-0">
                 <div id="chat" class="row {{unless this.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                   <div class="col {{unless this.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
@@ -126,13 +134,15 @@
                       </BsButtonGroup>
                     </div>
                     <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanmessages}}>
-                      <div class="col-md-12 chatframe" {{scroll-position this.scrollPosition relative=true}}>
-                        {{#each this.messages as |message|}}
-                          <div class="row" id="{{message.id}}">
-                            {{message-format message}}
-                          </div>
-                        {{/each}}
-                      </div>  
+                      {{#unless this.cpanmessages}}
+                        <div class="col-md-12 chatframe" {{scroll-position this.scrollPosition relative=false}}>
+                          {{#each this.messages as |message|}}
+                            <div class="row" id="{{message.id}}">
+                              {{message-format message}}
+                            </div>
+                          {{/each}}
+                        </div>  
+                      {{/unless}}
                     </BsCollapse>  
                   </div>
                 </div>
@@ -152,17 +162,19 @@
                         </BsButtonGroup>
                       </div>
                       <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanpending}}>
-                        <div class="col-md queueframe" {{scroll-position this.scrollPendingPosition relative=false}} id="songqueue">
-                          {{#each this.pendingSongs as |pendingsong|}}
-                            <div role="button" {{on "click" (fn this.requestStatus pendingsong)}} class="alert-info d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
-                              <div class="row">
-                                <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
-                                <div class="col-auto"><small>{{pendingsong.user}}</small></div>
+                        {{#unless this.cpanpending}}
+                          <div class="col-md queueframe" {{scroll-position this.scrollPendingPosition relative=true}} id="songqueue">
+                            {{#each this.pendingSongs as |pendingsong|}}
+                              <div id={{pendingsong.id}} role="button" {{on "click" (fn this.requestStatus pendingsong)}} class="alert-info d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
+                                <div class="row">
+                                  <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                                  <div class="col-auto"><small>{{pendingsong.user}}</small></div>
+                                </div>
+                                <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
                               </div>
-                              <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
-                            </div>
-                          {{/each}}
-                        </div>  
+                            {{/each}}
+                          </div>
+                        {{/unless}}
                       </BsCollapse>  
                     </div>
                   </div>
@@ -181,17 +193,19 @@
                         </BsButtonGroup>
                       </div>
                       <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanplayed}}>
-                        <div class="col-md queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
-                          {{#each this.playedSongs as |playedsong|}}
-                            <div role="button" {{on "click" (fn this.requestStatus playedsong)}} class="alert-light border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
-                              <div class="row">
-                                <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
-                                <div class="col-auto"><small>{{playedsong.user}}</small></div>
+                        {{#unless this.cpanplayed}}
+                          <div class="col-md queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
+                            {{#each this.playedSongs as |playedsong|}}
+                              <div id={{playedsong.id}} role="button" {{on "click" (fn this.requestStatus playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
+                                <div class="row">
+                                  <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                                  <div class="col-auto"><small>{{playedsong.user}}</small></div>
+                                </div>
+                                <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
                               </div>
-                              <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
-                            </div>
-                          {{/each}}
-                        </div>  
+                            {{/each}}
+                          </div>
+                        {{/unless}}
                       </BsCollapse>
                     </div>      
                   </div>
@@ -206,9 +220,13 @@
       </div>
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
-          <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftBottom}}>
-            <FaIcon @icon={{if this.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-          </div>
+          {{#if @stream.events}}
+            <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftBottom}}>
+              <FaIcon @icon={{if this.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            </div>
+          {{else}}
+            <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
+          {{/if}}
           {{#if this.requests}}
             <div role="button" class="{{if this.extraPanRight (if this.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
               <FaIcon @icon={{if this.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />

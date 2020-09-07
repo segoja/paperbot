@@ -14,7 +14,7 @@ export default helper(function([message]) {
       pre = '<div class="col chatline py-1">';
     }       
   } else { 
-    pre = '<div class="col chatline py-1 system alert-light">';
+      pre = '<div class="col chatline py-1 system alert-light">';
   }   
 
   var body = "";
@@ -26,10 +26,10 @@ export default helper(function([message]) {
       body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong> '+ message.parsedbody +'</span>';
     break;
     case 'chat':
-      body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;  
+      body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> <span class="'+ message.type+'">'+ message.parsedbody+'</span>';  
     break;
     default:
-      body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> '+ message.parsedbody;
+      body = '<small class="d-none d-md-inline">['+ moment(message.timestamp).format("HH:mm:ss")+']</small><span class="'+ message.type +'" style="color: '+ message.color +';"> '+message.htmlbadges+' <strong>' + message.displayname +':</strong></span> <span class="'+ message.type+'">'+ message.parsedbody+'</span>';
     break;
   }
   

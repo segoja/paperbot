@@ -58,6 +58,13 @@ html,body{
   scrollbar-color: var(--main-scrollbar-color);
 }
 
+#eventlist > div:first-child, 
+#songqueue > div:first-child {
+  filter: drop-shadow(0px 1px 2px);
+  /* margin-top: 0.75em !important; */
+  margin-bottom: 0.6em !important;
+}
+
 .eventsframe::-webkit-scrollbar {
   display: none;
 } 
@@ -91,8 +98,9 @@ div.highlight{
 div.system{
   border-left: 4px solid!important;
   padding-left: 11px;
-  font-size: 12px;
+  font-size: 0.9em;
   font-weight: 400;
+  font-style: italic;  
   line-height: 1.25em;
   color: #721c24;
 }
@@ -272,4 +280,42 @@ span.deleted {
 
 .text-editstream{
   color: #000;
+}
+
+/* Info green */
+.event-cheer{
+  color: #216c65;
+  background-color: #e4fcf8;
+  border-color: #216c65;
+}
+
+/* Dark purple */
+.event-resub{
+  color: #251a36;
+  background-color: #c3ace2;
+  border-color: #251a36;
+}
+/* Purple */
+.event-sub{
+  color: #341d5b;
+  background-color: #e3ccf2;
+  border-color: #341d5b;
+}
+/* Green */
+.event-gift{
+  color: #254815;
+  background-color: #d1f8ba;
+  border-color: #254815;
+}
+/* Red */
+.event-raid{
+  color: #721c24;
+  background-color: #e8c7ca;
+  border-color: #721c24;
+}
+/* Orange */
+.event-host{
+  color: #4a290f;
+  background-color: #ffd1b0;
+  border-color: #4a290f;
 }

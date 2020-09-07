@@ -6,6 +6,7 @@ import { htmlSafe } from '@ember/template';
 import { action } from "@ember/object";
 import { assign } from '@ember/polyfills';
 import { sort } from '@ember/object/computed';
+import moment from 'moment';
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -276,7 +277,7 @@ export default class TwitchChatService extends Service {
     
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
-      timestamp: new Date(),
+      timestamp: moment().format(),
       body: msg ? msg.toString() : null,
       parsedbody: this.parseMessage(msg.toString(), tags['emotes']).toString(),    
       user: tags['username'] ? tags['username'].toString() : this.botUsername,
@@ -296,7 +297,7 @@ export default class TwitchChatService extends Service {
         this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+msg+'"');
         this.lastsongrequest = {
           id: tags['id'] ? tags['id'].toString() : 'songsys',
-          timestamp: new Date,
+          timestamp: moment().format(),
           type: tags['message-type'] ? tags['message-type'] : null,
           song: msg, 
           user: tags['username'] ? tags['username'].toString() : this.botUsername,
@@ -330,7 +331,7 @@ export default class TwitchChatService extends Service {
         this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+song+'"');
         this.lastsongrequest = {
           id: tags['id'] ? tags['id'].toString() : 'songsys',
-          timestamp: new Date,
+          timestamp: moment().format(),
           type: tags['message-type'] ? tags['message-type'] : null,
           song: song, 
           user: tags['username'] ? tags['username'].toString() : this.botUsername,
@@ -714,12 +715,12 @@ export default class TwitchChatService extends Service {
     // Stream events you would get in streamlabels event list.
     client.on("anongiftpaidupgrade", (channel, username, userstate) => {
         // Do your stuff.
-        this.eventHandler("@"+username+" got upgraded to "+userstate["msg-param-cumulative-months"]+"");
+        this.eventHandler("@"+username+" got upgraded to "+userstate["msg-param-cumulative-months"]+".", "gift");
     });
     
     client.on("cheer", (channel, userstate, message) => {
         // Do your stuff.
-        this.eventHandler(""+channel+" got cheered by @"+userstate['display-name']+" with "+userstate['bits']+" and the message: "+message);
+        this.eventHandler(""+channel+" got cheered by @"+userstate['display-name']+" with "+userstate['bits']+" and the message: "+message, "cheer");
     });
     
     client.on("follow", (channel, userstate) => {
@@ -729,12 +730,12 @@ export default class TwitchChatService extends Service {
     
     client.on("hosted", (channel, username, viewers, autohost) => {
         // Do your stuff.
-        this.eventHandler(""+channel+" has been hosted by @"+username+" with "+viewers+" viewers. The raid is autohost? "+autohost);
+        this.eventHandler(""+channel+" has been hosted by @"+username+" with "+viewers+" viewers. The raid is autohost? "+autohost, "host");
     });
     
     client.on("raided", (channel, username, viewers) => {
         // Do your stuff.
-        this.eventHandler(""+channel+" has been raided by @"+username+" with "+viewers+" viewers.");
+        this.eventHandler(""+channel+" has been raided by @"+username+" with "+viewers+" viewers.", "raid");
     });
     
     client.on("resub", (channel, username, streakMonths, msg, tags, methods) => {
@@ -761,7 +762,7 @@ export default class TwitchChatService extends Service {
             }         
           }
         }
-        this.eventHandler("@"+username+" subscribed at "+plan+". They've subscribed for "+tags["msg-param-cumulative-months"]+" months!");        
+        this.eventHandler("@"+username+" resubscribed at "+plan+". They've subscribed for "+tags["msg-param-cumulative-months"]+" months!", "resub");        
     });
 
 
@@ -771,7 +772,7 @@ export default class TwitchChatService extends Service {
         /*console.log("Mistery gifted: =============================")
         console.log(methods);
         console.log(userstate);*/
-        this.eventHandler("@"+username+" gifted "+numbOfSubs+" of subs.");
+        this.eventHandler("@"+username+" gifted "+numbOfSubs+" subs.", "gift");
     });
     
     client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
@@ -779,7 +780,7 @@ export default class TwitchChatService extends Service {
         /*console.log("Sub gifted: =============================")
         console.log(methods);
         console.log(userstate);*/      
-        this.eventHandler("@"+username+" gifted @"+recipient+" a sub.");
+        this.eventHandler("@"+username+" gifted @"+recipient+" a sub.", "gift");
     });
     
     client.on("subscription", (channel, username, method, message, userstate) => {
@@ -809,14 +810,14 @@ export default class TwitchChatService extends Service {
             }         
           }
         }
-        this.eventHandler("@"+username+" subscribed to "+channel+" with "+plan+".");
+        this.eventHandler("@"+username+" subscribed to "+channel+" with "+plan+".", "sub");
     });
   }
   
   @action chateventHandler(notice){
     this.lastmessage = {
       id: 'system',
-      timestamp: new Date(),
+      timestamp: moment().format(),
       body: null,
       parsedbody: this.parseMessage(notice, []).toString(),    
       user: "[Info]",
@@ -834,10 +835,11 @@ export default class TwitchChatService extends Service {
   }
 
   @tracked lastEvent = null;
-  @action eventHandler(event){
+  @action eventHandler(event, type){
+    
     this.lastevent = {
       id: 'event',
-      timestamp: new Date(),
+      timestamp: moment().format(),
       parsedbody: this.parseMessage(event, []).toString(),    
       user: "event",
       displayname: "event",      
@@ -845,7 +847,7 @@ export default class TwitchChatService extends Service {
       csscolor: htmlSafe('color: #cccccc'),        
       badges: null,
       htmlbadges:  '',
-      type: "event",
+      type: type ? "event-"+type.toString() : "event",
       usertype: null,
       reward: false,
       emotes: null,

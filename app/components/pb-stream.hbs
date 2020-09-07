@@ -21,7 +21,7 @@
               <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Chat log</h6></div>
             </div>
             <div class="row h-100 overflow-hidden">
-              <div class="col chatframe">
+              <div class="chatframe">
                 {{#each @stream.chatlog as |message|}}
                   <div class="row" id="{{message.id}}">
                     <div class="col chatline py-0 {{if message.reward "highlight alert-warning"}}">

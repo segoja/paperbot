@@ -16,12 +16,12 @@ export default class ScrollPositionModifier extends Modifier {
     // {{scoll-position @someNumber relative=@someBoolean}}
     //                                       ~~~~~~~~~~~~
     //
-    return this.args.named.relative
+    return this.args.named.relative;
   }
 
   didReceiveArguments() {
     if(this.isRelative) {
-      this.element.scrollTop += this.element.scrollHeight;
+      this.element.scrollTop = this.args.positional[0];
     } else {
       this.element.scrollTop = this.element.scrollHeight;
     }

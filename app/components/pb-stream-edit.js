@@ -24,7 +24,7 @@ export default class PbStreamEditComponent extends Component {
   @tracked scrollPosition = 0;
   @tracked scrollPlayedPosition = 0;
   @tracked scrollPendingPosition = 0;
-  
+  @tracked scrollEventsPosition = 0;
   @tracked message = "";
   @tracked eventlist = [];  
   @tracked msglist = [];
@@ -44,6 +44,12 @@ export default class PbStreamEditComponent extends Component {
     'songqueue',
     'queueDescSorting'
   ) arrangedDescQueue;
+  
+  eventsDescSorting = Object.freeze(['timestamp:desc']);    
+  @sort (
+    'eventlist',
+    'eventsDescSorting'
+  ) arrangedDescEvents;
   
   get disableBotButton(){
     if(this.args.stream.finished === true || this.args.stream.botclient === '' || this.args.stream.channel === ''){
@@ -80,13 +86,12 @@ export default class PbStreamEditComponent extends Component {
   
   // With this getter we limit the number of messages displayed on screen.
   get messages(){
-    return this.msglist.slice(-60);
+    return this.msglist.slice(-45);
   }   
   // With this getter we limit the number of messages displayed on screen.
   get events(){
-    return this.eventlist;
+    return this.arrangedDescEvents;
   }   
-
 
   get audiocommandslist(){
     return this.args.commands.filterBy('type','audio').filterBy('active', true);
@@ -105,7 +110,6 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.takessongrequests = this.args.stream.requests;    
     return this.args.stream.requests;
   }
-  
     
   constructor() {
     super(...arguments);
@@ -268,9 +272,10 @@ export default class PbStreamEditComponent extends Component {
     this.msglist = this.twitchChat.messages;    
     this.songqueue = this.twitchChat.songqueue;
     this.scrollPosition = this.messages.get('length');
-    this.scrollEventsPosition = this.twitchChat.eventlist.get('length');
-    this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
-    this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
+    // this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
+    // this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
+    this.scrollPlayedPosition = this.twitchChat.playedSongs.get('length');
+    this.scrollPendingPosition = 0;
     if(this.queueToFile){
       this.fileContent();
     }
@@ -279,22 +284,18 @@ export default class PbStreamEditComponent extends Component {
   // This action gets triggered every time the an event gets triggered in the channel
   @action eventGetter() {
     this.eventlist = this.twitchChat.events;
-    this.scrollEventsPosition = this.twitchChat.eventlist.get('length');
-    //if(this.queueToFile){
-      //this.fileContent();
-    //}
+    this.scrollEventsPosition = 0;
   }
 
 
-
   @action fileContent(){
-    console.log("Escribiendo a disco!");      
+    // console.log("Escribiendo a disco!");      
     if (this.queueToFile){
       var fs = require('fs');
       var writeFile = denodeify(fs.writeFile);
       var readFile = denodeify(fs.readFile);
       
-      console.log();
+      // console.log();
       // alert(this.globalConfig.config.soundsfolder);
       var html = readFile("ember/queue/queue-header.html", 'utf8').then((data)=>{
         this.pendingSongs.forEach((pendingsong)=>{          
@@ -311,7 +312,7 @@ export default class PbStreamEditComponent extends Component {
           return data.concat(footer);
         });
       });
-      console.log(html);
+      // console.log(html);
       if(this.globalConfig.config.overlayfolder != ''){
         let pathstring = this.globalConfig.config.overlayfolder+'\\queue.html';
         return writeFile(pathstring, html);         
@@ -373,9 +374,12 @@ export default class PbStreamEditComponent extends Component {
   // Song processing related actions  
   @action requestStatus(song) {    
     // We use set in order to make sure the context updates properly.
+    if(song.processed === true){
+      set(song, 'timestamp', moment().format());
+    }
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = this.pendingSongs.get('length');
-    this.scrollPendingPosition = this.playedSongs.get('length');
+    this.scrollPendingPosition = 0;
     this.msgGetter();
   } 
   
@@ -384,7 +388,7 @@ export default class PbStreamEditComponent extends Component {
       let firstSong = this.pendingSongs[this.pendingSongs.length-1];
       set(firstSong, 'processed', true);
       this.scrollPlayedPosition = this.pendingSongs.get('length');
-      this.scrollPendingPosition = this.playedSongs.get('length');
+      this.scrollPendingPosition = 0;
       this.fileContent();
     }
 
@@ -392,9 +396,12 @@ export default class PbStreamEditComponent extends Component {
   @action prevSong(){
     if(this.playedSongs.get('length') != 0){
       let firstSong = this.playedSongs[this.playedSongs.length-1];
+      if(firstSong.processed === true){
+        set(firstSong, 'timestamp', moment().format());
+      }
       set(firstSong, 'processed', false);
       this.scrollPlayedPosition = this.pendingSongs.get('length');
-      this.scrollPendingPosition = this.playedSongs.get('length');
+      this.scrollPendingPosition = 0;
       this.fileContent();
     }
   }
@@ -473,7 +480,7 @@ export default class PbStreamEditComponent extends Component {
     this.extraPanLeft = !this.extraPanLeft;
   }
   
-  @tracked extraPanLeftTop = false;
+  @tracked extraPanLeftTop = true;
 
   @action toggleExtraPanLeftTop() {
     this.extraPanLeftTop = !this.extraPanLeftTop;

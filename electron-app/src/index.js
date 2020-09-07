@@ -120,7 +120,7 @@ app.on('ready', async () => {
     
     webPreferences: {
       webSecurity: false,
-      allowRunningInsecureContent: false,
+      allowRunningInsecureContent: true,
       nodeIntegration: true,
     },
   });
