@@ -120,8 +120,11 @@ app.on('ready', async () => {
     
     webPreferences: {
       webSecurity: false,
-      allowRunningInsecureContent: true,
+      allowRunningInsecureContent: false,
       nodeIntegration: true,
+      // Next line is needed to make file and folder selection work in command editing and config editing.
+      // It's going to be deprecated soon, so we will have to rework the functionality.
+      enableRemoteModule: true,
     },
   });
 
