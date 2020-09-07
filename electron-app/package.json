@@ -1,7 +1,7 @@
 {
   "name": "paperbot",
   "productName": "paperbot",
-  "version": "0.25",
+  "version": "0.2.5",
   "description": "Paperbot",
   "main": "src/index.js",
   "scripts": {
