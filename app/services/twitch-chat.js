@@ -14,9 +14,16 @@ export default class TwitchChatService extends Service {
   @tracked botclient;
   @tracked chatclient;
 
+  @tracked savechat = false;
+
   @tracked msglist = [];  
   get messages(){
-    return this.msglist;
+    if (this.savechat){
+      return this.msglist;
+    } else {
+      this.msglist = this.msglist.slice(-45);
+      return this.msglist;
+    }
   }
   
   @tracked whisperlist = [];  

@@ -3,6 +3,20 @@
     <div class="col d-block align-self-center pr-0 pl-3"><h5 class="my-0 text-truncate">{{#if @stream.channel}} #{{@stream.channel}} - {{/if}}{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
     <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
       {{#unless @isEditing}}
+        <bg.button @type="dark" class="rounded-0 border-0 {{if @stream.finished "d-none"}}">
+          <BsTooltip title="Keyboard shortcuts" @placement="left" class="helptooltip" @triggerEvents="click">
+            <h6 class="text-left">Keyboard Shortcuts</h6>
+            <p class="text-left">
+              Toggle Soundboard: "Ctrl"+"M"<br>
+              Toggle Overlay Queue File: "Ctrl"+"N"<br>
+              Next. Song: "Ctrl"+"."<br>
+              Prev. Song: "Ctrl"+","<br>
+              Send most recently played song back to last position<br> in pending queue: "Ctrl"+"Q"+","<br>
+              Send played song back to last position in pending<br> queue: "Ctrl"+"Q"+Click on the song
+            </p>
+          </BsTooltip>
+          <FaIcon @icon="question-circle" class="text-white" />        
+        </bg.button>
         <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
       {{/unless}}
       {{!-- <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>--}}
@@ -16,24 +30,25 @@
     {{#if @stream.finished}}
       <div class="card-body p-0 m-0  h-100 flex-column d-flex flex-fill overflow-hidden">
         <div class="row p-0 m-0 h-100 d-flex flex-fill overflow-hidden">
-          <div class="col-md h-100 flex-column d-flex overflow-hidden border border-round">
-            <div class="row alert-dark">
-              <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Chat log</h6></div>
-            </div>
-            <div class="row h-100 overflow-hidden">
-              <div class="chatframe">
-                {{#each @stream.chatlog as |message|}}
-                  <div class="row" id="{{message.id}}">
-                    <div class="col chatline py-0 {{if message.reward "highlight alert-warning"}}">
-                      {{message-format message}}
+          {{#if @stream.savechat}}
+            <div class="col-md h-100 flex-column d-flex overflow-hidden border border-round">
+              <div class="row alert-dark">
+                <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Chat log</h6></div>
+              </div>
+              <div class="row h-100 overflow-hidden">
+                <div class="chatframe">
+                  {{#each @stream.chatlog as |message|}}
+                    <div class="row" id="{{message.id}}">
+                      <div class="col chatline py-0 {{if message.reward "highlight alert-warning"}}">
+                        {{message-format message}}
+                      </div>
                     </div>
-                  </div>
-                {{/each}}
+                  {{/each}}
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div class="col-5 h-100 border m-0 p-0">
+          {{/if}}
+          <div class="{{if @stream.savechat "col-5" "col"}} h-100 border m-0 p-0">
             <div class="row m-0 p-0 {{if @stream.requests "h-50" "h-100"}} {{unless @stream.events "d-none"}}">
               {{#if @stream.events}}
                 <div class="col h-100 flex-column d-flex overflow-hidden border border-round">
@@ -85,3 +100,4 @@
     {{/if}}
   {{/unless}}
 </div>
+<div id="ember-bootstrap-wormhole"></div>

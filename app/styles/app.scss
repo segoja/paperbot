@@ -319,3 +319,8 @@ span.deleted {
   background-color: #ffd1b0;
   border-color: #4a290f;
 }
+
+
+.helptooltip>div.tooltip-inner{
+  max-width: inherit!important;
+}

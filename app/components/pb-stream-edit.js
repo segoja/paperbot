@@ -16,7 +16,9 @@ export default class PbStreamEditComponent extends Component {
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.songqueue') isQueueEmpty;
   @empty ('twitchChat.events') isEventsEmpty;
-    
+  
+  // We use this property to track if a key is pressed or not using ember-keyboard helpers.
+  @tracked modifierkey =  false;
   
   @tracked saving = false;
   @tracked optsbot = this.args.stream.botclient.get('optsgetter');
@@ -98,11 +100,11 @@ export default class PbStreamEditComponent extends Component {
   }
   
   get pendingSongs() {
-    return this.arrangedDescQueue.filterBy('processed', false);
+    return this.arrangedAscQueue.filterBy('processed', false);
   }
   
   get playedSongs() {
-    return this.arrangedAscQueue.filterBy('processed', true);
+    return this.arrangedDescQueue.filterBy('processed', true);
   }
   
   // Whith this getter we control the queue display while keeping the service updated with the settings.
@@ -161,6 +163,7 @@ export default class PbStreamEditComponent extends Component {
       // this.optsbot.channels = [this.args.stream.channel];
       this.twitchChat.channel = this.args.stream.channel;
     }
+    this.twitchChat.savechat = this.args.stream.savechat;
     
     this.twitchChat.audiocommands = this.audiocommandslist;
     this.twitchChat.commands = this.args.commands;
@@ -203,6 +206,7 @@ export default class PbStreamEditComponent extends Component {
       //this.optschat.channels = [this.args.stream.channel];
       this.twitchChat.channel = this.args.stream.channel;
     }
+    this.twitchChat.savechat = this.args.stream.savechat;    
     this.twitchChat.connector(this.optschat, "chat");
   }
 
@@ -247,7 +251,9 @@ export default class PbStreamEditComponent extends Component {
   
   @action finishStream(){
     if(this.args.stream.finished != true){
-      this.args.stream.chatlog = this.twitchChat.messages;
+      if(this.args.stream.savechat){
+        this.args.stream.chatlog = this.twitchChat.messages;        
+      }
       this.args.stream.songqueue = this.twitchChat.songqueue;
       this.args.stream.eventlog = this.twitchChat.events;
 
@@ -274,7 +280,7 @@ export default class PbStreamEditComponent extends Component {
     this.scrollPosition = this.messages.get('length');
     // this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     // this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
-    this.scrollPlayedPosition = this.twitchChat.playedSongs.get('length');
+    this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
     if(this.queueToFile){
       this.fileContent();
@@ -330,8 +336,10 @@ export default class PbStreamEditComponent extends Component {
   @action doneEditing() {
     if(this.args.stream.finished === false){
       if(this.isChatEmpty === false){
-        if(this.msglist != this.args.stream.chatlog){
-          this.args.stream.chatlog = this.msglist;
+        if(this.args.stream.savechat){
+          if(this.msglist != this.args.stream.chatlog){
+            this.args.stream.chatlog = this.msglist;
+          }
         }
       }
       if(this.isQueueEmpty === false){
@@ -353,8 +361,10 @@ export default class PbStreamEditComponent extends Component {
   @action doneAndReturnEditing() {
     if(this.args.stream.finished === false){
       if(this.isChatEmpty === false){
-        if(this.msglist != this.args.stream.chatlog){
-          this.args.stream.chatlog = this.msglist;
+        if(this.args.stream.savechat){
+          if(this.msglist != this.args.stream.chatlog){
+            this.args.stream.chatlog = this.msglist;
+          }
         }
       }
       if(this.isQueueEmpty === false){
@@ -370,24 +380,56 @@ export default class PbStreamEditComponent extends Component {
     }
     this.args.saveAndReturnStream(); 
   }  
+
   
   // Song processing related actions  
+  @action modPressed(){
+    if(this.modifierkey === false){
+      this.modifierkey = true;
+    }
+  }
+  
+  @action modNotPressed(){
+    if(this.modifierkey){
+      this.modifierkey = false;
+    }
+  }
+
   @action requestStatus(song) {    
     // We use set in order to make sure the context updates properly.
-    if(song.processed === true){
+    if(song.processed === true && this.modifierkey === true){
+      // Next line makes the element to get back in the pending list but in the last position:
       set(song, 'timestamp', moment().format());
     }
     set(song, 'processed', !song.processed);
-    this.scrollPlayedPosition = this.pendingSongs.get('length');
+    this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
     this.msgGetter();
   } 
+  @action backToQueue(song) {    
+    // We use set in order to make sure the context updates properly.
+    if(song.processed === true){
+      // Next line makes the element to get back in the pending list but in the last position:
+      set(song, 'timestamp', moment().format());
+    }
+    set(song, 'processed', !song.processed);
+    this.scrollPlayedPosition = 0;
+    this.scrollPendingPosition = 0;
+    this.msgGetter();
+  }
+
   
   @action nextSong(){
     if(this.pendingSongs.get('length') != 0){
-      let firstSong = this.pendingSongs[this.pendingSongs.length-1];
+      // For selecting the last element of the array:
+      // let firstSong = this.pendingSongs[this.pendingSongs.length-1];
+      // For selecting the first element of the array:
+      let firstSong = this.pendingSongs[0];
+      //if(firstSong.processed === true){
+        // set(firstSong, 'timestamp', moment().format());
+      //}
       set(firstSong, 'processed', true);
-      this.scrollPlayedPosition = this.pendingSongs.get('length');
+      this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
       this.fileContent();
     }
@@ -395,12 +437,16 @@ export default class PbStreamEditComponent extends Component {
   }
   @action prevSong(){
     if(this.playedSongs.get('length') != 0){
-      let firstSong = this.playedSongs[this.playedSongs.length-1];
-      if(firstSong.processed === true){
+      // For selecting the last element of the array:
+      // let firstSong = this.playedSongs[this.playedSongs.length-1];
+      // For selecting the first element of the array:
+      let firstSong = this.playedSongs[0];
+      if(firstSong.processed === true && this.modifierkey === true){
+        // Next line makes the element to get back in the pending list but in the last position:
         set(firstSong, 'timestamp', moment().format());
       }
       set(firstSong, 'processed', false);
-      this.scrollPlayedPosition = this.pendingSongs.get('length');
+      this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
       this.fileContent();
     }

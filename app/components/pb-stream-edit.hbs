@@ -3,18 +3,16 @@
     <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneAndReturnEditing}} as |form|>
       <form.element @controlType="text" @label="Stream Title" placeholder="Stream title" @property="title" required />
       <form.element @controlType="text" @label="Stream Channel" placeholder="Stream channel" @property="channel" required />
+      
       <div class="form-group row my-0">
-        <label class="col-md-4">Request System</label>
-        <div class="col-sm">
-          <form.element @controlType="checkbox" @label="" @property="requests" class="form-check form-check-inline"  />
+        <label class="col-md-4">Stream Monitoring</label>
+        <div class="col-sm pl-0">
+          <form.element @controlType="checkbox" @label="Chat Logging" @formLayout="inline" @property="savechat" class="form-check form-check-inline"  />
+          <form.element @controlType="checkbox" @label="Event Logging" @formLayout="inline" @property="events" class="form-check form-check-inline"  />
+          <form.element @controlType="checkbox" @label="Song Request System" @formLayout="inline" @property="requests" class="form-check form-check-inline"  />
         </div>
       </div>
-      <div class="form-group row my-0">
-        <label class="col-md-4">Event list</label>
-        <div class="col-sm">
-          <form.element @controlType="checkbox" @label="" @property="events" class="form-check form-check-inline"  />
-        </div>
-      </div>      
+    
       <form.element @controlType="power-select" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{fn @setBotClient}} required as |client|>
         <client.control @allowClear={{true}} @placeholder="Select the Bot Client for the stream" as |option|>
           {{option.username}}
@@ -36,9 +34,11 @@
     <div class="row p-0 m-0 border border-dark rounded-0 bg-dark">
       <div class="col-2 row p-0 m-0 bg-dark">
         <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.soundBoardEnabled "info" "secondary"}} @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
+          {{on-key "ctrl+KeyM" this.soundboardToggle}}  
           <FaIcon @icon="{{if this.soundBoardEnabled "volume-up" "volume-mute"}}" />
         </BsButton>     
         <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.queueToFile "warning" "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
+          {{on-key "ctrl+KeyN" this.queueWriter}}
           <FaIcon @icon="{{if this.queueToFile "file-alt" "file"}}" />
         </BsButton>
       </div>
@@ -67,9 +67,6 @@
   </div>
   {{#unless @stream.finished}}  
     {{#if this.twitchChat.botConnected}}
-      {{#if this.requests}}
-        {{on-key "F7" this.nextSong}}{{on-key "F9" this.prevSong}}
-      {{/if}}
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
           {{#if @stream.events}}
@@ -149,6 +146,12 @@
               </d.Container>
             </div>
           </div>
+          {{#if this.requests}}
+            {{on-key "ctrl+Period" this.nextSong}}
+            {{on-key "ctrl+Comma" this.prevSong}}
+            {{on-key "ctrl+KeyQ" this.modPressed event="keypress"}} 
+            {{on-key "ctrl+KeyQ" this.modNotPressed event="keyup"}} 
+          {{/if}}
           <div class="{{if this.requests (if this.extraPanRight (if this.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
             <div class="row m-0 p-0 {{if this.extraPanRightTop (if this.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
               <d.Container class="col h-100 m-0 p-0"> 
@@ -194,9 +197,9 @@
                       </div>
                       <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanplayed}}>
                         {{#unless this.cpanplayed}}
-                          <div class="col-md queueframe" {{scroll-position this.scrollPlayedPosition relative=false}}>
+                          <div class="col-md queueframe" {{scroll-position this.scrollPlayedPosition relative=true}}>
                             {{#each this.playedSongs as |playedsong|}}
-                              <div id={{playedsong.id}} role="button" {{on "click" (fn this.requestStatus playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
+                              <div id={{playedsong.id}} role="button" {{on "click" (fn this.requestStatus playedsong)}} {{on-key "right" (fn this.backToQueue playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
                                 <div class="row">
                                   <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
                                   <div class="col-auto"><small>{{playedsong.user}}</small></div>
