@@ -4,9 +4,10 @@ import { tracked } from '@glimmer/tracking';
 import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { empty, sort } from '@ember/object/computed';
-import { denodeify } from 'rsvp';
 import moment from 'moment';
 import { later } from '@ember/runloop';
+import { denodeify } from 'rsvp';
+import ENV from '../config/environment';
 
 export default class PbStreamEditComponent extends Component {
   @service twitchChat;
@@ -283,7 +284,7 @@ export default class PbStreamEditComponent extends Component {
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
     if(this.queueToFile){
-      this.fileContent();
+      this.fileContent(this.pendingSongs);
     }
   }
 
@@ -293,36 +294,45 @@ export default class PbStreamEditComponent extends Component {
     this.scrollEventsPosition = 0;
   }
 
-
-  @action fileContent(){
-    // console.log("Escribiendo a disco!");      
-    if (this.queueToFile){
-      var fs = require('fs');
-      var writeFile = denodeify(fs.writeFile);
-      var readFile = denodeify(fs.readFile);
-      
-      // console.log();
-      // alert(this.globalConfig.config.soundsfolder);
-      var html = readFile("ember/queue/queue-header.html", 'utf8').then((data)=>{
-        this.pendingSongs.forEach((pendingsong)=>{          
-          data = data.concat("\n\t\t\t<div class=\"alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white\">");
-          data = data.concat("\n\t\t\t\t<div class=\"alert-heading h4\">"+pendingsong.song+"</div>");
-          data = data.concat("\n\t\t\t\t<div class=\"row\">");
-          data = data.concat("\n\t\t\t\t\t<div class=\"col h6\">"+moment(pendingsong.timestamp).format("YYYY/MM/DD HH:mm:ss")+"</div>");
-          data = data.concat("\n\t\t\t\t\t<div class=\"col-auto h6\">"+pendingsong.user+"</div>");
-          data = data.concat("\n\t\t\t\t</div>");
-          data = data.concat("\n\t\t\t</div>");          
+  @tracked overlayHtml = '';  
+  get overlayLoader(){
+    if(this.overlayHtml === ''){
+      let fs = require('fs');
+      let readFile = denodeify(fs.readFile);
+      if (ENV.environment === 'development') {
+        readFile("ember-dist/queue/queue.html", 'utf8').then(async (data)=>{ 
+          this.overlayHtml = await data.toString();
         });
-        return readFile("ember/queue/queue-footer.html", 'utf8').then((footer)=>{
-          // console.log(footer);
-          return data.concat(footer);
-        });
+      } else {
+        readFile("resources/app/ember-dist/queue/queue.html", 'utf8').then(async (data)=>{ 
+          this.overlayHtml = await data.toString();
+        }); 
+      }    
+    }
+    return true;
+  } 
+  
+  @action fileContent(pendingSongs){
+    if (this.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('lenght') != 0){
+      let pathString = this.globalConfig.config.overlayfolder;
+      if(pathString.substr(pathString.length - 1) === "\\"){
+        pathString = pathString.slice(0, -1)+'\\queue.html';
+      } else {
+        pathString = pathString+'\\queue.html';
+      }      
+      var htmlEntries = '';
+      pendingSongs.map((pendingsong)=>{          
+        htmlEntries = htmlEntries.concat("\n\t\t\t<div class=\"alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white\">");
+        htmlEntries = htmlEntries.concat("\n\t\t\t\t<div class=\"alert-heading h4\">"+pendingsong.song+"</div>");
+        htmlEntries = htmlEntries.concat("\n\t\t\t\t<div class=\"row\">");
+        htmlEntries = htmlEntries.concat("\n\t\t\t\t\t<div class=\"col h6\">"+moment(pendingsong.timestamp).format("YYYY/MM/DD HH:mm:ss")+"</div>");
+        htmlEntries = htmlEntries.concat("\n\t\t\t\t\t<div class=\"col-auto h6\">"+pendingsong.user+"</div>");
+        htmlEntries = htmlEntries.concat("\n\t\t\t\t</div>");
+        htmlEntries = htmlEntries.concat("\n\t\t\t</div>");          
       });
-      // console.log(html);
-      if(this.globalConfig.config.overlayfolder != ''){
-        let pathstring = this.globalConfig.config.overlayfolder+'\\queue.html';
-        return writeFile(pathstring, html);         
-      }
+      
+      var newHtml = this.overlayHtml.replace(/queuecontent/g, htmlEntries);      
+      this.args.overlayGenerator(newHtml, pathString);
     }    
   }
   
@@ -404,7 +414,9 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    this.msgGetter();
+    if(this.queueToFile){
+      this.fileContent(this.pendingSongs);
+    }
   } 
   @action backToQueue(song) {    
     // We use set in order to make sure the context updates properly.
@@ -415,7 +427,9 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    this.msgGetter();
+    if(this.queueToFile){
+      this.fileContent(this.pendingSongs);
+    }
   }
 
   
@@ -431,9 +445,11 @@ export default class PbStreamEditComponent extends Component {
       set(firstSong, 'processed', true);
       this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
-      this.fileContent();
+      this.fileContent(this.pendingSongs);
     }
-
+    if(this.queueToFile){
+      this.fileContent(this.pendingSongs);
+    }
   }
   @action prevSong(){
     if(this.playedSongs.get('length') != 0){
@@ -448,7 +464,9 @@ export default class PbStreamEditComponent extends Component {
       set(firstSong, 'processed', false);
       this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
-      this.fileContent();
+    }
+    if(this.queueToFile){
+      this.fileContent(this.pendingSongs);
     }
   }
   // Soundboard toggle

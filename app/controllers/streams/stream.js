@@ -1,7 +1,9 @@
+/* global require */
 import Controller, { inject }  from '@ember/controller';
 import { action } from "@ember/object";
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
+import { denodeify } from 'rsvp';
 
 export default class StreamController extends Controller {
   @inject streams;
@@ -80,6 +82,21 @@ export default class StreamController extends Controller {
       } else {
         this.model.save();
       }   
+    }
+  }
+   
+  @tracked oldHtml = '';
+  @action overlayGenerator(newHtml, pathString){
+    if(this.oldHtml != newHtml){
+      this.oldHtml = newHtml;      
+      // console.log("Inside overlay file generator!");      
+     
+      let fs = require('fs');      
+      let writeFileSync = denodeify(fs.writeFileSync);
+      // console.log(pathString);
+      writeFileSync(pathString, newHtml).then(()=>{
+        // console.log("done!")
+      });          
     }
   }
 

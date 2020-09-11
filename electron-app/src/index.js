@@ -116,11 +116,11 @@ app.on('ready', async () => {
 
   mainWindow = new BrowserWindow({
     width: 1280,
-    height: 1024,
+    height: 800,
     
     webPreferences: {
       webSecurity: false,
-      allowRunningInsecureContent: false,
+      allowRunningInsecureContent: true,
       nodeIntegration: true,
       // Next line is needed to make file and folder selection work in command editing and config editing.
       // It's going to be deprecated soon, so we will have to rework the functionality.

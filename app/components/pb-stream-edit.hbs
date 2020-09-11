@@ -150,7 +150,8 @@
             {{on-key "ctrl+Period" this.nextSong}}
             {{on-key "ctrl+Comma" this.prevSong}}
             {{on-key "ctrl+KeyQ" this.modPressed event="keypress"}} 
-            {{on-key "ctrl+KeyQ" this.modNotPressed event="keyup"}} 
+            {{on-key "ctrl+KeyQ" this.modNotPressed event="keyup"}}
+            <div class={{if this.overlayLoader "d-none"}}></div>
           {{/if}}
           <div class="{{if this.requests (if this.extraPanRight (if this.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
             <div class="row m-0 p-0 {{if this.extraPanRightTop (if this.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
