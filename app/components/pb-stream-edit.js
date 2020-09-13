@@ -283,7 +283,7 @@ export default class PbStreamEditComponent extends Component {
     // this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.queueToFile){
+    if(this.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -299,6 +299,7 @@ export default class PbStreamEditComponent extends Component {
     if(this.overlayHtml === ''){
       let fs = require('fs');
       let readFile = denodeify(fs.readFile);
+      console.log(ENV.environment);
       if (ENV.environment === 'development') {
         readFile("ember-dist/queue/queue.html", 'utf8').then(async (data)=>{ 
           this.overlayHtml = await data.toString();
@@ -313,7 +314,7 @@ export default class PbStreamEditComponent extends Component {
   } 
   
   @action fileContent(pendingSongs){
-    if (this.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('lenght') != 0){
+    if (this.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('lenght') != 0 && this.args.stream.requests){
       let pathString = this.globalConfig.config.overlayfolder;
       if(pathString.substr(pathString.length - 1) === "\\"){
         pathString = pathString.slice(0, -1)+'\\queue.html';
@@ -414,7 +415,7 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.queueToFile){
+    if(this.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   } 
@@ -427,7 +428,7 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.queueToFile){
+    if(this.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -447,7 +448,7 @@ export default class PbStreamEditComponent extends Component {
       this.scrollPendingPosition = 0;
       this.fileContent(this.pendingSongs);
     }
-    if(this.queueToFile){
+    if(this.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -465,7 +466,7 @@ export default class PbStreamEditComponent extends Component {
       this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
     }
-    if(this.queueToFile){
+    if(this.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -564,8 +565,14 @@ export default class PbStreamEditComponent extends Component {
     }
   }
 
-  @tracked queueToFile = false;
+   
+  @tracked queueToFile = false; 
   @action queueWriter(){
-    this.queueToFile = !this.queueToFile;
+    if(this.args.stream.requests && this.globalConfig.config.overlayfolder != ''){
+      this.queueToFile = !this.queueToFile;      
+    } else {
+      this.queueToFile = false;
+    }
   }
+  
 }

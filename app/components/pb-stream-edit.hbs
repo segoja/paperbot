@@ -35,11 +35,11 @@
       <div class="col-2 row p-0 m-0 bg-dark">
         <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.soundBoardEnabled "info" "secondary"}} @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
           {{on-key "ctrl+KeyM" this.soundboardToggle}}  
-          <FaIcon @icon="{{if this.soundBoardEnabled "volume-up" "volume-mute"}}" />
+          <FaIcon @icon={{if this.soundBoardEnabled "volume-up" "volume-mute"}} />
         </BsButton>     
-        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.queueToFile "warning" "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
-          {{on-key "ctrl+KeyN" this.queueWriter}}
-          <FaIcon @icon="{{if this.queueToFile "file-alt" "file"}}" />
+        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if @stream.requests (if this.queueToFile "warning" "secondary") "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
+          {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
+          <FaIcon @icon={{if @stream.requests (if this.queueToFile "file-alt" "file") "file"}} />
         </BsButton>
       </div>
       <div class="col row p-0 m-0 rounded-0 bg-dark">

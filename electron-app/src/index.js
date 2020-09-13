@@ -137,7 +137,7 @@ app.on('ready', async () => {
   });
     
 // The following disables the window's menu.
-  mainWindow.removeMenu();
+  // mainWindow.removeMenu();
 
   // If you want to open up dev tools programmatically, call
   // mainWindow.openDevTools();
