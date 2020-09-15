@@ -11,6 +11,26 @@
         {{!-- <form.element @controlType="text" @label="Name" placeholder="Config name" @property="name" required /> --}}
         <form.element @controlType="text" @label="Default channel" placeholder="Default channel name" @property="defchannel" required />          
 
+      <div class="row">
+        <label class="control-label col-form-label col-md-4">
+          External event tracking
+          <span role="btn">
+            <FaIcon @icon="question-circle" class="text-info" />
+            <BsTooltip>Get your API key from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer">Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer">StreamElements</a></BsTooltip>
+          </span>
+        </label>
+        <div class="col-md-8 border-light">
+          <div class="row input-group no-gutters ">
+            <form.element @controlType="password" @label="" placeholder="Default channel name" @formLayout="inline" @property="externaleventskey" class="col-md" />
+            <div class="input-group-append d-inline-block col-md-auto">
+              <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline"  class="input-group-text" as |el|>
+                <el.control @inline={{true}}/>
+              </form.element>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <div class="row">
         <label class="control-label col-form-label col-md-4">
@@ -70,6 +90,7 @@
           </div>
         </div> 
         <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>
+        <BsButton @type="success" @onClick={{fn this.connectExternal}}>Connect external</BsButton>        
         <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Config saved!</span></div>
       </BsForm>
     </div>

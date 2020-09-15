@@ -8,6 +8,9 @@ export default class ConfigModel extends Model {
   @attr('string', {defaultValue: ""}) couchdbpassword;
   @attr('string', {defaultValue: ""}) couchdburl;
 
+  @attr('string', {defaultValue: ""}) externalevents;  
+  @attr('string', {defaultValue: ""}) externaleventskey;
+
   @attr('string', {defaultValue: ""}) defchannel;
 
   @belongsTo('client', { inverse: 'botclientconfigs', save: true }) defbotclient;
