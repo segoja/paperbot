@@ -283,32 +283,40 @@ span.deleted {
 }
 
 /* Info green */
-.event-cheer{
+.event-merch, .event-donation{
   color: #216c65;
   background-color: #e4fcf8;
   border-color: #216c65;
 }
 
 /* Dark purple */
-.event-resub{
+.event-resub, .event-gift{
   color: #251a36;
   background-color: #c3ace2;
   border-color: #251a36;
 }
+.event-bulk{
+  color: #000000;
+  background-color: #c3ace2;
+  border-color: #251a36;
+}
+
 /* Purple */
 .event-sub{
   color: #341d5b;
   background-color: #e3ccf2;
   border-color: #341d5b;
 }
+
 /* Green */
-.event-gift{
+.event-nothing{
   color: #254815;
   background-color: #d1f8ba;
   border-color: #254815;
 }
+
 /* Red */
-.event-raid{
+.event-raid, .event-cheer{
   color: #721c24;
   background-color: #e8c7ca;
   border-color: #721c24;
@@ -319,7 +327,12 @@ span.deleted {
   background-color: #ffd1b0;
   border-color: #4a290f;
 }
-
+/* Yellow */
+.event-redemption {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
 
 .helptooltip>div.tooltip-inner{
   max-width: inherit!important;

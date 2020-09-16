@@ -334,7 +334,14 @@ export default class PbStreamEditComponent extends Component {
 
   @tracked overlayHtml = '';  
   get overlayLoader(){
-    if(this.overlayHtml === ''){
+    var isnode = true;
+    // This should trigger an error that will set isnode to false, so it will prevent the fs code from running.    
+    try {
+     require('fs');
+    } catch(e) {
+         isnode = false;
+    }
+    if(this.overlayHtml === '' && isnode === true){      
       let fs = require('fs');
       let readFile = denodeify(fs.readFile);
       console.log(ENV.environment);
