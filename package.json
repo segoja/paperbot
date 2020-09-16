@@ -110,7 +110,7 @@
     "acorn": "^7.4.0",
     "darkreader": "^4.9.16",
     "ember-svg-jar": "^2.2.3",
-    "streamlabs-socket-client": "git+https://github.com/segoja/streamlabs-socket-client.git",
+    "socket.io-client": "^2.3.0",
     "tmi.js": "^1.5.0"
   }
 }

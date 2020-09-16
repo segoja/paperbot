@@ -10,6 +10,7 @@ import { denodeify } from 'rsvp';
 import ENV from '../config/environment';
 
 export default class PbStreamEditComponent extends Component {
+  @service eventsExternal;
   @service twitchChat;
   @service globalConfig;
   @service audio;
@@ -17,6 +18,7 @@ export default class PbStreamEditComponent extends Component {
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.songqueue') isQueueEmpty;
   @empty ('twitchChat.events') isEventsEmpty;
+  @empty ('eventsExternal.events') isEventsExternalEmpty;
   
   // We use this property to track if a key is pressed or not using ember-keyboard helpers.
   @tracked modifierkey =  false;
@@ -53,6 +55,11 @@ export default class PbStreamEditComponent extends Component {
     'eventlist',
     'eventsDescSorting'
   ) arrangedDescEvents;
+  
+  @sort (
+    'eventsExternal.evenlist',
+    'eventsDescSorting'
+  ) arrangedDescEventsExternal;  
   
   get disableBotButton(){
     if(this.args.stream.finished === true || this.args.stream.botclient === '' || this.args.stream.channel === ''){
@@ -92,7 +99,7 @@ export default class PbStreamEditComponent extends Component {
     return this.msglist.slice(-45);
   }   
   // With this getter we limit the number of messages displayed on screen.
-  get events(){
+  get events(){   
     return this.arrangedDescEvents;
   }   
 
@@ -118,7 +125,12 @@ export default class PbStreamEditComponent extends Component {
     super(...arguments);
     // These lines is to allow switching to other routes
     // without losing the active chat history and song queue.
-    this.eventlist = this.twitchChat.events;
+    if(this.eventsExternal.connected){
+      this.eventlist = this.eventsExternal.events; 
+    } else {
+      this.eventlist = this.twitchChat.events;      
+    }
+
     this.msglist = this.twitchChat.messages;
     this.songqueue = this.twitchChat.songqueue;
     this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
@@ -154,6 +166,8 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.botclient.on("subgift", this.eventGetter);
       this.twitchChat.botclient.on("submysterygift", this.eventGetter);
       this.twitchChat.botclient.on("subscription", this.eventGetter);
+      this.eventsExternal.client.on("event", this.eventGetter);
+      this.eventsExternal.client.on("event:test", this.eventGetter);
     }    
   }
 
@@ -168,6 +182,12 @@ export default class PbStreamEditComponent extends Component {
     
     this.twitchChat.audiocommands = this.audiocommandslist;
     this.twitchChat.commands = this.args.commands;
+    
+    if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
+      this.eventsExternal.token = this.globalConfig.config.externaleventskey;
+      this.eventsExternal.type = this.globalConfig.config.externalevents;
+      this.eventsExternal.createClient();
+    }
     
     this.twitchChat.connector(this.optsbot, "bot").then(()=>{
         // Chat events:
@@ -198,6 +218,8 @@ export default class PbStreamEditComponent extends Component {
         this.twitchChat.botclient.on("subgift", this.eventGetter);
         this.twitchChat.botclient.on("submysterygift", this.eventGetter);
         this.twitchChat.botclient.on("subscription", this.eventGetter);
+        this.eventsExternal.client.on("event", this.eventGetter);
+        this.eventsExternal.client.on("event:test", this.eventGetter);        
       }
     );
   }
@@ -224,6 +246,9 @@ export default class PbStreamEditComponent extends Component {
     if(this.twitchChat.chatConnected){
       this.disconnectChat();          
     }
+    if(this.eventsExternal.connected){
+      this.eventsExternal.disconnectClient();      
+    }
   }
   @action disconnectChat(){
     this.twitchChat.disconnectChat().then(
@@ -248,6 +273,9 @@ export default class PbStreamEditComponent extends Component {
         console.log("Error disconnecting!");        
       }
     );
+    if(this.eventsExternal.connected){
+      this.eventsExternal.disconnectClient();      
+    }
   }
   
   @action finishStream(){
@@ -256,9 +284,14 @@ export default class PbStreamEditComponent extends Component {
         this.args.stream.chatlog = this.twitchChat.messages;        
       }
       this.args.stream.songqueue = this.twitchChat.songqueue;
-      this.args.stream.eventlog = this.twitchChat.events;
-
-      if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
+      
+      if(this.eventsExternal.connected){
+        this.args.stream.eventlog = this.eventsExternal.events;
+      } else {
+        this.args.stream.eventlog = this.twitchChat.events;
+      }
+      
+      if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true || this.eventsExternal.connected){
        this.disconnectClients();
       }
       
@@ -290,7 +323,12 @@ export default class PbStreamEditComponent extends Component {
 
   // This action gets triggered every time the an event gets triggered in the channel
   @action eventGetter() {
-    this.eventlist = this.twitchChat.events;
+    if(this.eventsExternal.connected){
+      this.eventlist = this.eventsExternal.events;      
+    } else {
+      this.eventlist = this.twitchChat.events;      
+    }
+
     this.scrollEventsPosition = 0;
   }
 
@@ -362,7 +400,12 @@ export default class PbStreamEditComponent extends Component {
         if(this.eventlist != this.args.stream.eventlog){
           this.args.stream.eventlog = this.eventlist;
         }
-      }      
+      }
+      if(this.isEventsExternalEmpty === false){
+        if(this.eventsExternal.eventlist != this.args.stream.eventlog){
+          this.args.stream.eventlog = this.eventsExternal.eventlist;
+        }
+      }
     }
     this.args.saveStream();
     this.saving = true;
@@ -388,6 +431,11 @@ export default class PbStreamEditComponent extends Component {
           this.args.stream.eventlog = this.eventlist;
         }
       } 
+      if(this.isEventsExternalEmpty === false){
+        if(this.eventsExternal.eventlist != this.args.stream.eventlog){
+          this.args.stream.eventlog = this.eventsExternal.eventlist;
+        }
+      }
     }
     this.args.saveAndReturnStream(); 
   }  

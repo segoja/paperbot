@@ -90,7 +90,9 @@
           </div>
         </div> 
         <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>
-        <BsButton @type="success" @onClick={{fn this.connectExternal}}>Connect external</BsButton>        
+        <BsButton @type="success" @onClick={{fn this.connectExternalEvents}}>Connect External Events</BsButton>        
+        <BsButton @type="success" @onClick={{fn this.disconnectExternalEvents}}>Disconnect External Events</BsButton>        
+
         <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Config saved!</span></div>
       </BsForm>
     </div>

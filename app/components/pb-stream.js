@@ -6,6 +6,7 @@ import { later } from '@ember/runloop';
 
 export default class PbStreamComponent extends Component {
   @service twitchChat;
+  @service eventsExternal;
 
   @tracked restore = true;
   
