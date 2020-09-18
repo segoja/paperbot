@@ -8,7 +8,8 @@ export default class StreamsRoute extends Route {
     return hash({
       model: store.findAll('stream'),
       clients: store.findAll('client'),
-      commands: store.findAll('command'),      
+      commands: store.findAll('command'),
+      songs: store.findAll('song'),
     });
   }
 

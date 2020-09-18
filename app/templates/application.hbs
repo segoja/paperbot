@@ -25,7 +25,10 @@
           </nav.item>
           <nav.item>
             <nav.link-to @route="clients.index">Clients</nav.link-to>
-          </nav.item> 
+          </nav.item>
+          <nav.item>
+            <nav.link-to @route="songs.index">Songs</nav.link-to>
+          </nav.item>          
           <nav.dropdown class={{if this.headData.darkMode "bg-dark"}} as |dd| >
             <dd.toggle><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
             <dd.menu class={{if this.headData.darkMode "bg-dark"}} as |ddm|>            

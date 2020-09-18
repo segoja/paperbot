@@ -6,6 +6,4 @@ export default class ApplicationAdapter extends JSONAPIAdapter {
   headers = {
    Accept: "application/json"
   };
- 
-  
 }

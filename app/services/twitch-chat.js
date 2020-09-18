@@ -7,6 +7,7 @@ import { action } from "@ember/object";
 import { assign } from '@ember/polyfills';
 import { sort } from '@ember/object/computed';
 import moment from 'moment';
+import Fuse from 'fuse.js';
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -335,20 +336,49 @@ export default class TwitchChatService extends Service {
     if(String(commandName).startsWith('!sr ') && this.takessongrequests){
       var song = commandName.replace(/!sr /g, '');
       if(song){
-        this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+song+'"');
-        this.lastsongrequest = {
-          id: tags['id'] ? tags['id'].toString() : 'songsys',
-          timestamp: moment().format(),
-          type: tags['message-type'] ? tags['message-type'] : null,
-          song: song, 
-          user: tags['username'] ? tags['username'].toString() : this.botUsername,
-          displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
-          color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
-          csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),
-          emotes: tags['emotes'] ? tags['emotes'] : null,
-          processed: false,
-        };
-        this.songqueue.push(this.lastsongrequest);
+        let options = {
+          includeScore: true,
+          findAllMatches: true,
+          ignoreLocation: true,
+          threshold: 1,
+          keys: [
+            {
+              name: 'title',
+              weight: 0.9
+            },
+            {
+              name: 'author',
+              weight: 0.1
+            }
+          ]
+        }
+        let fuse = new Fuse(this.songs, options);
+
+        // Search for items that include "Man" and "Old",
+        // OR end with "Artist"
+        var fusearch = fuse.search(song).shift();
+        var score = fusearch.score;
+        console.log("the score is: "+score);        
+        if(score < 0.2){
+          song = fusearch.item.title+" by "+fusearch.item.artist;
+          this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+song+'"');
+          this.lastsongrequest = {
+            id: tags['id'] ? tags['id'].toString() : 'songsys',
+            timestamp: moment().format(),
+            type: tags['message-type'] ? tags['message-type'] : null,
+            song: song, 
+            user: tags['username'] ? tags['username'].toString() : this.botUsername,
+            displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
+            color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
+            csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),
+            emotes: tags['emotes'] ? tags['emotes'] : null,
+            processed: false,
+          };
+          this.songqueue.push(this.lastsongrequest);          
+        } else {
+          this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');
+        }
+
       }
       console.log(`* Executed ${commandName} command`);        
     } else {

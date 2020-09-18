@@ -136,6 +136,9 @@ export default class PbStreamEditComponent extends Component {
     this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     
+    this.twitchChat.commands = this.args.commands.filterBy('active', true);
+    this.twitchChat.songs = this.args.songs.filterBy('active', true);
+    
     if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
       this.twitchChat.botclient.on('message', this.msgGetter);
     }
@@ -181,7 +184,8 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.savechat = this.args.stream.savechat;
     
     this.twitchChat.audiocommands = this.audiocommandslist;
-    this.twitchChat.commands = this.args.commands;
+    this.twitchChat.commands = this.args.commands.filterBy('active', true);
+    this.twitchChat.songs = this.args.songs.filterBy('active', true);
     
     if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
       this.eventsExternal.token = this.globalConfig.config.externaleventskey;
