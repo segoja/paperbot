@@ -337,3 +337,22 @@ span.deleted {
 .helptooltip>div.tooltip-inner{
   max-width: inherit!important;
 }
+
+
+.btn-control{
+  color: #ffffff;
+  background-color: #4a5258;
+  border-color: #444b52;
+}
+
+.btn-control:hover{
+  color: #ffffff;
+  background-color: #0792a8;
+  border-color: #0792a8;
+}
+
+.btn-control:disabled,.btn-control.disabled{
+  color: #ffffff;
+  background-color: #4c555d;
+  border-color: #4c455d;
+}

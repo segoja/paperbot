@@ -108,6 +108,7 @@
   },
   "dependencies": {
     "acorn": "^7.4.0",
+    "bootstrap-dark": "git+https://github.com/vinorodrigues/bootstrap-dark.git",
     "darkreader": "^4.9.16",
     "ember-svg-jar": "^2.2.3",
     "fuse.js": "^6.4.1",

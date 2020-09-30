@@ -12,14 +12,15 @@
       <form.element @controlType="power-select" @property="type" @label="Type" @options={{this.songTypes}} as |element| >
         <element.control placeholder="Select the song type" @allowClear={{true}} />
       </form.element>
-      
+      <form.element @controlType="text" @label="Account" placeholder="Select the twitch account you want to link the song" @property="account" /> 
       <div class="form-group row my-0">
         <label class="col-md-4">Active</label>
         <div class="col-sm">
           <form.element @controlType="checkbox" @label="" class="form-check form-check-inline" @property="active" />
         </div>
       </div>
-      
+      <form.element @controlType="textarea" @label="Keywords" placeholder="Type words or phrases related to the song" @property="keywords" /> 
+
       <div class="form-group row my-0">
         <label class="col-md-4">Permissions</label>
         <div class="col-sm pl-0">

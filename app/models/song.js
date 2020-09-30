@@ -5,6 +5,8 @@ export default class SongModel extends Model {
   @attr('string', {defaultValue: ""}) title;
   @attr('string', {defaultValue: ""}) artist; 
   @attr('string', {defaultValue: ""}) type;   
+  
+  @attr('string', {defaultValue: ""}) keywords;
 
   @attr('boolean', {defaultValue: true}) active;
 
@@ -17,5 +19,12 @@ export default class SongModel extends Model {
   @attr('string', {defaultValue: ""}) last_request;  
   
   @attr('number', {defaultValue: ""}) times_requested;
-  @attr('number', {defaultValue: ""}) times_played;  
+  @attr('number', {defaultValue: ""}) times_played;
+  
+  @attr('string', {defaultValue: ""}) account;
+  
+  get fullstring(){
+    let string = this.title.toString()+' '+this.artist.toString()+' '+this.keywords.toString();
+    return string.toString();
+  }
 }

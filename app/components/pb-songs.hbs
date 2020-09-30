@@ -4,8 +4,8 @@
       <div class="{{if @isViewing "d-none" "card h-100 flex-fill"}}">
         <div class="card-header">
           <div class="row">
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md col-sm-6 col-12 px-1" @onchange={{this.resetPage}} as |form|>
-              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" as |el|>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md col-sm-6 col-12 px-1"  as |form|>
+              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" {{on "keydown" this.resetPage}} as |el|>
                 <el.control
                   placeholder="Filter by title"
                   tabIndex={{5}}
@@ -13,10 +13,10 @@
                 />
               </form.element>
             </BsForm>
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-auto col-sm-6 col-12 px-1" @onchange={{this.resetPage}} as |form|>
-              <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@songTypes}} as |element| >
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-auto col-sm-6 col-12 px-1" as |form|>
+              <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@songTypes}} @onChange={{this.resetPage}} as |element| >
                 <element.control  @triggerClass="w-100 m-0" @allowClear={{true}} @placeholder="Filter by type" class="w-100" as |option|>
-                  <span class="w-100">{{option}}</span>
+                  <span class="w-100" >{{option}}</span>
                 </element.control>
               </form.element>
             </BsForm>
@@ -24,31 +24,32 @@
               <FileUpload @name="importfile" @accept=".csv" @onfileadd={{fn this.songImport}} hidden={{false}} class="my-0"><span class="btn btn-secondary ember-view">Import</span></FileUpload>
               <BsButton @type="secondary" @onClick={{fn this.songExportFiltered}}>Export</BsButton>
               <BsButton @type="info" @onClick={{fn @createSong}}>Add New</BsButton>
+              <BsButton @type="info" @onClick={{fn @udpdateRest}}>Cloud Sync</BsButton>
             </div>
           </div>
         </div>
-        <div class="card-body mx-0 p-0 flex-fill d-flex h-100 overflow-hidden">
+        <div class="card-body mx-0 p-0 flex-fill d-flex h-100 overflow-hidden" id="bodycontainer">
           <div class="row mx-0 flex-fill d-flex h-100 listframe">
             <table class="table table-hover table-condensed col-12 my-0 px-0">
               <thead class="listheader thead-light">
-                <tr class="w-100">
+                <tr class="col">
                   <th scope="col" class="col-sm">Song</th>
-                  <th scope="col" class="col-sm w-25">Artist</th>
-                  <th scope="col" class="col-sm">Type</th>
-                  <th scope="col" class="col-sm">Played</th>
-                  <th scope="col" class="col-sm">Requested</th>
+                  <th scope="col" class="col-sm">Artist</th>
+                  <th scope="col" class="d-none d-lg-table-cell col-md">Type</th>
+                  <th scope="col" class="d-none d-lg-table-cell col-md">Played</th>
+                  <th scope="col" class="d-none d-lg-table-cell col-md">Requested</th>
                   <th scope="col" class="col-sm">Last request</th>
                   <th scope="col" class="col-sm-auto">Admin</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="preheight">
                 {{#each this.pagedContent as |song|}}            
-                  <LinkTo @route="songs.song" @model={{song}} @tagName="tr" class="w-100">
-                    <td class="col-sm-auto align-top">{{if song.title song.title "<unntitled>"}}</td>
+                  <LinkTo @route="songs.song" @model={{song}} @tagName="tr" class="col">
+                    <td class="col-sm align-top">{{if song.title song.title "<unntitled>"}}</td>
                     <td class="col-sm align-top">{{song.artist}}</td>
-                    <td class="col-sm align-top">{{song.type}}</td>
-                    <td class="col-sm align-top">{{song.times_played}}</td>
-                    <td class="col-sm align-top">{{song.times_requested}}</td>
+                    <td class="d-none d-lg-table-cell col-md align-top">{{song.type}}</td>
+                    <td class="d-none d-lg-table-cell col-md align-top">{{song.times_played}}</td>
+                    <td class="d-none d-lg-table-cell col-md align-top">{{song.times_requested}}</td>
                     <td class="col-sm align-top">{{song.last_request}}</td>                    
                     <td class="col-sm-auto align-top">
                       <BsButtonGroup class="mx-auto" as |bg|>

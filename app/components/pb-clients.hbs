@@ -4,8 +4,8 @@
       <div class="{{if @isViewing "d-none" "card h-100 flex-fill"}}">
         <div class="card-header">
           <div class="row">          
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-12 col-sm px-1" @onchange={{this.resetPage}} as |form|>
-              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" as |el|>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-12 col-sm px-1" as |form|>
+              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" {{on "keydown" this.resetPage}}  as |el|>
                 <el.control
                   placeholder="Filter Clients"
                   tabIndex={{5}}

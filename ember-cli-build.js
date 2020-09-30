@@ -8,7 +8,7 @@ module.exports = function(defaults) {
     outputPaths: {
       app: {
         css: {
-          'app': '/assets/paperbot.css', // FOR LIGHT THEME => app.scss
+          'app': 'assets/paperbot.css', // FOR LIGHT THEME => app.scss
         }
       }
     },    

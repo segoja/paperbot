@@ -1,13 +1,14 @@
 ﻿<HeadLayout />
+<div id="ember-bootstrap-wormhole"></div>
 <header class="m-0 p-0">
   <BsNavbar
     @type="dark"
-    class="px-3 my-0 py-1"
+    class="px-0 px-md-3 my-0 py-1"
     @backgroundColor="dark"
     @collapsed={{true}}
     @fluid={{true}}
     @position="fixed-top"
-    @toggleBreakpoint="sm"
+    @toggleBreakpoint="md"
     @onCollapse={{fn (mut this.collapsed) true}}
     @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
 
@@ -15,7 +16,7 @@
         {{navbar.toggle}}
         <LinkTo @route="application" class="navbar-brand my-0 py-0">Paperbot <span>{{svg-jar "papercat-gray-icon" class="logo" }}</span></LinkTo>{{this.loadConfig}}
       </div>     
-      <navbar.content>
+      <navbar.content class="px-md-0 px-3">
         <navbar.nav class="ml-auto" as |nav|>
           <nav.item>
             <nav.link-to @route="streams.index">Streams</nav.link-to>

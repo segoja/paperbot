@@ -4,8 +4,8 @@
       <div class="{{if @isViewing "d-none" "card h-100 flex-fill"}}">
         <div class="card-header">
           <div class="row">
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md col-sm-6 col-12 px-1" @onchange={{this.resetPage}} as |form|>
-              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" as |el|>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md col-sm-6 col-12 px-1" as |form|>
+              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" {{on "keydown" this.resetPage}} as |el|>
                 <el.control
                   placeholder="Filter by name"
                   tabIndex={{5}}
@@ -13,8 +13,8 @@
                 />
               </form.element>
             </BsForm>
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-auto col-sm-6 col-12 px-1" @onchange={{this.resetPage}} as |form|>
-              <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@commandTypes}} as |element| >
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-auto col-sm-6 col-12 px-1" as |form|>
+              <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@commandTypes}} @onchange={{this.resetPage}} as |element| >
                 <element.control  @triggerClass="w-100 m-0" @allowClear={{true}} @placeholder="Filter by type" class="w-100" as |option|>
                   <span class="w-100">{{option}}</span>
                 </element.control>

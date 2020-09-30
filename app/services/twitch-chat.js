@@ -8,6 +8,7 @@ import { assign } from '@ember/polyfills';
 import { sort } from '@ember/object/computed';
 import moment from 'moment';
 import Fuse from 'fuse.js';
+import computedFilterByQuery from 'ember-cli-filter-by-query';
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -325,6 +326,24 @@ export default class TwitchChatService extends Service {
     }
   }
 
+  songsSorting = Object.freeze(['date_added:asc']);
+  
+  @sort (
+    'songs',
+    'songsSorting'
+  ) arrangedSongs; 
+  
+  @tracked requestpattern = '';
+  
+  @computedFilterByQuery(
+    'arrangedSongs',
+    ['title','artist','keywords'],
+    'requestpattern',
+    { conjunction: 'and', sort: false}
+  ) filteredSongs;
+
+  
+  
   // Called every time a message comes in
   @action commandHandler (target, tags, msg, self) {
     // Ignore messages from the bot so you don't create command infinite loops
@@ -334,51 +353,64 @@ export default class TwitchChatService extends Service {
     
     // If the command is known, let's execute it      
     if(String(commandName).startsWith('!sr ') && this.takessongrequests){
-      var song = commandName.replace(/!sr /g, '');
+      var song = commandName.replace(/!sr /g, "");
       if(song){
-        let options = {
+        /*let options = {
           includeScore: true,
           findAllMatches: true,
           ignoreLocation: true,
-          threshold: 1,
+          // useExtendedSearch: true,
+          minMatchCharLength: 2,
+          //ignoreFieldNorm: true,
+          threshold: 0.2,
           keys: [
             {
-              name: 'title',
-              weight: 0.9
+              name: 'fullstring',
             },
-            {
-              name: 'author',
-              weight: 0.1
-            }
           ]
         }
         let fuse = new Fuse(this.songs, options);
+        var tokenized = song.replace(/ /g, " ");
+        console.log(tokenized);
+        var search = fuse.search(tokenized);
+        console.log(search);
+        var bestmatch = search.shift(); */       
 
-        // Search for items that include "Man" and "Old",
-        // OR end with "Artist"
-        var fusearch = fuse.search(song).shift();
-        var score = fusearch.score;
-        console.log("the score is: "+score);        
-        if(score < 0.2){
-          song = fusearch.item.title+" by "+fusearch.item.artist;
-          this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+song+'"');
-          this.lastsongrequest = {
-            id: tags['id'] ? tags['id'].toString() : 'songsys',
-            timestamp: moment().format(),
-            type: tags['message-type'] ? tags['message-type'] : null,
-            song: song, 
-            user: tags['username'] ? tags['username'].toString() : this.botUsername,
-            displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
-            color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
-            csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),
-            emotes: tags['emotes'] ? tags['emotes'] : null,
-            processed: false,
-          };
-          this.songqueue.push(this.lastsongrequest);          
+        this.requestpattern = song;
+        
+        if (this.filteredSongs.get('length') !== 0 ) { 
+          console.log("we found songs!");  
+          var bestmatch = this.filteredSongs.shift();
+          console.log("=================");
+          console.log(bestmatch);
+          console.log("=================");
+          if(bestmatch.active){
+            if(this.commandPermissionHandler(bestmatch, tags) === true){
+              song = bestmatch.title+" by "+bestmatch.artist;
+              this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+song+'"');
+              this.lastsongrequest = {
+                id: tags['id'] ? tags['id'].toString() : 'songsys',
+                timestamp: moment().format(),
+                type: tags['message-type'] ? tags['message-type'] : null,
+                song: song, 
+                user: tags['username'] ? tags['username'].toString() : this.botUsername,
+                displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
+                color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
+                csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),
+                emotes: tags['emotes'] ? tags['emotes'] : null,
+                processed: false,
+              };
+              this.songqueue.push(this.lastsongrequest);              
+            } else {
+              this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
+            }
+          
+          } else {
+            this.botclient.say(target, "/me I coudln't infer the song @"+tags['username']+". Try again!");
+          }
         } else {
-          this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');
+          this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');         
         }
-
       }
       console.log(`* Executed ${commandName} command`);        
     } else {
@@ -431,6 +463,7 @@ export default class TwitchChatService extends Service {
 
   
   @action commandPermissionHandler(command, tags){
+    // console.log(tags['badges']);
     if(tags['badges'] != null){
       var admin = false;      
       var mod = false;
