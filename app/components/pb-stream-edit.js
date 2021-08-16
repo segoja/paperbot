@@ -1,4 +1,3 @@
-/* global require */
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action, set } from '@ember/object';
@@ -6,8 +5,8 @@ import { inject as service } from '@ember/service';
 import { empty, sort } from '@ember/object/computed';
 import moment from 'moment';
 import { later } from '@ember/runloop';
-import { denodeify } from 'rsvp';
 import ENV from '../config/environment';
+import { fs } from "@tauri-apps/api";
 
 export default class PbStreamEditComponent extends Component {
   @service eventsExternal;
@@ -339,23 +338,15 @@ export default class PbStreamEditComponent extends Component {
 
   @tracked overlayHtml = '';  
   get overlayLoader(){
-    var isnode = true;
-    // This should trigger an error that will set isnode to false, so it will prevent the fs code from running.    
-    try {
-     require('fs');
-    } catch(e) {
-         isnode = false;
-    }
-    if(this.overlayHtml === '' && isnode === true){      
-      let fs = require('fs');
-      let readFile = denodeify(fs.readFile);
-      console.log(ENV.environment);
+
+    if(this.overlayHtml === ''){      
+
       if (ENV.environment === 'development') {
-        readFile("ember-dist/queue/queue.html", 'utf8').then(async (data)=>{ 
+        fs.readTextFile("../dist/queue/queue.html").then(async (data)=>{ 
           this.overlayHtml = await data.toString();
         });
       } else {
-        readFile("resources/app/ember-dist/queue/queue.html", 'utf8').then(async (data)=>{ 
+        fs.readTextFile("../dist/queue/queue.html").then(async (data)=>{ 
           this.overlayHtml = await data.toString();
         }); 
       }    
@@ -364,7 +355,7 @@ export default class PbStreamEditComponent extends Component {
   } 
   
   @action fileContent(pendingSongs){
-    if (this.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('lenght') != 0 && this.args.stream.requests){
+    if (this.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('length') != undefined && this.args.stream.requests){
       let pathString = this.globalConfig.config.overlayfolder;
       if(pathString.substr(pathString.length - 1) === "\\"){
         pathString = pathString.slice(0, -1)+'\\queue.html';

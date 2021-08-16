@@ -1,24 +1,24 @@
 {{#if @isEditing}}
   <div class="card-body">
     <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneAndReturnEditing}} as |form|>
-      <form.element @controlType="text" @label="Stream Title" placeholder="Stream title" @property="title" required />
-      <form.element @controlType="text" @label="Stream Channel" placeholder="Stream channel" @property="channel" required />
+      <form.element @controlType="text" @label="Stream Title" class="pb-2" placeholder="Stream title" @property="title" required />
+      <form.element @controlType="text" @label="Stream Channel" class="pb-2" placeholder="Stream channel" @property="channel" required />
       
-      <div class="form-group row my-0">
+      <div class="form-group row pb-2">
         <label class="col-md-4">Stream Monitoring</label>
-        <div class="col-sm ps-0">
-          <form.element @controlType="checkbox" @label="Chat Logging" @formLayout="inline" @property="savechat" class="form-check form-check-inline"  />
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="Chat Logging" @formLayout="inline" @property="savechat" class="form-check form-check-inline ps-0"  />
           <form.element @controlType="checkbox" @label="Event Logging" @formLayout="inline" @property="events" class="form-check form-check-inline"  />
           <form.element @controlType="checkbox" @label="Song Request System" @formLayout="inline" @property="requests" class="form-check form-check-inline"  />
         </div>
       </div>
     
-      <form.element @controlType="power-select" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{fn @setBotClient}} required as |client|>
+      <form.element @controlType="power-select" class="pb-2" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{fn @setBotClient}} required as |client|>
         <client.control @allowClear={{true}} @placeholder="Select the Bot Client for the stream" as |option|>
           {{option.username}}
         </client.control>
       </form.element>
-      <form.element @controlType="power-select" @property="chatclient" @label="Chat Client" @options={{@clients}} selected={{this.globalConfig.config.defchatclient}}  @onChange={{fn @setChatClient}}  required as |client|>
+      <form.element @controlType="power-select" class="pb-2" @property="chatclient" @label="Chat Client" @options={{@clients}} selected={{this.globalConfig.config.defchatclient}}  @onChange={{fn @setChatClient}}  required as |client|>
         <client.control @allowClear={{true}} @placeholder="Select the Chat Client for the stream" as |option|>
           {{option.username}}
         </client.control>

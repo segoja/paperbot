@@ -19,24 +19,26 @@
               </div>
             </div>
           </div>
-          <div class="card-body mx-0 p-0 flex-fill d-flex h-100 overflow-hidden">
-            <div class="row mx-0 flex-fill d-flex h-100 listframe">
+          <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden">
+            <div class="row mx-0 flex-fill listframe">
               <table class="table table-hover table-condensed col-12 my-0 px-0">
                 <thead class="listheader thead-light">
                   <tr><th class="col-sm">Stream</th><th class="col-sm-auto">Date</th><th class="col-sm-auto">Admin</th></tr>
                 </thead>
                 <tbody>
                   {{#each this.pagedContent as |stream|}}  
-                    <LinkTo @route="streams.stream" @model={{stream}} @tagName="tr" class="w-100" >
+                    <tr>
                       <td class="col-sm align-top">{{if stream.title stream.title "untitled"}}</td>
                       <td class="col-sm-auto align-top"><span class="text-nowrap">{{format-date stream.date }}</span></td>
-                      <td class="col-auto align-top">
-                        <BsButtonGroup class="mx-auto" as |bg|>
-                          <bg.button @type="" class="btn-sm btn-outline-secondary h-100 alert-secondary" @onClick={{fn @gridEditStream stream}}><FaIcon @icon="edit" /></bg.button>
-                          <bg.button @type="" class="btn-sm btn-outline-danger h-100 alert-danger" @onClick={{fn @gridDeleteStream stream}}><FaIcon @icon="trash" /></bg.button>
-                        </BsButtonGroup>
-                      </td>
-                    </LinkTo>       
+                      <td class="col-auto py-0 pe-0">
+                        <div class="row g-0">
+                          <div class="col-auto ms-auto btn-group my-0">
+                            <button type="button" class="btn btn-outline-secondary rounded-0 py-2 px-3 alert-secondary" {{on "click" (fn @gridEditStream stream)}}><FaIcon @icon="edit" /></button>
+                            <button type="button" class="btn btn-outline-danger rounded-0 py-2 px-3 alert-danger" {{ on "click" (fn @gridDeleteStream stream)}}><FaIcon @icon="trash" /></button>
+                          </div>
+                        </div>
+                      </td>                      
+                    </tr>       
                   {{/each}}
                 </tbody>
               </table>

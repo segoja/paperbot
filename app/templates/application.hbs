@@ -32,9 +32,9 @@
           <nav.item>
             <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
           </nav.item>
-          <nav.dropdown class={{if this.headData.darkMode "bg-dark"}} as |dd| >
+          <nav.dropdown class="bg-dark" as |dd| >
             <dd.toggle><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
-            <dd.menu class={{if this.headData.darkMode "bg-dark"}} as |ddm|>            
+            <dd.menu class="dropdown-menu-dark" as |ddm|>            
               <ddm.item>
                 <ddm.link-to @route="settings.index" class="font-weight-bold"><h6>Change Settings <FaIcon @icon="wrench" /></h6></ddm.link-to>
               </ddm.item>
@@ -42,16 +42,16 @@
                 <hr class="dropdown-divider">
               </ddm.item>
               <ddm.item>
-                <nav.link-to @route="clients.index"  class="ps-3 dropdown-item {{if this.headData.darkMode "bg-dark"}}" >Clients</nav.link-to>
+                <ddm.link-to @route="clients.index" class="dropdown-item ps-3">Clients</ddm.link-to>
               </ddm.item>              
               <ddm.item>
-                <span role="button" class="dropdown-item ps-3 {{if this.headData.darkMode "bg-dark"}}" {{on "click" this.handleExport}}>Export Database</span>
+                <span role="button" class="dropdown-item ps-3" {{on "click" this.handleExport}}>Export Database</span>
               </ddm.item>
               <ddm.item>
-                <FileUpload @name="uploadfile" @accept="file/json" @onfileadd={{fn this.handleImport}} hidden={{false}} class="my-0" ><span class="dropdown-item ps-3 {{if this.headData.darkMode "bg-dark"}}">Import Database</span></FileUpload>
+                <FileUpload @name="uploadfile" @accept="file/json" @onfileadd={{fn this.handleImport}} hidden={{false}} class="my-0" ><span class="dropdown-item ps-3">Import Database</span></FileUpload>
               </ddm.item>
               <ddm.item>
-                <span role="button" class="dropdown-item ps-3 {{if this.headData.darkMode "bg-dark"}}" {{on "click" this.wipeDatabase}}>Wipe DB</span>
+                <span role="button" class="dropdown-item ps-3" {{on "click" this.wipeDatabase}}>Wipe DB</span>
               </ddm.item>
             </dd.menu>
           </nav.dropdown>

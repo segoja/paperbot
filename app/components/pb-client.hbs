@@ -1,38 +1,40 @@
 <div class="card">
-  <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded-top">
+  <div class="card-header bg-dark text-white row p-0 m-0 g-0 border-0 rounded-top">
     <div class="col d-block align-self-center pe-0 ps-3"><h5 class="my-0">{{@client.username}}</h5></div>
-    <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
-      <bg.button @type="dark rounded-0 rounded-top-right border-0" @onClick={{fn @closeClient}}><FaIcon @icon="times" /></bg.button>
-    </BsButtonGroup>
+    <div class="col-auto">
+      <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" @closeClient}}><FaIcon @icon="times" /></button>
+    </div>
   </div>
   <div class="card-body">
     <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{fn @saveClient}} as |form|>
-      <form.element @controlType="text" @label="Username" placeholder="Username" @property="username" required />  
-
-      <div class="form-group row">
-        <label class="control-label col-form-label col-md-4">
+      <form.element @controlType="text" @label="Username" placeholder="Username" class="pb-2" @property="username" required />  
+      
+      <div class="form-group row pb-2">
+        <label class="col-md-4 col-form-label">
           Oauth 
-          <span role="btn">
+          <span role="button">
             <FaIcon @icon="question-circle" class="text-info" />
             <BsTooltip>Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer">Here</a></BsTooltip>
           </span>
         </label>
-        <div class="input-group col-md-8">
-          <Input @type={{if this.isMasked "password" "text"}} @value={{@client.oauth}} class="form-control" @placeholder="Paste your Oauth here including Oauth: "/>          
-          <div class="input-group-append">
-            <BsButton @type="outline-secondary border-form-control" @onClick={{fn this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></BsButton>        
+        <div class="col-md-8">
+          <div class="input-group">
+            <Input @type={{if this.isMasked "password" "text"}} @value={{@client.oauth}} class="form-control" @placeholder="Paste your Oauth here including Oauth: "/>          
+            <div class="input-group-append">
+              <button type="button" class="btn btn-outline-secondary border-form-control" {{on "click" this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></button>        
+            </div>
           </div>
         </div>
       </div>
 
-      <form.element @controlType="text" @label="Channel" placeholder="Channel" @property="channel" required />  
+      <form.element @controlType="text" @label="Channel" placeholder="Channel" class="pb-2" @property="channel" required />  
       
-      <div class="form-group row my-0">
+      <div class="form-group row pb-2">
         <label class="col-md-4">Advanced Settings</label>
-        <div class="col-sm ps-0">
-          <form.element @controlType="checkbox" @label="Debug" @formLayout="inline" @property="debug" class="form-check form-check-inline" />
-          <form.element @controlType="checkbox" @label="Reconnect" @formLayout="inline" @property="reconnect" class="form-check form-check-inline" />
-          <form.element @controlType="checkbox" @label="Secure" @formLayout="inline" @property="secure" class="form-check form-check-inline" />
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="Debug" @formLayout="inline" @property="debug" class="form-check form-check-inline ps-0" />
+          <form.element @controlType="checkbox" @label="Reconnect" @formLayout="inline" @property="reconnect" class="form-check form-check-inline ps-0" />
+          <form.element @controlType="checkbox" @label="Secure" @formLayout="inline" @property="secure" class="form-check form-check-inline ps-0" />
         </div>
       </div>
       

@@ -9,33 +9,31 @@
     <div class="card-body">
       <BsForm @formLayout="horizontal" @model={{@config}}  @onSubmit={{fn this.doneEditing}} as |form|>
         {{!-- <form.element @controlType="text" @label="Name" placeholder="Config name" @property="name" required /> --}}
-        <form.element @controlType="text" @label="Default channel" placeholder="Default channel name" @property="defchannel" required />          
+        <form.element @controlType="text" @label="Default channel" class="pb-2" placeholder="Default channel name" @property="defchannel" required />          
 
-      <div class="row">
+      <div class="row pb-2">
         <label class="control-label col-form-label col-md-4">
           External event tracking
-          <span role="btn">
+          <span role="button">
             <FaIcon @icon="question-circle" class="text-info" />
             <BsTooltip>Get your API key from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer">Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer">StreamElements</a></BsTooltip>
           </span>
         </label>
         <div class="col-md-8 border-light">
           <div class="row input-group g-0">
-            <form.element @controlType="password" @label="" placeholder="Default channel name" @formLayout="inline" @property="externaleventskey" class="col-md" />
-            <div class="input-group-append d-inline-block col-md-auto">
-              <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline"  class="input-group-text" as |el|>
-                <el.control @inline={{true}}/>
-              </form.element>
-            </div>
+            <form.element @controlType="password" @label="" placeholder="Default channel name" @formLayout="inline" @property="externaleventskey" class="col rounded-0 rounded-start" />
+            <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline" class="input-group-text col py-1 rounded-0 rounded-end" as |el|>
+              <el.control @inline={{true}}/>
+            </form.element>
           </div>
         </div>
       </div>
 
 
-      <div class="row">
+      <div class="row pb-2">
         <label class="control-label col-form-label col-md-4">
           Default Bot client 
-          <span role="btn">
+          <span role="button">
             <FaIcon @icon="question-circle" class="text-info" />
             <BsTooltip>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
           </span>
@@ -48,7 +46,7 @@
       </div>
 
 
-      <div class="row">
+      <div class="row pb-2">
         <label class="control-label col-form-label col-md-4">
           Default Chat client 
           <span role="btn">
@@ -64,7 +62,7 @@
       </div>
       
        
-        <form.element @controlType="text" @property="overlayfolder"  @label="Folder to place queue overlay file" as |el|>
+        <form.element @controlType="text" @property="overlayfolder" class="pb-2" @label="Folder to place queue overlay file" as |el|>
           <div class="input-group">
             <el.control disabled class="border-form-control" />
             <div class="input-group-append">
@@ -77,16 +75,16 @@
         <form.element @controlType="password" @label="CouchDB password" placeholder="Password" @property="couchdbpassword" required  /> 
         <form.element @controlType="text" @label="CouchDB url" placeholder="Username" @property="couchdburl" required />
         --}}
-        <div class="form-group row my-0">
+        <div class="form-group row pb-2">
           <label class="col-md-4">Dark mode</label>
           <div class="col-sm">
-            <form.element @controlType="checkbox" @label="" @property="darkmode" class="form-check form-check-inline" required />
+            <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />
           </div>
         </div>
-        <div class="form-group row my-0">
+        <div class="form-group row pb-2">
           <label class="col-md-4">Default config</label>
           <div class="col-sm">
-            <form.element @controlType="checkbox" @label="" @property="isdefault" class="form-check form-check-inline" required />
+            <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check form-check-inline ps-0" @property="isdefault" required />
           </div>
         </div> 
         <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>   

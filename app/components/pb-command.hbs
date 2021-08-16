@@ -1,35 +1,35 @@
 <div class="card">
-  <div class="card-header bg-dark text-white row p-0 m-0 border-0 rounded-top">
+  <div class="card-header bg-dark text-white row p-0 m-0 g-0 border-0 rounded-top">
     <div class="col d-block align-self-center pe-0 ps-3"><h5 class="my-0">{{@command.name}}</h5></div>
-    <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
-      <bg.button @type="dark rounded-0 rounded-top-right border-0" @onClick={{fn @closeCommand}}><FaIcon @icon="times" /></bg.button>
-    </BsButtonGroup>
+    <div class="col-auto">
+      <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" @closeCommand}}><FaIcon @icon="times" /></button>
+    </div>
   </div>
   <div class="card-body">
     <BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{fn @saveCommand}} as |form|>
-      <form.element @controlType="text" @label="Name" placeholder="Type the command name" @property="name" required /> 
-      <form.element @controlType="power-select" @property="type" @label="Type" @options={{@commandTypes}} as |element| >
+      <form.element @controlType="text" @label="Name" class="pb-2" placeholder="Type the command name" @property="name" required /> 
+      <form.element @controlType="power-select" @property="type" @label="Type" class="pb-2" @options={{@commandTypes}} as |element| >
         <element.control placeholder="Select the command type" @allowClear={{true}} />
       </form.element>
-      <div class="form-group row my-0">
+      <div class="form-group row pb-2">
         <label class="col-md-4">Active</label>
         <div class="col-sm">
-          <form.element @controlType="checkbox" @label="" class="form-check form-check-inline" @property="active" />
+          <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check form-check-inline ps-0" @property="active" />
         </div>
       </div>
-      <form.element @controlType="text" @label="Cooldown" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
-      <form.element @controlType="text" @label="Timer" placeholder="Timer time in seconds" @property="timer" required /> 
-      <div class="form-group row my-0">
+      <form.element @controlType="text" @label="Cooldown" class="pb-2" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
+      <form.element @controlType="text" @label="Timer" class="pb-2" placeholder="Timer time in seconds" @property="timer" required /> 
+      <div class="form-group row pb-2">
         <label class="col-md-4">Permissions</label>
-        <div class="col-sm ps-0">
-          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check form-check-inline" @property="admin" />
-          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check form-check-inline" @property="mod" />
-          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check form-check-inline" @property="sub" />
-          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check form-check-inline" @property="vip" />
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check form-check-inline ps-0" @property="admin" />
+          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check form-check-inline ps-0" @property="mod" />
+          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check form-check-inline ps-0" @property="sub" />
+          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="vip" />
         </div>
       </div>
-      <form.element @controlType="textarea" @label="Response" placeholder="Type the command response..." @property="response" required /> 
-      <form.element @controlType="text" @property="soundfile"  @label="Sound file" as |el|>
+      <form.element @controlType="textarea" @label="Response" class="pb-2" placeholder="Type the command response..." @property="response" required /> 
+      <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
         <div class="input-group">
           <div class="input-group-prepend">
             <BsButton @type="secondary" @onClick={{fn (if this.isPlaying this.stopSound this.playSound)}}><FaIcon @icon="{{if this.loadPreview (if this.isPlaying "stop" "play") "volume-mute"}}" /></BsButton>
@@ -40,12 +40,12 @@
           </div>
         </div>
       </form.element>
-      <div class="form-group row ember-view">
+      <div class="form-group row pb-2">
         <label class="col-md-4">Volume %:</label>    
         <div class="col-sm">
           <div class="input-group bg-light rounded">
-            <Input @type="range" min="1" max="100" @value={{@command.volume}}  {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control slider" />
-            <div class="input-group-append">
+            <Input @type="range" min="1" max="100" @value={{@command.volume}}  {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control slider w-75" />
+            <div class="input-group-append w-25">
               <Input @type="text" @value={{@command.volume}} {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control rounded-0" />
             </div>
           </div>
