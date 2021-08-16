@@ -20,7 +20,7 @@
           </span>
         </label>
         <div class="col-md-8 border-light">
-          <div class="row input-group no-gutters ">
+          <div class="row input-group g-0">
             <form.element @controlType="password" @label="" placeholder="Default channel name" @formLayout="inline" @property="externaleventskey" class="col-md" />
             <div class="input-group-append d-inline-block col-md-auto">
               <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline"  class="input-group-text" as |el|>
@@ -89,11 +89,9 @@
             <form.element @controlType="checkbox" @label="" @property="isdefault" class="form-check form-check-inline" required />
           </div>
         </div> 
-        <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>
-        <BsButton @type="success" @onClick={{fn this.connectExternalEvents}}>Connect External Events</BsButton>        
-        <BsButton @type="success" @onClick={{fn this.disconnectExternalEvents}}>Disconnect External Events</BsButton>        
+        <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>   
 
-        <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Config saved!</span></div>
+        <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Config saved!</span></div>
       </BsForm>
     </div>
 </div>

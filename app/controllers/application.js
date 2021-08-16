@@ -4,6 +4,7 @@ import { action } from '@ember/object';
 import DarkReader from 'darkreader';
 import FileReader from 'ember-file-upload/system/file-reader';
 import moment from 'moment';
+import { tracked } from '@glimmer/tracking';
 
 export default class ApplicationController extends Controller {
   @service cloudState;
@@ -35,6 +36,18 @@ export default class ApplicationController extends Controller {
     } else {
       DarkReader.disable(); 
     }
+  }
+  
+  @tracked isOnline = false;
+  get serverStatus(){
+    fetch('http://paper.bot', {mode: 'no-cors'}).then(async () => {
+      console.log("Server is connected.");
+      this.isOnline = true;
+    }, ()=>{
+      console.log("Server is not connected.");
+      this.isOnline = false;
+    });
+    return this.isOnline;   
   }
   
   get loadConfig(){

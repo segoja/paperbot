@@ -17,7 +17,7 @@
         <LinkTo @route="application" class="navbar-brand my-0 py-0">Paperbot <span>{{svg-jar "papercat-gray-icon" class="logo" }}</span></LinkTo>{{this.loadConfig}}
       </div>     
       <navbar.content class="px-md-0 px-3">
-        <navbar.nav class="ml-auto" as |nav|>
+        <navbar.nav class="me-auto" as |nav|>
           <nav.item>
             <nav.link-to @route="streams.index">Streams</nav.link-to>
           </nav.item>
@@ -25,11 +25,13 @@
             <nav.link-to @route="commands.index">Commands</nav.link-to>
           </nav.item>
           <nav.item>
-            <nav.link-to @route="clients.index">Clients</nav.link-to>
-          </nav.item>
-          <nav.item>
             <nav.link-to @route="songs.index">Songs</nav.link-to>
-          </nav.item>          
+          </nav.item> 
+        </navbar.nav>
+        <navbar.nav class="ms-auto" as |nav|>
+          <nav.item>
+            <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
+          </nav.item>
           <nav.dropdown class={{if this.headData.darkMode "bg-dark"}} as |dd| >
             <dd.toggle><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
             <dd.menu class={{if this.headData.darkMode "bg-dark"}} as |ddm|>            
@@ -40,13 +42,16 @@
                 <hr class="dropdown-divider">
               </ddm.item>
               <ddm.item>
-                <span role="button" class="dropdown-item {{if this.headData.darkMode "bg-dark"}}" {{on "click" this.handleExport}}>Export Database</span>
+                <nav.link-to @route="clients.index"  class="ps-3 dropdown-item {{if this.headData.darkMode "bg-dark"}}" >Clients</nav.link-to>
+              </ddm.item>              
+              <ddm.item>
+                <span role="button" class="dropdown-item ps-3 {{if this.headData.darkMode "bg-dark"}}" {{on "click" this.handleExport}}>Export Database</span>
               </ddm.item>
               <ddm.item>
-                <FileUpload @name="uploadfile" @accept="file/json" @onfileadd={{fn this.handleImport}} hidden={{false}} class="my-0" ><span class="dropdown-item {{if this.headData.darkMode "bg-dark"}}">Import Database</span></FileUpload>
+                <FileUpload @name="uploadfile" @accept="file/json" @onfileadd={{fn this.handleImport}} hidden={{false}} class="my-0" ><span class="dropdown-item ps-3 {{if this.headData.darkMode "bg-dark"}}">Import Database</span></FileUpload>
               </ddm.item>
               <ddm.item>
-                <span role="button" class="dropdown-item {{if this.headData.darkMode "bg-dark"}}" {{on "click" this.wipeDatabase}}>Wipe DB</span>
+                <span role="button" class="dropdown-item ps-3 {{if this.headData.darkMode "bg-dark"}}" {{on "click" this.wipeDatabase}}>Wipe DB</span>
               </ddm.item>
             </dd.menu>
           </nav.dropdown>
@@ -54,7 +59,7 @@
             <span role="button" {{on "click" this.toggleMode}} class="nav-link {{if this.headData.darkMode "bulboff" "bulbon active"}}" title="{{if this.headData.darkMode "Dark mode" "Light mode"}}">
               <FaIcon @icon="{{if this.headData.darkMode "lightbulb" "lightbulb"}}" />
             </span>
-          </nav.item>           
+          </nav.item>
         </navbar.nav>
       </navbar.content>
   </BsNavbar>

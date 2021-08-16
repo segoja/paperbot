@@ -4,6 +4,8 @@ import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
+import { dialog } from "@tauri-apps/api";
+import { readBinaryFile } from '@tauri-apps/api/fs'
 
 export default class PbCommandComponent extends Component {
   @service audio;
@@ -17,11 +19,13 @@ export default class PbCommandComponent extends Component {
   }
   
   @action getAudioPath(command){
-    let dialog = require('electron').remote.dialog;    
-    dialog.showOpenDialog({ properties: ['openFile'] }).then((file) => {
-      // console.log(file);
-      if(file.filePaths[0] != undefined){
-        command.soundfile = file.filePaths[0];
+    dialog.open({
+      directory: false,
+      filters: [{name: "Select audio file...", extensions: ['mp3','wav','ogg']}]
+    }).then((file) => {
+      console.log(file);
+      if(file){
+        command.soundfile = file;
         command.save();
       }
     });
@@ -33,7 +37,7 @@ export default class PbCommandComponent extends Component {
   
   get loadPreview(){
     if(this.args.command.soundfile){
-      this.audio.removeFromRegister('sound', 'preview');    
+      this.audio.removeFromRegister('sound', 'preview');
       return this.audio.load(this.args.command.soundfile).asSound('preview');      
     } else {
       return false;

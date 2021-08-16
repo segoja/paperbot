@@ -98,23 +98,24 @@ export default class TwitchChatService extends Service {
   }
   
   defaultColors = [
-        ('Red', 'rgb(255, 0, 0)'),
-        ('Blue', 'rgb(0, 0, 255)'),
-        ('Green', 'rgb(0, 255, 0)'),
-        ('FireBrick', 'rgb(178, 34, 34)'),
-        ('Coral', 'rgb(255, 127, 80)'),
-        ('YellowGreen', 'rgb(154, 205, 50)'),
-        ('OrangeRed', 'rgb(255, 69, 0)'),
-        ('SeaGreen', 'rgb(46, 139, 87)'),
-        ('GoldenRod', 'rgb(218, 165, 32)'),
-        ('Chocolate', 'rgb(210, 105, 30)'),
-        ('CadetBlue', 'rgb(95, 158, 160)'),
-        ('DodgerBlue', 'rgb(30, 144, 255)'),
-        ('HotPink', 'rgb(255, 105, 180)'),
-        ('BlueViolet', 'rgb(138, 43, 226)'),
-        ('SpringGreen', 'rgb(0, 255, 127)'),
-    ];
+    ('Red', 'rgb(255, 0, 0)'),
+    ('Blue', 'rgb(0, 0, 255)'),
+    ('Green', 'rgb(0, 255, 0)'),
+    ('FireBrick', 'rgb(178, 34, 34)'),
+    ('Coral', 'rgb(255, 127, 80)'),
+    ('YellowGreen', 'rgb(154, 205, 50)'),
+    ('OrangeRed', 'rgb(255, 69, 0)'),
+    ('SeaGreen', 'rgb(46, 139, 87)'),
+    ('GoldenRod', 'rgb(218, 165, 32)'),
+    ('Chocolate', 'rgb(210, 105, 30)'),
+    ('CadetBlue', 'rgb(95, 158, 160)'),
+    ('DodgerBlue', 'rgb(30, 144, 255)'),
+    ('HotPink', 'rgb(255, 105, 180)'),
+    ('BlueViolet', 'rgb(138, 43, 226)'),
+    ('SpringGreen', 'rgb(0, 255, 127)'),
+  ];
  
+  @tracked songs = '';
   @tracked streamlabs;
   
   

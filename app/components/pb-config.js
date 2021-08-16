@@ -3,11 +3,9 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
-import { inject as service } from '@ember/service';
 
 export default class PbConfigComponent extends Component {
-  @service eventsExternal;
-
+  
   @tracked saving = false;
 
   @action doneEditing() {  
@@ -31,17 +29,4 @@ export default class PbConfigComponent extends Component {
       config.overlayfolder = folder.filePaths[0];
     });
   }
-  
-
-  @action connectExternalEvents(){
-    this.eventsExternal.type = this.args.config.externalevents;
-    this.eventsExternal.token = this.args.config.externaleventskey;
-
-    this.eventsExternal.createClient();
-  } 
-
-  @action disconnectExternalEvents(){
-    this.eventsExternal.disconnectClient();
-  }
-  
 }

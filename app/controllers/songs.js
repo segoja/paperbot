@@ -67,29 +67,85 @@ export default class SongsController extends Controller {
     });
   }
   
-  @action udpdateRest(){ 
-    if(this.model.get('leght') != 0){
-      this.store.findAll('slsong').then(function(slsongs){
-         slsongs.invoke('destroyRecord');
-      }).then(()=>{
-        /*this.model.map(async (song)=>{
-          let newSlsong = this.store.createRecord('slsong');
-          newSlsong.set('title', song.title);
-          newSlsong.set('artist', song.artist);
-          newSlsong.set('songtype', song.type);
-          newSlsong.set('account', song.account);    
-          newSlsong.set('is_active', song.active);
-          newSlsong.set('is_admin', song.admin);
-          newSlsong.set('is_mod', song.mod);
-          newSlsong.set('is_vip', song.vip);
-          newSlsong.set('is_sub', song.sub);
-          newSlsong.set('date_added', song.date_added);
-          newSlsong.set('last_played', song.last_played);
-          newSlsong.set('times_requested', song.times_requested);
-          newSlsong.set('times_played', song.times_played);
-          await newSlsong.save();
-        });*/
-      }); 
-    }
+  @action udpdateRest(){
+    fetch('http://paper.bot', {mode: 'no-cors', method: 'POST'}).then(async (response) => {
+      console.log("Server is online");
+      if(this.model.get('leght') != 0){
+        this.model.forEach(async (song)=>{
+          if(song.remoteid){
+            await this.store.findRecord('slsong', song.remoteid).then(async(slsong)=>{
+              await console.log("The song "+slsong.title+" is already in the remote server! Updating...");
+              slsong.set('title',song.title);
+              slsong.set('artist',song.artist);
+              slsong.set('songtype',song.type);
+              slsong.set('account',song.account);    
+              slsong.set('is_active',song.active);
+              slsong.set('is_admin',song.admin);
+              slsong.set('is_mod',song.mod);
+              slsong.set('is_vip',song.vip);
+              slsong.set('is_sub',song.sub);
+              slsong.set('date_added',song.date_added);
+              slsong.set('last_played',song.last_played);
+              slsong.set('times_requested',song.times_requested);
+              slsong.set('times_played',song.times_played);
+              slsong.set('pouchrev',song.rev);
+              slsong.set('pouchid',song.id);
+              await slsong.save();
+            }, async(error)=>{
+              await console.log("Creating copy in the remote server of the song: "+song.title);
+              let newSlsong = this.store.createRecord('slsong');
+              newSlsong.save().then(async(savedSlsong)=>{
+                song.remoteid = savedSlsong.id;
+                await song.save().then(async(updatedmodel)=>{  
+                  savedSlsong.set('title',updatedmodel.title);
+                  savedSlsong.set('artist',updatedmodel.artist);
+                  savedSlsong.set('songtype',updatedmodel.type);
+                  savedSlsong.set('account',updatedmodel.account);    
+                  savedSlsong.set('is_active',updatedmodel.active);
+                  savedSlsong.set('is_admin',updatedmodel.admin);
+                  savedSlsong.set('is_mod',updatedmodel.mod);
+                  savedSlsong.set('is_vip',updatedmodel.vip);
+                  savedSlsong.set('is_sub',updatedmodel.sub);
+                  savedSlsong.set('date_added',updatedmodel.date_added);
+                  savedSlsong.set('last_played',updatedmodel.last_played);
+                  savedSlsong.set('times_requested',updatedmodel.times_requested);
+                  savedSlsong.set('times_played',updatedmodel.times_played);
+                  savedSlsong.set('pouchrev',updatedmodel.rev);
+                  savedSlsong.set('pouchid',updatedmodel.id);
+                  await savedSlsong.save();
+                });               
+              });
+
+            });          
+          } else {
+            await console.log("Creating copy in the remote server of the song: "+song.title);
+            let newSlsong = this.store.createRecord('slsong');
+            newSlsong.save().then(async (savedSlsong)=>{
+              song.remoteid = savedSlsong.id;
+              await song.save().then(async(updatedmodel)=>{  
+                savedSlsong.set('title',updatedmodel.title);
+                savedSlsong.set('artist',updatedmodel.artist);
+                savedSlsong.set('songtype',updatedmodel.type);
+                savedSlsong.set('account',updatedmodel.account);    
+                savedSlsong.set('is_active',updatedmodel.active);
+                savedSlsong.set('is_admin',updatedmodel.admin);
+                savedSlsong.set('is_mod',updatedmodel.mod);
+                savedSlsong.set('is_vip',updatedmodel.vip);
+                savedSlsong.set('is_sub',updatedmodel.sub);
+                savedSlsong.set('date_added',updatedmodel.date_added);
+                savedSlsong.set('last_played',updatedmodel.last_played);
+                savedSlsong.set('times_requested',updatedmodel.times_requested);
+                savedSlsong.set('times_played',updatedmodel.times_played);
+                savedSlsong.set('pouchrev',updatedmodel.rev);
+                savedSlsong.set('pouchid',updatedmodel.id);
+                await savedSlsong.save();
+              });               
+            });
+          }        
+        });
+      }
+    }, (kaput)=>{
+      console.log("Server is not connected.");
+    });
   }
 }

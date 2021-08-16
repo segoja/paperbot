@@ -20,7 +20,7 @@
                 </element.control>
               </form.element>
             </BsForm>
-            <div class="col-lg-auto col-12 mx-1 pl-0 pr-2 px-lg-0">
+            <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">
               <FileUpload @name="importfile" @accept=".csv" @onfileadd={{fn this.commandImport}} hidden={{false}} class="my-0"><span class="btn btn-secondary ember-view">Import</span></FileUpload>
               <BsButton @type="secondary" @onClick={{fn this.commandExportFiltered}}>Export</BsButton>
               <BsButton @type="info" @onClick={{fn @createCommand}}>Add New</BsButton>
@@ -44,7 +44,7 @@
                       <td class="col col-lg-auto">{{if command.name command.name "unnamed"}}</td>
                       <td class="d-none d-lg-table-cell col-lg"><small class="muted">{{command.response}}</small></td>
                       <td class="col-sm">{{command.type}}</td>
-                      <td class="col-sm text-center align-middle">
+                      <td class="col-sm text-center">
                         <span role="button" class="mx-auto py-0 my-0" {{on "click" (fn @gridActiveCommand command)}}>
                           <FaIcon class="text-secondary" @icon="{{if command.active "check-square" "square"}}" />
                         </span>

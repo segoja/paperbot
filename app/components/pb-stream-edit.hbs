@@ -6,7 +6,7 @@
       
       <div class="form-group row my-0">
         <label class="col-md-4">Stream Monitoring</label>
-        <div class="col-sm pl-0">
+        <div class="col-sm ps-0">
           <form.element @controlType="checkbox" @label="Chat Logging" @formLayout="inline" @property="savechat" class="form-check form-check-inline"  />
           <form.element @controlType="checkbox" @label="Event Logging" @formLayout="inline" @property="events" class="form-check form-check-inline"  />
           <form.element @controlType="checkbox" @label="Song Request System" @formLayout="inline" @property="requests" class="form-check form-check-inline"  />
@@ -25,8 +25,8 @@
       </form.element>  
       <BsButton @type="success" @onClick={{fn this.doneAndReturnEditing}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
-      <div class="text-success ml-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Stream updated!</span></div>
-      <BsButton @type="danger" @onClick={{fn @deleteStream}} class="float-right">Delete</BsButton>
+      <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Stream updated!</span></div>
+      <BsButton @type="danger" @onClick={{fn @deleteStream}} class="float-end">Delete</BsButton>
     </BsForm>
   </div>
 {{else}}
@@ -85,7 +85,7 @@
       </div>
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <EmberDragula class="row flex-fill d-flex h-100 mx-0 px-0 overflow-hidden" as |d|>
-          <div role="button" class="h-100 d-flex border alert-secondary float-right" {{on "click" this.toggleExtraPanLeft}}>
+          <div role="button" class="h-100 d-flex border alert-secondary float-end w-auto px-0" {{on "click" this.toggleExtraPanLeft}}>
             <span class="d-block align-self-center"><FaIcon @icon={{if this.extraPanLeft "grip-lines-vertical" "ellipsis-v"}} /></span>
           </div>
          <div class="{{if this.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
@@ -96,7 +96,7 @@
                       <div id="events" class="row {{unless this.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                         <div class="col {{unless this.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                           <div class="row bg-secondary text-light">
-                            <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Events</h6></div>
+                            <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Events</h6></div>
                             <BsButtonGroup class="col-auto px-0" as |bg|>
                               <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
                             </BsButtonGroup>
@@ -125,7 +125,7 @@
                 <div id="chat" class="row {{unless this.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                   <div class="col {{unless this.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
                     <div class="row  bg-secondary text-light">
-                      <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Recent messages</h6></div>
+                      <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Recent messages</h6></div>
                       <BsButtonGroup class="col-auto px-0" as |bg|>
                         <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "messages"}} ><FaIcon @icon="{{if this.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
                       </BsButtonGroup>
@@ -137,7 +137,11 @@
                             <div class="row" id="{{message.id}}">
                               {{message-format message}}
                             </div>
-                          {{/each}}
+                          {{/each}} 
+                          {{!-- <iframe frameborder="0" scrolling="yes" height="100%" width="100%" id="actualtwitchchat" 
+                            src="https://www.twitch.tv/embed/{{@stream.channel}}/chat?{{if this.globalConfig.config.darkmode "darkpopout&"}}parent=localhost"
+                          >
+                          </iframe> --}}
                         </div>  
                       {{/unless}}
                     </BsCollapse>  
@@ -160,7 +164,7 @@
                   <div id="pending" class="row {{unless this.cpanpending "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                     <div class="col {{unless this.cpanpending "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
-                        <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Songs pending</h6></div>
+                        <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Songs pending</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
                           <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "pending"}} ><FaIcon @icon="{{if this.cpanpending "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
@@ -191,7 +195,7 @@
                   <div id="played" class="row {{unless this.cpanplayed "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
                     <div class="col {{unless this.cpanplayed "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
-                        <div class="col d-block align-self-center pr-0 pl-2"><h6 class="my-0">Songs played</h6></div>
+                        <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Songs played</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
                           <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "played"}} ><FaIcon @icon="{{if this.cpanplayed "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
@@ -217,7 +221,7 @@
               </d.Container>
             </div>
           </div>
-          <div role="button" class="h-100 d-flex border alert-secondary float-left" {{on "click" this.toggleExtraPanRight}}>
+          <div role="button" class="h-100 d-flex border alert-secondary float-start" {{on "click" this.toggleExtraPanRight}}>
             <span class="d-block align-self-center"><FaIcon @icon={{if this.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
           </div>
         </EmberDragula>

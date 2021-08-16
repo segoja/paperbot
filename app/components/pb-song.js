@@ -12,5 +12,5 @@ export default class PbSongComponent extends Component {
     this.args.saveSong();
     this.saving = true;
     later(() => { this.saving = false; }, 500);    
-  }
+  }  
 }

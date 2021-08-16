@@ -226,6 +226,7 @@ export default class PbStreamEditComponent extends Component {
         this.eventsExternal.client.on("event:test", this.eventGetter);        
       }
     );
+      // later(() => { console.log(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     
   }
   
   @action connectChat(){

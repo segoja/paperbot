@@ -49,7 +49,7 @@ export default class PbSongsComponent extends Component {
   @action songImport(file){
     let reader = new FileReader();
     reader.readAsText(file.blob).then((text) => {    
-      let reference = ["title","artist","type","account","active","admin","mod","vip","sub","date_added","last_played","times_requested","times_played"];
+      let reference = ["title","artist","type","account","active","admin","mod","vip","sub","date_added","last_played","times_requested","times_played","remoteid"];
 
       let rows = PapaParse.parse(text,{header: true, skipEmptyLines: true}).data;
       
@@ -78,10 +78,10 @@ export default class PbSongsComponent extends Component {
     this.filteredContent;
     var csvdata = [];
     if (this.filteredContent !== 0){
-      let header = ["title","artist","type","account","active","admin","mod","vip","sub","date_added","last_played","times_requested","times_played"];
+      let header = ["title","artist","type","account","active","admin","mod","vip","sub","date_added","last_played","times_requested","times_played","remoteid"];
       csvdata.push(header);
       this.filteredContent.forEach((song) => {
-        let csvrow = [song.title,song.artist,song.type,song.account,song.active,song.admin,song.mod,song.vip,song.sub,song.date_added,song.last_played,song.times_requested,song.times_played];
+        let csvrow = [song.title,song.artist,song.type,song.account,song.active,song.admin,song.mod,song.vip,song.sub,song.date_added,song.last_played,song.times_requested,song.times_played,song.remoteid];
         csvdata.push(csvrow);
       });
     }

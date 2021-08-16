@@ -18,4 +18,7 @@ export default class SlsongModel extends Model {
   
   @attr('number', {defaultValue: ""}) times_requested;
   @attr('number', {defaultValue: ""}) times_played;
+  
+  @attr('string', {defaultValue: ""}) pouchrev;
+  @attr('string', {defaultValue: ""}) pouchid;
 }

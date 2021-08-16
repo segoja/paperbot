@@ -1,23 +1,11 @@
-import JSONAPISerializer from '@ember-data/serializer/json-api';
+import DS from 'ember-data';
 
-export default class SlsongSerializer extends JSONAPISerializer {
-  primaryKey: '_id';
-  
-  normalizeArrayResponse(store, primaryModelClass, payload, id, requestType) {
-    let normalizedDocument = super.normalizeArrayResponse(...arguments);
-
-    // Customize document meta
-    normalizedDocument.meta = camelCaseKeys(normalizedDocument.meta);
-
-    return normalizedDocument;
+export default DS.RESTSerializer.extend({
+  normalizeQueryRecordResponse(store, primaryModelClass, payload) {
+    if (payload.slsongs) {
+      payload.user = payload.slsongs[0];
+      delete payload.slsongs;
+    }
+    return this._super(...arguments);
   }
-
-  extractRelationship(relationshipHash) {
-    let normalizedRelationship = super.extractRelationship(...arguments);
-
-    // Customize relationship meta
-    normalizedRelationship.meta = camelCaseKeys(normalizedRelationship.meta);
-
-    return normalizedRelationship;
-  }
-}
+});

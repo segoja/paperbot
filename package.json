@@ -19,26 +19,28 @@
     "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint .",
     "start": "ember serve",
+    "tauri": "tauri",
     "test": "npm-run-all lint:* test:*",
     "test:ember": "ember test"
   },
   "devDependencies": {
     "@ember/optional-features": "^1.3.0",
     "@ember/render-modifiers": "^1.0.2",
-    "@fortawesome/ember-fontawesome": "^0.2.1",
-    "@fortawesome/free-brands-svg-icons": "^5.14.0",
-    "@fortawesome/free-regular-svg-icons": "^5.14.0",
-    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/ember-fontawesome": "^0.2.3",
+    "@fortawesome/free-brands-svg-icons": "^5.15.3",
+    "@fortawesome/free-regular-svg-icons": "^5.15.3",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@glimmer/component": "^1.0.1",
     "@glimmer/tracking": "^1.0.1",
+    "@tauri-apps/cli": "^1.0.0-beta.6",
     "@zestia/ember-dragula": "^10.0.4",
     "babel-eslint": "^10.1.0",
-    "bootstrap": "^4.5.2",
+    "bootstrap": "^5.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-audio": "^1.0.0-beta.1",
     "ember-auto-import": "^1.6.0",
-    "ember-bootstrap": "^4.0.0",
-    "ember-bootstrap-power-select": "^2.0.0",
+    "ember-bootstrap": "^4.9.0",
+    "ember-bootstrap-power-select": "^3.0.1",
     "ember-cli": "~3.20.0",
     "ember-cli-active-link-wrapper": "0.5.0",
     "ember-cli-app-version": "^3.2.0",
@@ -107,12 +109,12 @@
     "icon": "paperbot"
   },
   "dependencies": {
+    "@tauri-apps/api": "^1.0.0-beta.5",
     "acorn": "^7.4.0",
-    "bootstrap-dark": "git+https://github.com/vinorodrigues/bootstrap-dark.git",
-    "darkreader": "^4.9.16",
+    "darkreader": "^4.9.34",
     "ember-svg-jar": "^2.2.3",
     "fuse.js": "^6.4.1",
     "socket.io-client": "^2.3.0",
-    "tmi.js": "^1.5.0"
+    "tmi.js": "^1.8.4"
   }
 }

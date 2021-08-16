@@ -23,6 +23,8 @@ export default class SongModel extends Model {
   
   @attr('string', {defaultValue: ""}) account;
   
+  @attr('string', {defaultValue: ""}) remoteid;  
+  
   get fullstring(){
     let string = this.title.toString()+' '+this.artist.toString()+' '+this.keywords.toString();
     return string.toString();
