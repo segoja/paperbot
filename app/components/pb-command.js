@@ -1,11 +1,9 @@
-/* global require */
 import Component from '@glimmer/component';
 import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 import { dialog } from "@tauri-apps/api";
-import { readBinaryFile } from '@tauri-apps/api/fs'
 
 export default class PbCommandComponent extends Component {
   @service audio;
@@ -22,11 +20,13 @@ export default class PbCommandComponent extends Component {
     dialog.open({
       directory: false,
       filters: [{name: "Select audio file...", extensions: ['mp3','wav','ogg']}]
-    }).then((file) => {
-      console.log(file);
-      if(file){
-        command.soundfile = file;
-        command.save();
+    }).then((path) => {
+      if(path != null){ 
+        console.log(path);
+        if(path){
+          command.soundfile = path;
+          command.save();
+        }
       }
     });
   }  

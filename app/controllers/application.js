@@ -2,9 +2,10 @@ import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import DarkReader from 'darkreader';
-import FileReader from 'ember-file-upload/system/file-reader';
 import moment from 'moment';
 import { tracked } from '@glimmer/tracking';
+import { dialog } from "@tauri-apps/api";
+import { readTextFile } from '@tauri-apps/api/fs';
 
 export default class ApplicationController extends Controller {
   @service cloudState;
@@ -87,22 +88,27 @@ export default class ApplicationController extends Controller {
     }
   }
 
-
-  @action handleImport (file) {
-    if (file) {
-      var reader = new FileReader();
-      reader.readAsText(file.blob).then((result)=>{
-        var adapter = this.store.adapterFor('application');
-        adapter.db.bulkDocs(
-          JSON.parse(result),
-          {new_edits: false}, // not change revision
-          (...args) => {
+  @action handleImport() {
+    dialog.open({
+      directory: false,
+      filters: [{name: "backup file", extensions: ['json']}]
+    }).then((path) => {
+      if(path != null){
+        readTextFile(path).then((data)=>{
+          
+          let adapter = this.store.adapterFor('application');
+          let importable = Object.assign([],JSON.parse(data));
+          
+          adapter.db.bulkDocs(importable, {new_edits: false}, (...args) => {
             console.log('DONE', args);
             window.location.reload(true);
           });
-      });
-    } 
+          
+        });
+      }
+    });
   }
+  
   
   @action wipeDatabase(){
     var adapter = this.store.adapterFor('application');

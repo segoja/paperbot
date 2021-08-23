@@ -48,7 +48,7 @@
                 <span role="button" class="dropdown-item ps-3" {{on "click" this.handleExport}}>Export Database</span>
               </ddm.item>
               <ddm.item>
-                <FileUpload @name="uploadfile" @accept="file/json" @onfileadd={{fn this.handleImport}} hidden={{false}} class="my-0" ><span class="dropdown-item ps-3">Import Database</span></FileUpload>
+                <span role="button" class="dropdown-item ps-3" {{on "click" this.handleImport}}>Import Database</span>
               </ddm.item>
               <ddm.item>
                 <span role="button" class="dropdown-item ps-3" {{on "click" this.wipeDatabase}}>Wipe DB</span>

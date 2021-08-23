@@ -4,11 +4,11 @@ import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { inject as service } from '@ember/service';
-import FileReader from 'ember-file-upload/system/file-reader';
 import { tracked } from '@glimmer/tracking';
 import { compare } from '@ember/utils';
 import PapaParse from 'papaparse';
-
+import { dialog } from "@tauri-apps/api";
+import { readTextFile } from '@tauri-apps/api/fs';
 
 export default class PbSongsComponent extends Component {
   @service csv;
@@ -46,31 +46,35 @@ export default class PbSongsComponent extends Component {
   
   @tracked importcontent;
   
-  @action songImport(file){
-    let reader = new FileReader();
-    reader.readAsText(file.blob).then((text) => {    
-      let reference = ["title","artist","type","account","active","admin","mod","vip","sub","date_added","last_played","times_requested","times_played","remoteid"];
+  @action songImport(){
+    dialog.open({
+      directory: false,
+      filters: [{name: "csv file", extensions: ['csv']}]
+    }).then((path) => {
+      if(path != null){        
+        readTextFile(path).then((text)=>{   
+          let reference = ["title","artist","type","account","active","admin","mod","vip","sub","date_added","last_played","times_requested","times_played","remoteid"];
 
-      let rows = PapaParse.parse(text,{header: true, skipEmptyLines: true}).data;
-      
-      let csvfields = text.split('\r\n').slice(0,1).toString().split(',');
-      console.log(reference);
-      console.log(csvfields);
-      
-      // We check if the structure is the same.
-      if (compare(csvfields, reference) === 0){
-        // alert(this.csvfields);
-        this.importcontent = rows;
-        
-        this.importcontent.forEach((song)=>{
-          console.log(song);
-          this.args.importSongs(song);
-        });      
-      } else {
-        alert("Wrong column structure in the import csv file.");
+          let rows = PapaParse.parse(text,{header: true, skipEmptyLines: true}).data;
+          
+          let csvfields = text.split('\r\n').slice(0,1).toString().split(',');
+          console.log(reference);
+          console.log(csvfields);
+          
+          // We check if the structure is the same.
+          if (compare(csvfields, reference) === 0){
+            // alert(this.csvfields);
+            this.importcontent = rows;
+            
+            this.importcontent.forEach((song)=>{
+              console.log(song);
+              this.args.importSongs(song);
+            });      
+          } else {
+            alert("Wrong column structure in the import csv file.");
+          }
+        });
       }
-    }, function (err) {
-      console.error(err);
     });
   }    
   
