@@ -36,7 +36,7 @@
             <dd.toggle><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
             <dd.menu class="dropdown-menu-dark" as |ddm|>            
               <ddm.item>
-                <ddm.link-to @route="settings.index" class="font-weight-bold"><h6>Change Settings <FaIcon @icon="wrench" /></h6></ddm.link-to>
+                <ddm.link-to @route="settings.config" @model={{this.globalConfig.config}} class="font-weight-bold"><h6>Change Settings <FaIcon @icon="wrench" /></h6></ddm.link-to>
               </ddm.item>
               <ddm.item>
                 <hr class="dropdown-divider">

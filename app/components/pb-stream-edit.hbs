@@ -103,11 +103,11 @@
                           </div>                          
                           <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanevents}}>
                             {{#unless this.cpanevents}}                                                          
-                              <div class="col-md eventsframe" {{scroll-position this.scrollEventsPosition relative=true}} id="eventlist">
+                              <div class="col-md eventsframe" {{scroll-position position=this.scrollEventsPosition relative=true}} id="eventlist">
                                 {{#each this.events as |event|}}
                                   <div class="alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                                     <div class="row">
-                                      <div class="col"><small>{{moment-format event.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                                      <div class="col"><small>{{nicer-date event.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                                     </div>
                                     <div class="alert-heading h6">{{event.parsedbody}}</div>
                                   </div>
@@ -132,7 +132,7 @@
                     </div>
                     <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanmessages}}>
                       {{#unless this.cpanmessages}}
-                        <div class="col-md-12 chatframe" {{scroll-position this.scrollPosition relative=false}}>
+                        <div class="col-md-12 chatframe" {{scroll-position position=this.scrollPosition relative=false}}>
                           {{#each this.messages as |message|}}
                             <div class="row" id="{{message.id}}">
                               {{message-format message}}
@@ -171,11 +171,11 @@
                       </div>
                       <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanpending}}>
                         {{#unless this.cpanpending}}
-                          <div class="col-md queueframe" {{scroll-position this.scrollPendingPosition relative=true}} id="songqueue">
+                          <div class="col-md queueframe" {{scroll-position position=this.scrollPendingPosition relative=true}} id="songqueue">
                             {{#each this.pendingSongs as |pendingsong|}}
                               <div id={{pendingsong.id}} role="button" {{on "click" (fn this.requestStatus pendingsong)}} class="alert-info d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                                 <div class="row">
-                                  <div class="col"><small>{{moment-format pendingsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                                  <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                                   <div class="col-auto"><small>{{pendingsong.user}}</small></div>
                                 </div>
                                 <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
@@ -202,11 +202,11 @@
                       </div>
                       <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanplayed}}>
                         {{#unless this.cpanplayed}}
-                          <div class="col-md queueframe" {{scroll-position this.scrollPlayedPosition relative=true}}>
+                          <div class="col-md queueframe" {{scroll-position position=this.scrollPlayedPosition relative=true}}>
                             {{#each this.playedSongs as |playedsong|}}
                               <div id={{playedsong.id}} role="button" {{on "click" (fn this.requestStatus playedsong)}} {{on-key "right" (fn this.backToQueue playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
                                 <div class="row">
-                                  <div class="col"><small>{{moment-format playedsong.timestamp "YYYY/MM/DD HH:mm:ss"}}</small></div>
+                                  <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                                   <div class="col-auto"><small>{{playedsong.user}}</small></div>
                                 </div>
                                 <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>

@@ -1,7 +1,6 @@
 export function initialize(application) {
   var globals = {
     isEditing: false,
-    darkMode: false,
   };
 
   application.register('globals:main', globals, { instantiate: false });

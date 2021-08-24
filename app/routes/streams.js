@@ -1,7 +1,9 @@
 import Route from '@ember/routing/route';
 import { hash } from 'rsvp';
+import { inject as service } from '@ember/service';
 
 export default class StreamsRoute extends Route {
+  @service store;
 
   model () {
     var store = this.store;

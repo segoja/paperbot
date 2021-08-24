@@ -9,7 +9,6 @@ import auth from 'pouchdb-authentication';
 PouchDB.plugin(auth);
 
 export default class ApplicationAdapter extends Adapter {
-  @service session;
   @service cloudState;
   @service refreshIndicator;
 
@@ -21,7 +20,7 @@ export default class ApplicationAdapter extends Adapter {
     assert('local_couch must be set', !isEmpty(localDb));
 
     const db = new PouchDB(localDb, {attachments: true});   
-    this.set('db', db);
+    this.db = db;
 
     return this;
   }

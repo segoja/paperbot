@@ -7,7 +7,8 @@ export default class ConfigController extends Controller {
   @inject application;
   @inject settings;
   @service router;
-  @service headData;
+  @service lightControl;
+  @service globalConfig;
 
   @tracked isEditing;
 
@@ -78,21 +79,10 @@ export default class ConfigController extends Controller {
   }
   
   @action saveConfig () {
-    // this.settings.isViewing = false;
     this.isEditing = false;
-    if(this.model.isdefault){
-      this.application.darkreader(this.model.darkmode);
-      this.headData.set('darkMode', this.model.darkmode);
-    }
-    this.model.save();
-    this.router.transitionTo('settings.config', this.model);
-  }
-  
-  @action deleteConfig() {
-    this.model.destroyRecord().then(() => {
-      this.settings.isViewing = false;
-      this.isEditing =  false;
-      this.router.transitionTo('settings');
+    this.model.save().then(()=>{
+      this.lightControl.toggleMode(this.model.darkmode);
+      this.router.transitionTo('settings.config', this.model);      
     });
-  }  
+  } 
 }

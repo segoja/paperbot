@@ -1,9 +1,7 @@
 import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
-import DarkReader from 'darkreader';
 import moment from 'moment';
-import { tracked } from '@glimmer/tracking';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
 
@@ -11,50 +9,42 @@ export default class ApplicationController extends Controller {
   @service cloudState;
   @service audio;
   @service store;
-  @service router; 
-  @service headData;
+  @service router;
   @service globalConfig;
-
-  get darkmode(){
-    if(this.model){
-      var config = this.model.filterBy('isdefault', true).get('firstObject');
-      if(config !== undefined){
-        //this.darkreader(config.switcher);
-        return config.switcher;        
-      }
-    }
-    this.darkreader(true);
-    return this.headData.darkMode;
-  }
-
-  @action darkreader(status){
-    if(status){
-      DarkReader.enable({
-          brightness: 100,
-          contrast: 100,
-          sepia: 0
-      });      
-    } else {
-      DarkReader.disable(); 
-    }
-  }
+  @service lightControl;
   
-  @tracked isOnline = false;
+  
+  // We load the existing config or create a new one.  
+  constructor() {
+    super(...arguments);
+    
+    this.store.findAll('config').then(()=>{
+      let currentconfig = this.store.peekRecord('config','myconfig');
+      if (currentconfig){
+        console.log("Config found! Loading...");
+        this.lightControl.toggleMode(currentconfig.darkmode);
+        this.globalConfig.config = currentconfig;
+      } else{
+        this.store.createRecord('config',{id: 'myconfig'}).save().then((newconfig)=>{
+          console.log("Config not found! New config created...");
+          this.globalConfig.config = newconfig;
+        }).catch(()=>{
+          console.log("Error creating config!");
+        })
+      }
+    });
+  }
+
   get serverStatus(){
+    let isOnline = false;
     fetch('http://paper.bot', {mode: 'no-cors'}).then(async () => {
       console.log("Server is connected.");
-      this.isOnline = true;
+      isOnline = true;
     }, ()=>{
       console.log("Server is not connected.");
-      this.isOnline = false;
+      isOnline = false;
     });
-    return this.isOnline;   
-  }
-  
-  get loadConfig(){
-    var config = this.model.filterBy('isdefault', true).get('firstObject');
-    this.globalConfig.config = config;
-    return '';    
+    return isOnline;   
   }
   
   @action handleExport () {
@@ -112,25 +102,20 @@ export default class ApplicationController extends Controller {
   
   @action wipeDatabase(){
     var adapter = this.store.adapterFor('application');
-    adapter.wipeDatabase();
+    adapter.wipeDatabase().then(()=>{
+      console.log('The database has been wiped.');
+      window.location.reload(true);      
+    });
   }
   
-  @action toggleMode(){
-    
-    if(this.model){
-      var config = this.model.filterBy('isdefault', true).get('firstObject');
-      if(config !== undefined){
-        config.darkmode = !config.darkmode;
-        config.save();
-        this.headData.set('darkMode', this.darkmode);
-        this.darkreader(this.darkmode);
-      } else {
-        this.headData.set('darkMode', !this.darkmode);
-        this.darkreader(!this.darkmode);
-      }
+  @action toggleMode(){    
+    if(this.globalConfig.config.isLoaded){
+      this.globalConfig.config.darkmode = !this.globalConfig.config.darkmode;
+      this.globalConfig.config.save().then(()=>{
+        this.lightControl.toggleMode(this.globalConfig.config.darkmode); 
+      });
     } else {
-      this.headData.set('darkMode', !this.darkmode);
-      this.darkreader(!this.darkmode);
+      this.lightControl.toggleMode(!this.lightControl.isDark);
     }
   }
 }

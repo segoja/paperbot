@@ -168,8 +168,8 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.botclient.on("subgift", this.eventGetter);
       this.twitchChat.botclient.on("submysterygift", this.eventGetter);
       this.twitchChat.botclient.on("subscription", this.eventGetter);
-      this.eventsExternal.client.on("event", this.eventGetter);
-      this.eventsExternal.client.on("event:test", this.eventGetter);
+      //this.eventsExternal.client.on("event", this.eventGetter);
+      //this.eventsExternal.client.on("event:test", this.eventGetter);
     }    
   }
 
@@ -221,8 +221,8 @@ export default class PbStreamEditComponent extends Component {
         this.twitchChat.botclient.on("subgift", this.eventGetter);
         this.twitchChat.botclient.on("submysterygift", this.eventGetter);
         this.twitchChat.botclient.on("subscription", this.eventGetter);
-        this.eventsExternal.client.on("event", this.eventGetter);
-        this.eventsExternal.client.on("event:test", this.eventGetter);        
+        // this.eventsExternal.client.on("event", this.eventGetter);
+        // this.eventsExternal.client.on("event:test", this.eventGetter);        
       }
     );
       // later(() => { console.log(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     

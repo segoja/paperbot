@@ -7,7 +7,7 @@ export default class ScrollPositionModifier extends Modifier {
     // {{scoll-position @someNumber relative=@someBoolean}}
     //                  ~~~~~~~~~~~
     //
-    return this.args.positional[0];
+    return this.args.named.position;
   }
 
   get isRelative() {
@@ -21,7 +21,7 @@ export default class ScrollPositionModifier extends Modifier {
 
   didReceiveArguments() {
     if(this.isRelative) {
-      this.element.scrollTop = this.args.positional[0];
+      this.element.scrollTop = this.args.named.position
     } else {
       this.element.scrollTop = this.element.scrollHeight;
     }
