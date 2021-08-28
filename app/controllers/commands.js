@@ -15,6 +15,7 @@ export default class CommandsController extends Controller {
   @inject ('commands.command') command;
   @service router;
   @service audio;
+  @service store;
 
   queryParams= [
     {'queryParamsObj.page': 'page'},

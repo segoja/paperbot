@@ -15,7 +15,9 @@ class QueryParamsObj {
 export default class SongsController extends Controller {
   @inject ('songs.song') song;
   @service audio;
-
+  @service store;
+  @service router;
+  
   queryParams= [
     {'queryParamsObj.page': 'page'},
     {'queryParamsObj.perPage': 'perPage'},
@@ -31,7 +33,7 @@ export default class SongsController extends Controller {
   @action createSong() {
     let newSong = this.store.createRecord('song');
     newSong.date_added = moment().format();
-    this.transitionToRoute('songs.song', newSong.save());
+    this.router.transitionTo('songs.song', newSong.save());
   }
   
   @action importSongs(song){
@@ -53,7 +55,7 @@ export default class SongsController extends Controller {
   }
   
   @action gridEditSong(song) {
-    this.transitionToRoute('songs.song', song);
+    this.router.transitionTo('songs.song', song);
   } 
 
   @action gridActiveSong(song) {

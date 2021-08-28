@@ -14,7 +14,8 @@ class QueryParamsObj {
 export default class ClientController extends Controller {
   @inject ('clients.client') client;
   @service router;
-
+  @service store;
+  
   queryParams= [
     {'queryParamsObj.page': 'page'},
     {'queryParamsObj.perPage': 'perPage'},

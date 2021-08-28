@@ -13,6 +13,7 @@ class QueryParamsObj {
 export default class StreamsController extends Controller {
   @inject ('streams.stream') stream;
   @service router;
+  @service store;
   @service globalConfig;
   
   queryParams= [

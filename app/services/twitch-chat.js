@@ -21,21 +21,20 @@ export default class TwitchChatService extends Service {
   @tracked msglist = [];  
   get messages(){
     if (this.savechat){
-      return this.msglist;
+      return this.msglist || [];
     } else {
-      this.msglist = this.msglist.slice(-45);
-      return this.msglist;
+      return this.msglist.slice(-45) || [];
     }
   }
   
   @tracked whisperlist = [];  
   get whispers(){
-    return this.whisperlist;
+    return this.whisperlist || [];
   }
   
   @tracked eventlist = []; 
   get events(){
-    return this.eventlist;
+    return this.eventlist || [];
   } 
   
   @tracked songqueue = []; 
@@ -71,14 +70,14 @@ export default class TwitchChatService extends Service {
   @tracked botConnected = false;
   @tracked chatConnected = false;
   @tracked chanId;
-  @tracked commands;
+  @tracked commands = [];
   get commandlist(){
-    return this.commands;
+    return this.commands || [];
   }
 
-  @tracked audiocommands;
+  @tracked audiocommands = [];
   get audiocommandslist(){
-    return this.audiocommands;
+    return this.audiocommands || [];
   }
   
   @tracked soundBoardEnabled = true;
@@ -249,7 +248,7 @@ export default class TwitchChatService extends Service {
 
   @action soundboard(){
     console.log("Loading the soundboard...");
-    if(this.audiocommandslist.lenght !== 0){
+    if(this.audiocommandslist.length !== 0){
       this.audiocommandslist.forEach((command) => {
         this.audio.load(command.soundfile).asSound(command.name).then(
           function() {
@@ -267,7 +266,7 @@ export default class TwitchChatService extends Service {
 
   @action unloadSoundboard(){
     console.log("Unloading the soundboard...");
-    if(this.audiocommandslist.lenght !== 0){
+    if(this.audiocommandslist.length !== 0){
       this.audiocommandslist.forEach((command) => {
         this.audio.removeFromRegister('sound', command.name);
         console.log(command.soundfile+ " unloaded from the soundboard");
@@ -679,8 +678,8 @@ export default class TwitchChatService extends Service {
         // Do your stuff.
         let message = "";
         if(enabled){
-          if(lenght){
-            message = "<strong>"+channel+"</strong> enabled followers only mode for "+lenght+"s.";
+          if(length){
+            message = "<strong>"+channel+"</strong> enabled followers only mode for "+length+"s.";
           } else {
             message = "<strong>"+channel+"</strong> enabled followers only mode";
           }
@@ -721,8 +720,8 @@ export default class TwitchChatService extends Service {
         // Do your stuff.
         let message = "";
         if(enabled){
-          if(lenght){
-            message = "<strong>"+channel+"</strong> enabled slow mode for "+lenght+"s.";
+          if(length){
+            message = "<strong>"+channel+"</strong> enabled slow mode for "+length+"s.";
           } else {
             message = "<strong>"+channel+"</strong> enabled slow mode";
           }

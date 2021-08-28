@@ -33,13 +33,13 @@
   <div class="card-body p-0 m-0 border-top-0 border-trans">
     <div class="row p-0 m-0 border border-dark rounded-0 bg-dark">
       <div class="col-2 row p-0 m-0 bg-dark">
-        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.soundBoardEnabled "info" "secondary"}} @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
+        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.panelState.soundBoardEnabled "info" "secondary"}} @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
           {{on-key "ctrl+KeyM" this.soundboardToggle}}  
-          <FaIcon @icon={{if this.soundBoardEnabled "volume-up" "volume-mute"}} />
+          <FaIcon @icon={{if this.panelState.soundBoardEnabled "volume-up" "volume-mute"}} />
         </BsButton>     
-        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if @stream.requests (if this.queueToFile "warning" "secondary") "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
+        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if @stream.requests (if this.panelState.queueToFile "warning" "secondary") "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
           {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
-          <FaIcon @icon={{if @stream.requests (if this.queueToFile "file-alt" "file") "file"}} />
+          <FaIcon @icon={{if @stream.requests (if this.panelState.queueToFile "file-alt" "file") "file"}} />
         </BsButton>
       </div>
       <div class="col row p-0 m-0 rounded-0 bg-dark">
@@ -70,15 +70,15 @@
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
           {{#if @stream.events}}
-            <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftTop}}>
-              <FaIcon @icon={{if this.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            <div role="button" class="{{if this.panelState.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftTop}}>
+              <FaIcon @icon={{if this.panelState.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
             </div>
           {{else}}
-            <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
+            <div role="button" class="{{if this.panelState.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
           {{/if}}
           {{#if this.requests}}
-            <div role="button" class="{{if this.extraPanRight (if this.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
-              <FaIcon @icon={{if this.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            <div role="button" class="{{if this.panelState.extraPanRight (if this.panelState.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
+              <FaIcon @icon={{if this.panelState.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
             </div>
           {{/if}}
         </div>
@@ -86,23 +86,23 @@
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <EmberDragula class="row flex-fill d-flex h-100 mx-0 px-0 overflow-hidden" as |d|>
           <div role="button" class="h-100 d-flex border alert-secondary float-end w-auto px-0" {{on "click" this.toggleExtraPanLeft}}>
-            <span class="d-block align-self-center"><FaIcon @icon={{if this.extraPanLeft "grip-lines-vertical" "ellipsis-v"}} /></span>
+            <span class="d-block align-self-center"><FaIcon @icon={{if this.panelState.extraPanLeft "grip-lines-vertical" "ellipsis-v"}} /></span>
           </div>
-         <div class="{{if this.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
-          <div class="{{if this.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
-              <div class="row m-0 p-0 {{if @stream.events (if this.extraPanLeftTop (if this.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
+         <div class="{{if this.panelState.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
+          <div class="{{if this.panelState.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
+              <div class="row m-0 p-0 {{if @stream.events (if this.panelState.extraPanLeftTop (if this.panelState.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
                 <d.Container class="col h-100 border m-0 p-0">
                    {{#if @stream.events}}
-                      <div id="events" class="row {{unless this.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                        <div class="col {{unless this.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
+                      <div id="events" class="row {{unless this.panelState.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                        <div class="col {{unless this.panelState.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                           <div class="row bg-secondary text-light">
                             <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Events</h6></div>
                             <BsButtonGroup class="col-auto px-0" as |bg|>
-                              <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
+                              <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.panelState.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
                             </BsButtonGroup>
                           </div>                          
-                          <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanevents}}>
-                            {{#unless this.cpanevents}}                                                          
+                          <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.panelState.cpanevents}}>
+                            {{#unless this.panelState.cpanevents}}                                                          
                               <div class="col-md eventsframe" {{scroll-position position=this.scrollEventsPosition relative=true}} id="eventlist">
                                 {{#each this.events as |event|}}
                                   <div class="alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
@@ -120,18 +120,18 @@
                     {{/if}}
                 </d.Container>
               </div>          
-            <div class="row m-0 p-0 {{if this.extraPanLeftBottom (if this.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
+            <div class="row m-0 p-0 {{if this.panelState.extraPanLeftBottom (if this.panelState.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
               <d.Container class="col h-100 border m-0 p-0">
-                <div id="chat" class="row {{unless this.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                  <div class="col {{unless this.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
+                <div id="chat" class="row {{unless this.panelState.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                  <div class="col {{unless this.panelState.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
                     <div class="row  bg-secondary text-light">
                       <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Recent messages</h6></div>
                       <BsButtonGroup class="col-auto px-0" as |bg|>
-                        <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "messages"}} ><FaIcon @icon="{{if this.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
+                        <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "messages"}} ><FaIcon @icon="{{if this.panelState.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
                       </BsButtonGroup>
                     </div>
-                    <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanmessages}}>
-                      {{#unless this.cpanmessages}}
+                    <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.panelState.cpanmessages}}>
+                      {{#unless this.panelState.cpanmessages}}
                         <div class="col-md-12 chatframe" {{scroll-position position=this.scrollPosition relative=false}}>
                           {{#each this.messages as |message|}}
                             <div class="row" id="{{message.id}}">
@@ -157,20 +157,20 @@
             {{on-key "ctrl+KeyQ" this.modNotPressed event="keyup"}}
             <div class={{if this.overlayLoader "d-none"}}></div>
           {{/if}}
-          <div class="{{if this.requests (if this.extraPanRight (if this.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
-            <div class="row m-0 p-0 {{if this.extraPanRightTop (if this.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
+          <div class="{{if this.requests (if this.panelState.extraPanRight (if this.panelState.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
+            <div class="row m-0 p-0 {{if this.panelState.extraPanRightTop (if this.panelState.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
               <d.Container class="col h-100 m-0 p-0"> 
                 {{#if this.requests}}
-                  <div id="pending" class="row {{unless this.cpanpending "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                    <div class="col {{unless this.cpanpending "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
+                  <div id="pending" class="row {{unless this.panelState.cpanpending "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                    <div class="col {{unless this.panelState.cpanpending "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
                         <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Songs pending</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
                           <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "pending"}} ><FaIcon @icon="{{if this.cpanpending "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
                       </div>
-                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanpending}}>
-                        {{#unless this.cpanpending}}
+                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.panelState.cpanpending}}>
+                        {{#unless this.panelState.cpanpending}}
                           <div class="col-md queueframe" {{scroll-position position=this.scrollPendingPosition relative=true}} id="songqueue">
                             {{#each this.pendingSongs as |pendingsong|}}
                               <div id={{pendingsong.id}} role="button" {{on "click" (fn this.requestStatus pendingsong)}} class="alert-info d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
@@ -189,19 +189,19 @@
                 {{/if}}
               </d.Container>
             </div>
-            <div class="row m-0 p-0 {{if this.extraPanRightBottom (if this.extraPanRightTop "h-50" "h-100") "d-none"}} border">
+            <div class="row m-0 p-0 {{if this.panelState.extraPanRightBottom (if this.panelState.extraPanRightTop "h-50" "h-100") "d-none"}} border">
               <d.Container class="col h-100 m-0 p-0"> 
                 {{#if this.requests}}
-                  <div id="played" class="row {{unless this.cpanplayed "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                    <div class="col {{unless this.cpanplayed "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
+                  <div id="played" class="row {{unless this.panelState.cpanplayed "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                    <div class="col {{unless this.panelState.cpanplayed "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
                         <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Songs played</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
-                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "played"}} ><FaIcon @icon="{{if this.cpanplayed "window-maximize" "window-minimize"}}" /></bg.button>
+                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "played"}} ><FaIcon @icon="{{if this.panelState.cpanplayed "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
                       </div>
-                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.cpanplayed}}>
-                        {{#unless this.cpanplayed}}
+                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.panelState.cpanplayed}}>
+                        {{#unless this.panelState.cpanplayed}}
                           <div class="col-md queueframe" {{scroll-position position=this.scrollPlayedPosition relative=true}}>
                             {{#each this.playedSongs as |playedsong|}}
                               <div id={{playedsong.id}} role="button" {{on "click" (fn this.requestStatus playedsong)}} {{on-key "right" (fn this.backToQueue playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
@@ -222,22 +222,22 @@
             </div>
           </div>
           <div role="button" class="h-100 d-flex border alert-secondary float-start" {{on "click" this.toggleExtraPanRight}}>
-            <span class="d-block align-self-center"><FaIcon @icon={{if this.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
+            <span class="d-block align-self-center"><FaIcon @icon={{if this.panelState.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
           </div>
         </EmberDragula>
       </div>
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
           {{#if @stream.events}}
-            <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftBottom}}>
-              <FaIcon @icon={{if this.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            <div role="button" class="{{if this.panelState.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftBottom}}>
+              <FaIcon @icon={{if this.panelState.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
             </div>
           {{else}}
-            <div role="button" class="{{if this.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
+            <div role="button" class="{{if this.panelState.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
           {{/if}}
           {{#if this.requests}}
-            <div role="button" class="{{if this.extraPanRight (if this.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
-              <FaIcon @icon={{if this.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            <div role="button" class="{{if this.panelState.extraPanRight (if this.panelState.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
+              <FaIcon @icon={{if this.panelState.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
             </div>
           {{/if}}
         </div>

@@ -3,15 +3,12 @@ import { action } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
-import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import { compare } from '@ember/utils';
 import PapaParse from 'papaparse';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
 
 export default class PbCommandsComponent extends Component {
-  @service csv;
   
   commandsSorting = Object.freeze(['date:desc']);
   
@@ -60,21 +57,17 @@ export default class PbCommandsComponent extends Component {
     }).then((path) => {
       if(path != null){
         readTextFile(path).then((text)=>{
-          let reference = ["name","type","active","admin","mod","vip","sub","cooldown","timer","response","soundfile","volume"];
+          let reference = '"name","type","active","admin","mod","vip","sub","cooldown","timer","response","soundfile","volume"';
 
-          let rows = PapaParse.parse(text,{header: true, skipEmptyLines: true}).data;
+          let rows = PapaParse.parse(text,{ delimiter: ',', header: true, quotes: false, quoteChar: '"', skipEmptyLines: true }).data;
           
-          let csvfields = text.split('\r\n').slice(0,1).toString().split(',');
-          console.log(reference);
-          console.log(csvfields);
+          let csvfields = text.split('\r\n').slice(0,1);
           
           // We check if the structure is the same.
-          if (compare(csvfields, reference) === 0){
-            // alert(this.csvfields);
+          if (csvfields.toString() === reference){
             this.importcontent = rows;
             
             this.importcontent.forEach((command)=>{
-              console.log(command);
               this.args.importCommands(command);
             });      
           } else {
@@ -86,18 +79,25 @@ export default class PbCommandsComponent extends Component {
   }
   
   @action commandExportFiltered() {
-    this.filteredContent;
     var csvdata = [];
-    if (this.filteredContent !== 0){
-      let header = ["name","type","active","admin","mod","vip","sub","cooldown","timer","response","soundfile","volume"];
+    if (this.filteredContent.length > 0){
+      let header = ['name','type','active','admin','mod','vip','sub','cooldown','timer','response','soundfile','volume'];
       csvdata.push(header);
       this.filteredContent.forEach((command) => {
         let csvrow = [command.name, command.type, command.active, command.admin, command.mod, command.vip, command.sub, command.cooldown, command.timer, command.response, command.soundfile, command.volume];
         csvdata.push(csvrow);
       });
+      
+      csvdata = PapaParse.unparse(csvdata, { delimiter: ',', header: true, quotes: true, quoteChar: '"' });        
+
+      let { document, URL } = window;
+      let anchor = document.createElement('a');
+      anchor.download = 'commands.csv';
+      anchor.href = URL.createObjectURL(new Blob([csvdata], { type: 'text/csv' }));
+
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
     }
-    
-    //csvdata = PapaParse.unparse(this.filteredContent,{header: true, skipEmptyLines: true,	quoteChar: '"',	escapeChar: '"',	delimiter: ",", newline: "\r\n"});
-    this.csv.export(csvdata, {fileName: 'commands.csv', autoQuote: true, withSeparator: false});
   }
 }

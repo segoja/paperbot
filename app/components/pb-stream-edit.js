@@ -13,6 +13,7 @@ export default class PbStreamEditComponent extends Component {
   @service twitchChat;
   @service globalConfig;
   @service audio;
+  @service panelState;
 
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.songqueue') isQueueEmpty;
@@ -34,8 +35,6 @@ export default class PbStreamEditComponent extends Component {
   @tracked msglist = [];
   @tracked songqueue = [];
   
-  @tracked soundBoardEnabled = false;
-
   queueAscSorting = Object.freeze(['timestamp:asc']);
  
   @sort (
@@ -320,7 +319,7 @@ export default class PbStreamEditComponent extends Component {
     // this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.queueToFile && this.args.stream.requests){
+    if(this.panelState.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -355,7 +354,7 @@ export default class PbStreamEditComponent extends Component {
   } 
   
   @action fileContent(pendingSongs){
-    if (this.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('length') != undefined && this.args.stream.requests){
+    if (this.panelState.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('length') != undefined && this.args.stream.requests){
       let pathString = this.globalConfig.config.overlayfolder;
       if(pathString.substr(pathString.length - 1) === "\\"){
         pathString = pathString.slice(0, -1)+'\\queue.html';
@@ -466,7 +465,7 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.queueToFile && this.args.stream.requests){
+    if(this.panelState.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   } 
@@ -479,7 +478,7 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.queueToFile && this.args.stream.requests){
+    if(this.panelState.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -499,7 +498,7 @@ export default class PbStreamEditComponent extends Component {
       this.scrollPendingPosition = 0;
       this.fileContent(this.pendingSongs);
     }
-    if(this.queueToFile && this.args.stream.requests){
+    if(this.panelState.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -517,112 +516,83 @@ export default class PbStreamEditComponent extends Component {
       this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
     }
-    if(this.queueToFile && this.args.stream.requests){
+    if(this.panelState.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
   // Soundboard toggle
   @action soundboardToggle(){
-    this.soundBoardEnabled = !this.soundBoardEnabled;
-    if(this.soundBoardEnabled === false){
+    this.panelState.soundBoardEnabled = !this.panelState.soundBoardEnabled;
+    if(this.panelState.soundBoardEnabled === false){
       if(this.twitchChat.lastSoundCommand != null){
         this.twitchChat.lastSoundCommand.stop();
       }
     }
-    this.twitchChat.soundBoardEnabled = this.soundBoardEnabled;    
+    this.twitchChat.soundBoardEnabled = this.panelState.soundBoardEnabled;    
   }
   
   
   // Pannels interaction
-  @tracked cpanpending = false;
-  @tracked cpanplayed = false;
-  @tracked cpanmessages = false;
-  @tracked cpanevents = false;
   
   @action closePan(pannel){
     if (pannel === "pending"){
-      this.cpanpending = !this.cpanpending;
+      this.panelState.cpanpending = !this.panelState.cpanpending;
     }
     if (pannel === "played"){
-      this.cpanplayed = !this.cpanplayed;
+      this.panelState.cpanplayed = !this.panelState.cpanplayed;
     } 
     if (pannel === "messages"){
-      this.cpanmessages = !this.cpanmessages;
+      this.panelState.cpanmessages = !this.panelState.cpanmessages;
     }
     if (pannel === "events"){
-      this.cpanevents = !this.cpanevents;
+      this.panelState.cpanevents = !this.panelState.cpanevents;
     }      
   }
 
   @action togglePan(pannel){
     if (pannel === "pending"){
-      this.cpanpending = !this.cpanpending;
+      this.panelState.cpanpending = !this.panelState.cpanpending;
     }
     if (pannel === "played"){
-      this.cpanplayed = !this.cpanplayed;
+      this.panelState.cpanplayed = !this.panelState.cpanplayed;
     } 
     if (pannel === "messages"){
-      this.cpanmessages = !this.cpanmessages;
+      this.panelState.cpanmessages = !this.panelState.cpanmessages;
     }
     if (pannel === "events"){
-      this.cpanevents = !this.cpanevents;
+      this.panelState.cpanevents = !this.panelState.cpanevents;
     }    
   }
 
-  @tracked extraPanRight = true;
-
   @action toggleExtraPanRight() {
-    this.extraPanRight = !this.extraPanRight;
+    this.panelState.extraPanRight = !this.panelState.extraPanRight;
   }   
   
-  @tracked extraPanRightTop = true;
-
   @action toggleExtraPanRightTop() {
-    this.extraPanRightTop = !this.extraPanRightTop;
+    this.panelState.extraPanRightTop = !this.panelState.extraPanRightTop;
   }  
   
-  @tracked extraPanRightBottom = true;
-
   @action toggleExtraPanRightBottom() {
-    this.extraPanRightBottom = !this.extraPanRightBottom;
+    this.panelState.extraPanRightBottom = !this.panelState.extraPanRightBottom;
   }    
-  
-  
-  
-  
-  @tracked extraPanLeft = true;
 
   @action toggleExtraPanLeft() {
-    this.extraPanLeft = !this.extraPanLeft;
+    this.panelState.extraPanLeft = !this.panelState.extraPanLeft;
   }
   
-  @tracked extraPanLeftTop = true;
-
   @action toggleExtraPanLeftTop() {
-    this.extraPanLeftTop = !this.extraPanLeftTop;
+    this.panelState.extraPanLeftTop = !this.panelState.extraPanLeftTop;
   }  
   
-  @tracked extraPanLeftBottom = true;
-
   @action toggleExtraPanLeftBottom() {
-    this.extraPanLeftBottom = !this.extraPanLeftBottom;
-  }  
-
-  get noPanels(){
-    if(!this.extraPanLeft && !this.extraPanRight){
-      return true;
-    } else {
-      return false;
-    }
+    this.panelState.extraPanLeftBottom = !this.panelState.extraPanLeftBottom;
   }
 
-   
-  @tracked queueToFile = false; 
   @action queueWriter(){
     if(this.args.stream.requests && this.globalConfig.config.overlayfolder != ''){
-      this.queueToFile = !this.queueToFile;      
+      this.panelState.queueToFile = !this.panelState.queueToFile;      
     } else {
-      this.queueToFile = false;
+      this.panelState.queueToFile = false;
     }
   }
   

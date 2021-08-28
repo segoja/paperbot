@@ -4,7 +4,8 @@ import { inject as service } from '@ember/service';
 
 export default class SettingsRoute extends Route {
   @service store;
-
+  @service router;
+  
   model () {
     var store = this.store;
     return hash({
@@ -25,11 +26,10 @@ export default class SettingsRoute extends Route {
   redirect (model, transition) {
     if (transition.targetName === 'settings.index') {
       if (model.model.get('length') !== 0) {
-        // this.transitionTo('settings.config', model.filterBy('default', true).get('firstObject'));
         this.controllerFor('settings').isViewing = false;
-        this.transitionTo('settings.config', model.model.get('firstObject'));
+        this.router.transitionTo('settings.config', model.model.get('firstObject'));
       } else {
-        this.transitionTo('settings.config', this.store.createRecord('config', {id: 'myconfig', name: "Default settings", isdefault: true}));
+        this.router.transitionTo('settings.config', this.store.createRecord('config', {id: 'myconfig', name: "Default settings", isdefault: true}));
       }
     }
   }

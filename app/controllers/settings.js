@@ -14,7 +14,8 @@ export default class SettingsController extends Controller {
   @inject ('settings.config') config; 
   @service router;
   @service headData;
-
+  @service store;
+  
   queryParams= [
     {'queryParamsObj.page': 'page'},
     {'queryParamsObj.perPage': 'perPage'},

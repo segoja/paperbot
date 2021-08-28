@@ -11,7 +11,8 @@ PouchDB.plugin(auth);
 export default class ApplicationAdapter extends Adapter {
   @service cloudState;
   @service refreshIndicator;
-
+  @service store;
+  
   constructor() {
     super(...arguments);
 

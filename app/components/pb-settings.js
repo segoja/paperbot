@@ -3,14 +3,12 @@ import { action } from '@ember/object';
 import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
-import { inject as service } from '@ember/service';
-import FileReader from 'ember-file-upload/system/file-reader';
 import { tracked } from '@glimmer/tracking';
-import { compare } from '@ember/utils';
 import PapaParse from 'papaparse';
+import { dialog } from "@tauri-apps/api";
+import { readTextFile } from '@tauri-apps/api/fs';
 
 export default class PbSettingsComponent extends Component {
-  @service csv;
 
   settingsSorting = Object.freeze(['name']);
   
@@ -37,31 +35,31 @@ export default class PbSettingsComponent extends Component {
   
   @tracked importcontent;
   
-  @action configImport(file){
-    let reader = new FileReader();
-    reader.readAsText(file.blob).then((text) => {    
-      let reference = ['name','soundsfolder','couchdbuser','couchdbpassword','couchdburl','darkmode','isdefault'];
+  @action configImport(){
+    dialog.open({
+      directory: false,
+      filters: [{name: "csv file", extensions: ['csv']}]
+    }).then((path) => {
+      if(path != null){        
+        readTextFile(path).then((text)=>{      
+          let reference = '"name","soundsfolder","couchdbuser","couchdbpassword","couchdburl","darkmode","isdefault"';
 
-      let rows = PapaParse.parse(text,{header: true, skipEmptyLines: true}).data;
-      
-      let csvfields = text.split('\r\n').slice(0,1).toString().split(',');
-      console.log(reference);
-      console.log(csvfields);
-      
-      // We check if the structure is the same.
-      if (compare(csvfields, reference) === 0){
-        // alert(this.csvfields);
-        this.importcontent = rows;
-        
-        this.importcontent.forEach((config)=>{
-          console.log(config);
-          this.args.importConfigs(config);
-        });      
-      } else {
-        alert("Wrong column structure in the import csv file.");
+          let rows = PapaParse.parse(text,{ delimiter: ',', header: true, quotes: false, quoteChar: '"', skipEmptyLines: true }).data;
+          
+          let csvfields = text.split('\r\n').slice(0,1);
+          
+          // We check if the structure is the same.
+          if (csvfields.toString() === reference){
+            this.importcontent = rows;
+            
+            this.importcontent.forEach((song)=>{
+              this.args.importSongs(song);
+            });      
+          } else {
+            alert("Wrong column structure in the import csv file.");
+          }
+        });
       }
-    }, function (err) {
-      console.error(err);
     });
   }
     
@@ -69,16 +67,24 @@ export default class PbSettingsComponent extends Component {
   @action configExportFiltered() {
     this.filteredContent;
     var csvdata = [];
-    if (this.filteredContent !== 0){
+    if (this.filteredContent.length > 0){
       let header = ['name','soundsfolder','couchdbuser','couchdbpassword','couchdburl','darkmode','isdefault'];
       csvdata.push(header);
       this.filteredContent.forEach((config) => {
         let csvrow = [config.name,config.soundsfolder,config.couchdbuser,config.couchdbpassword,config.couchdburl,config.darkmode,config.isdefault];
         csvdata.push(csvrow);
       });
-    }
+      
+      csvdata = PapaParse.unparse(csvdata, { delimiter: ',', header: true, quotes: true, quoteChar: '"' });        
 
-      //csvdata = PapaParse.unparse(this.filteredContent,{header: true, skipEmptyLines: true,	quoteChar: '"',	escapeChar: '"',	delimiter: ",", newline: "\r\n"});
-      this.csv.export(csvdata, {fileName: 'settings.csv', autoQuote: true, withSeparator: false});
+      let { document, URL } = window;
+      let anchor = document.createElement('a');
+      anchor.download = 'settings.csv';
+      anchor.href = URL.createObjectURL(new Blob([csvdata], { type: 'text/csv' }));
+
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+    }
   }
 }

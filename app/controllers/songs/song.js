@@ -2,15 +2,15 @@ import Controller, { inject }  from '@ember/controller';
 import { action } from "@ember/object";
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import { isEmpty } from '@ember/utils';
 
 export default class SongController extends Controller {
   @inject songs;
   @service audio;
+  @service router;
     
   @action closeSong() {
     this.songs.isViewing = false;
-    this.transitionToRoute('songs');
+    this.roputer.transitionTo('songs');
   }
   
   @action editSong(){
@@ -18,7 +18,7 @@ export default class SongController extends Controller {
   
   @action saveAndReturnSong(){
     this.saveSong();
-    this.transitionToRoute('songs');
+    this.router.transitionTo('songs');
   }
 
   @tracked slsong;
@@ -26,7 +26,8 @@ export default class SongController extends Controller {
   @action saveSong () {
     console.log(this.slsong);
     // this.model.remoteid = this.slsong.id;
-    this.model.save().then((updatedmodel)=>{  
+    this.model.save().then((updatedmodel)=>{
+      console.log(updatedmodel);
       /*this.slsong.set('title',updatedmodel.title);
       this.slsong.set('artist',updatedmodel.artist);
       this.slsong.set('songtype',updatedmodel.type);
@@ -49,7 +50,7 @@ export default class SongController extends Controller {
   @action deleteSong() {    
     this.model.destroyRecord().then(() => {
       this.songs.isViewing = false;
-      this.transitionToRoute('songs');
+      this.router.transitionTo('songs');
     });
   }
 }

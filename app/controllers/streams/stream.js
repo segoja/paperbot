@@ -7,6 +7,7 @@ import { fs } from "@tauri-apps/api";
 export default class StreamController extends Controller {
   @inject streams;
   @service router;
+  @service store;
   
   @tracked isEditing;
 

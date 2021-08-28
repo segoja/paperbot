@@ -4,7 +4,7 @@ import { inject as service } from '@ember/service';
 
 export default class StreamsRoute extends Route {
   @service store;
-
+  @service router;
   model () {
     var store = this.store;
     return hash({
@@ -25,7 +25,7 @@ export default class StreamsRoute extends Route {
   redirect (model, transition) {
     if (transition.targetName === 'streams.index') {
       if (this.controllerFor('streams').lastStream) {
-        this.transitionTo('streams.stream', this.controllerFor('streams').lastStream);
+        this.router.transitionTo('streams.stream', this.controllerFor('streams').lastStream);
       } 
     }
   }

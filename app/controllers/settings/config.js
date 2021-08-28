@@ -9,6 +9,7 @@ export default class ConfigController extends Controller {
   @service router;
   @service lightControl;
   @service globalConfig;
+  @service store;
 
   @tracked isEditing;
 
