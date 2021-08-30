@@ -28,7 +28,12 @@
           <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="vip" />
         </div>
       </div>
-      <form.element @controlType="textarea" @label="Response" class="pb-2" placeholder="Type the command response..." @property="response" required /> 
+      <div class="form-group row pb-2">
+        <label class="col-md-4">Response:</label>    
+        <div class="col-sm">
+          <Textarea @value={{@command.response}} placeholder="Type the command response..." class="form-control"/>
+        </div>
+      </div>
       <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
         <div class="input-group">
           <div class="input-group-prepend">

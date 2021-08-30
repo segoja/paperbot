@@ -12,7 +12,7 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 
 export default class TwitchChatService extends Service {
   @service audio;
- 
+
   @tracked botclient;
   @tracked chatclient;
 
@@ -66,9 +66,19 @@ export default class TwitchChatService extends Service {
   @tracked channel = '';
   @tracked botUsername = '';
   @tracked botPassword = '';
+  @tracked chatUsername = '';
+
+
+  get sameClient(){
+    if(this.chatUsername === this.botUsername){
+      return true;
+    }
+    return false;
+  }
   
   @tracked botConnected = false;
   @tracked chatConnected = false;
+  
   @tracked chanId;
   @tracked commands = [];
   get commandlist(){
@@ -129,7 +139,23 @@ export default class TwitchChatService extends Service {
       if(this.botConnected === true){
         this.botclient.disconnect();
       }
+      if(this.chatUsername === options.identity.username.toString() && this.chatConnected){
+        console.log("chat client is the same of the chat, enabling bot...");
+        this.botConnected = true;
+      }
+    }
+    
+    if(clientType === "chat"){
+      if(this.chatConnected === true){
+        this.chatclient.disconnect();
+      }
+      if(this.botUsername === options.identity.username.toString() && this.botConnected){
+        console.log("chat client is the same of the bot, enabling chat...");
+        this.chatConnected = true;
+      }
+    }
       
+    if(!this.botConnected && clientType === "bot"){      
       // this.channel = options.channels.toString();
       this.botUsername = options.identity.username.toString();
       this.botPassword = options.identity.password.replace(/oauth:/g, '');
@@ -151,19 +177,19 @@ export default class TwitchChatService extends Service {
           return false;
         }
       );
+      
       if(this.botConnected){
         this.botclient.join(this.channel);
         this.superHandler(this.botclient);
         this.twitchNameToUser(this.channel);
         console.log(this.badgespack);
       }
+      
       return this.botConnected;
     }
+    
     // We check what kind of client is connecting
-    if(clientType === "chat"){
-      if(this.chatConnected === true){
-        this.chatclient.disconnect();
-      }
+    if(!this.chatConnected && clientType === "chat"){
       // this.channel = options.channels.toString();
       this.chatclient = new tmi.client(options);
       // Register our event handlers (defined below)
@@ -227,12 +253,18 @@ export default class TwitchChatService extends Service {
   async disconnectChat(){
     var isDisconnected = false;
     if(this.chatConnected === true){
-      this.chatclient.disconnect().then(() => {
+      if(this.sameClient){
         this.chatConnected = false;
-        this.channel = '';
         isDisconnected = true;
-        console.log("The chat client got disconnected!");        
-      });
+        console.log("The chat has been disabled.");   
+      } else {
+        this.chatclient.disconnect().then(() => {
+          this.chatConnected = false;
+          this.channel = '';
+          isDisconnected = true;
+          console.log("The chat client got disconnected!");        
+        });
+      }
     }
    return isDisconnected;
   }

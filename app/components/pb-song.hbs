@@ -19,8 +19,12 @@
           <form.element @controlType="checkbox" @label="" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="active" />
         </div>
       </div>
-      <form.element @controlType="textarea" @label="Keywords" class="pb-2" placeholder="Type words or phrases related to the song" @property="keywords" /> 
-
+      <div class="form-group row pb-2">
+        <label class="col-md-4">Keywords:</label>    
+        <div class="col-sm">
+          <Textarea @value={{@song.keywords}} placeholder="Type words or phrases related to the song" class="form-control"/>
+        </div>
+      </div>
       <div class="form-group row pb-2">
         <label class="col-md-4">Permissions</label>
         <div class="col-sm">

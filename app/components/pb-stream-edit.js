@@ -184,6 +184,9 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.audiocommands = this.audiocommandslist;
     this.twitchChat.commands = this.args.commands.filterBy('active', true);
     this.twitchChat.songs = this.args.songs.filterBy('active', true);
+    this.twitchChat.chatUsername = this.args.stream.botName || '';
+    this.twitchChat.botUsername = this.args.stream.chatName || '';
+
     
     if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
       this.eventsExternal.token = this.globalConfig.config.externaleventskey;
@@ -256,12 +259,13 @@ export default class PbStreamEditComponent extends Component {
   @action disconnectChat(){
     this.twitchChat.disconnectChat().then(
       function(){
-        console.log("Chat client disconnected!");    
-        // 
-      }, 
+        if(!this.twitchChat.sameClient){
+          console.log("Chat client disconnected!");
+        }
+      }.bind(this), 
       function(){
         console.log("Error disconnecting!");        
-      }
+      }.bind(this)
     );
   }
 
@@ -378,7 +382,11 @@ export default class PbStreamEditComponent extends Component {
   }
   
   @action sendMessage() {
-    this.twitchChat.chatclient.say(this.twitchChat.channel, this.message);
+    if(!this.twitchChat.sameClient){
+      this.twitchChat.chatclient.say(this.twitchChat.channel, this.message);
+    } else {
+      this.twitchChat.botclient.say(this.twitchChat.channel, this.message);
+    }
     this.message = "";
   }  
 

@@ -18,9 +18,7 @@ export default class StreamModel extends Model {
   @belongsTo('client', { inverse: 'botclientstreams', save: true }) botclient;
   @belongsTo('client', { inverse: 'chatclientstreams', save: true }) chatclient;
   
-  @readOnly('botuser.username') botName;
-  @readOnly('chatuser.username') chatName;
+  @readOnly('botclient.username') botName;
+  @readOnly('chatclient.username') chatName;
 
-  @readOnly('botuser.username') botName;
-  @readOnly('chatuser.username') chatName;
 }

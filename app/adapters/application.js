@@ -4,9 +4,6 @@ import { Adapter } from 'ember-pouch';
 import { assert } from '@ember/debug';
 import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
-import auth from 'pouchdb-authentication';
-
-PouchDB.plugin(auth);
 
 export default class ApplicationAdapter extends Adapter {
   @service cloudState;
