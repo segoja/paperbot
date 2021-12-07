@@ -7,10 +7,11 @@ export default class SongController extends Controller {
   @inject songs;
   @service audio;
   @service router;
+  @service currentUser;
     
   @action closeSong() {
-    this.songs.isViewing = false;
-    this.roputer.transitionTo('songs');
+    this.currentUser.isViewing = false;
+    this.router.transitionTo('songs');
   }
   
   @action editSong(){
@@ -49,7 +50,7 @@ export default class SongController extends Controller {
   
   @action deleteSong() {    
     this.model.destroyRecord().then(() => {
-      this.songs.isViewing = false;
+      this.currentUser.isViewing = false;
       this.router.transitionTo('songs');
     });
   }

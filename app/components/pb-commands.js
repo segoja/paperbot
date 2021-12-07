@@ -7,8 +7,10 @@ import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
+import { inject as service } from '@ember/service';
 
 export default class PbCommandsComponent extends Component {
+  @service currentUser;
   
   commandsSorting = Object.freeze(['date:desc']);
   

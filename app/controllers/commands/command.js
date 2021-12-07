@@ -6,9 +6,10 @@ export default class CommandController extends Controller {
   @inject commands;
   @service router;
   @service audio;
+  @service currentUser;
     
   @action closeCommand() {
-    this.commands.isViewing = false;
+    this.currentUser.isViewing = false;
     this.router.transitionTo('commands');      
   }
   
@@ -46,7 +47,7 @@ export default class CommandController extends Controller {
     }
     
     this.model.destroyRecord().then(() => {
-      this.commands.isViewing = false;
+      this.currentUser.isViewing = false;
       this.router.transitionTo('commands');
     });
   }

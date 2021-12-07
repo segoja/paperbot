@@ -4,6 +4,7 @@ import { inject as service } from '@ember/service';
 
 export default class StreamRoute extends Route {
   @service store;
+  @service currentUser;
   
   async model (params) {
     return this.store.findRecord('stream', params.stream_id);
@@ -12,7 +13,7 @@ export default class StreamRoute extends Route {
   setupController (controller, model) { 
     super.setupController(controller, model);
     if (this.controllerFor('streams').get('lastStream')){
-      this.controllerFor('streams').set('isViewing', true);
+      this.currentUser.isViewing = true;
     }
   }
   afterModel(model){

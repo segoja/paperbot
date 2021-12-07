@@ -15,6 +15,7 @@ export default class SettingsController extends Controller {
   @service router;
   @service headData;
   @service store;
+  @service currentUser;
   
   queryParams= [
     {'queryParamsObj.page': 'page'},
@@ -24,8 +25,6 @@ export default class SettingsController extends Controller {
   
   queryParamsObj = new QueryParamsObj();
   
-  @tracked isViewing;
-
   @action createConfig() {
     let newConfig = this.store.createRecord('config');
     this.router.transitionTo('settings.config', newConfig.save());
@@ -51,7 +50,7 @@ export default class SettingsController extends Controller {
 
   @action gridDeleteConfig(config) {
     config.destroyRecord().then(() => {
-      this.isViewing = false;
+      this.currentUser.isViewing = false;
     });
   } 
    

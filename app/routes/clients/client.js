@@ -4,14 +4,15 @@ import { inject as service } from '@ember/service';
 
 export default class ClientRoute extends Route {
   @service store;
+  @service currentUser;
   
   async model (params) {
     return this.store.findRecord('client', params.client_id);
   }
   beforeModel(){
-    this.controllerFor('clients').isViewing = true;
+    this.currentUser.isViewing = true;
   }
   @action willTransition(){
-    this.controllerFor('clients').isViewing = false;
+    this.currentUser.isViewing = false;
   }
 }

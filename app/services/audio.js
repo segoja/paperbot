@@ -8,7 +8,7 @@ export default class AudioService extends audio {
   // We need to override _load in order to load audio files from the computer in tauri.
   
   _load(name, src, type) {
-    const audioContext = this.get('audioContext');
+    const audioContext = this.audioContext;
     const register = this._getRegisterFor(type);
  
     if (register.has(name)) {

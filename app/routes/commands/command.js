@@ -4,16 +4,17 @@ import { inject as service } from '@ember/service';
 
 export default class CommandRoute extends Route {
   @service store;
+  @service currentUser;
   
   async model (params) {
     return this.store.findRecord('command', params.command_id);
   }
   
   beforeModel(){
-    this.controllerFor('commands').isViewing = true;
+    this.currentUser.isViewing = true;
   }
   
   @action willTransition(){
-    this.controllerFor('commands').isViewing = false;
+    this.currentUser.isViewing = false;
   }
 }

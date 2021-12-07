@@ -10,12 +10,13 @@ export default class ConfigController extends Controller {
   @service lightControl;
   @service globalConfig;
   @service store;
+  @service currentUser;
 
   @tracked isEditing;
 
   @action closeConfig() {
     this.isEditing = false;
-    this.settings.isViewing = false;
+    this.currentUser.isViewing = false;
     this.router.transitionTo('settings');      
   }
   

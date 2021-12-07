@@ -29,7 +29,6 @@ html,body{
 @media (min-width: 576px){
   .pending {
     min-height: 50%!important;
-    height: calc(inherit-50%)!important;
     max-height: 100%!important;
   }
 }

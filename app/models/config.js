@@ -10,6 +10,8 @@ export default class ConfigModel extends Model {
 
   @attr('string', {defaultValue: ""}) externalevents;  
   @attr('string', {defaultValue: ""}) externaleventskey;
+  
+  @attr('string', {defaultValue: ""}) lastPlayed;
 
   @attr('string', {defaultValue: ""}) defchannel;
 

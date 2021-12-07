@@ -14,6 +14,7 @@ export default class PbStreamEditComponent extends Component {
   @service globalConfig;
   @service audio;
   @service panelState;
+  @service currentUser;
 
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.songqueue') isQueueEmpty;
@@ -33,18 +34,17 @@ export default class PbStreamEditComponent extends Component {
   @tracked message = "";
   @tracked eventlist = [];  
   @tracked msglist = [];
-  @tracked songqueue = [];
   
   queueAscSorting = Object.freeze(['timestamp:asc']);
  
   @sort (
-    'songqueue',
+    'currentUser.songqueue',
     'queueAscSorting'
   ) arrangedAscQueue;
   
   queueDescSorting = Object.freeze(['timestamp:desc']);    
   @sort (
-    'songqueue',
+    'currentUser.songqueue',
     'queueDescSorting'
   ) arrangedDescQueue;
   
@@ -130,7 +130,7 @@ export default class PbStreamEditComponent extends Component {
     }
 
     this.msglist = this.twitchChat.messages;
-    this.songqueue = this.twitchChat.songqueue;
+    this.currentUser.songqueue = this.twitchChat.songqueue;
     this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     
@@ -308,7 +308,7 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.whisperlist = [];
       this.twitchChat.msglist = [];
       this.twitchChat.songqueue = [];    
-      this.songqueue = [];
+      this.currentUser.songqueue = [];
       this.msglist = [];
     }
   }
@@ -317,7 +317,7 @@ export default class PbStreamEditComponent extends Component {
   // message and updates both the chatlog and the song queue.
   @action msgGetter() {
     this.msglist = this.twitchChat.messages;    
-    this.songqueue = this.twitchChat.songqueue;
+    this.currentUser.songqueue = this.twitchChat.songqueue;
     this.scrollPosition = this.messages.get('length');
     // this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     // this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
@@ -402,8 +402,8 @@ export default class PbStreamEditComponent extends Component {
         }
       }
       if(this.isQueueEmpty === false){
-        if(this.songqueue != this.args.stream.songqueue){
-          this.args.stream.songqueue = this.songqueue;
+        if(this.currentUser.songqueue != this.args.stream.songqueue){
+          this.args.stream.songqueue = this.currentUser.songqueue;
         }
       }
       if(this.isEventsEmpty === false){
@@ -432,8 +432,8 @@ export default class PbStreamEditComponent extends Component {
         }
       }
       if(this.isQueueEmpty === false){
-        if(this.songqueue != this.args.stream.songqueue){
-          this.args.stream.songqueue = this.songqueue;
+        if(this.currentUser.songqueue != this.args.stream.songqueue){
+          this.args.stream.songqueue = this.currentUser.songqueue;
         }
       }
       if(this.isEventsEmpty === false){
@@ -473,10 +473,19 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
+    
+    if(this.pendingSongs.get('length') != 0){
+      this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
+    } else {
+      this.globalConfig.config.lastPlayed = '';
+    }
+    this.globalConfig.config.save();
+    
     if(this.panelState.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
-  } 
+  }
+  
   @action backToQueue(song) {    
     // We use set in order to make sure the context updates properly.
     if(song.processed === true){
@@ -505,11 +514,18 @@ export default class PbStreamEditComponent extends Component {
       this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
       this.fileContent(this.pendingSongs);
+      if(this.pendingSongs.get('length') != 0){
+        this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
+      } else {
+        this.globalConfig.config.lastPlayed = '';
+      }
+      this.globalConfig.config.save();
     }
     if(this.panelState.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
+  
   @action prevSong(){
     if(this.playedSongs.get('length') != 0){
       // For selecting the last element of the array:
@@ -523,6 +539,12 @@ export default class PbStreamEditComponent extends Component {
       set(firstSong, 'processed', false);
       this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
+      if(this.pendingSongs.get('length') != 0){
+        this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
+      } else {
+        this.globalConfig.config.lastPlayed = '';
+      }
+      this.globalConfig.config.save();
     }
     if(this.panelState.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);

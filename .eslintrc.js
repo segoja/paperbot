@@ -28,18 +28,15 @@ module.exports = {
     // node files
     {
       files: [
-        '.ember-cli.js',
-        '.eslintrc.js',
-        /*'.prettierrc.js',*/
-        '.template-lintrc.js',
-        'ember-cli-build.js',
-        'testem.js',
-
-        'blueprints/*/index.js',
-        'config/**/*.js',
-
-        'lib/*/index.js',
-        'server/**/*.js',
+        './.eslintrc.js',
+        './.prettierrc.js',
+        './.template-lintrc.js',
+        './ember-cli-build.js',
+        './testem.js',
+        './blueprints/*/index.js',
+        './config/**/*.js',
+        './lib/*/index.js',
+        './server/**/*.js',
       ],
       excludedFiles: [
         'app/**',
@@ -51,9 +48,9 @@ module.exports = {
         browser: false,
         node: true,
       },
-      plugins: ['node'],
+      /* plugins: ['node'],
 
-      /* 
+      
         Build error if we extend with next line:
         extends: ['plugin:node/recommended'], 
       */

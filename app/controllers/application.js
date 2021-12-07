@@ -7,12 +7,12 @@ import { readTextFile } from '@tauri-apps/api/fs';
 
 export default class ApplicationController extends Controller {
   @service cloudState;
+  @service currentUser;
   @service audio;
   @service store;
   @service router;
   @service globalConfig;
-  @service lightControl;
-  
+  @service lightControl;  
   
   // We load the existing config or create a new one.  
   constructor() {
@@ -46,6 +46,16 @@ export default class ApplicationController extends Controller {
     });
     return isOnline;   
   }
+  
+  get updateLight(){
+    if(this.globalConfig.config.darkmode){
+      this.lightControl.toggleMode(true);
+      return true;
+    } else {
+      this.lightControl.toggleMode(false);
+      return false;
+    }
+  }  
   
   @action handleExport () {
     let adapter = this.store.adapterFor('application');
@@ -108,14 +118,24 @@ export default class ApplicationController extends Controller {
     });
   }
   
-  @action toggleMode(){    
-    if(this.globalConfig.config.isLoaded){
+  @action toggleMode(){
+    if(this.globalConfig.config.isLoaded && !this.globalConfig.config.isSaving){
       this.globalConfig.config.darkmode = !this.globalConfig.config.darkmode;
       this.globalConfig.config.save().then(()=>{
         this.lightControl.toggleMode(this.globalConfig.config.darkmode); 
       });
-    } else {
-      this.lightControl.toggleMode(!this.lightControl.isDark);
     }
+  }
+  
+  @action toggleMenu(){
+    this.currentUser.expandMenu = !this.currentUser.expandMenu;
+  }
+
+  @action toggleSubmenu(){
+    this.currentUser.expandSubmenu = !this.currentUser.expandSubmenu;
+  }
+  
+  @action closeMenu(){
+    this.currentUser.expandMenu = false;
   }
 }

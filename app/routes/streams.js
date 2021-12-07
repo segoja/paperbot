@@ -3,8 +3,10 @@ import { hash } from 'rsvp';
 import { inject as service } from '@ember/service';
 
 export default class StreamsRoute extends Route {
-  @service store;
   @service router;
+  @service store;
+  @service currentUser;
+  
   model () {
     var store = this.store;
     return hash({
@@ -15,19 +17,23 @@ export default class StreamsRoute extends Route {
     });
   }
 
-  setupController (controller, models) {
+  setupController(controller, models) {
     super.setupController(controller, models);
     controller.setProperties(models);
     
-    this.controllerFor('streams').set('isViewing', false);
+    this.currentUser.isViewing = false;
+  }
+
+  afterModel(){
+    this.currentUser.isViewing = false;
   }
 
   redirect (model, transition) {
-    if (transition.targetName === 'streams.index') {
+    /*if (transition.targetName === 'streams.index') {
       if (this.controllerFor('streams').lastStream) {
         this.router.transitionTo('streams.stream', this.controllerFor('streams').lastStream);
       } 
-    }
+    }*/
   }
   
 }

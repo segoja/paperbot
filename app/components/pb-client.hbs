@@ -19,7 +19,7 @@
         </label>
         <div class="col-md-8">
           <div class="input-group">
-            <Input @type={{if this.isMasked "password" "text"}} @value={{@client.oauth}} class="form-control" @placeholder="Paste your Oauth here including Oauth: "/>          
+            <Input @type={{if this.isMasked "password" "text"}} @value={{@client.oauth}} class="form-control" placeholder="Paste your Oauth here including Oauth: "/>          
             <div class="input-group-append">
               <button type="button" class="btn btn-outline-secondary border-form-control" {{on "click" this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></button>        
             </div>

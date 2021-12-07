@@ -9,15 +9,11 @@ export default class LightControlService extends Service {
   }
 
   // To turn on/of DarkReader:
-  toggleMode(status){
+  async toggleMode(status){
     if(status){
-      DarkReader.enable({
-          brightness: 100,
-          contrast: 100,
-          sepia: 0
-      });      
+      await DarkReader.enable({brightness: 100, contrast: 100, sepia: 0});      
     } else {
-      DarkReader.disable(); 
+      await DarkReader.disable(); 
     }
   }
 

@@ -15,6 +15,7 @@ export default class ClientController extends Controller {
   @inject ('clients.client') client;
   @service router;
   @service store;
+  @service currentUser;
   
   queryParams= [
     {'queryParamsObj.page': 'page'},
@@ -23,16 +24,13 @@ export default class ClientController extends Controller {
   ];
   
   queryParamsObj = new QueryParamsObj();
-  
-  @tracked isViewing;
 
   @action createClient() {
     let newclient = this.store.createRecord('client');
     this.client.isEditing = true;
     this.router.transitionTo('clients.client', newclient.save());
   }
-
-
+  
   @action importClients(client){
     let newClient = this.store.createRecord('client');
     newClient.set('username',client.username);
@@ -83,7 +81,7 @@ export default class ClientController extends Controller {
     //Wait for children to be destroyed then destroy the client      
     this.unlinkChildren(client).then((children)=>{
       client.destroyRecord().then(() => {
-        this.isViewing = false;
+        this.currentUser.isViewing = false;
         var prevchildId = null;
         children.map(async (child)=>{
           // We check for duplicated in the child list.

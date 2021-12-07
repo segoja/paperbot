@@ -16,6 +16,7 @@ export default class CommandsController extends Controller {
   @service router;
   @service audio;
   @service store;
+  @service currentUser;
 
   queryParams= [
     {'queryParamsObj.page': 'page'},
@@ -26,7 +27,6 @@ export default class CommandsController extends Controller {
   
   queryParamsObj = new QueryParamsObj();
 
-  @tracked isViewing;
   @tracked commandTypes = ['simple','parameterized','audio'];
 
   @action createCommand() {
@@ -82,7 +82,7 @@ export default class CommandsController extends Controller {
     }   
     
     command.destroyRecord().then(() => {
-      this.isViewing = false;
+      this.currentUser.isViewing = false;
     });
   }  
 }

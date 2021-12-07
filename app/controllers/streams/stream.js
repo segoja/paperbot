@@ -8,12 +8,13 @@ export default class StreamController extends Controller {
   @inject streams;
   @service router;
   @service store;
+  @service currentUser;
   
   @tracked isEditing;
 
   @action closeStream () {
     this.streams.lastStream = null;
-    this.streams.isViewing = false;
+    this.currentUser.isViewing = false;
     this.isEditing = false;
     this.router.transitionTo('streams.index');      
   }
@@ -119,7 +120,7 @@ export default class StreamController extends Controller {
     this.deleteClientLinks().then(()=>{
       this.model.destroyRecord().then(() => {
         this.streams.lastStream = null;
-        this.streams.isViewing = false;
+        this.currentUser.isViewing = false;
         this.isEditing = false;
         this.router.transitionTo('streams');
       });      

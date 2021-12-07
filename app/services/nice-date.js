@@ -1,6 +1,5 @@
-import Service from '@ember/service';
+import Service, { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
-import { inject as service } from '@ember/service';
 import moment from 'moment';
 
 export default class NiceDateService extends Service {

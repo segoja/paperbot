@@ -47,7 +47,7 @@ module.exports = function(defaults) {
     },
 
     'ember-bootstrap': {
-      'bootstrapVersion': 4,
+      'bootstrapVersion': 5,
       'importBootstrapCSS': false,
       'insertEmberWormholeElementToDom': false
     },
@@ -93,8 +93,18 @@ module.exports = function(defaults) {
       { transformation: 'amd', as: 'moment' }
     ]
   });
+  /*
+  app.import('node_modules/popper.js/dist/popper.min.js', {
+    using: [
+      { transformation: 'amd', as: 'popper' }
+    ]
+  });
 
-  // app.import('node_modules/bootstrap/dist/css/bootstrap.min.css');
 
+  app.import('node_modules/bootstrap/dist/js/bootstrap.min.js', {
+    using: [
+      { transformation: 'amd', as: 'bootstrap' }
+    ]
+  }); */
   return app.toTree();
 };

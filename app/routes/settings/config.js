@@ -4,6 +4,7 @@ import { inject as service } from '@ember/service';
 
 export default class ConfigRoute extends Route {
   @service store;
+  @service currentUser;
   
   async model (params) {
     // Using peekRecord the promise is instanctly solved, so we can do checks. wooooooo
@@ -11,7 +12,7 @@ export default class ConfigRoute extends Route {
   }  
   
   beforeModel(){
-    this.controllerFor('settings').isViewing = true;
+    this.currentUser.isViewing = true;
   }
 
   @action willTransition (transition) {

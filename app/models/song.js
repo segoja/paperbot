@@ -3,7 +3,8 @@ import { attr } from '@ember-data/model';
 
 export default class SongModel extends Model {
   @attr('string', {defaultValue: ""}) title;
-  @attr('string', {defaultValue: ""}) artist; 
+  @attr('string', {defaultValue: ""}) artist;
+  @attr('string', {defaultValue: ""}) lyrics;
   @attr('string', {defaultValue: ""}) type;   
   
   @attr('string', {defaultValue: ""}) keywords;

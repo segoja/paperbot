@@ -19,7 +19,7 @@
         </bg.button>
         <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
       {{/unless}}
-      {{!-- <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn @editStream}} disabled={{@isEditing}} ><FaIcon @icon="edit" /></bg.button>--}}
+      <bg.button @type="dark" class="rounded-0 border-0" @onClick={{fn this.showLyrics}} ><FaIcon @icon="edit" /></bg.button>
       <bg.button @type="dark" class="rounded-0 rounded-top-right border-0" @onClick={{fn @closeStream}}><FaIcon @icon="times" /></bg.button>
     </BsButtonGroup>
   </div>

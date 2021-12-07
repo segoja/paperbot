@@ -7,9 +7,11 @@ import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
+import { inject as service } from '@ember/service';
 
 export default class PbSongsComponent extends Component {
- 
+  @service currentUser;
+  
   songsSorting = Object.freeze(['date_added:asc']);
   
   @sort (
@@ -50,7 +52,7 @@ export default class PbSongsComponent extends Component {
     }).then((path) => {
       if(path != null){        
         readTextFile(path).then((text)=>{   
-          let reference = '"title","artist","type","account","active","admin","mod","vip","sub","date_added","last_played","times_requested","times_played","remoteid"';
+          let reference = '"title","artist","lyrics","type","account","active","admin","mod","vip","sub","date_added","last_played","times_requested","times_played","remoteid"';
 
           let rows = PapaParse.parse(text,{ delimiter: ',', header: true, quotes: false, quoteChar: '"', skipEmptyLines: true }).data;
           
@@ -74,10 +76,10 @@ export default class PbSongsComponent extends Component {
   @action songExportFiltered() {
     var csvdata = [];
     if (this.filteredContent.length > 0){
-      let header = ['title','artist','type','account','active','admin','mod','vip','sub','date_added','last_played','times_requested','times_played','remoteid'];
+      let header = ['title','artist','lyrics','type','account','active','admin','mod','vip','sub','date_added','last_played','times_requested','times_played','remoteid'];
       csvdata.push(header);
       this.filteredContent.forEach((song) => {
-        let csvrow = [song.title,song.artist,song.type,song.account,song.active,song.admin,song.mod,song.vip,song.sub,song.date_added,song.last_played,song.times_requested,song.times_played,song.remoteid];
+        let csvrow = [song.title,song.artist,song.lyrics,song.type,song.account,song.active,song.admin,song.mod,song.vip,song.sub,song.date_added,song.last_played,song.times_requested,song.times_played,song.remoteid];
         csvdata.push(csvrow);
       });
       

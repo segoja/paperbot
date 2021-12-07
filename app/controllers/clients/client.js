@@ -8,9 +8,10 @@ export default class ClientController extends Controller {
   @inject streams;
   @service router;
   @service globalConfig;
+  @service currentUser;
 
   @action closeClient() {
-    this.clients.isViewing = false;
+    this.currentUser.isViewing = false;
     this.router.transitionTo('clients');      
   }
   
@@ -64,7 +65,7 @@ export default class ClientController extends Controller {
     //Wait for children to be destroyed then destroy the client      
     this.unlinkChildren().then((children)=>{
       this.model.destroyRecord().then(() => {
-        this.clients.isViewing = false;
+        this.currentUser.isViewing = false;
         var prevchildId = null;
         children.map(async (child)=>{
           // We check for duplicated in the child list.

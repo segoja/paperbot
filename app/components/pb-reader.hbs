@@ -1,0 +1,29 @@
+<div class="row h-100 flex-fill m-0 p-0">
+  <div class="col-12 h-100 flex-fill p-0 m-0"> 
+      {{!-- song listing --}}
+      <div class="card h-100 flex-fill">
+        <div class="card-header">
+          <div class="row">
+            <PowerSelect @searchEnabled={{true}} @search={{this.searchSong}} @searchMessage="" @options="" @searchPlaceholder="Type a song" @selected={{this.selected}}  @searchClass="form-control w-100"  @allowClear={{true}} @onChange={{fn this.selectSong}} @placeholder="Select a song" as |song|>
+              <span>{{song.title}} {{#if song.artist}}- <span class="text-secondary">{{song.artist}}</span>{{/if}}</span>
+            </PowerSelect>  
+          </div>
+        </div>
+        <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
+          <div class="row mx-0 flex-fill listframe">
+              {{!-- Song content --}}
+              {{#if this.restore}}
+                {{#if this.currentSong}}
+                  <h2>{{this.currentSong.title}}</h2>
+                  <pre>{{this.currentSong.lyrics}}</pre>
+                {{/if}}
+              {{else}}
+                Reloading...
+              {{/if}}
+          </div>
+        </div>
+        <div class="card-footer py-0 my-0 px-2">
+        </div>
+      </div>
+  </div>
+</div>

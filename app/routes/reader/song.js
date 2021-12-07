@@ -9,7 +9,7 @@ export default class SongRoute extends Route {
   model (params) {
     return this.store.findRecord('song', params.song_id);   
   }
-    
+  
   beforeModel(){
     this.currentUser.isViewing = true;
     this.controllerFor('songs.song').slsong = null;    

@@ -1,5 +1,4 @@
-import Service from '@ember/service';
-import { inject as service } from '@ember/service';
+import Service, { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import tmi from 'tmi.js';
 import { htmlSafe } from '@ember/template';
@@ -12,6 +11,7 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 
 export default class TwitchChatService extends Service {
   @service audio;
+  @service globalConfig;
 
   @tracked botclient;
   @tracked chatclient;
@@ -432,7 +432,11 @@ export default class TwitchChatService extends Service {
                 emotes: tags['emotes'] ? tags['emotes'] : null,
                 processed: false,
               };
-              this.songqueue.push(this.lastsongrequest);              
+              this.songqueue.push(this.lastsongrequest);
+              if(this.songqueue.length > 0 && this.songqueue.length < 2 ){
+                this.globalConfig.config.lastPlayed = song;
+                this.globalConfig.config.save();
+              }
             } else {
               this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
             }

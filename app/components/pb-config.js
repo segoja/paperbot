@@ -23,5 +23,5 @@ export default class PbConfigComponent extends Component {
         config.overlayfolder = directory;
       }
     });
-  }
+  }  
 }

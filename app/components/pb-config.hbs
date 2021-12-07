@@ -2,7 +2,7 @@
   <div class="card-header bg-dark text-white row py-2 m-0 border-0 rounded-top">
     <div class="row col align-self-center"><h5 class="my-0">{{@config.name}}</h5></div>
     {{!-- <BsButtonGroup class="col-auto px-0 rounded" as |bg|>
-      <bg.button @type="secondary rounded-0" @onClick={{fn @editConfig}} disabled={{@isViewing}} ><FaIcon @icon="edit" /></bg.button>
+      <bg.button @type="secondary rounded-0" @onClick={{fn @editConfig}} disabled={{this.currentUser.isViewing}} ><FaIcon @icon="edit" /></bg.button>
       <bg.button @type="danger" @onClick={{fn @closeConfig}}><FaIcon @icon="times" /></bg.button>
     </BsButtonGroup> --}}
   </div>
@@ -86,7 +86,13 @@
           <div class="col-sm">
             <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check form-check-inline ps-0" @property="isdefault" required />
           </div>
-        </div> 
+        </div>
+        <div class="form-group row pb-2">
+          <label class="col-md-4">Last song played</label>
+          <div class="col-sm">
+            {{@config.lastPlayed}}
+          </div>
+        </div>
         <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>   
 
         <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Config saved!</span></div>

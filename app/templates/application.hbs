@@ -27,6 +27,9 @@
           <nav.item>
             <nav.link-to @route="songs.index">Songs</nav.link-to>
           </nav.item> 
+          <nav.item>
+            <nav.link-to @route="reader.index">Reader</nav.link-to>
+          </nav.item>           
         </navbar.nav>
         <navbar.nav class="ms-auto" as |nav|>
           <nav.item>
@@ -57,7 +60,7 @@
           </nav.dropdown>
           <nav.item>
             <span role="button" {{on "click" this.toggleMode}} class="nav-link {{if this.headData.darkMode "bulboff" "bulbon active"}}" title="{{if this.headData.darkMode "Dark mode" "Light mode"}}">
-              <FaIcon @icon="{{if this.headData.darkMode "lightbulb" "lightbulb"}}" />
+              <FaIcon @icon="{{if this.headData.darkMode "lightbulb" "lightbulb"}}" />{{this.updateLight}}
             </span>
           </nav.item>
         </navbar.nav>
