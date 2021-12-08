@@ -7,6 +7,9 @@ import { dialog } from "@tauri-apps/api";
 export default class PbConfigComponent extends Component {
   
   @tracked saving = false;
+  
+  // Tooltip hide delay
+  @tracked ttdelay = 1000;
 
   @action doneEditing() {  
     this.args.saveConfig();

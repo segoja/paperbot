@@ -1,72 +1,74 @@
 ﻿<HeadLayout />
 <div id="ember-bootstrap-wormhole"></div>
-<header class="m-0 p-0">
-  <BsNavbar
-    @type="dark"
-    class="px-0 px-md-3 my-0 py-1"
-    @backgroundColor="dark"
-    @collapsed={{true}}
-    @fluid={{true}}
-    @position="fixed-top"
-    @toggleBreakpoint="md"
-    @onCollapse={{fn (mut this.collapsed) true}}
-    @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
+{{#unless this.currentUser.hideMenu}}
+  <header class="m-0 p-0">
+    <BsNavbar
+      @type="dark"
+      class="px-0 px-md-3 my-0 py-1"
+      @backgroundColor="dark"
+      @collapsed={{true}}
+      @fluid={{true}}
+      @position="fixed-top"
+      @toggleBreakpoint="md"
+      @onCollapse={{fn (mut this.collapsed) true}}
+      @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
 
-      <div class="navbar-header">
-        {{navbar.toggle}}
-        <LinkTo @route="application" class="navbar-brand my-0 py-0">Paperbot <span>{{svg-jar "papercat-gray-icon" class="logo" }}</span></LinkTo>{{this.loadConfig}}
-      </div>     
-      <navbar.content class="px-md-0 px-3">
-        <navbar.nav class="me-auto" as |nav|>
-          <nav.item>
-            <nav.link-to @route="streams.index">Streams</nav.link-to>
-          </nav.item>
-          <nav.item>
-            <nav.link-to @route="commands.index">Commands</nav.link-to>
-          </nav.item>
-          <nav.item>
-            <nav.link-to @route="songs.index">Songs</nav.link-to>
-          </nav.item> 
-          <nav.item>
-            <nav.link-to @route="reader.index">Reader</nav.link-to>
-          </nav.item>           
-        </navbar.nav>
-        <navbar.nav class="ms-auto" as |nav|>
-          <nav.item>
-            <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
-          </nav.item>
-          <nav.dropdown class="bg-dark" as |dd| >
-            <dd.toggle><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
-            <dd.menu class="dropdown-menu-dark" as |ddm|>            
-              <ddm.item>
-                <ddm.link-to @route="settings.config" @model={{this.globalConfig.config}} class="font-weight-bold"><h6>Change Settings <FaIcon @icon="wrench" /></h6></ddm.link-to>
-              </ddm.item>
-              <ddm.item>
-                <hr class="dropdown-divider">
-              </ddm.item>
-              <ddm.item>
-                <ddm.link-to @route="clients.index" class="dropdown-item ps-3">Clients</ddm.link-to>
-              </ddm.item>              
-              <ddm.item>
-                <span role="button" class="dropdown-item ps-3" {{on "click" this.handleExport}}>Export Database</span>
-              </ddm.item>
-              <ddm.item>
-                <span role="button" class="dropdown-item ps-3" {{on "click" this.handleImport}}>Import Database</span>
-              </ddm.item>
-              <ddm.item>
-                <span role="button" class="dropdown-item ps-3" {{on "click" this.wipeDatabase}}>Wipe DB</span>
-              </ddm.item>
-            </dd.menu>
-          </nav.dropdown>
-          <nav.item>
-            <span role="button" {{on "click" this.toggleMode}} class="nav-link {{if this.headData.darkMode "bulboff" "bulbon active"}}" title="{{if this.headData.darkMode "Dark mode" "Light mode"}}">
-              <FaIcon @icon="{{if this.headData.darkMode "lightbulb" "lightbulb"}}" />{{this.updateLight}}
-            </span>
-          </nav.item>
-        </navbar.nav>
-      </navbar.content>
-  </BsNavbar>
-</header>
-<main role="main" class="container-fluid pt-5 px-0">
+        <div class="navbar-header">
+          {{navbar.toggle}}
+          <LinkTo @route="application" class="navbar-brand my-0 py-0">Paperbot <span>{{svg-jar "papercat-gray-icon" class="logo" }}</span></LinkTo>{{this.loadConfig}}
+        </div>     
+        <navbar.content class="px-md-0 px-3">
+          <navbar.nav class="me-auto" as |nav|>
+            <nav.item>
+              <nav.link-to @route="streams.index">Streams</nav.link-to>
+            </nav.item>
+            <nav.item>
+              <nav.link-to @route="commands.index">Commands</nav.link-to>
+            </nav.item>
+            <nav.item>
+              <nav.link-to @route="songs.index">Songs</nav.link-to>
+            </nav.item> 
+            <nav.item>
+              <nav.link-to @route="clients.index">Clients</nav.link-to>
+            </nav.item>           
+          </navbar.nav>
+          <navbar.nav class="ms-auto" as |nav|>
+            <nav.item>
+              <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
+            </nav.item>
+            <nav.dropdown class="bg-dark" as |dd| >
+              <dd.toggle><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
+              <dd.menu class="dropdown-menu-dark" as |ddm|>            
+                <ddm.item>
+                  <ddm.link-to @route="settings.config" @model={{this.globalConfig.config}} class="font-weight-bold"><h6>Change Settings <FaIcon @icon="wrench" /></h6></ddm.link-to>
+                </ddm.item>
+                <ddm.item>
+                  <hr class="dropdown-divider">
+                </ddm.item>
+                <ddm.item>
+                  <ddm.link-to @route="clients.index" class="dropdown-item ps-3">Clients</ddm.link-to>
+                </ddm.item>              
+                <ddm.item>
+                  <span role="button" class="dropdown-item ps-3" {{on "click" this.handleExport}}>Export Database</span>
+                </ddm.item>
+                <ddm.item>
+                  <span role="button" class="dropdown-item ps-3" {{on "click" this.handleImport}}>Import Database</span>
+                </ddm.item>
+                <ddm.item>
+                  <span role="button" class="dropdown-item ps-3" {{on "click" this.wipeDatabase}}>Wipe DB</span>
+                </ddm.item>
+              </dd.menu>
+            </nav.dropdown>
+            <nav.item>
+              <span role="button" {{on "click" this.toggleMode}} class="nav-link {{if this.headData.darkMode "bulboff" "bulbon active"}}" title="{{if this.headData.darkMode "Dark mode" "Light mode"}}">
+                <FaIcon @icon={{if this.updateLight "lightbulb" "lightbulb"}} />
+              </span>
+            </nav.item>
+          </navbar.nav>
+        </navbar.content>
+    </BsNavbar>
+  </header>
+{{/unless}}
+<main role="main" class={{if this.currentUser.hideMenu "container-fluid pt-0 px-0" "container-fluid pt-5 px-0" }}>
   {{outlet}}
 </main>

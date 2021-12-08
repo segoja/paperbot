@@ -13,7 +13,7 @@ export default class StreamController extends Controller {
   @tracked isEditing;
 
   @action closeStream () {
-    this.streams.lastStream = null;
+    this.currentUser.lastStream = null;
     this.currentUser.isViewing = false;
     this.isEditing = false;
     this.router.transitionTo('streams.index');      
@@ -119,7 +119,7 @@ export default class StreamController extends Controller {
     //tag.save().then(() => this.model.save());
     this.deleteClientLinks().then(()=>{
       this.model.destroyRecord().then(() => {
-        this.streams.lastStream = null;
+        this.currentUser.lastStream = null;
         this.currentUser.isViewing = false;
         this.isEditing = false;
         this.router.transitionTo('streams');

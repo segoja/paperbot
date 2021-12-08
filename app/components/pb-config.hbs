@@ -16,7 +16,7 @@
           External event tracking
           <span role="button">
             <FaIcon @icon="question-circle" class="text-info" />
-            <BsTooltip>Get your API key from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer">Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer">StreamElements</a></BsTooltip>
+            <BsTooltip @delayHide={{this.ttdelay}}>Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer">Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer">StreamElements</a></BsTooltip>
           </span>
         </label>
         <div class="col-md-8 border-light">
@@ -35,7 +35,7 @@
           Default Bot client 
           <span role="button">
             <FaIcon @icon="question-circle" class="text-info" />
-            <BsTooltip>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
+            <BsTooltip @delayHide={{this.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
           </span>
         </label>
           <form.element @controlType="power-select" @property="defbotclient" @onChange={{fn @setdefBot}} @formLayout="inline" class="col-md-8 border-light" @invisibleLabel={{true}} @options={{@clients}} required as |client|>
@@ -51,7 +51,7 @@
           Default Chat client 
           <span role="btn">
             <FaIcon @icon="question-circle" class="text-info" />
-            <BsTooltip>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
+            <BsTooltip @delayHide={{this.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
           </span>
         </label>
         <form.element @controlType="power-select" @property="defchatclient" @onChange={{fn @setdefChat}} @formLayout="inline" class="col-md-8 border-light" @options={{@clients}} required as |client|>

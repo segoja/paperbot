@@ -29,11 +29,11 @@ export default class StreamsRoute extends Route {
   }
 
   redirect (model, transition) {
-    /*if (transition.targetName === 'streams.index') {
-      if (this.controllerFor('streams').lastStream) {
-        this.router.transitionTo('streams.stream', this.controllerFor('streams').lastStream);
+    if (transition.targetName === 'streams.index') {
+      if (this.currentUser.lastStream) {
+        this.router.transitionTo('streams.stream', this.currentUser.lastStream);
       } 
-    }*/
+    }
   }
   
 }

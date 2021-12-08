@@ -1,12 +1,31 @@
+  <style>
+    .fancy-colums {
+      font-size: {{this.zoomLevel}}em!important; 
+    }   
+  </style>
 <div class="row h-100 flex-fill m-0 p-0">
   <div class="col-12 h-100 flex-fill p-0 m-0"> 
       {{!-- song listing --}}
       <div class="card h-100 flex-fill">
-        <div class="card-header">
-          <div class="row">
-            <PowerSelect @searchEnabled={{true}} @search={{this.searchSong}} @searchMessage="" @options="" @searchPlaceholder="Type a song" @selected={{this.selected}}  @searchClass="form-control w-100"  @allowClear={{true}} @onChange={{fn this.selectSong}} @placeholder="Select a song" as |song|>
-              <span>{{song.title}} {{#if song.artist}}- <span class="text-secondary">{{song.artist}}</span>{{/if}}</span>
-            </PowerSelect>  
+        <div class="card-header px-2">
+          <div class="row g-1">
+            <div class="col">
+              <PowerSelect @searchEnabled={{true}} @search={{this.searchSong}} @searchMessage="" @options="" @searchPlaceholder="Type a song" @selected={{this.selected}}  @searchClass="form-control w-100"  @allowClear={{true}} @onChange={{fn this.selectSong}} @placeholder="Select a song" as |song|>
+                <span>{{song.title}} {{#if song.artist}}- <span class="text-secondary">{{song.artist}}</span>{{/if}}</span>
+              </PowerSelect>
+            </div>
+            <div class="col-auto">
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary" {{on "click" this.resetZoom}}><FaIcon @icon="undo" /></button>
+                <button type="button" class="btn btn-secondary" {{on "click" this.subZoom}}><FaIcon @icon="search-minus" /></button>
+                <button type="button" class="btn btn-secondary" {{on "click" this.addZoom}}><FaIcon @icon="search-plus" /></button>
+              </div>
+            </div>
+            <div class="col-auto">
+              <button type="button" {{on "click" this.toggleMode}} class="btn btn-outline-secondary" active={{this.updateLight}} title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}">
+                <FaIcon @icon="lightbulb" />
+              </button>
+            </div>
           </div>
         </div>
         <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
@@ -14,8 +33,8 @@
               {{!-- Song content --}}
               {{#if this.restore}}
                 {{#if this.currentSong}}
-                  <h2>{{this.currentSong.title}}</h2>
-                  <pre>{{this.currentSong.lyrics}}</pre>
+                  <h5>{{this.currentSong.title}}</h5>
+                  <div class="fancy-colums">{{this.currentSong.lyrics}}</div>
                 {{/if}}
               {{else}}
                 Reloading...

@@ -433,7 +433,7 @@ export default class TwitchChatService extends Service {
                 processed: false,
               };
               this.songqueue.push(this.lastsongrequest);
-              if(this.songqueue.length > 0 && this.songqueue.length < 2 ){
+              if(this.songqueue.length == 1){
                 this.globalConfig.config.lastPlayed = song;
                 this.globalConfig.config.save();
               }

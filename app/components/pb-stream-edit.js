@@ -13,7 +13,6 @@ export default class PbStreamEditComponent extends Component {
   @service twitchChat;
   @service globalConfig;
   @service audio;
-  @service panelState;
   @service currentUser;
 
   @empty ('twitchChat.messages') isChatEmpty;
@@ -97,8 +96,12 @@ export default class PbStreamEditComponent extends Component {
     return this.msglist.slice(-45);
   }   
   // With this getter we limit the number of messages displayed on screen.
-  get events(){   
-    return this.arrangedDescEvents;
+  get events(){
+    let events = [];
+    if(this.arrangedDescEvents.length > 0){
+      events = this.arrangedDescEvents;
+    }
+    return events;
   }   
 
   get audiocommandslist(){
@@ -167,9 +170,9 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.botclient.on("subgift", this.eventGetter);
       this.twitchChat.botclient.on("submysterygift", this.eventGetter);
       this.twitchChat.botclient.on("subscription", this.eventGetter);
-      //this.eventsExternal.client.on("event", this.eventGetter);
-      //this.eventsExternal.client.on("event:test", this.eventGetter);
-    }    
+      this.eventsExternal.client.on("event", this.eventGetter);
+      this.eventsExternal.client.on("event:test", this.eventGetter);
+    }
   }
 
   // Bot and Chat related actions:
@@ -223,8 +226,8 @@ export default class PbStreamEditComponent extends Component {
         this.twitchChat.botclient.on("subgift", this.eventGetter);
         this.twitchChat.botclient.on("submysterygift", this.eventGetter);
         this.twitchChat.botclient.on("subscription", this.eventGetter);
-        // this.eventsExternal.client.on("event", this.eventGetter);
-        // this.eventsExternal.client.on("event:test", this.eventGetter);        
+        this.eventsExternal.client.on("event", this.eventGetter);
+        this.eventsExternal.client.on("event:test", this.eventGetter);        
       }
     );
       // later(() => { console.log(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     
@@ -323,7 +326,7 @@ export default class PbStreamEditComponent extends Component {
     // this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.panelState.queueToFile && this.args.stream.requests){
+    if(this.currentUser.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -358,7 +361,7 @@ export default class PbStreamEditComponent extends Component {
   } 
   
   @action fileContent(pendingSongs){
-    if (this.panelState.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('length') != undefined && this.args.stream.requests){
+    if (this.currentUser.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('length') != undefined && this.args.stream.requests){
       let pathString = this.globalConfig.config.overlayfolder;
       if(pathString.substr(pathString.length - 1) === "\\"){
         pathString = pathString.slice(0, -1)+'\\queue.html';
@@ -481,7 +484,7 @@ export default class PbStreamEditComponent extends Component {
     }
     this.globalConfig.config.save();
     
-    if(this.panelState.queueToFile && this.args.stream.requests){
+    if(this.currentUser.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -495,7 +498,7 @@ export default class PbStreamEditComponent extends Component {
     set(song, 'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.panelState.queueToFile && this.args.stream.requests){
+    if(this.currentUser.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -521,7 +524,7 @@ export default class PbStreamEditComponent extends Component {
       }
       this.globalConfig.config.save();
     }
-    if(this.panelState.queueToFile && this.args.stream.requests){
+    if(this.currentUser.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -546,19 +549,19 @@ export default class PbStreamEditComponent extends Component {
       }
       this.globalConfig.config.save();
     }
-    if(this.panelState.queueToFile && this.args.stream.requests){
+    if(this.currentUser.queueToFile && this.args.stream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
   // Soundboard toggle
   @action soundboardToggle(){
-    this.panelState.soundBoardEnabled = !this.panelState.soundBoardEnabled;
-    if(this.panelState.soundBoardEnabled === false){
+    this.currentUser.soundBoardEnabled = !this.currentUser.soundBoardEnabled;
+    if(this.currentUser.soundBoardEnabled === false){
       if(this.twitchChat.lastSoundCommand != null){
         this.twitchChat.lastSoundCommand.stop();
       }
     }
-    this.twitchChat.soundBoardEnabled = this.panelState.soundBoardEnabled;    
+    this.twitchChat.soundBoardEnabled = this.currentUser.soundBoardEnabled;    
   }
   
   
@@ -566,63 +569,63 @@ export default class PbStreamEditComponent extends Component {
   
   @action closePan(pannel){
     if (pannel === "pending"){
-      this.panelState.cpanpending = !this.panelState.cpanpending;
+      this.currentUser.cpanpending = !this.currentUser.cpanpending;
     }
     if (pannel === "played"){
-      this.panelState.cpanplayed = !this.panelState.cpanplayed;
+      this.currentUser.cpanplayed = !this.currentUser.cpanplayed;
     } 
     if (pannel === "messages"){
-      this.panelState.cpanmessages = !this.panelState.cpanmessages;
+      this.currentUser.cpanmessages = !this.currentUser.cpanmessages;
     }
     if (pannel === "events"){
-      this.panelState.cpanevents = !this.panelState.cpanevents;
+      this.currentUser.cpanevents = !this.currentUser.cpanevents;
     }      
   }
 
   @action togglePan(pannel){
     if (pannel === "pending"){
-      this.panelState.cpanpending = !this.panelState.cpanpending;
+      this.currentUser.cpanpending = !this.currentUser.cpanpending;
     }
     if (pannel === "played"){
-      this.panelState.cpanplayed = !this.panelState.cpanplayed;
+      this.currentUser.cpanplayed = !this.currentUser.cpanplayed;
     } 
     if (pannel === "messages"){
-      this.panelState.cpanmessages = !this.panelState.cpanmessages;
+      this.currentUser.cpanmessages = !this.currentUser.cpanmessages;
     }
     if (pannel === "events"){
-      this.panelState.cpanevents = !this.panelState.cpanevents;
+      this.currentUser.cpanevents = !this.currentUser.cpanevents;
     }    
   }
 
   @action toggleExtraPanRight() {
-    this.panelState.extraPanRight = !this.panelState.extraPanRight;
+    this.currentUser.extraPanRight = !this.currentUser.extraPanRight;
   }   
   
   @action toggleExtraPanRightTop() {
-    this.panelState.extraPanRightTop = !this.panelState.extraPanRightTop;
+    this.currentUser.extraPanRightTop = !this.currentUser.extraPanRightTop;
   }  
   
   @action toggleExtraPanRightBottom() {
-    this.panelState.extraPanRightBottom = !this.panelState.extraPanRightBottom;
+    this.currentUser.extraPanRightBottom = !this.currentUser.extraPanRightBottom;
   }    
 
   @action toggleExtraPanLeft() {
-    this.panelState.extraPanLeft = !this.panelState.extraPanLeft;
+    this.currentUser.extraPanLeft = !this.currentUser.extraPanLeft;
   }
   
   @action toggleExtraPanLeftTop() {
-    this.panelState.extraPanLeftTop = !this.panelState.extraPanLeftTop;
+    this.currentUser.extraPanLeftTop = !this.currentUser.extraPanLeftTop;
   }  
   
   @action toggleExtraPanLeftBottom() {
-    this.panelState.extraPanLeftBottom = !this.panelState.extraPanLeftBottom;
+    this.currentUser.extraPanLeftBottom = !this.currentUser.extraPanLeftBottom;
   }
 
   @action queueWriter(){
     if(this.args.stream.requests && this.globalConfig.config.overlayfolder != ''){
-      this.panelState.queueToFile = !this.panelState.queueToFile;      
+      this.currentUser.queueToFile = !this.currentUser.queueToFile;      
     } else {
-      this.panelState.queueToFile = false;
+      this.currentUser.queueToFile = false;
     }
   }
   

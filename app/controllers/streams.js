@@ -23,9 +23,6 @@ export default class StreamsController extends Controller {
   ];
 
   queryParamsObj = new QueryParamsObj();
-
-  @tracked lastStream;
-  
   
   async defaultSetter(stream){
     
@@ -76,7 +73,7 @@ export default class StreamsController extends Controller {
     stream.destroyRecord().then(() => {
       this.currentUser.isViewing = false;
       this.stream.isEditing = false;
-      this.lastStream = null;
+      this.currentUser.lastStream = null;
     });
   } 
 }

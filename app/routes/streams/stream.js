@@ -12,17 +12,17 @@ export default class StreamRoute extends Route {
   
   setupController (controller, model) { 
     super.setupController(controller, model);
-    if (this.controllerFor('streams').get('lastStream')){
+    if (this.currentUser.lastStream){
       this.currentUser.isViewing = true;
     }
   }
   afterModel(model){
-    this.controllerFor('streams').set('lastStream', model);    
+    this.currentUser.lastStream = model;    
   }
   
   @action willTransition (transition) {
     if (transition.targetName === 'streams.index' || transition.targetName === 'index' ) {
-      if (this.controllerFor('streams').get('lastStream')) {
+      if (this.currentUser.lastStream) {
         transition.abort();
       } 
     }

@@ -217,7 +217,19 @@ svg.logo{
   cursor: pointer;
 }
 
-
+.fancy-colums {
+  max-height: 75%!important;
+  column-count: 3;
+  display: block;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.85em;
+  direction: ltr /* rtl:ignore */;
+  white-space: pre;
+  unicode-bidi: bidi-override;
+  margin: 1em 0px;
+  @include media-breakpoint-down(xl) { column-count: 2; }  
+  @include media-breakpoint-down(lg) { column-count: 1; } 
+}
 
 .spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
 

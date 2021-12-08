@@ -47,6 +47,14 @@ export default class ApplicationController extends Controller {
     return isOnline;   
   }
   
+  get isLyrics(){
+    console.log(this.router.location);
+    if(this.router.location === 'reader'){
+      return true;
+    }
+    return false;
+  }
+  
   get updateLight(){
     if(this.globalConfig.config.darkmode){
       this.lightControl.toggleMode(true);
@@ -55,7 +63,7 @@ export default class ApplicationController extends Controller {
       this.lightControl.toggleMode(false);
       return false;
     }
-  }  
+  }
   
   @action handleExport () {
     let adapter = this.store.adapterFor('application');

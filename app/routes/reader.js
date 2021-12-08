@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
-import { hash } from 'rsvp';
 import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
 
 export default class ReaderRoute extends Route {
   @service store;
@@ -12,5 +12,12 @@ export default class ReaderRoute extends Route {
     
   afterModel(){
     this.currentUser.isViewing = false;
-  }  
+    this.currentUser.isReader = true;
+  }
+  
+  @action willTransition (transition) {
+    if (transition.targetName != 'reader') {
+      this.currentUser.isReader = false;
+    }
+  }
 }

@@ -24,7 +24,8 @@ export default class EventsExternalService extends Service {
   @action createClient(){
     if(this.type && this.token && this.client === null && this.connected === false){
       if(this.type === "StreamLabs"){
-        this.client = io('https://sockets.streamlabs.com?token=' + this.token, { transports: ['websocket']});        
+        // this.client = io('https://sockets.streamlabs.com?token=' + this.token, { transports: ['websocket']}); 
+        this.client = io(`https://sockets.streamlabs.com?token=${this.token}`, {transports: ['websocket']});        
         this.streamLabsEvents(this.client);
       } 
       
@@ -69,6 +70,7 @@ export default class EventsExternalService extends Service {
       // Structure as on JSON Schema
       var outputmessage = '';
       var type = '';
+      console.log('Event detected');
       switch (data.listener) {
         case 'follower-latest': {
           console.log("Follow");
@@ -309,9 +311,14 @@ export default class EventsExternalService extends Service {
       console.log('Successfully connected to the websocket');
     });
     
-    client.on('disconnect', function () {
+    client.on('disconnect', function (err) {
       console.log('Disconnected from websocket');
+      console.log(err);
     });
+
+    client.on('error', function (err) {
+      console.log(err);
+    });    
     
     client.on('event', (data) => {
       // console.log(event);
@@ -403,9 +410,8 @@ export default class EventsExternalService extends Service {
                 this.eventHandler(outputmessage, type);
                 break;
               }
-
               default: {
-                console.log(data);
+                console.log(data);               
                 break;
               }
             }

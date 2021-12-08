@@ -1,7 +1,7 @@
 import { helper } from '@ember/component/helper';
 import { htmlSafe } from '@ember/string';
-import marked from 'marked';
 
 export default helper(function([value]) {
-  return htmlSafe(marked(value));
+  let result = '<pre>'+value.replace(/\n/gm, '</pre><pre>')+'</pre>';
+  return htmlSafe(result);
 });
