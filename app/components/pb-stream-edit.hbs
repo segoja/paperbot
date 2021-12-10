@@ -70,39 +70,39 @@
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
           {{#if @stream.events}}
-            <div role="button" class="{{if this.currentUser.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftTop}}>
-              <FaIcon @icon={{if this.currentUser.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            <div role="button" class="{{if this.globalConfig.config.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftTop}}>
+              <FaIcon @icon={{if this.globalConfig.config.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
             </div>
           {{else}}
-            <div role="button" class="{{if this.currentUser.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
+            <div role="button" class="{{if this.globalConfig.config.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
           {{/if}}
           {{#if this.requests}}
-            <div role="button" class="{{if this.currentUser.extraPanRight (if this.currentUser.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
-              <FaIcon @icon={{if this.currentUser.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            <div role="button" class="{{if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
+              <FaIcon @icon={{if this.globalConfig.config.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
             </div>
           {{/if}}
         </div>
       </div>
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <EmberDragula class="row flex-fill d-flex h-100 mx-0 px-0 overflow-hidden" as |d|>
-          <div role="button" class="h-100 d-flex border alert-secondary float-end w-auto px-0" {{on "click" this.toggleExtraPanLeft}}>
-            <span class="d-block align-self-center"><FaIcon @icon={{if this.currentUser.extraPanLeft "grip-lines-vertical" "ellipsis-v"}} /></span>
+          <div role="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanLeft}}>
+            <span class="d-block align-self-center"><FaIcon @icon={{if this.globalConfig.config.extraPanLeft "grip-lines-vertical" "ellipsis-v"}} /></span>
           </div>
-         <div class="{{if this.currentUser.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
-          <div class="{{if this.currentUser.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
-              <div class="row m-0 p-0 {{if @stream.events (if this.currentUser.extraPanLeftTop (if this.currentUser.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
+         <div class="{{if this.globalConfig.config.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
+          <div class="{{if this.globalConfig.config.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
+              <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.extraPanLeftTop (if this.globalConfig.config.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
                 <d.Container class="col h-100 border m-0 p-0">
                    {{#if @stream.events}}
-                      <div id="events" class="row {{unless this.currentUser.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                        <div class="col {{unless this.currentUser.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
+                      <div id="events" class="row {{unless this.globalConfig.config.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                        <div class="col {{unless this.globalConfig.config.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                           <div class="row bg-secondary text-light">
                             <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Events</h6></div>
                             <BsButtonGroup class="col-auto px-0" as |bg|>
-                              <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.currentUser.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
+                              <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.globalConfig.config.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
                             </BsButtonGroup>
                           </div>                          
-                          <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.currentUser.cpanevents}}>
-                            {{#unless this.currentUser.cpanevents}}                                                          
+                          <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanevents}}>
+                            {{#unless this.globalConfig.config.cpanevents}}                                                          
                               <div class="col-md eventsframe" {{scroll-position position=this.scrollEventsPosition relative=true}} id="eventlist">
                                 {{#each this.events as |event|}}
                                   <div class="alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
@@ -120,28 +120,32 @@
                     {{/if}}
                 </d.Container>
               </div>          
-            <div class="row m-0 p-0 {{if this.currentUser.extraPanLeftBottom (if this.currentUser.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
+            <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanLeftBottom (if this.globalConfig.config.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
               <d.Container class="col h-100 border m-0 p-0">
-                <div id="chat" class="row {{unless this.currentUser.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                  <div class="col {{unless this.currentUser.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
+                <div id="chat" class="row {{unless this.globalConfig.config.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                  <div class="col {{unless this.globalConfig.config.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
                     <div class="row  bg-secondary text-light">
                       <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Recent messages</h6></div>
                       <BsButtonGroup class="col-auto px-0" as |bg|>
-                        <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "messages"}} ><FaIcon @icon="{{if this.currentUser.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
+                        <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "messages"}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
                       </BsButtonGroup>
                     </div>
-                    <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.currentUser.cpanmessages}}>
-                      {{#unless this.currentUser.cpanmessages}}
+                    <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanmessages}}>
+                      {{#unless this.globalConfig.config.cpanmessages}}
                         <div class="col-md-12 chatframe" {{scroll-position position=this.scrollPosition relative=false}}>
+                          
                           {{#each this.messages as |message|}}
                             <div class="row" id="{{message.id}}">
                               {{message-format message}}
                             </div>
-                          {{/each}} 
-                          {{!-- <iframe frameborder="0" scrolling="yes" height="100%" width="100%" id="actualtwitchchat" 
-                            src="https://www.twitch.tv/embed/{{@stream.channel}}/chat?{{if this.globalConfig.config.darkmode "darkpopout&"}}parent=localhost"
+                          {{/each}}
+                                                  
+                         {{!--  <iframe src="https://www.twitch.tv/embed/{{@stream.channel}}/chat?parent=localhost&darkpopout"
+                                  height="100%"
+                                  width="100%"
+                                  sandbox="allow-same-origin allow-scripts allow-popups allow-modals allow-storage-access-by-user-activation allow-popups-to-escape-sandbox"
                           >
-                          </iframe> --}}
+                          </iframe>--}}  
                         </div>  
                       {{/unless}}
                     </BsCollapse>  
@@ -157,20 +161,20 @@
             {{on-key "ctrl+KeyQ" this.modNotPressed event="keyup"}}
             <div class={{if this.overlayLoader "d-none"}}></div>
           {{/if}}
-          <div class="{{if this.requests (if this.currentUser.extraPanRight (if this.currentUser.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
-            <div class="row m-0 p-0 {{if this.currentUser.extraPanRightTop (if this.currentUser.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
+          <div class="{{if this.requests (if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
+            <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightTop (if this.globalConfig.config.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
               <d.Container class="col h-100 m-0 p-0"> 
                 {{#if this.requests}}
-                  <div id="pending" class="row {{unless this.currentUser.cpanpending "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                    <div class="col {{unless this.currentUser.cpanpending "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
+                  <div id="pending" class="row {{unless this.globalConfig.config.cpanpending "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                    <div class="col {{unless this.globalConfig.config.cpanpending "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
                         <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Songs pending</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
-                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "pending"}} ><FaIcon @icon="{{if this.cpanpending "window-maximize" "window-minimize"}}" /></bg.button>
+                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "pending"}} ><FaIcon @icon="{{if this.globalConfig.config.cpanpending "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
                       </div>
-                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.currentUser.cpanpending}}>
-                        {{#unless this.currentUser.cpanpending}}
+                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanpending}}>
+                        {{#unless this.globalConfig.config.cpanpending}}
                           <div class="col-md queueframe" {{scroll-position position=this.scrollPendingPosition relative=true}} id="songqueue">
                             {{#each this.pendingSongs as |pendingsong|}}
                               <div id={{pendingsong.id}} role="button" {{on "click" (fn this.requestStatus pendingsong)}} class="alert-info d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
@@ -189,19 +193,19 @@
                 {{/if}}
               </d.Container>
             </div>
-            <div class="row m-0 p-0 {{if this.currentUser.extraPanRightBottom (if this.currentUser.extraPanRightTop "h-50" "h-100") "d-none"}} border">
+            <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightBottom (if this.globalConfig.config.extraPanRightTop "h-50" "h-100") "d-none"}} border">
               <d.Container class="col h-100 m-0 p-0"> 
                 {{#if this.requests}}
-                  <div id="played" class="row {{unless this.currentUser.cpanplayed "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                    <div class="col {{unless this.currentUser.cpanplayed "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
+                  <div id="played" class="row {{unless this.globalConfig.config.cpanplayed "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
+                    <div class="col {{unless this.globalConfig.config.cpanplayed "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
                       <div class="row bg-secondary text-light">
                         <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Songs played</h6></div>
                         <BsButtonGroup class="col-auto px-0" as |bg|>
-                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "played"}} ><FaIcon @icon="{{if this.currentUser.cpanplayed "window-maximize" "window-minimize"}}" /></bg.button>
+                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "played"}} ><FaIcon @icon="{{if this.globalConfig.config.cpanplayed "window-maximize" "window-minimize"}}" /></bg.button>
                         </BsButtonGroup>
                       </div>
-                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.currentUser.cpanplayed}}>
-                        {{#unless this.currentUser.cpanplayed}}
+                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanplayed}}>
+                        {{#unless this.globalConfig.config.cpanplayed}}
                           <div class="col-md queueframe" {{scroll-position position=this.scrollPlayedPosition relative=true}}>
                             {{#each this.playedSongs as |playedsong|}}
                               <div id={{playedsong.id}} role="button" {{on "click" (fn this.requestStatus playedsong)}} {{on-key "right" (fn this.backToQueue playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
@@ -221,23 +225,23 @@
               </d.Container>
             </div>
           </div>
-          <div role="button" class="h-100 d-flex border alert-secondary float-start" {{on "click" this.toggleExtraPanRight}}>
-            <span class="d-block align-self-center"><FaIcon @icon={{if this.currentUser.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
+          <div role="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanRight}}>
+            <span class="d-block align-self-center"><FaIcon @icon={{if this.globalConfig.config.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
           </div>
         </EmberDragula>
       </div>
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
           {{#if @stream.events}}
-            <div role="button" class="{{if this.currentUser.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftBottom}}>
-              <FaIcon @icon={{if this.currentUser.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            <div role="button" class="{{if this.globalConfig.config.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftBottom}}>
+              <FaIcon @icon={{if this.globalConfig.config.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
             </div>
           {{else}}
-            <div role="button" class="{{if this.currentUser.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
+            <div role="button" class="{{if this.globalConfig.config.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
           {{/if}}
           {{#if this.requests}}
-            <div role="button" class="{{if this.currentUser.extraPanRight (if this.currentUser.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
-              <FaIcon @icon={{if this.currentUser.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+            <div role="button" class="{{if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
+              <FaIcon @icon={{if this.globalConfig.config.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
             </div>
           {{/if}}
         </div>
@@ -246,13 +250,13 @@
     {{#unless this.disconnectButton}}  
       <div class="card-footer flex-column flex-fill d-flex p-0 my-0 alert-secondary"> 
         <div class="row m-0">
-          <BsForm @formLayout="vertical" @model={{this}} class="col-md-12 my-1 mx-0 py-0 px-3" @onSubmit={{fn this.sendMessage}} as |form|>
-            <form.element @property="message" class="m-0 p-0" as |el|>
+          <BsForm @formLayout="inline" @model={{this}} class="col-md-12 my-1 mx-0 py-1 px-2" @onSubmit={{fn this.sendMessage}} as |form|>
+            <form.element @property="message" class="mb-0 pb-0"  as |el|>
               <el.control 
                 @controlType="text"
                 autocomplete="off"
                 placeholder="Type your message here"
-                 class="my-0 py-0 rounded-0 chatinput border-dark"
+                 class="mb-0 my-0 py-1 rounded-0 chatinput border-dark"
                 readonly={{this.inputDisabled}}        
               />
             </form.element>

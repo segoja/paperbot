@@ -5,6 +5,7 @@ import { action } from '@ember/object';
 export default class ReaderRoute extends Route {
   @service store;
   @service currentUser;
+  @service globalConfig;
 
   model () {
     return this.store.findAll('song');
@@ -12,12 +13,14 @@ export default class ReaderRoute extends Route {
     
   afterModel(){
     this.currentUser.isViewing = false;
-    this.currentUser.isReader = true;
+    this.globalConfig.config.showLyrics = true;
+    this.globalConfig.config.save();
   }
   
   @action willTransition (transition) {
     if (transition.targetName != 'reader') {
-      this.currentUser.isReader = false;
+      this.globalConfig.config.showLyrics = false;
+      this.globalConfig.config.save();
     }
   }
 }

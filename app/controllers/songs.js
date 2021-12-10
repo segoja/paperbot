@@ -39,6 +39,7 @@ export default class SongsController extends Controller {
     let newSong = this.store.createRecord('song');    
     newSong.set('title', song.title);
     newSong.set('artist', song.artist);
+    newSong.set('lyrics', song.lyrics);
     newSong.set('type', song.type);
     newSong.set('account', song.account);    
     newSong.set('active', song.active);

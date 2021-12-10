@@ -1,9 +1,12 @@
 import Service from '@ember/service';
 import { action } from "@ember/object";
 import { tracked } from '@glimmer/tracking';
-import { WebviewWindow, appWindow } from "@tauri-apps/api/window"
+import { inject as service } from '@ember/service';
+import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
 
 export default class CurrentUserService extends Service {
+  @service globalConfig;
+  @service router;
   @tracked isViewing = false;
   @tracked expandMenu = false;
   @tracked expandSubmenu = false;
@@ -13,31 +16,10 @@ export default class CurrentUserService extends Service {
   // Buttons
   @tracked queueToFile = false;
   @tracked soundBoardEnabled = false;  
-  
-  // Pannels
-  @tracked cpanpending = false;
-  @tracked cpanplayed = false;
-  @tracked cpanmessages = false;
-  @tracked cpanevents = false;  
-  @tracked extraPanRight = true;
-  @tracked extraPanRightTop = true;
-  @tracked extraPanRightBottom = true;  
-  @tracked extraPanLeft = true;  
-  @tracked extraPanLeftTop = true;  
-  @tracked extraPanLeftBottom = true;
 
-  get noPanels(){
-    if(!this.extraPanLeft && !this.extraPanRight){
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  @tracked isReader = false;
   @tracked lyricsViewer = '';
   get hideMenu(){
-    if(this.isReader){
+    if(this.router.currentURL === '/reader'){
       return true;
     }
     return false;
@@ -49,8 +31,9 @@ export default class CurrentUserService extends Service {
       this.lyricsViewer = '';
     } else {
       // loading embedded asset:
-      this.lyricsViewer = '';      
-      let options = { url: 'reader', title: "Paperbot - Lyrics" };
+      this.lyricsViewer = '';
+      let parentWindow = getCurrent();
+      let options = { url: 'reader', title: "Paperbot - Lyrics", parent: parentWindow };
       this.lyricsViewer = new WebviewWindow('second', options);
 
       this.lyricsViewer.once('tauri://created', function () {
@@ -66,7 +49,6 @@ export default class CurrentUserService extends Service {
        // an error happened creating the webview window
         console.log('Pues se cierra!');
       }.bind(this));      
-    }
-  }
-  
+    }    
+  }  
 }

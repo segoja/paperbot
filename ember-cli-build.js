@@ -105,6 +105,15 @@ module.exports = function(defaults) {
     using: [
       { transformation: 'amd', as: 'bootstrap' }
     ]
-  }); */
+  }); 
+  
+  const { Webpack } = require('@embroider/webpack');
+  return require('@embroider/compat').compatBuild(app, Webpack, {
+    skipBabel: [
+      {
+        package: 'qunit',
+      },
+    ],
+  });*/
   return app.toTree();
 };

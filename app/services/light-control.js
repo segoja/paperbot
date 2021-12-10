@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 import DarkReader from 'darkreader';
 
-export default class LightControlService extends Service {
+export default class LightControlService extends Service {  
   
   get isDark(){
     console.log(DarkReader.isEnabled());
@@ -9,9 +9,9 @@ export default class LightControlService extends Service {
   }
 
   // To turn on/of DarkReader:
-  async toggleMode(status){
+  async toggleMode(status){    
     if(status){
-      await DarkReader.enable({brightness: 100, contrast: 100, sepia: 0});      
+      await DarkReader.enable({brightness: 100, contrast: 100, sepia: 0}, {disableStyleSheetsProxy: false});
     } else {
       await DarkReader.disable(); 
     }

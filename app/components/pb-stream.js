@@ -8,6 +8,7 @@ export default class PbStreamComponent extends Component {
   @service twitchChat;
   @service eventsExternal;
   @service currentUser;
+  @service globalConfig;
 
   @tracked restore = true;
   

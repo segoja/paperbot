@@ -105,7 +105,8 @@ export default class PbStreamEditComponent extends Component {
   }   
 
   get audiocommandslist(){
-    return this.args.commands.filterBy('type','audio').filterBy('active', true);
+    let result = this.args.commands.filterBy('type','audio').filterBy('active', true);
+    return result;
   }
   
   get pendingSongs() {
@@ -567,58 +568,58 @@ export default class PbStreamEditComponent extends Component {
   
   // Pannels interaction
   
-  @action closePan(pannel){
-    if (pannel === "pending"){
-      this.currentUser.cpanpending = !this.currentUser.cpanpending;
-    }
-    if (pannel === "played"){
-      this.currentUser.cpanplayed = !this.currentUser.cpanplayed;
-    } 
-    if (pannel === "messages"){
-      this.currentUser.cpanmessages = !this.currentUser.cpanmessages;
-    }
-    if (pannel === "events"){
-      this.currentUser.cpanevents = !this.currentUser.cpanevents;
-    }      
-  }
-
   @action togglePan(pannel){
     if (pannel === "pending"){
-      this.currentUser.cpanpending = !this.currentUser.cpanpending;
+      this.globalConfig.config.cpanpending = !this.globalConfig.config.cpanpending;
     }
     if (pannel === "played"){
-      this.currentUser.cpanplayed = !this.currentUser.cpanplayed;
+      this.globalConfig.config.cpanplayed = !this.globalConfig.config.cpanplayed;
     } 
     if (pannel === "messages"){
-      this.currentUser.cpanmessages = !this.currentUser.cpanmessages;
+      this.globalConfig.config.cpanmessages = !this.globalConfig.config.cpanmessages;
     }
     if (pannel === "events"){
-      this.currentUser.cpanevents = !this.currentUser.cpanevents;
-    }    
+      this.globalConfig.config.cpanevents = !this.globalConfig.config.cpanevents;
+    }   
+    this.globalConfig.config.save();
   }
 
   @action toggleExtraPanRight() {
-    this.currentUser.extraPanRight = !this.currentUser.extraPanRight;
+    this.globalConfig.config.extraPanRight = !this.globalConfig.config.extraPanRight;
+    if(this.globalConfig.config.extraPanRight){
+      this.globalConfig.config.extraPanRightTop = true;
+      this.globalConfig.config.extraPanRightBottom = true;
+    }
+    this.globalConfig.config.save();
   }   
   
   @action toggleExtraPanRightTop() {
-    this.currentUser.extraPanRightTop = !this.currentUser.extraPanRightTop;
+    this.globalConfig.config.extraPanRightTop = !this.globalConfig.config.extraPanRightTop;   
+    this.globalConfig.config.save();
   }  
   
   @action toggleExtraPanRightBottom() {
-    this.currentUser.extraPanRightBottom = !this.currentUser.extraPanRightBottom;
+    this.globalConfig.config.extraPanRightBottom = !this.globalConfig.config.extraPanRightBottom;   
+    this.globalConfig.config.save();
   }    
 
   @action toggleExtraPanLeft() {
-    this.currentUser.extraPanLeft = !this.currentUser.extraPanLeft;
+    this.globalConfig.config.extraPanLeft = !this.globalConfig.config.extraPanLeft;
+    if(this.globalConfig.config.extraPanLeft){
+      this.globalConfig.config.extraPanLeftTop = true;
+      this.globalConfig.config.extraPanLeftBottom = true;
+    }
+    this.globalConfig.config.save();
   }
   
   @action toggleExtraPanLeftTop() {
-    this.currentUser.extraPanLeftTop = !this.currentUser.extraPanLeftTop;
+    this.globalConfig.config.extraPanLeftTop = !this.globalConfig.config.extraPanLeftTop;   
+    this.globalConfig.config.save();
   }  
   
   @action toggleExtraPanLeftBottom() {
-    this.currentUser.extraPanLeftBottom = !this.currentUser.extraPanLeftBottom;
+    this.globalConfig.config.extraPanLeftBottom = !this.globalConfig.config.extraPanLeftBottom; 
+    this.globalConfig.config.save();
   }
 
   @action queueWriter(){
