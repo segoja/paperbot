@@ -1,0 +1,61 @@
+<BsButton @type="warning" @onClick={{fn this.toggleModal}}><FaIcon @icon="file-import" /> Generate from files</BsButton>
+{{#if this.isViewing}}
+  <BsModal @onSubmit={{fn this.generateSongs}} @size="lg" as |Modal|>
+    <Modal.header>
+      <h4 class="modal-title"><i class="glyphicon glyphicon-alert"></i> Import songs from your text files</h4>
+    </Modal.header>
+    <Modal.body>
+      <BsForm @model={{this}} @formLayout="inline" class="row g-1 pb-2"  as |form|>
+        <div class="row g-1 pb-2">
+          <BsButton @type="warning col-auto" @onClick={{fn this.openSongsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
+          <form.element @controlType="text" class="col" @property="separator" {{on "keydown" this.generateList}} as |el|>
+            <el.control
+              placeholder="Enter the artist/song separator string to process filenames"
+              class="w-100 m-0"
+            />
+          </form.element>      
+        </div>
+        <div class="row g-1 pb-2">
+          <form.element @controlType="text" class="col" @property="filterQuery" {{on "keydown" this.resetPage}} as |el|>
+            <el.control
+              placeholder="Filter importable songs."
+              class="w-100 m-0"
+            />
+          </form.element>
+        </div>
+      </BsForm>
+        {{#if this.songs}}
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                {{#if this.separator}}<th class="w-auto" scope="col">Artist</th>{{/if}}
+                <th class={{if this.separator "w-50"}} scope="col">Title</th>
+                <th class="w-auto" scope="col">
+                  <BsButton @type="secondary float-end" @onClick={{fn this.bulkSelectAll}}><FaIcon @icon={{if this.isBulk "square" "check-square"}} /></BsButton>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each this.pagedSongs as |song|}}            
+                <tr class={{if song.selected "bg-success"}}>                    
+                  {{#if this.separator}}<td class="w-auto">{{song.artist}}</td>{{/if}}
+                  <td class={{if this.separator "w-50"}}>{{song.title}}</td>
+                  <td class="w-auto">
+                    <BsButton @type="warning float-end" @onClick={{fn this.addToImport song}}><FaIcon @icon={{if song.selected "minus" "plus"}} /></BsButton>            
+                  </td>
+                </tr>
+              {{/each}}          
+            </tbody>        
+          </table>
+      
+          <div class="py-0 my-0 px-2">
+            <PageNumbers @content={{this.pagedSongs}} />
+          </div>
+        {{/if}}
+    </Modal.body>
+    <Modal.footer as |footer|>
+      <BsButton @onClick={{fn Modal.close}} @type="danger">Cancel</BsButton>
+      <BsButton @onClick={{fn this.generateSongs}} @type="success">Import</BsButton>
+    </Modal.footer>
+  </BsModal>
+{{/if}}
