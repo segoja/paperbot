@@ -114,13 +114,34 @@ div.system{
     border-top-left-radius: 0.25rem!important;
 }
 
+#ember-basic-dropdown-wormhole{
+  z-index: 1100;
+}
 .ember-power-select-trigger{
   height: calc(1.5em + 0.75rem + 2px)!important;
   line-height: 2.25em!important;
   font-size: 1rem;
   font-weight: 400;
   color: #6C757D!important;
-  border: 1px solid #ced4da!important;
+  border: 1px solid #ced4da;
+  &.intable {
+    height: calc(1.5em + 0.75rem + 4px) !important;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;    
+    background-color: transparent;
+    .ember-power-select-clear-btn { background-color: transparent; }
+    &.selected {
+      .ember-basic-dropdown-trigger,
+      .ember-power-select-selected-item,
+      .ember-power-select-clear-btn,
+      .ember-power-select-status-icon,
+      .ember-power-select-placeholder { 
+        background-color: transparent; 
+        color: inherit; 
+        border-color: inherit transparent transparent transparent;
+      }
+    }
+  }
 }
 .border-form-control{
   border: 1px solid #ced4da!important;

@@ -418,13 +418,17 @@ export default class TwitchChatService extends Service {
           console.log("=================");
           if(bestmatch.active){
             if(this.commandPermissionHandler(bestmatch, tags) === true){
-              song = bestmatch.title+" by "+bestmatch.artist;
-              this.botclient.say(target, '/me @'+tags['username']+ ' requested the song "'+song+'"');
+              song = '"'+bestmatch.title+'"';
+              if(bestmatch.artist){
+                song = song+' by '+bestmatch.artist+'.';
+              }
+              this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+song);
               this.lastsongrequest = {
                 id: tags['id'] ? tags['id'].toString() : 'songsys',
                 timestamp: moment().format(),
                 type: tags['message-type'] ? tags['message-type'] : null,
-                song: song, 
+                song: song,
+                artist: bestmatch.artist? bestmatch.artist:'',
                 user: tags['username'] ? tags['username'].toString() : this.botUsername,
                 displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
                 color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
