@@ -7,46 +7,50 @@
   </div>
   <div class="card-body">
     <BsForm @formLayout="horizontal" @model={{@song}} @onSubmit={{fn @saveSong}} as |form|>
-      <form.element @controlType="text" @label="Title" class="pb-2" placeholder="Type the song title" @property="title" /> 
-      <form.element @controlType="text" @label="Artist" class="pb-2" placeholder="Type the song artist" @property="artist" /> 
-      <form.element @controlType="power-select" @property="type" class="pb-2" @label="Type" @options={{this.songTypes}} as |element| >
-        <element.control placeholder="Select the song type" @allowClear={{true}} />
-      </form.element>
-      <form.element @controlType="text" @label="Account" class="pb-2" placeholder="Select the twitch account you want to link the song" @property="account" /> 
-      <div class="form-group row pb-2">
-        <label class="col-md-4">Active</label>
-        <div class="col-sm">
-          <form.element @controlType="checkbox" @label="" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="active" />
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <form.element @controlType="text" @label="Title" class="pb-2" placeholder="Type the song title" @property="title" /> 
+        <form.element @controlType="text" @label="Artist" class="pb-2" placeholder="Type the song artist" @property="artist" /> 
+        <form.element @controlType="power-select" @property="type" class="pb-2" @label="Type" @options={{this.songTypes}} as |element| >
+          <element.control placeholder="Select the song type" @allowClear={{true}} />
+        </form.element>
+        <form.element @controlType="text" @label="Account" class="pb-2" placeholder="Select the twitch account you want to link the song" @property="account" /> 
+        <div class="form-group row pb-2">
+          <label class="col-md-4">Active</label>
+          <div class="col-sm">
+            <form.element @controlType="checkbox" @label="" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="active" />
+          </div>
+        </div>
+        <div class="form-group row pb-2">
+          <label class="col-md-4">Keywords:</label>    
+          <div class="col-sm">
+            <Textarea @value={{@song.keywords}} placeholder="Type words or phrases related to the song" class="form-control"/>
+          </div>
+        </div>
+        <div class="form-group row pb-2">
+          <label class="col-md-4">Permissions</label>
+          <div class="col-sm">
+            <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check form-check-inline ps-0" @property="admin" />
+            <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check form-check-inline ps-0" @property="mod" />
+            <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check form-check-inline ps-0" @property="sub" />
+            <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="vip" />
+          </div>
+        </div>
+        <form.element @controlType="text" @label="Remote model ID" placeholder="You can't touch this!" @property="remoteid" class="pb-2" disabled={{true}} />
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="row py-2"><label class="col-md-4">Lyrics/tab:</label></div>
+        <div class="form-group row pt-4">            
+          <div class="col-sm">   
+            <Textarea @value={{@song.lyrics}} class="form-control" placeholder="Write/paste your lyrics/tab here." rows="15" />
+          </div>
         </div>
       </div>
-      <div class="form-group row pb-2">
-        <label class="col-md-4">Keywords:</label>    
-        <div class="col-sm">
-          <Textarea @value={{@song.keywords}} placeholder="Type words or phrases related to the song" class="form-control"/>
-        </div>
-      </div>
-      <div class="form-group row pb-2">
-        <label class="col-md-4">Lyrics/tab:</label>   
-        <div class="col-sm">   
-          <MarkdownEditor @value={{@song.lyrics}} @onChange={{fn (mut @song.lyrics)}} @rows="20" />
-        </div>
-      </div>
-      <div class="form-group row pb-2">
-        <label class="col-md-4">Permissions</label>
-        <div class="col-sm">
-          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check form-check-inline ps-0" @property="admin" />
-          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check form-check-inline ps-0" @property="mod" />
-          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check form-check-inline ps-0" @property="sub" />
-          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="vip" />
-        </div>
-      </div>
-      <form.element @controlType="text" @label="Remote model ID" placeholder="You can't touch this!" @property="remoteid" class="pb-2" disabled={{true}} /> 
-
+    </div>
       <BsButton @type="success" @onClick={{fn @saveAndReturnSong}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Song saved!</span></div>
       <BsButton @type="danger" @onClick={{fn @deleteSong}} class="float-end">Delete</BsButton>
-      
     </BsForm>
   </div>
 </div>

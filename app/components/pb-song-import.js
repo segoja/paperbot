@@ -60,7 +60,7 @@ export default class PbSongComponent extends Component {
   }
   
   @tracked songsData = [];  
-  @action async openSongsFolder(){
+  @action openSongsFolder(){
     dialog.open({ directory: true }).then((directory) => {
       // console.log(directory);
       if(directory != null && directory){
@@ -68,32 +68,12 @@ export default class PbSongComponent extends Component {
           if(files.length > 0){
             this.songsData = [];
             let idnum = 0;
-            let ansiDecoder = new TextDecoder('windows-1252');
-            files.forEach((file)=>{
+            files.forEach(async (file)=>{
               //console.log(file);
               let filename = file.name.slice(0, -4);
-              let extension = file.name.substr(file.name.length - 3);
-              if(filename && extension.toLowerCase() === 'txt'){
-                let newSong = {id: idnum, name: '', lyrics: ''};
-                newSong.name = filename;
-                readTextFile(file.path).then((filedata)=>{
-                  newSong.lyrics = filedata;
-                }).catch((err)=>{ 
-                  readBinaryFile(file.path).then((fileBinarydata)=>{
-                    console.log(fileBinarydata);
-                    // let string = String.fromCharCode(...fileBinarydata);
-                    let u8arr = new Uint8Array(fileBinarydata);
-                    let string = ansiDecoder.decode(u8arr);        
-                    newSong.lyrics = string;
-                  }).catch((binErr)=>{
-                    console.log(file.path);
-                    console.log(binErr);
-                  });
-                });
-                if(newSong.name){ 
-                  this.songsData.push(newSong);
-                  idnum = idnum +1;                
-                }
+              let extension = file.name.substr(file.name.length - 3);              
+              if(filename && extension.toLowerCase() === 'txt'){                
+                this.songsData.push({id: idnum, name: filename, path: file.path});
                 //console.log(newSong);                
               }
             });
@@ -108,24 +88,38 @@ export default class PbSongComponent extends Component {
   @tracked separator = '';
   @tracked songs = [];
   @action generateList(){
-    if(this.separator != ''){
-      this.songs = this.songsData.map((song)=>{
-        let data = song.name.split(this.separator);
-        let title = data[1];
-        if(data[2]){ title = title+' - '+data[2]; }
-        if(data[3]){ title = title+' - '+data[3]; }
-        if(data[4]){ title = title+' - '+data[4]; }        
-        if(title){ title = title.trimStart().trimEnd(); }
-        let artist = data[0];            
-        if(artist){ artist = artist.trimStart().trimEnd(); }
-        return this.store.createRecord('textfile', {title: title, artist: artist, lyrics: song.lyrics, selected: false });
-      });
-    } else {
-      this.songs = this.songsData.map((song)=>{        
-        return this.store.createRecord('textfile', {title: song.name.trimStart().trimEnd(), artist: '', lyrics: song.lyrics, selected: false });
-      });
-    }
     this.resetPage();
+    let ansiDecoder = new TextDecoder('windows-1252');
+    this.songs = this.songsData.map((item)=>{
+      let newSong = this.store.createRecord('textfile');
+      
+      readTextFile(item.path).then((filedata)=>{
+        newSong.lyrics = filedata;
+      }).catch((err)=>{ 
+        readBinaryFile(item.path).then((fileBinarydata)=>{
+          let u8arr = new Uint8Array(fileBinarydata);
+          newSong.lyrics = ansiDecoder.decode(u8arr);
+        }).catch((binErr)=>{
+          console.log(item.path);
+          console.log(binErr);
+        });
+      });
+       
+      if(this.separator){
+        let data = item.name.split(this.separator);
+        newSong.title = data[1];        
+        if(data[2]){ newSong.title = newSong.title+' - '+data[2]; }
+        if(data[3]){ newSong.title = newSong.title+' - '+data[3]; }
+        if(data[4]){ newSong.title = newSong.title+' - '+data[4]; }        
+        if(newSong.title){ newSong.title = newSong.title.trimStart().trimEnd(); }
+        newSong.artist = data[0];            
+        if(newSong.artist){ newSong.artist = newSong.artist.trimStart().trimEnd(); }
+      } else {
+        newSong.title = item.name.trimStart().trimEnd();
+      } 
+      newSong.selected = false;
+      return newSong;
+    });
   }
   
   @tracked filterQuery = '';
