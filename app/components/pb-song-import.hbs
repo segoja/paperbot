@@ -1,13 +1,18 @@
 <BsButton @type="warning" @onClick={{fn this.toggleModal}}><FaIcon @icon="file-import" />Generate</BsButton>
 {{#if this.isViewing}}
-  <BsModal @onSubmit={{fn this.generateSongs}} @size="lg" as |Modal|>
-    <Modal.header @onClose={{fn this.toggleModal Modal.close}} class="py-2" >
-      <h4 class="modal-title"><i class="glyphicon glyphicon-alert"></i> Import songs from your text files</h4>
+  <BsModal @onSubmit={{fn this.generateSongs}} @size="xl border rounded bg-dark" as |Modal|>
+    <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">
+      <div class="row g-0 w-100 bg-dark bg-gradient border-0 rounded-top">
+        <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i> Import songs from your text files</span></div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}}><FaIcon @icon="times" /></button>
+        </div>
+      </div>
     </Modal.header>
     <Modal.body>
-      <BsForm @model={{this}} @formLayout="inline" class="row g-1 pb-2"  as |form|>
-        <div class="row g-1 pb-2">
-          <BsButton @type="warning col-auto" @onClick={{fn this.openSongsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
+      <BsForm @model={{this}} @formLayout="inline" class="row g-0 pb-2"  as |form|>
+        <div class="row g-0 pb-2">
+          <BsButton @type="warning col-auto me-1" @onClick={{fn this.openSongsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
           <form.element @controlType="text" class="col" @property="separator" {{on "keydown" this.generateList}} as |el|>
             <el.control
               placeholder="Enter the artist/song separator string to process filenames"
@@ -15,7 +20,7 @@
             />
           </form.element>      
         </div>
-        <div class="row g-1 pb-2">
+        <div class="row g-0 pb-2">
           <form.element @controlType="text" class="col" @property="filterQuery" {{on "keydown" this.resetPage}} as |el|>
             <el.control
               placeholder="Filter importable songs."
@@ -42,7 +47,7 @@
                         <span class="w-100">{{option}}</span>
                       </element.control>
                     </form.element>
-                    <BsButton @type="btn-outline-secondary alert-secondary rounded-0 col-auto"  @onClick={{fn this.bulkSelectAll}}>
+                    <BsButton @type="btn-outline-secondary rounded-0 col-auto"  @onClick={{fn this.bulkSelectAll}}>
                       <FaIcon class="text-secondary" @icon={{if this.isBulk "square" "check-square"}} />
                     </BsButton>                         
                   </BsForm>
@@ -61,7 +66,7 @@
                           <span class="w-100">{{option}}</span>
                         </element.control>
                       </form.element>
-                      <BsButton @type={{if song.selected "btn-outline-secondary bg-transparent rounded-0 col-auto" "btn-outline-secondary alert-secondary rounded-0 col-auto"}}  @onClick={{fn this.addToImport song}}>
+                      <BsButton @type={{if song.selected "btn-outline-secondary rounded-0 col-auto" "btn-outline-secondary rounded-0 col-auto"}}  @onClick={{fn this.addToImport song}}>
                         <FaIcon class="text-secondary" @icon={{if song.selected "check-square" "square"}} />
                       </BsButton>                         
                     </BsForm>

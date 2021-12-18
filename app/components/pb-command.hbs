@@ -1,8 +1,10 @@
 <div class="card">
-  <div class="card-header bg-dark text-white row p-0 m-0 g-0 border-0 rounded-top">
-    <div class="col d-block align-self-center pe-0 ps-3"><h5 class="my-0">{{@command.name}}</h5></div>
-    <div class="col-auto">
-      <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" @closeCommand}}><FaIcon @icon="times" /></button>
+  <div class="card-header bg-dark bg-gradient p-0 m-0 border-0 rounded-top">
+    <div class="row g-0">
+      <div class="col py-1 ps-3"><span class="h5 text-white">{{@command.name}}</span></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" @closeCommand}}><FaIcon @icon="times" /></button>
+      </div>
     </div>
   </div>
   <div class="card-body">

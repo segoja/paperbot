@@ -11,6 +11,11 @@ export default class EventsExternalService extends Service {
   @tracked token = null;  
   @tracked client = null;
   
+  constructor() {
+    super(...arguments);
+    this.createClient;
+  }
+  
   // @tracked connected = false;
   
   get connected(){

@@ -30,38 +30,46 @@
     </BsForm>
   </div>
 {{else}}
-  <div class="card-body p-0 m-0 border-top-0 border-trans">
-    <div class="row p-0 m-0 border border-dark rounded-0 bg-dark">
-      <div class="col-2 row p-0 m-0 bg-dark">
-        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if this.currentUser.soundBoardEnabled "info" "secondary"}} @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
-          {{on-key "ctrl+KeyM" this.soundboardToggle}}  
-          <FaIcon @icon={{if this.currentUser.soundBoardEnabled "volume-up" "volume-mute"}} />
-        </BsButton>     
-        <BsButton class="btn-sm mx-0 border border-dark col-12 col-sm-6 rounded-0" @type={{if @stream.requests (if this.currentUser.queueToFile "warning" "secondary") "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
-          {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
-          <FaIcon @icon={{if @stream.requests (if this.currentUser.queueToFile "file-alt" "file") "file"}} />
-        </BsButton>
-      </div>
-      <div class="col row p-0 m-0 rounded-0 bg-dark">
-        {{#if this.disableBotButton}}
-          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type={{if this.twitchChat.botConnected "primary" "secondary"}} disabled={{this.disableBotButton}}><FaIcon @icon="play" /> Bot Client</BsButton>
-        {{else}}      
-          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type={{if this.twitchChat.botConnected "primary" "secondary"}} @onClick={{fn (if this.twitchChat.botConnected this.disconnectBot this.connectBot)}}>
-            <FaIcon @icon={{if this.twitchChat.botConnected "stop" "play"}} /> Bot Client
+  <div class="card-body p-0">
+    <div class="row g-0 bg-dark">
+      <div class="col-auto">
+        <div class="row g-0">
+          <BsButton class="btn-sm col-12 col-sm" @type={{if this.currentUser.soundBoardEnabled "info" "secondary"}} @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
+            {{on-key "ctrl+KeyM" this.soundboardToggle}}  
+            <FaIcon @icon={{if this.currentUser.soundBoardEnabled "volume-up" "volume-mute"}} />
+          </BsButton>     
+          <BsButton class="btn-sm col-12 col-sm" @type={{if @stream.requests (if this.currentUser.queueToFile "warning" "secondary") "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
+            {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
+            <FaIcon @icon={{if @stream.requests (if this.currentUser.queueToFile "file-alt" "file") "file"}} />
           </BsButton>
-        {{/if}}
-        {{#if this.disableChatButton}}
-          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type={{if this.twitchChat.chatConnected "success" "secondary"}} disabled={{this.disableChatButton}} ><FaIcon @icon="play" /> Chat Client</BsButton>
-        {{else}}
-          <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type={{if this.twitchChat.chatConnected "success" "secondary"}} @onClick={{fn (if this.twitchChat.chatConnected this.disconnectChat this.connectChat)}}>
-            <FaIcon @icon={{if this.twitchChat.chatConnected "stop" "play"}} /> Chat Client
-          </BsButton>
-        {{/if}}
+        </div>
       </div>
-      <div class="col row p-0 m-0 rounded-0 text-nowrap bg-dark">
-        {{!-- <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Clients</BsButton> --}}
-        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0" @type="danger" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished this.disconnectButton true)}}><FaIcon @icon="save" /> Finish Stream</BsButton>
-        <BsButton class="btn-sm border border-dark col-12 col-sm mx-0 rounded-0 text-editstream" @type="warning" @onClick={{fn @editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
+      <div class="col">
+        <div class="row g-0">
+          {{#if this.disableBotButton}}
+            <BsButton class="btn-sm col-12 col-sm" @type={{if this.twitchChat.botConnected "primary" "secondary"}} disabled={{this.disableBotButton}}><FaIcon @icon="play" /> Bot</BsButton>
+          {{else}}      
+            <BsButton class="btn-sm col-12 col-sm"  @type={{if this.twitchChat.botConnected "primary" "secondary"}} @onClick={{fn (if this.twitchChat.botConnected this.disconnectBot this.connectBot)}}>
+              <FaIcon @icon={{if this.twitchChat.botConnected "stop" "play"}} /> Bot
+            </BsButton>
+          {{/if}}
+          {{#if this.disableChatButton}}
+            <BsButton class="btn-sm col-12 col-sm" @type={{if this.twitchChat.chatConnected "success" "secondary"}} disabled={{this.disableChatButton}} >
+              <FaIcon @icon="play" /> Chat
+            </BsButton>
+          {{else}}
+            <BsButton class="btn-sm col-12 col-sm" @type={{if this.twitchChat.chatConnected "success" "secondary"}} @onClick={{fn (if this.twitchChat.chatConnected this.disconnectChat this.connectChat)}}>
+              <FaIcon @icon={{if this.twitchChat.chatConnected "stop" "play"}} /> Chat
+            </BsButton>
+          {{/if}}
+        </div>
+      </div>
+      <div class="col">
+        <div class="row g-0">
+          {{!-- <BsButton class="btn-sm col-12 col-sm" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Clients</BsButton> --}}
+          <BsButton class="btn-sm col-12 col-sm text-truncate" @type="danger" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished this.disconnectButton true)}}><FaIcon @icon="flag-checkered" /> Finish Stream</BsButton>
+          <BsButton class="btn-sm col-12 col-sm text-editstream text-truncate" @type="warning" @onClick={{fn @editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
+        </div>
       </div>
     </div>
   </div>
@@ -70,16 +78,25 @@
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
           {{#if @stream.events}}
-            <div role="button" class="{{if this.globalConfig.config.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftTop}}>
-              <FaIcon @icon={{if this.globalConfig.config.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-            </div>
+            {{#if this.globalConfig.config.extraPanLeft}}
+              <button type="button" class="col border alert-secondary p-0 m-0" disabled={{not this.globalConfig.config.extraPanLeft}} {{on "click" this.toggleExtraPanLeftTop}}>
+                <FaIcon @icon={{if this.globalConfig.config.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+              </button>
+            {{/if}}
           {{else}}
-            <div role="button" class="{{if this.globalConfig.config.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
+            {{#if (not this.globalConfig.config.extraPanRight)}}          
+              <div class="col border alert-secondary p-0 m-0"></div>
+            {{/if}}
           {{/if}}
           {{#if this.requests}}
-            <div role="button" class="{{if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
-              <FaIcon @icon={{if this.globalConfig.config.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-            </div>
+            {{#if this.globalConfig.config.extraPanRight}}          
+              <button type="button" class="{{if this.globalConfig.config.extraPanLeft "col-5" "col"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
+                <FaIcon @icon={{if this.globalConfig.config.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+              </button>
+            {{/if}}
+          {{/if}}
+          {{#if (and (not this.globalConfig.config.extraPanLeft) (not this.globalConfig.config.extraPanRight))}}          
+            <div class="col border alert-secondary p-0 m-0"></div>
           {{/if}}
         </div>
       </div>
@@ -225,24 +242,33 @@
               </d.Container>
             </div>
           </div>
-          <div role="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanRight}}>
-            <span class="d-block align-self-center"><FaIcon @icon={{if this.globalConfig.config.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
-          </div>
         </EmberDragula>
+        <div role="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanRight}}>
+          <span class="d-block align-self-center"><FaIcon @icon={{if this.globalConfig.config.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
+        </div>
       </div>
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">
           {{#if @stream.events}}
-            <div role="button" class="{{if this.globalConfig.config.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanLeftBottom}}>
-              <FaIcon @icon={{if this.globalConfig.config.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-            </div>
+            {{#if this.globalConfig.config.extraPanLeft}}
+              <button type="button" class="col border alert-secondary p-0 m-0" disabled={{not this.globalConfig.config.extraPanLeft}} {{on "click" this.toggleExtraPanLeftBottom}}>
+                <FaIcon @icon={{if this.globalConfig.config.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+              </button>
+            {{/if}}
           {{else}}
-            <div role="button" class="{{if this.globalConfig.config.extraPanLeft "col" "d-none"}} border alert-secondary p-0 m-0"></div>
+            {{#if (not this.globalConfig.config.extraPanRight)}}          
+              <div class="col border alert-secondary p-0 m-0"></div>
+            {{/if}}
           {{/if}}
           {{#if this.requests}}
-            <div role="button" class="{{if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5" "col") "d-none"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
-              <FaIcon @icon={{if this.globalConfig.config.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-            </div>
+            {{#if this.globalConfig.config.extraPanRight}}
+              <button type="button" class="{{if this.globalConfig.config.extraPanLeft "col-5" "col"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
+                <FaIcon @icon={{if this.globalConfig.config.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
+              </button>
+            {{/if}}
+          {{/if}}
+          {{#if (and (not this.globalConfig.config.extraPanLeft) (not this.globalConfig.config.extraPanRight))}}          
+            <div class="col border alert-secondary p-0 m-0"></div>
           {{/if}}
         </div>
       </div>

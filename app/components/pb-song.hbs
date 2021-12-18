@@ -1,24 +1,26 @@
 <div class="card">
-  <div class="card-header bg-dark text-white row p-0 m-0 g-0 border-0 rounded-top">
-    <div class="col d-block align-self-center pe-0 ps-3"><h5 class="my-0">{{@song.title}}</h5></div>
-    <div class="col-auto">
-      <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" @closeSong}}><FaIcon @icon="times" /></button>
+  <div class="card-header bg-dark bg-gradient p-0 m-0 border-0 rounded-top">
+    <div class="row g-0">
+      <div class="col py-1 ps-3"><span class="h5 text-white">{{@song.title}}</span></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" @closeSong}}><FaIcon @icon="times" /></button>
+      </div>
     </div>
   </div>
   <div class="card-body">
-    <BsForm @formLayout="horizontal" @model={{@song}} @onSubmit={{fn @saveSong}} as |form|>
+    <BsForm @formLayout="inline" @model={{@song}} @onSubmit={{fn @saveSong}} as |form|>
     <div class="row">
       <div class="col-12 col-md-6">
-        <form.element @controlType="text" @label="Title" class="pb-2" placeholder="Type the song title" @property="title" /> 
-        <form.element @controlType="text" @label="Artist" class="pb-2" placeholder="Type the song artist" @property="artist" /> 
-        <form.element @controlType="power-select" @property="type" class="pb-2" @label="Type" @options={{this.songTypes}} as |element| >
+        <form.element @controlType="text" @label="Title" class="pb-2" @formLayout="inline" placeholder="Type the song title" @property="title" /> 
+        <form.element @controlType="text" @label="Artist" class="pb-2" @formLayout="inline" placeholder="Type the song artist" @property="artist" /> 
+        <form.element @controlType="power-select" @property="type" @formLayout="inline" class="pb-2" @label="Type" @options={{this.songTypes}} as |element| >
           <element.control placeholder="Select the song type" @allowClear={{true}} />
         </form.element>
-        <form.element @controlType="text" @label="Account" class="pb-2" placeholder="Select the twitch account you want to link the song" @property="account" /> 
-        <div class="form-group row pb-2">
-          <label class="col-md-4">Active</label>
-          <div class="col-sm">
-            <form.element @controlType="checkbox" @label="" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="active" />
+        {{!-- <form.element @controlType="text" @label="Account" class="pb-2" @formLayout="inline" placeholder="Select the twitch account you want to link the song" @property="account" /> --}}
+        <div class="form-group row py-2">
+          <label class="col-4">Active</label>
+          <div class="col">
+            <form.element @controlType="checkbox" @label="" @formLayout="inline"  class="form-check form-check-inline ps-0 float-start" @property="active" />
           </div>
         </div>
         <div class="form-group row pb-2">
@@ -36,11 +38,11 @@
             <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="vip" />
           </div>
         </div>
-        <form.element @controlType="text" @label="Remote model ID" placeholder="You can't touch this!" @property="remoteid" class="pb-2" disabled={{true}} />
+        {{!-- <form.element @controlType="text" @label="Remote model ID" placeholder="You can't touch this!" @property="remoteid" class="pb-2" disabled={{true}} /> --}}
       </div>
       <div class="col-12 col-md-6">
-        <div class="row py-2"><label class="col-md-4">Lyrics/tab:</label></div>
-        <div class="form-group row pt-4">            
+        <div class="row"><label class="col-md-4">Lyrics/tab:</label></div>
+        <div class="form-group row py-2">            
           <div class="col-sm">   
             <Textarea @value={{@song.lyrics}} class="form-control" placeholder="Write/paste your lyrics/tab here." rows="15" />
           </div>
