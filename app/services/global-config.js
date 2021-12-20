@@ -3,6 +3,7 @@ import Service from '@ember/service';
 
 export default class GlobalConfigService extends Service {
   @tracked config = '';
+  @tracked showFirstRun = true;
   
   get defbotclient(){
     if(this.config != ''){

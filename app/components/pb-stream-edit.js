@@ -171,8 +171,10 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.botclient.on("subgift", this.eventGetter);
       this.twitchChat.botclient.on("submysterygift", this.eventGetter);
       this.twitchChat.botclient.on("subscription", this.eventGetter);
-      //this.eventsExternal.client.on("event", this.eventGetter);
-      //this.eventsExternal.client.on("event:test", this.eventGetter);
+      if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
+        this.eventsExternal.client.on("event", this.eventGetter);
+        this.eventsExternal.client.on("event:test", this.eventGetter);
+      }
     }
   }
 
@@ -195,6 +197,7 @@ export default class PbStreamEditComponent extends Component {
     if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
       this.eventsExternal.token = this.globalConfig.config.externaleventskey;
       this.eventsExternal.type = this.globalConfig.config.externalevents;
+      this.eventsExternal.createClient();
     }
     
     this.twitchChat.connector(this.optsbot, "bot").then(()=>{
@@ -226,8 +229,10 @@ export default class PbStreamEditComponent extends Component {
         this.twitchChat.botclient.on("subgift", this.eventGetter);
         this.twitchChat.botclient.on("submysterygift", this.eventGetter);
         this.twitchChat.botclient.on("subscription", this.eventGetter);
-        //this.eventsExternal.client.on("event", this.eventGetter);
-        //this.eventsExternal.client.on("event:test", this.eventGetter);        
+        if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
+          this.eventsExternal.client.on("event", this.eventGetter);
+          this.eventsExternal.client.on("event:test", this.eventGetter);
+        }
       }
     );
       // later(() => { console.log(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     

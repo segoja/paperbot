@@ -12,16 +12,21 @@ export default class PbReaderComponent extends Component {
   @service globalConfig;
   @service headData;
   @service lightControl;
+  @tracked selected = '';
+  @tracked songQuery = "";
+  @tracked restore = true;
+  @tracked zoomLevel = 0.85;
   
   songsSorting = Object.freeze(['date_added:asc']);  
   @sort ('args.songs','songsSorting') arrangedContent;
   
   @computed('globalConfig.config.lastPlayed', 'restore')
   get filterQueryString(){
+    let restore = this.restore;
     let lastPlayed = this.globalConfig.config.lastPlayed;
     let selected = this.selected;
     if( lastPlayed != '' && !selected ){
-      return lastPlayed.replace(' by ',' ');
+      return lastPlayed.replace(' by ',' ').replace(/"/g, "").replace(/.$/, " ");
     }
     return '';
   }
@@ -33,7 +38,6 @@ export default class PbReaderComponent extends Component {
     { conjunction: 'and', sort: false}
   ) filteredContent;  
 
-  @tracked selected = '';
   get currentSong(){
     let song = [];
     if(this.selected){
@@ -48,7 +52,6 @@ export default class PbReaderComponent extends Component {
     return song;
   }
   
-  @tracked songQuery = "";
   @computedFilterByQuery(
     'arrangedContent',
     ['title','artist'],
@@ -61,7 +64,6 @@ export default class PbReaderComponent extends Component {
     return this.filteredSongs;
   } 
   
-  @tracked restore = true;
   
   @action selectSong(song){
     this.selected = song;
@@ -69,13 +71,14 @@ export default class PbReaderComponent extends Component {
     later(() => { this.restore = true; }, 10);   
   }
   
-  @tracked zoomLevel = 0.85;
   @action resetZoom(){
     this.zoomLevel = 0.85;
   }
+  
   @action addZoom(){
     this.zoomLevel = this.zoomLevel + 0.025;
   }
+  
   @action subZoom(){
     this.zoomLevel = this.zoomLevel - 0.025;
   }
@@ -97,6 +100,5 @@ export default class PbReaderComponent extends Component {
         this.lightControl.toggleMode(this.globalConfig.config.darkmode); 
       });
     }
-  }
-  
+  }  
 }

@@ -75,14 +75,16 @@
               {{/each}}          
             </tbody>        
           </table>      
-          <div class="py-0 my-0 px-2">
-            <PageNumbers @content={{this.pagedSongs}} />
-          </div>
         {{/if}}
     </Modal.body>
-    <Modal.footer class="py-2" as |footer|>
-      <BsButton @onClick={{fn this.toggleModal Modal.close}} @type="danger">Cancel</BsButton>
-      <BsButton @onClick={{fn this.generateSongs}} @type="success">Import</BsButton>
+    <Modal.footer class="py-2 row g-0" as |footer|>
+      {{#if this.songs}}
+        <PageNumbers @content={{this.pagedSongs}} @fullBorder={{true}} class="col" />
+      {{/if}}
+      <div class="col-auto">
+        <BsButton @onClick={{fn this.toggleModal Modal.close}} @type="danger">Cancel</BsButton>
+        <BsButton @onClick={{fn this.generateSongs}} @type="success">Import</BsButton>
+      </div>
     </Modal.footer>
   </BsModal>
 {{/if}}

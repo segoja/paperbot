@@ -4,17 +4,14 @@ import { tracked } from '@glimmer/tracking';
 import io from 'socket.io-client';
 import moment from 'moment';
 import { htmlSafe } from '@ember/template';
+import { inject as service } from '@ember/service';
 
 export default class EventsExternalService extends Service {
+  @service globalConfig;
 
   @tracked type = null;  
   @tracked token = null;  
   @tracked client = null;
-  
-  constructor() {
-    super(...arguments);
-    this.createClient;
-  }
   
   // @tracked connected = false;
   

@@ -27,7 +27,8 @@ module.exports = function (environment) {
     // This fix the huge deprecated warning.
     emberKeyboard: {
       disableInputsInitializer: true,
-      listeners: ['keyUp', 'keyDown', 'keyPress', 'click'], // use only `keyUp`, `keyDown`, and `click`,      
+      listeners: ['keyUp', 'keyDown', 'keyPress', 'click'], // use only `keyUp`, `keyDown`, and `click`,
+      propagation: true,
     },
     APP: {
       // Here you can pass flags/options to your application instance

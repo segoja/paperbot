@@ -418,6 +418,7 @@ export default class TwitchChatService extends Service {
           console.log("=================");
           if(bestmatch.active){
             if(this.commandPermissionHandler(bestmatch, tags) === true){
+              // changing this could break the reader.
               song = '"'+bestmatch.title+'"';
               if(bestmatch.artist){
                 song = song+' by '+bestmatch.artist+'.';
@@ -697,6 +698,12 @@ export default class TwitchChatService extends Service {
         // Do your stuff.
         this.chateventHandler("<strong>@"+username+"</strong> has been unbanned.");
     });
+
+    client.on("chant", (channel, username, reason, userstate) => {
+        // Do your stuff.
+        this.chateventHandler("<strong>@"+username+"</strong> started a chant!");
+    });
+
 
     client.on("clearchat", (channel) => {
         // Do your stuff.

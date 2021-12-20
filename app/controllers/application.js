@@ -12,7 +12,8 @@ export default class ApplicationController extends Controller {
   @service store;
   @service router;
   @service globalConfig;
-  @service lightControl;  
+  @service lightControl; 
+  @service eventsExternal;
   
   // We load the existing config or create a new one.  
   constructor() {
@@ -24,10 +25,16 @@ export default class ApplicationController extends Controller {
         console.log("Config found! Loading...");
         this.lightControl.toggleMode(currentconfig.darkmode);
         this.globalConfig.config = currentconfig;
+        if(this.globalConfig.config.externalevents &&  this.globalConfig.config.externaleventskey){
+          this.eventsExternal.token = this.globalConfig.config.externaleventskey;
+          this.eventsExternal.type = this.globalConfig.config.externalevents;
+        }
+        this.globalConfig.showFirstRun = true;
       } else{
         this.store.createRecord('config',{id: 'myconfig'}).save().then((newconfig)=>{
           console.log("Config not found! New config created...");
           this.globalConfig.config = newconfig;
+          this.globalConfig.showFirstRun = true;
         }).catch(()=>{
           console.log("Error creating config!");
         })

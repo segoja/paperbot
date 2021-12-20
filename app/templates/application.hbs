@@ -70,5 +70,6 @@
   </header>
 {{/unless}}
 <main role="main" class={{if this.currentUser.hideMenu "container-fluid pt-0 px-0" "container-fluid pt-5 px-0" }}>
+  <PbFirstRun />
   {{outlet}}
 </main>
