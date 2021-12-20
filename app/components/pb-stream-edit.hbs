@@ -26,7 +26,7 @@
       <BsButton @type="success" @onClick={{this.doneAndReturnEditing}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Stream updated!</span></div>
-      <BsButton @type="danger" @onClick={{@deleteStream}} class="float-end">Delete</BsButton>
+      <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this stream?" @targetAction={{fn @deleteStream}} />
     </BsForm>
   </div>
 {{else}}
@@ -40,6 +40,9 @@
           </BsButton>     
           <BsButton class="btn-sm col-12 col-sm" @type={{if @stream.requests (if this.currentUser.queueToFile "warning" "secondary") "secondary"}} @onClick={{this.queueWriter}} title="Enable/disable overlay queue file">
             {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
+            {{#if (not @stream.requests)}}
+              <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>Please, enable the <em>Song Request System</em></BsTooltip>
+            {{/if}}
             <FaIcon @icon={{if @stream.requests (if this.currentUser.queueToFile "file-alt" "file") "file"}} />
           </BsButton>
         </div>

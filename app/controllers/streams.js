@@ -63,7 +63,12 @@ export default class StreamsController extends Controller {
       return this.defaultSetter(stream);
     });
   }
-  
+
+  @action gridResumeStream(stream) {
+    this.stream.isEditing = false;
+    this.router.transitionTo('streams.stream', stream);
+  } 
+
   @action gridEditStream(stream) {
     this.stream.isEditing = true;
     this.router.transitionTo('streams.stream', stream);

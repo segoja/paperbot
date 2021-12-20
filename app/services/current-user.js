@@ -33,7 +33,7 @@ export default class CurrentUserService extends Service {
       // loading embedded asset:
       this.lyricsViewer = '';
       let parentWindow = getCurrent();
-      let options = { url: 'reader', title: "Paperbot - Lyrics", parent: parentWindow };
+      let options = { url: 'reader', title: 'Paperbot Reader', parent: parentWindow, decorations: false, minWidth: 320, minHeight: 600 };
       this.lyricsViewer = new WebviewWindow('second', options);
 
       this.lyricsViewer.once('tauri://created', function () {

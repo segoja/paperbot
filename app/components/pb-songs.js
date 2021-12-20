@@ -18,7 +18,7 @@ export default class PbSongsComponent extends Component {
     'args.songs',
     'songsSorting'
   ) arrangedContent; 
-  
+
   @computedFilterByQuery(
     'arrangedContent',
     ['type'],
@@ -28,7 +28,7 @@ export default class PbSongsComponent extends Component {
  
   @computedFilterByQuery(
     'filteredByType',
-    ['title','artist','type'],
+    ['title','artist'],
     'args.queryParamsObj.query',
     { conjunction: 'and', sort: false}
   ) filteredContent;  
@@ -44,6 +44,15 @@ export default class PbSongsComponent extends Component {
   }
   
   @tracked importcontent;
+
+  @action wipeSongs(){
+    this.args.queryParamsObj.page = 1;
+    this.args.songs.forEach((song)=>{
+      song.destroyRecord().then(()=>{
+        console.log("Songs wiped.")
+      });
+    });
+  }
   
   @action songImport(){
     dialog.open({

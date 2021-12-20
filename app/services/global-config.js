@@ -4,6 +4,8 @@ import Service from '@ember/service';
 export default class GlobalConfigService extends Service {
   @tracked config = '';
   @tracked showFirstRun = true;
+  // Tooltip hide delay
+  @tracked ttdelay = 1000;
   
   get defbotclient(){
     if(this.config != ''){

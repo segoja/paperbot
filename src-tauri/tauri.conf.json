@@ -15,11 +15,24 @@
       "targets": "all",
       "identifier": "com.tauri.dev",
       "icon": [
+        "icons/16x16.png",
         "icons/32x32.png",
+        "icons/64x64.png",
         "icons/128x128.png",
         "icons/128x128@2x.png",
         "icons/icon.icns",
-        "icons/icon.ico"
+        "icons/icon.ico",
+        "icons/icon.png",
+        "icons/Square107x107Logo.png",
+        "icons/Square142x142Logo.png",
+        "icons/Square150x150Logo.png",
+        "icons/Square284x284Logo.png",
+        "icons/Square30x30Logo.png",
+        "icons/Square310x310Logo.png",
+        "icons/Square44x44Logo.png",
+        "icons/Square71x71Logo.png",
+        "icons/Square89x89Logo.png",
+        "icons/StoreLogo.png"
       ],
       "resources": [],
       "externalBin": [],
@@ -68,9 +81,12 @@
       {
         "title": "PaperBot",
         "width": 1080,
-        "height": 606,
+        "height": 606,        
+        "minWidth": 320,
+        "minHeight": 600,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "decorations": false
       }
     ],
     "security": {

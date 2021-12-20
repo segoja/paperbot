@@ -7,38 +7,24 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import { inject as service } from '@ember/service';
-import { later } from '@ember/runloop';
 
 export default class PbSongComponent extends Component {
   @tracked page = 1;
   @tracked perPage = 10;
+  
   @service store;
   
   @tracked isViewing = false;  
-  @action toggleModal(paramFunc) {
-    if(paramFunc){
-      paramFunc();
-      later(() => {
-        this.page = 1;
-        this.isBulk = false;
-        this.bulkType = '';
-        this.filterQuery = '';
-        this.separator = '';
-        this.songs = [];
-        this.songsData = [];
-        this.isViewing = !this.isViewing;     
-      }, 1000);
-    } else {
-      this.isViewing = !this.isViewing;
-      if(!this.isViewing){
-        this.page = 1;
-        this.isBulk = false;
-        this.bulkType = '';
-        this.filterQuery = '';
-        this.separator = '';
-        this.songs = [];
-        this.songsData = [];     
-      }
+  @action toggleModal() {
+    this.isViewing = !this.isViewing;
+    if(!this.isViewing){
+      this.page = 1;
+      this.isBulk = false;
+      this.bulkType = '';
+      this.filterQuery = '';
+      this.separator = '';
+      this.songs = [];
+      this.songsData = [];     
     }
   }
   

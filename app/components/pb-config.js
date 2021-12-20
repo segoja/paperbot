@@ -3,13 +3,12 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 import { dialog } from "@tauri-apps/api";
+import { inject as service } from '@ember/service';
 
 export default class PbConfigComponent extends Component {
+  @service globalConfig;
   
   @tracked saving = false;
-  
-  // Tooltip hide delay
-  @tracked ttdelay = 1000;
 
   @action doneEditing() {  
     this.args.saveConfig();

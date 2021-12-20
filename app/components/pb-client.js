@@ -2,8 +2,10 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
+import { inject as service } from '@ember/service';
 
-export default class PbClientComponent extends Component { 
+export default class PbClientComponent extends Component {
+  @service globalConfig;
 
   @tracked saving = false;
   

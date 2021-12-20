@@ -16,7 +16,7 @@
             <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">
               <BsButton @type="secondary" @onClick={{this.clientImport}}>Import</BsButton>
               <BsButton @type="secondary" @onClick={{this.clientExportFiltered}}>Export</BsButton>
-              <BsButton @type="info" @onClick={{@createClient}}>Add New</BsButton>
+              <BsButton @type="primary" @onClick={{@createClient}}>Add New</BsButton>
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@
                         <div class="d-none d-sm-block col-sm py-2">{{client.channel}}</div>
                         <div class="col-auto ms-auto btn-group my-0">
                           <button type="button" class="btn btn-outline-secondary rounded-0 py-2 px-3 alert-secondary" {{on "click" (fn @gridEditClient client)}}><FaIcon @icon="edit" /></button>
-                          <button type="button" class="btn btn-outline-danger rounded-0 py-2 px-3 alert-danger" {{ on "click" (fn @gridDeleteClient client)}}><FaIcon @icon="trash" /></button>
+                          <ButtonConfirm @btnClass="btn btn-outline-danger rounded-0 py-2 px-3 alert-danger" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this client?" @targetAction={{fn @gridDeleteClient client}} />
                         </div>
                       </div>
                     </td>

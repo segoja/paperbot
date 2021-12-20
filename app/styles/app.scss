@@ -193,11 +193,16 @@ div.pan-buttons-row{
   align: center;
 }
 
-svg.logo{
- /*fill: gray;*/
- height: 27px;
- width: 27px;
- vertical-align: top;
+.papermenu *{
+  align-items: baseline!important;
+  .navbar-toggler-icon { width: 27px; height: 27px; }
+  .dragger { cursor: pointer!important; }
+  svg.logo{
+   /*fill: gray;*/
+   height: 27px;
+   width: 27px;
+   vertical-align: bottom;
+  }
 }
 
 .slider {
@@ -253,6 +258,14 @@ svg.logo{
 }
 
 .spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
+
+.btn:focus {
+  box-shadow: none;
+}
+
+.pt-custom {
+  padding-top: 2.3rem !important;
+}
 
 @keyframes spin {
   0% {

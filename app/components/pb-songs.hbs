@@ -4,7 +4,7 @@
       <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill"}}">
         <div class="card-header">
           <div class="row">
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md col-sm-6 col-12 px-1"  as |form|>
+            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md col-sm-6 col-12 px-1" as |form|>
               <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" {{on "keydown" this.resetPage}} as |el|>
                 <el.control
                   placeholder="Filter by title"
@@ -14,17 +14,18 @@
               </form.element>
             </BsForm>
             <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-auto col-sm-6 col-12 px-1" as |form|>
-              <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@songTypes}} @onChange={{this.resetPage}} as |element| >
+              <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@songTypes}} @onchange={{this.resetPage}} as |element| >
                 <element.control  @triggerClass="w-100 m-0" @allowClear={{true}} @placeholder="Filter by type" class="w-100" as |option|>
-                  <span class="w-100" >{{option}}</span>
+                  <span class="w-100">{{option}}</span>
                 </element.control>
               </form.element>
             </BsForm>
             <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">
               <PbSongImport @songTypes={{@songTypes}} />
+              <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all songs?" @targetAction={{this.wipeSongs}} />
               <BsButton @type="secondary" @onClick={{this.songImport}}>Import</BsButton>
               <BsButton @type="secondary" @onClick={{this.songExportFiltered}}>Export</BsButton>
-              <BsButton @type="info" @onClick={{@createSong}}>Add New</BsButton>
+              <BsButton @type="primary" @onClick={{@createSong}}>Add New</BsButton>
               {{!-- <BsButton @type="info" @onClick={{fn @udpdateRest}}>Cloud Sync</BsButton> --}}
             </div>
           </div>
@@ -56,7 +57,7 @@
                       <div class="row g-0">
                         <div class="col-auto ms-auto btn-group my-0">
                           <button type="button" class="btn btn-outline-secondary alert-secondary rounded-0 py-2 px-3" {{on "click" (fn @gridEditSong song)}}><FaIcon @icon="edit" /></button>
-                          <button type="button" class="btn btn-outline-danger alert-danger rounded-0 py-2 px-3" {{ on "click" (fn @gridDeleteSong song)}}><FaIcon @icon="trash" /></button>
+                          <ButtonConfirm @btnClass="btn btn-outline-danger rounded-0 py-2 px-3 alert-danger" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @targetAction={{fn @gridDeleteSong song}} />
                         </div>
                       </div>
                     </td>

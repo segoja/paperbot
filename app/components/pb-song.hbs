@@ -52,7 +52,7 @@
       <BsButton @type="success" @onClick={{@saveAndReturnSong}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Song saved!</span></div>
-      <BsButton @type="danger" @onClick={{@deleteSong}} class="float-end">Delete</BsButton>
+      <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this song?" @targetAction={{fn @deleteSong}} />
     </BsForm>
   </div>
 </div>

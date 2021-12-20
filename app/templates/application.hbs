@@ -1,43 +1,66 @@
-﻿<HeadLayout />
-<div id="ember-bootstrap-wormhole"></div>
-{{#unless this.currentUser.hideMenu}}
-  <header class="m-0 p-0">
+﻿<div id="ember-bootstrap-wormhole"></div>
+<HeadLayout />
+{{#if (not this.currentUser.hideMenu)}}
+  <header role="button" class="m-0 p-0">
     <BsNavbar
       @type="dark"
-      class="px-0 px-md-3 g-0 my-0 py-1"
+      class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
       @backgroundColor="dark"
       @collapsed={{true}}
       @fluid={{true}}
       @position="fixed-top"
       @toggleBreakpoint="md"
       @onCollapse={{fn (mut this.collapsed) true}}
+      @container="none container-fluid px-0 ps-md-2"
       @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
 
-        <div class="navbar-header">
-          {{navbar.toggle}}
-          <LinkTo @route="application" class="navbar-brand my-0 py-0">Paperbot <span>{{svg-jar "papercat-gray-icon" class="logo" }}</span></LinkTo>{{this.loadConfig}}
-        </div>     
+        <div class="navbar-header row col-md-auto col g-0">
+          <div class="col-auto">
+            <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 m-0" />
+            <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 dragger" {{on "mousedown" this.dragWindow}}>
+              {{svg-jar "papercat-gray-icon" class="logo" }}
+              <span class="d-none d-sm-inline-block pe-3">Paperbot</span> 
+            </button>{{this.loadConfig}}
+          </div>
+          <div class="col d-md-none dragger">
+            <div role="button" class="nav-link pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
+          </div>
+          <div class="btn-group btn-group-sm col-auto d-md-none">
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+              <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+            </button>
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+            <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
+          </div>
+        </div>
         <navbar.content class="px-md-0 px-3">
-          <navbar.nav class="me-auto" as |nav|>
+          <navbar.nav class="col" as |nav|>
             <nav.item>
-              <nav.link-to @route="streams.index">Streams</nav.link-to>
+              <nav.link-to @route="streams.index" class="py-1">Streams</nav.link-to>
             </nav.item>
             <nav.item>
-              <nav.link-to @route="commands.index">Commands</nav.link-to>
+              <nav.link-to @route="commands.index" class="py-1">Commands</nav.link-to>
             </nav.item>
             <nav.item>
-              <nav.link-to @route="songs.index">Songs</nav.link-to>
+              <nav.link-to @route="songs.index" class="py-1">Songs</nav.link-to>
             </nav.item> 
             <nav.item>
-              <nav.link-to @route="clients.index">Clients</nav.link-to>
-            </nav.item>           
-          </navbar.nav>
-          <navbar.nav class="ms-auto" as |nav|>
-            <nav.item>
-              <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
+              <nav.link-to @route="clients.index" class="py-1">Clients</nav.link-to>
             </nav.item>
-            <nav.dropdown class="bg-dark" as |dd| >
-              <dd.toggle><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
+            <nav.item>
+              <PbFirstRun />
+            </nav.item>
+            <nav.item class="col-md d-md-flex d-none dragger">
+              <div role="button" class="nav-link w-100 pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
+            </nav.item> 
+          </navbar.nav>
+          <navbar.nav class="col-auto" as |nav|>
+            {{!-- <nav.item>
+              <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
+            </nav.item> --}}
+            <nav.dropdown class="bg-dark py-0" as |dd| >
+              <dd.toggle class="py-1"><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
               <dd.menu class="dropdown-menu-dark" as |ddm|>            
                 <ddm.item>
                   <ddm.link-to @route="settings.config" @model={{this.globalConfig.config}} class="font-weight-bold"><h6>Change Settings <FaIcon @icon="wrench" /></h6></ddm.link-to>
@@ -59,17 +82,74 @@
                 </ddm.item>
               </dd.menu>
             </nav.dropdown>
-            <nav.item>
-              <span role="button" {{on "click" this.toggleMode}} class="nav-link {{if this.headData.darkMode "bulboff" "bulbon active"}}" title="{{if this.headData.darkMode "Dark mode" "Light mode"}}">
-                <FaIcon @icon={{if this.updateLight "lightbulb" "lightbulb"}} />
-              </span>
-            </nav.item>
           </navbar.nav>
         </navbar.content>
+        <div class="row g-0 d-md-flex col col-md-auto d-none">
+          <div class="btn-group btn-group-sm col-auto">
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+              <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+            </button>
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+            <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
+          </div>
+        </div>
     </BsNavbar>
   </header>
-{{/unless}}
-<main class={{if this.currentUser.hideMenu "container-fluid pt-0 px-0" "container-fluid pt-5 px-0" }}>
-  <PbFirstRun />
+{{else}}
+  <header role="button" class="m-0 p-0">
+    <BsNavbar
+      @type="dark"
+      class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
+      @backgroundColor="dark"
+      @collapsed={{true}}
+      @fluid={{true}}
+      @position="fixed-top"
+      @toggleBreakpoint="md"
+      @onCollapse={{fn (mut this.collapsed) true}}
+      @container="none container-fluid px-0 ps-2"
+      @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
+
+        <div class="navbar-header row col-md-auto col g-0">
+          <div class="col-auto">
+            <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 m-0 d-none" />
+            <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 dragger" {{on "mousedown" this.dragWindow}}>
+              {{svg-jar "papercat-gray-icon" class="logo" }}
+              <span class="d-none d-sm-inline-block pe-3">Paperbot Reader</span> 
+            </button>{{this.loadConfig}}
+          </div>
+          <div class="col d-md-none dragger">
+            <div role="button" class="nav-link pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
+          </div>
+          <div class="btn-group btn-group-sm col-auto d-md-none">
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+              <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+            </button>
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+            <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
+          </div>
+        </div>
+        <navbar.content class="px-md-0 px-3">
+          <navbar.nav class="col" as |nav|>
+            <nav.item class="col-md d-md-flex d-none dragger">
+              <div role="button" class="nav-link w-100 pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
+            </nav.item> 
+          </navbar.nav>
+        </navbar.content>
+        <div class="row g-0 d-md-flex col col-md-auto d-none">
+          <div class="btn-group btn-group-sm col-auto">
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+              <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+            </button>
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+            <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
+          </div>
+        </div>
+    </BsNavbar>
+  </header>
+{{/if}}
+<main class="container-fluid pt-custom px-0">
   {{outlet}}
 </main>

@@ -16,7 +16,7 @@
           Oauth 
           <span role="button">
             <FaIcon @icon="question-circle" class="text-info" />
-            <BsTooltip>Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer">Here</a></BsTooltip>
+            <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer">Here</a></BsTooltip>
           </span>
         </label>
         <div class="col-md-8">
@@ -42,8 +42,8 @@
       
       <BsButton @type="success" @onClick={{@saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
-      <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Client saved!</span></div>      
-      <BsButton @type="danger" @onClick={{@deleteClient}} class="float-end">Delete</BsButton>      
+      <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Client saved!</span></div>
+      <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this client?" @targetAction={{fn @deleteClient}} />
     </BsForm>
   </div>
 </div>

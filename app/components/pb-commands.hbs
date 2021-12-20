@@ -23,7 +23,7 @@
             <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">             
               <BsButton @type="secondary" @onClick={{this.commandImport}}>Import</BsButton>
               <BsButton @type="secondary" @onClick={{this.commandExportFiltered}}>Export</BsButton>
-              <BsButton @type="info" @onClick={{@createCommand}}>Add New</BsButton>
+              <BsButton @type="primary" @onClick={{@createCommand}}>Add New</BsButton>
             </div>
           </div>
         </div>
@@ -50,7 +50,7 @@
                             <FaIcon class="text-secondary" @icon="{{if command.active "check-square" "square"}}" />
                           </button>
                           <button type="button" class="btn btn-outline-secondary rounded-0 py-2 px-3 alert-secondary" {{on "click" (fn @gridEditCommand command)}}><FaIcon @icon="edit" /></button>
-                          <button type="button" class="btn btn-outline-danger rounded-0 py-2 px-3 alert-danger" {{ on "click" (fn @gridDeleteCommand command)}}><FaIcon @icon="trash" /></button>
+                          <ButtonConfirm @btnClass="btn btn-outline-danger rounded-0 py-2 px-3 alert-danger" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this command?" @targetAction={{fn @gridDeleteCommand command}} />
                         </div>
                       </div>
                     </td>

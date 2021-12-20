@@ -4,6 +4,8 @@ import { action } from '@ember/object';
 import moment from 'moment';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
+import { appWindow } from '@tauri-apps/api/window';
+import { tracked } from '@glimmer/tracking';
 
 export default class ApplicationController extends Controller {
   @service cloudState;
@@ -15,6 +17,7 @@ export default class ApplicationController extends Controller {
   @service lightControl; 
   @service eventsExternal;
   
+  @tracked collapsed = true;
   // We load the existing config or create a new one.  
   constructor() {
     super(...arguments);
@@ -29,7 +32,7 @@ export default class ApplicationController extends Controller {
           this.eventsExternal.token = this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
-        this.globalConfig.showFirstRun = true;
+        this.globalConfig.showFirstRun = false;
       } else{
         this.store.createRecord('config',{id: 'myconfig'}).save().then((newconfig)=>{
           console.log("Config not found! New config created...");
@@ -153,4 +156,20 @@ export default class ApplicationController extends Controller {
   @action closeMenu(){
     this.currentUser.expandMenu = false;
   }
+  
+  @action minimizeWindow(){
+    appWindow.minimize();
+  }
+  
+  @action maximizeWindow(){
+    appWindow.toggleMaximize();
+  }
+  
+  @action closeWindow(){
+    appWindow.close();
+  }
+  
+  @action dragWindow(){
+    appWindow.startDragging();
+  }  
 }

@@ -1,0 +1,23 @@
+<BsButton @type={{@btnClass}} @onClick={{this.toggleModal}}><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
+
+<BsModal @size="md border rounded bg-dark" @open={{this.isViewing}} as |Modal|>
+  <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">
+    <div class="row g-0 w-100 bg-dark bg-gradient border-0 rounded-top">
+      <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i>Confirm action</span></div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}}><FaIcon @icon="times" /></button>
+      </div>
+    </div>
+  </Modal.header>
+  <Modal.body>
+    <div class="row">
+      <div class="col">
+        {{@confirmDescription}}       
+      </div>
+    </div>
+  </Modal.body>
+  <Modal.footer class="py-2" as |footer|>
+    <BsButton @onClick={{fn this.confirmModal}} @type="danger">Yes</BsButton>
+    <BsButton @onClick={{fn this.toggleModal}} @type="secondary">No</BsButton>
+  </Modal.footer>
+</BsModal>

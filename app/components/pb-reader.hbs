@@ -21,11 +21,6 @@
                 <button type="button" class="btn btn-secondary" {{on "click" this.addZoom}}><FaIcon @icon="search-plus" /></button>
               </div>
             </div>
-            <div class="col-auto">
-              <button type="button" {{on "click" this.toggleMode}} class="btn btn-outline-secondary" active={{this.updateLight}} title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}">
-                <FaIcon @icon="lightbulb" />
-              </button>
-            </div>
           </div>
         </div>
         <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
