@@ -8,7 +8,7 @@
     </div>
   </div>
   <div class="card-body">
-    <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{fn @saveClient}} as |form|>
+    <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{@saveClient}} as |form|>
       <form.element @controlType="text" @label="Username" placeholder="Username" class="pb-2" @property="username" required />  
       
       <div class="form-group row pb-2">
@@ -40,10 +40,10 @@
         </div>
       </div>
       
-      <BsButton @type="success" @onClick={{fn @saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 
-      <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
+      <BsButton @type="success" @onClick={{@saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 
+      <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Client saved!</span></div>      
-      <BsButton @type="danger" @onClick={{fn @deleteClient}} class="float-end">Delete</BsButton>      
+      <BsButton @type="danger" @onClick={{@deleteClient}} class="float-end">Delete</BsButton>      
     </BsForm>
   </div>
 </div>

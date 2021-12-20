@@ -21,9 +21,9 @@
               </form.element>
             </BsForm>
             <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">             
-              <BsButton @type="secondary" @onClick={{fn this.commandImport}}>Import</BsButton>
-              <BsButton @type="secondary" @onClick={{fn this.commandExportFiltered}}>Export</BsButton>
-              <BsButton @type="info" @onClick={{fn @createCommand}}>Add New</BsButton>
+              <BsButton @type="secondary" @onClick={{this.commandImport}}>Import</BsButton>
+              <BsButton @type="secondary" @onClick={{this.commandExportFiltered}}>Export</BsButton>
+              <BsButton @type="info" @onClick={{@createCommand}}>Add New</BsButton>
             </div>
           </div>
         </div>
@@ -46,7 +46,7 @@
                     <td class="col-auto py-0 pe-0">
                       <div class="row g-0">
                         <div class="col-auto ms-auto btn-group my-0">
-                          <button role="button" class="btn btn-outline-secondary rounded-0 py-2 px-3 alert-secondary" {{on "click" (fn @gridActiveCommand command)}}>
+                          <button role="button" class="btn btn-outline-secondary rounded-0 py-2 px-3 alert-secondary" type="button" {{on "click" (fn @gridActiveCommand command)}}>
                             <FaIcon class="text-secondary" @icon="{{if command.active "check-square" "square"}}" />
                           </button>
                           <button type="button" class="btn btn-outline-secondary rounded-0 py-2 px-3 alert-secondary" {{on "click" (fn @gridEditCommand command)}}><FaIcon @icon="edit" /></button>

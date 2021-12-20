@@ -8,7 +8,7 @@
     </div>
   </div>
   <div class="card-body">
-    <BsForm @formLayout="inline" @model={{@song}} @onSubmit={{fn @saveSong}} as |form|>
+    <BsForm @formLayout="inline" @model={{@song}} @onSubmit={{@saveSong}} as |form|>
     <div class="row">
       <div class="col-12 col-md-6">
         <form.element @controlType="text" @label="Title" class="pb-2" @formLayout="inline" placeholder="Type the song title" @property="title" /> 
@@ -49,10 +49,10 @@
         </div>
       </div>
     </div>
-      <BsButton @type="success" @onClick={{fn @saveAndReturnSong}}><FaIcon @icon="save" /> Save & Return</BsButton> 
-      <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
+      <BsButton @type="success" @onClick={{@saveAndReturnSong}}><FaIcon @icon="save" /> Save & Return</BsButton> 
+      <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Song saved!</span></div>
-      <BsButton @type="danger" @onClick={{fn @deleteSong}} class="float-end">Delete</BsButton>
+      <BsButton @type="danger" @onClick={{@deleteSong}} class="float-end">Delete</BsButton>
     </BsForm>
   </div>
 </div>

@@ -134,7 +134,7 @@ export default class PbStreamEditComponent extends Component {
     }
 
     this.msglist = this.twitchChat.messages;
-    this.currentUser.songqueue = this.twitchChat.songqueue;
+    set(this, 'currentUser.songqueue', this.twitchChat.songqueue);
     this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     
@@ -315,8 +315,8 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.eventlist = [];    
       this.twitchChat.whisperlist = [];
       this.twitchChat.msglist = [];
-      this.twitchChat.songqueue = [];    
-      this.currentUser.songqueue = [];
+      set(this, 'twitchChat.songqueue', []);    
+      set(this, 'currentUser.songqueue', []);
       this.msglist = [];
     }
   }
@@ -325,7 +325,7 @@ export default class PbStreamEditComponent extends Component {
   // message and updates both the chatlog and the song queue.
   @action msgGetter() {
     this.msglist = this.twitchChat.messages;    
-    this.currentUser.songqueue = this.twitchChat.songqueue;
+    set(this, 'currentUser.songqueue', this.twitchChat.songqueue);
     this.scrollPosition = this.messages.get('length');
     // this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     // this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');

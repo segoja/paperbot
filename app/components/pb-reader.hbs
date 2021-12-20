@@ -10,7 +10,7 @@
         <div class="card-header px-2">
           <div class="row g-1">
             <div class="col">
-              <PowerSelect @searchEnabled={{true}} @search={{this.searchSong}} @searchMessage="" @options="" @searchPlaceholder="Type a song" @selected={{this.selected}}  @searchClass="form-control w-100"  @allowClear={{true}} @onChange={{fn this.selectSong}} @placeholder="Select a song" as |song|>
+              <PowerSelect @searchEnabled={{true}} @search={{this.searchSong}} @searchMessage="" @options="" @searchPlaceholder="Type a song" @selected={{this.selected}}  @searchClass="form-control w-100"  @allowClear={{true}} @onChange={{this.selectSong}} @placeholder="Select a song" as |song|>
                 <span>{{song.title}} {{#if song.artist}}- <span class="text-secondary">{{song.artist}}</span>{{/if}}</span>
               </PowerSelect>
             </div>

@@ -1,6 +1,6 @@
 {{#if @isEditing}}
   <div class="card-body">
-    <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{fn this.doneAndReturnEditing}} as |form|>
+    <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{this.doneAndReturnEditing}} as |form|>
       <form.element @controlType="text" @label="Stream Title" class="pb-2" placeholder="Stream title" @property="title" required />
       <form.element @controlType="text" @label="Stream Channel" class="pb-2" placeholder="Stream channel" @property="channel" required />
       
@@ -13,20 +13,20 @@
         </div>
       </div>
     
-      <form.element @controlType="power-select" class="pb-2" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{fn @setBotClient}} required as |client|>
+      <form.element @controlType="power-select" class="pb-2" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{@setBotClient}} required as |client|>
         <client.control @allowClear={{true}} @placeholder="Select the Bot Client for the stream" as |option|>
           {{option.username}}
         </client.control>
       </form.element>
-      <form.element @controlType="power-select" class="pb-2" @property="chatclient" @label="Chat Client" @options={{@clients}} selected={{this.globalConfig.config.defchatclient}}  @onChange={{fn @setChatClient}}  required as |client|>
+      <form.element @controlType="power-select" class="pb-2" @property="chatclient" @label="Chat Client" @options={{@clients}} selected={{this.globalConfig.config.defchatclient}}  @onChange={{@setChatClient}}  required as |client|>
         <client.control @allowClear={{true}} @placeholder="Select the Chat Client for the stream" as |option|>
           {{option.username}}
         </client.control>
       </form.element>  
-      <BsButton @type="success" @onClick={{fn this.doneAndReturnEditing}}><FaIcon @icon="save" /> Save & Return</BsButton> 
-      <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
+      <BsButton @type="success" @onClick={{this.doneAndReturnEditing}}><FaIcon @icon="save" /> Save & Return</BsButton> 
+      <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Stream updated!</span></div>
-      <BsButton @type="danger" @onClick={{fn @deleteStream}} class="float-end">Delete</BsButton>
+      <BsButton @type="danger" @onClick={{@deleteStream}} class="float-end">Delete</BsButton>
     </BsForm>
   </div>
 {{else}}
@@ -34,11 +34,11 @@
     <div class="row g-0 bg-dark">
       <div class="col-auto">
         <div class="row g-0">
-          <BsButton class="btn-sm col-12 col-sm" @type={{if this.currentUser.soundBoardEnabled "info" "secondary"}} @onClick={{fn this.soundboardToggle}} title="Enable/disable soundboard">
+          <BsButton class="btn-sm col-12 col-sm" @type={{if this.currentUser.soundBoardEnabled "info" "secondary"}} @onClick={{this.soundboardToggle}} title="Enable/disable soundboard">
             {{on-key "ctrl+KeyM" this.soundboardToggle}}  
             <FaIcon @icon={{if this.currentUser.soundBoardEnabled "volume-up" "volume-mute"}} />
           </BsButton>     
-          <BsButton class="btn-sm col-12 col-sm" @type={{if @stream.requests (if this.currentUser.queueToFile "warning" "secondary") "secondary"}} @onClick={{fn this.queueWriter}} title="Enable/disable overlay queue file">
+          <BsButton class="btn-sm col-12 col-sm" @type={{if @stream.requests (if this.currentUser.queueToFile "warning" "secondary") "secondary"}} @onClick={{this.queueWriter}} title="Enable/disable overlay queue file">
             {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
             <FaIcon @icon={{if @stream.requests (if this.currentUser.queueToFile "file-alt" "file") "file"}} />
           </BsButton>
@@ -67,8 +67,8 @@
       <div class="col">
         <div class="row g-0">
           {{!-- <BsButton class="btn-sm col-12 col-sm" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Clients</BsButton> --}}
-          <BsButton class="btn-sm col-12 col-sm text-truncate" @type="danger" @onClick={{fn this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished this.disconnectButton true)}}><FaIcon @icon="flag-checkered" /> Finish Stream</BsButton>
-          <BsButton class="btn-sm col-12 col-sm text-editstream text-truncate" @type="warning" @onClick={{fn @editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
+          <BsButton class="btn-sm col-12 col-sm text-truncate" @type="danger" @onClick={{this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished this.disconnectButton true)}}><FaIcon @icon="flag-checkered" /> Finish Stream</BsButton>
+          <BsButton class="btn-sm col-12 col-sm text-editstream text-truncate" @type="warning" @onClick={{@editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
         </div>
       </div>
     </div>
@@ -276,7 +276,7 @@
     {{#unless this.disconnectButton}}  
       <div class="card-footer flex-column flex-fill d-flex p-0 my-0 alert-secondary"> 
         <div class="row m-0">
-          <BsForm @formLayout="inline" @model={{this}} class="col-md-12 my-1 mx-0 py-1 px-2" @onSubmit={{fn this.sendMessage}} as |form|>
+          <BsForm @formLayout="inline" @model={{this}} class="col-md-12 my-1 mx-0 py-1 px-2" @onSubmit={{this.sendMessage}} as |form|>
             <form.element @property="message" class="mb-0 pb-0"  as |el|>
               <el.control 
                 @controlType="text"

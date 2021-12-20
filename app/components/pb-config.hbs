@@ -7,7 +7,7 @@
     </BsButtonGroup> --}}
   </div>
     <div class="card-body">
-      <BsForm @formLayout="horizontal" @model={{@config}}  @onSubmit={{fn this.doneEditing}} as |form|>
+      <BsForm @formLayout="horizontal" @model={{@config}}  @onSubmit={{this.doneEditing}} as |form|>
         {{!-- <form.element @controlType="text" @label="Name" placeholder="Config name" @property="name" required /> --}}
         <form.element @controlType="text" @label="Default channel" class="pb-2" placeholder="Default channel name" @property="defchannel" required />          
 
@@ -38,7 +38,7 @@
             <BsTooltip @delayHide={{this.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
           </span>
         </label>
-          <form.element @controlType="power-select" @property="defbotclient" @onChange={{fn @setdefBot}} @formLayout="inline" class="col-md-8 border-light" @invisibleLabel={{true}} @options={{@clients}} required as |client|>
+          <form.element @controlType="power-select" @property="defbotclient" @onChange={{@setdefBot}} @formLayout="inline" class="col-md-8 border-light" @invisibleLabel={{true}} @options={{@clients}} required as |client|>
             <client.control @allowClear={{true}} @placeholder="Select the default Bot Client for new streams" as |option|>
               {{option.username}}
             </client.control>
@@ -54,7 +54,7 @@
             <BsTooltip @delayHide={{this.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
           </span>
         </label>
-        <form.element @controlType="power-select" @property="defchatclient" @onChange={{fn @setdefChat}} @formLayout="inline" class="col-md-8 border-light" @options={{@clients}} required as |client|>
+        <form.element @controlType="power-select" @property="defchatclient" @onChange={{@setdefChat}} @formLayout="inline" class="col-md-8 border-light" @options={{@clients}} required as |client|>
           <client.control @allowClear={{true}} @placeholder="Select the default Chat Client for new streams" as |option|>
             {{option.username}}
           </client.control>
@@ -93,7 +93,7 @@
             {{@config.lastPlayed}}
           </div>
         </div>
-        <BsButton @type="success" @onClick={{fn this.doneEditing}}>Save</BsButton>   
+        <BsButton @type="success" @onClick={{this.doneEditing}}>Save</BsButton>   
 
         <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Config saved!</span></div>
       </BsForm>

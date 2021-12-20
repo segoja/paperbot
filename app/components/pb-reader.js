@@ -20,7 +20,7 @@ export default class PbReaderComponent extends Component {
   songsSorting = Object.freeze(['date_added:asc']);  
   @sort ('args.songs','songsSorting') arrangedContent;
   
-  @computed('globalConfig.config.lastPlayed', 'restore')
+  @computed('globalConfig.config.lastPlayed', 'restore', 'selected')
   get filterQueryString(){
     let restore = this.restore;
     let lastPlayed = this.globalConfig.config.lastPlayed;

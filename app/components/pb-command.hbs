@@ -8,7 +8,7 @@
     </div>
   </div>
   <div class="card-body">
-    <BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{fn @saveCommand}} as |form|>
+    <BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{@saveCommand}} as |form|>
       <form.element @controlType="text" @label="Name" class="pb-2" placeholder="Type the command name" @property="name" required /> 
       <form.element @controlType="power-select" @property="type" @label="Type" class="pb-2" @options={{@commandTypes}} as |element| >
         <element.control placeholder="Select the command type" @allowClear={{true}} />
@@ -59,10 +59,10 @@
         </div>
       </div>
       
-      <BsButton @type="success" @onClick={{fn @saveAndReturnCommand}}><FaIcon @icon="save" /> Save & Return</BsButton> 
-      <BsButton @type="secondary" @onClick={{fn this.doneEditing}}><FaIcon @icon="save" /></BsButton>
+      <BsButton @type="success" @onClick={{@saveAndReturnCommand}}><FaIcon @icon="save" /> Save & Return</BsButton> 
+      <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Command saved!</span></div>
-      <BsButton @type="danger" @onClick={{fn @deleteCommand}} class="float-end">Delete</BsButton>
+      <BsButton @type="danger" @onClick={{@deleteCommand}} class="float-end">Delete</BsButton>
       
     </BsForm>
   </div>
