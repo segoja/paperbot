@@ -3,9 +3,10 @@ import { action, set } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
-import { writeFile, readTextFile, readBinaryFile } from '@tauri-apps/api/fs';
+import { writeBinaryFile, writeFile, readTextFile, readBinaryFile } from '@tauri-apps/api/fs';
 import moment from 'moment';
 import { empty, sort } from '@ember/object/computed';
+import { htmlSafe } from '@ember/template';
 
 export default class QueueHandlerService extends Service {
   @service globalConfig;
@@ -151,56 +152,68 @@ export default class QueueHandlerService extends Service {
           pathString = pathString.slice(0, -1)+'\\queue.html';
         } else {
           pathString = pathString+'\\queue.html';
-        }      
-        var htmlEntries = '';
-        htmlEntries = htmlEntries.concat(`
-          <!doctype html>
-            <html lang="en">
-              <head>
-                <!-- Required meta tags -->
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-                <meta http-equiv="refresh" content="2">
-                <!-- Bootstrap CSS -->
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-
-                <title>Song queue</title>
-              </head>
-              <body class="bg-transparent" style="overflow-y: hidden;">
-                <div class="container-fluid" style="overflow-y: hidden;">
-        `);
+        }
+        let htmlEntries = '';
         if(pendingSongs.length > 0){
-          pendingSongs.slice(0, 5).forEach((pendingsong)=>{          
-            htmlEntries = htmlEntries.concat("\n\t\t\t<div class=\"alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white\">");
-            htmlEntries = htmlEntries.concat("\n\t\t\t\t<div class=\"alert-heading h4\">"+pendingsong.song+"</div>");
-            htmlEntries = htmlEntries.concat("\n\t\t\t\t<div class=\"row\">");
-            htmlEntries = htmlEntries.concat("\n\t\t\t\t\t<div class=\"col h6\">"+moment(pendingsong.timestamp).format("YYYY/MM/DD HH:mm:ss")+"</div>");
-            htmlEntries = htmlEntries.concat("\n\t\t\t\t\t<div class=\"col-auto h6\">"+pendingsong.user+"</div>");
-            htmlEntries = htmlEntries.concat("\n\t\t\t\t</div>");
-            htmlEntries = htmlEntries.concat("\n\t\t\t</div>");          
+          let visible = pendingSongs.slice(0, 5);
+          visible.forEach((pendingsong)=>{
+            let song = pendingsong.song;
+            let time = moment(pendingsong.timestamp).format("YYYY/MM/DD HH:mm:ss");
+            let user = pendingsong.user;
+            htmlEntries = htmlEntries.concat(`
+      <div class="alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white">
+        <div class="alert-heading h4">${song}</div>
+        <div class="row">
+          <div class="col h6">${time}</div>
+          <div class="col-auto h6">${user}</div>
+        </div>
+      </div>
+            `);
           });
         } else {
-          htmlEntries = htmlEntries.concat("\n\t\t\t<div class=\"alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white\">");
-          htmlEntries = htmlEntries.concat("\n\t\t\t\t<div class=\"alert-heading h4\">The queue is empty.</div>");
-          htmlEntries = htmlEntries.concat("\n\t\t\t</div>");
+          htmlEntries = htmlEntries.concat(`
+      <div class="alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white">
+        <div class="alert-heading h4">The queue is empty.</div>
+      </div>
+          `);
         }
-        htmlEntries = htmlEntries.concat(`
-          </div>
-              <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
-              <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-            </body>
-          </html>
-        `);
         
-        this.overlayGenerator(htmlEntries, pathString);
+      let htmlBase = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <meta http-equiv="refresh" content="2">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Song queue</title>
+  </head>
+  <body class="bg-transparent" style="overflow-y: hidden;">
+    <div class="container-fluid" style="overflow-y: hidden;">
+    ${htmlEntries}
+    </div>
+  </body>
+</html>`;   
+        this.overlayGenerator(htmlBase, pathString);
       }
     }    
   }
   
   @action async overlayGenerator(newHtml, pathString){
     this.oldHtml = newHtml;
-    await writeFile({'contents': newHtml, 'path': pathString}).then(()=>{
-      console.log("done!")
-    });
+    let thisHtml = '';
+    try {
+      thisHtml = await newHtml;
+      // console.log(thisHtml);
+    }
+    catch (exception_var) {
+      console.log('Lentorro');
+    }
+    finally {
+      let text = unescape(encodeURIComponent(thisHtml));
+      //let arrayBuff = new TextEncoder().encode(text);
+      writeFile({'path': pathString, 'contents': thisHtml}).then(()=>{
+        console.log("done!")
+      });
+    }
   }  
 }
