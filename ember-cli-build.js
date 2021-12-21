@@ -30,9 +30,14 @@ module.exports = function(defaults) {
       versionStrategy: 'every-build',
       enabled: config != 'development'
     },
-
+    SRI: {
+      // crossorigin: 'anonymous',
+      enabled: false,
+    },
     // Exclude .png favicons from being fingerprinted
+    //origin: 'https://tauri.localhost/',
     fingerprint: {
+      //prepend: 'https://tauri.localhost/',
       exclude: [
                  'android-chrome-192x192.png',
                  'android-chrome-512x512.png',
@@ -51,12 +56,6 @@ module.exports = function(defaults) {
       'bootstrapVersion': 5,
       'importBootstrapCSS': false,
       'insertEmberWormholeElementToDom': false
-    },
-    'ember-cli-bootswatch': {
-      theme: 'pulse',
-      importSass: true,
-      importCss: false,
-      // importJS: ['button','tooltip']
     },
     'svgJar': {
       strategy: 'inline',
@@ -95,19 +94,6 @@ module.exports = function(defaults) {
     ]
   });
   /*
-  app.import('node_modules/popper.js/dist/popper.min.js', {
-    using: [
-      { transformation: 'amd', as: 'popper' }
-    ]
-  });
-
-
-  app.import('node_modules/bootstrap/dist/js/bootstrap.min.js', {
-    using: [
-      { transformation: 'amd', as: 'bootstrap' }
-    ]
-  }); 
-  
   const { Webpack } = require('@embroider/webpack');
   return require('@embroider/compat').compatBuild(app, Webpack, {
     skipBabel: [

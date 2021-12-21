@@ -1,4 +1,3 @@
-import Service from '@ember/service';
 import audio from 'ember-audio/services/audio';
 import { readBinaryFile } from '@tauri-apps/api/fs'
 import { resolve } from 'rsvp';

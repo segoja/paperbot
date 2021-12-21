@@ -1,13 +1,12 @@
 import Service, { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import tmi from 'tmi.js';
 import { htmlSafe } from '@ember/template';
 import { action } from "@ember/object";
 import { assign } from '@ember/polyfills';
 import { sort } from '@ember/object/computed';
 import moment from 'moment';
-import Fuse from 'fuse.js';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
+import tmi from 'tmi.js';
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -128,9 +127,10 @@ export default class TwitchChatService extends Service {
   @tracked streamlabs;
   
   
-  init() {
-    super.init(...arguments);
+  constructor() {
+    super(...arguments);
   }
+
   
   async connector(options, clientType){
     
@@ -387,27 +387,6 @@ export default class TwitchChatService extends Service {
     if(String(commandName).startsWith('!sr ') && this.takessongrequests){
       var song = commandName.replace(/!sr /g, "");
       if(song){
-        /*let options = {
-          includeScore: true,
-          findAllMatches: true,
-          ignoreLocation: true,
-          // useExtendedSearch: true,
-          minMatchCharLength: 2,
-          //ignoreFieldNorm: true,
-          threshold: 0.2,
-          keys: [
-            {
-              name: 'fullstring',
-            },
-          ]
-        }
-        let fuse = new Fuse(this.songs, options);
-        var tokenized = song.replace(/ /g, " ");
-        console.log(tokenized);
-        var search = fuse.search(tokenized);
-        console.log(search);
-        var bestmatch = search.shift(); */       
-
         this.requestpattern = song;
         
         if (this.filteredSongs.get('length') !== 0 ) { 

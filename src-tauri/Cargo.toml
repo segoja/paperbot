@@ -20,3 +20,7 @@ tauri = { version = "1.0.0-beta.8", features = ["api-all", "system-tray"] }
 [features]
 default = [ "custom-protocol" ]
 custom-protocol = [ "tauri/custom-protocol" ]
+
+[profile.release.package.wry]
+debug = true
+debug-assertions = true

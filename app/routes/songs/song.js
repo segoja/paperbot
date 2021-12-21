@@ -12,11 +12,11 @@ export default class SongRoute extends Route {
     
   beforeModel(){
     this.currentUser.isViewing = true;
-    this.controllerFor('songs.song').slsong = null;    
+    // this.controllerFor('songs.song').slsong = null;    
   }
  
   afterModel(model, transition){
-    if(model.remoteid){
+    /* if(model.remoteid){
       this.store.findRecord('slsong', model.remoteid).then(async (data)=>{
         console.log("Song found in the remote server!");
         this.controllerFor('songs.song').slsong = await data;
@@ -40,7 +40,7 @@ export default class SongRoute extends Route {
         console.log(error);
         console.log("Can't reach the remote server! uh oh..");
       });
-    }
+    } */
   } 
     
   @action willTransition(){

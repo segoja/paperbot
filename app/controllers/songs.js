@@ -70,7 +70,7 @@ export default class SongsController extends Controller {
   }
   
   @action udpdateRest(){
-    fetch('http://paper.bot', {mode: 'no-cors', method: 'POST'}).then(async (response) => {
+    /* fetch('http://paper.bot', {mode: 'no-cors', method: 'POST'}).then(async (response) => {
       console.log("Server is online");
       if(this.model.get('leght') != 0){
         this.model.forEach(async (song)=>{
@@ -148,6 +148,6 @@ export default class SongsController extends Controller {
       }
     }, (kaput)=>{
       console.log("Server is not connected.");
-    });
+    });*/
   }
 }
