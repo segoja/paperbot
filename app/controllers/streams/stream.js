@@ -88,8 +88,8 @@ export default class StreamController extends Controller {
    
   @tracked oldHtml = '';
   @action overlayGenerator(newHtml, pathString){
-    console.log('Test tested!');
-    console.log(newHtml);
+    // console.log('Test tested!');
+    // console.log(newHtml);
     //if(this.oldHtml != newHtml){
       this.oldHtml = newHtml;
       fs.writeFile({'contents': newHtml, 'path': pathString}).then(()=>{

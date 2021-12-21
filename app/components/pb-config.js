@@ -7,6 +7,7 @@ import { inject as service } from '@ember/service';
 
 export default class PbConfigComponent extends Component {
   @service globalConfig;
+  @service queueHandler;
   
   @tracked saving = false;
 
@@ -23,6 +24,7 @@ export default class PbConfigComponent extends Component {
       console.log(directory);
       if(directory){
         config.overlayfolder = directory;
+        this.queueHandler.fileContent(this.queueHandler.pendingSongs, true);        
       }
     });
   }  

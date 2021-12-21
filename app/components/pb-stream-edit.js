@@ -5,7 +5,6 @@ import { inject as service } from '@ember/service';
 import { empty, sort } from '@ember/object/computed';
 import moment from 'moment';
 import { later } from '@ember/runloop';
-import ENV from '../config/environment';
 import { fs } from "@tauri-apps/api";
 
 export default class PbStreamEditComponent extends Component {
@@ -14,39 +13,22 @@ export default class PbStreamEditComponent extends Component {
   @service globalConfig;
   @service audio;
   @service currentUser;
+  @service queueHandler;
 
   @empty ('twitchChat.messages') isChatEmpty;
   @empty ('twitchChat.songqueue') isQueueEmpty;
   @empty ('twitchChat.events') isEventsEmpty;
   @empty ('eventsExternal.events') isEventsExternalEmpty;
   
-  // We use this property to track if a key is pressed or not using ember-keyboard helpers.
-  @tracked modifierkey =  false;
-  
   @tracked saving = false;
   @tracked optsbot = this.args.stream.botclient.get('optsgetter');
   @tracked optschat = this.args.stream.chatclient.get('optsgetter');
   @tracked scrollPosition = 0;
-  @tracked scrollPlayedPosition = 0;
-  @tracked scrollPendingPosition = 0;
   @tracked scrollEventsPosition = 0;
   @tracked message = "";
   @tracked eventlist = [];  
   @tracked msglist = [];
-  
-  queueAscSorting = Object.freeze(['timestamp:asc']);
- 
-  @sort (
-    'currentUser.songqueue',
-    'queueAscSorting'
-  ) arrangedAscQueue;
-  
-  queueDescSorting = Object.freeze(['timestamp:desc']);    
-  @sort (
-    'currentUser.songqueue',
-    'queueDescSorting'
-  ) arrangedDescQueue;
-  
+    
   eventsDescSorting = Object.freeze(['timestamp:desc']);    
   @sort (
     'eventlist',
@@ -108,15 +90,7 @@ export default class PbStreamEditComponent extends Component {
     let result = this.args.commands.filterBy('type','audio').filterBy('active', true);
     return result;
   }
-  
-  get pendingSongs() {
-    return this.arrangedAscQueue.filterBy('processed', false);
-  }
-  
-  get playedSongs() {
-    return this.arrangedDescQueue.filterBy('processed', true);
-  }
-  
+    
   // Whith this getter we control the queue display while keeping the service updated with the settings.
   get requests(){
     this.twitchChat.takessongrequests = this.args.stream.requests;    
@@ -134,9 +108,9 @@ export default class PbStreamEditComponent extends Component {
     }
 
     this.msglist = this.twitchChat.messages;
-    set(this, 'currentUser.songqueue', this.twitchChat.songqueue);
-    this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
-    this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
+    this.queueHandler.songqueue = this.twitchChat.songqueue;
+    this.queueHandler.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
+    this.queueHandler.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     
     this.twitchChat.commands = this.args.commands.filterBy('active', true);
     this.twitchChat.songs = this.args.songs.filterBy('active', true);
@@ -315,8 +289,8 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.eventlist = [];    
       this.twitchChat.whisperlist = [];
       this.twitchChat.msglist = [];
-      set(this, 'twitchChat.songqueue', []);    
-      set(this, 'currentUser.songqueue', []);
+      this.twitchChat.songqueue = [];    
+      this.queueHandler.songqueue = [];
       this.msglist = [];
     }
   }
@@ -325,14 +299,12 @@ export default class PbStreamEditComponent extends Component {
   // message and updates both the chatlog and the song queue.
   @action msgGetter() {
     this.msglist = this.twitchChat.messages;    
-    set(this, 'currentUser.songqueue', this.twitchChat.songqueue);
+    this.queueHandler.songqueue = this.twitchChat.songqueue;
     this.scrollPosition = this.messages.get('length');
-    // this.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
-    // this.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
-    this.scrollPlayedPosition = 0;
-    this.scrollPendingPosition = 0;
+    this.queueHandler.scrollPlayedPosition = 0;
+    this.queueHandler.scrollPendingPosition = 0;
     if(this.currentUser.queueToFile && this.args.stream.requests){
-      this.fileContent(this.pendingSongs);
+      this.queueHandler.fileContent(this.queueHandler.pendingSongs);
     }
   }
 
@@ -347,47 +319,6 @@ export default class PbStreamEditComponent extends Component {
     this.scrollEventsPosition = 0;
   }
 
-  @tracked overlayHtml = '';  
-  get overlayLoader(){
-
-    if(this.overlayHtml === ''){      
-
-      if (ENV.environment === 'development') {
-        fs.readTextFile("../dist/queue/queue.html").then(async (data)=>{ 
-          this.overlayHtml = await data.toString();
-        });
-      } else {
-        fs.readTextFile("../dist/queue/queue.html").then(async (data)=>{ 
-          this.overlayHtml = await data.toString();
-        }); 
-      }    
-    }
-    return true;
-  } 
-  
-  @action fileContent(pendingSongs){
-    if (this.currentUser.queueToFile && this.globalConfig.config.overlayfolder != '' && pendingSongs.get('length') != undefined && this.args.stream.requests){
-      let pathString = this.globalConfig.config.overlayfolder;
-      if(pathString.substr(pathString.length - 1) === "\\"){
-        pathString = pathString.slice(0, -1)+'\\queue.html';
-      } else {
-        pathString = pathString+'\\queue.html';
-      }      
-      var htmlEntries = '';
-      pendingSongs.map((pendingsong)=>{          
-        htmlEntries = htmlEntries.concat("\n\t\t\t<div class=\"alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white\">");
-        htmlEntries = htmlEntries.concat("\n\t\t\t\t<div class=\"alert-heading h4\">"+pendingsong.song+"</div>");
-        htmlEntries = htmlEntries.concat("\n\t\t\t\t<div class=\"row\">");
-        htmlEntries = htmlEntries.concat("\n\t\t\t\t\t<div class=\"col h6\">"+moment(pendingsong.timestamp).format("YYYY/MM/DD HH:mm:ss")+"</div>");
-        htmlEntries = htmlEntries.concat("\n\t\t\t\t\t<div class=\"col-auto h6\">"+pendingsong.user+"</div>");
-        htmlEntries = htmlEntries.concat("\n\t\t\t\t</div>");
-        htmlEntries = htmlEntries.concat("\n\t\t\t</div>");          
-      });
-      
-      var newHtml = this.overlayHtml.replace(/queuecontent/g, htmlEntries);      
-      this.args.overlayGenerator(newHtml, pathString);
-    }    
-  }
   
   @action sendMessage() {
     if(!this.twitchChat.sameClient){
@@ -410,8 +341,8 @@ export default class PbStreamEditComponent extends Component {
         }
       }
       if(this.isQueueEmpty === false){
-        if(this.currentUser.songqueue != this.args.stream.songqueue){
-          this.args.stream.songqueue = this.currentUser.songqueue;
+        if(this.queueHandler.songqueue != this.args.stream.songqueue){
+          this.args.stream.songqueue = this.queueHandler.songqueue;
         }
       }
       if(this.isEventsEmpty === false){
@@ -440,8 +371,8 @@ export default class PbStreamEditComponent extends Component {
         }
       }
       if(this.isQueueEmpty === false){
-        if(this.currentUser.songqueue != this.args.stream.songqueue){
-          this.args.stream.songqueue = this.currentUser.songqueue;
+        if(this.queueHandler.songqueue != this.args.stream.songqueue){
+          this.args.stream.songqueue = this.queueHandler.songqueue;
         }
       }
       if(this.isEventsEmpty === false){
@@ -456,108 +387,8 @@ export default class PbStreamEditComponent extends Component {
       }
     }
     this.args.saveAndReturnStream(); 
-  }  
+  }    
 
-  
-  // Song processing related actions  
-  @action modPressed(){
-    if(this.modifierkey === false){
-      this.modifierkey = true;
-    }
-  }
-  
-  @action modNotPressed(){
-    if(this.modifierkey){
-      this.modifierkey = false;
-    }
-  }
-
-  @action requestStatus(song) {    
-    // We use set in order to make sure the context updates properly.
-    if(song.processed === true && this.modifierkey === true){
-      // Next line makes the element to get back in the pending list but in the last position:
-      set(song, 'timestamp', moment().format());
-    }
-    set(song, 'processed', !song.processed);
-    this.scrollPlayedPosition = 0;
-    this.scrollPendingPosition = 0;
-    
-    if(this.pendingSongs.get('length') != 0){
-      this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
-    } else {
-      this.globalConfig.config.lastPlayed = '';
-    }
-    this.globalConfig.config.save();
-    
-    if(this.currentUser.queueToFile && this.args.stream.requests){
-      this.fileContent(this.pendingSongs);
-    }
-  }
-  
-  @action backToQueue(song) {    
-    // We use set in order to make sure the context updates properly.
-    if(song.processed === true){
-      // Next line makes the element to get back in the pending list but in the last position:
-      set(song, 'timestamp', moment().format());
-    }
-    set(song, 'processed', !song.processed);
-    this.scrollPlayedPosition = 0;
-    this.scrollPendingPosition = 0;
-    if(this.currentUser.queueToFile && this.args.stream.requests){
-      this.fileContent(this.pendingSongs);
-    }
-  }
-
-  
-  @action nextSong(){
-    if(this.pendingSongs.get('length') != 0){
-      // For selecting the last element of the array:
-      // let firstSong = this.pendingSongs[this.pendingSongs.length-1];
-      // For selecting the first element of the array:
-      let firstSong = this.pendingSongs[0];
-      //if(firstSong.processed === true){
-        // set(firstSong, 'timestamp', moment().format());
-      //}
-      set(firstSong, 'processed', true);
-      this.scrollPlayedPosition = 0;
-      this.scrollPendingPosition = 0;
-      this.fileContent(this.pendingSongs);
-      if(this.pendingSongs.get('length') != 0){
-        this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
-      } else {
-        this.globalConfig.config.lastPlayed = '';
-      }
-      this.globalConfig.config.save();
-    }
-    if(this.currentUser.queueToFile && this.args.stream.requests){
-      this.fileContent(this.pendingSongs);
-    }
-  }
-  
-  @action prevSong(){
-    if(this.playedSongs.get('length') != 0){
-      // For selecting the last element of the array:
-      // let firstSong = this.playedSongs[this.playedSongs.length-1];
-      // For selecting the first element of the array:
-      let firstSong = this.playedSongs[0];
-      if(firstSong.processed === true && this.modifierkey === true){
-        // Next line makes the element to get back in the pending list but in the last position:
-        set(firstSong, 'timestamp', moment().format());
-      }
-      set(firstSong, 'processed', false);
-      this.scrollPlayedPosition = 0;
-      this.scrollPendingPosition = 0;
-      if(this.pendingSongs.get('length') != 0){
-        this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
-      } else {
-        this.globalConfig.config.lastPlayed = '';
-      }
-      this.globalConfig.config.save();
-    }
-    if(this.currentUser.queueToFile && this.args.stream.requests){
-      this.fileContent(this.pendingSongs);
-    }
-  }
   // Soundboard toggle
   @action soundboardToggle(){
     this.currentUser.soundBoardEnabled = !this.currentUser.soundBoardEnabled;
@@ -628,7 +459,8 @@ export default class PbStreamEditComponent extends Component {
 
   @action queueWriter(){
     if(this.args.stream.requests && this.globalConfig.config.overlayfolder != ''){
-      this.currentUser.queueToFile = !this.currentUser.queueToFile;      
+      this.currentUser.queueToFile = !this.currentUser.queueToFile;
+      this.queueHandler.fileContent(this.queueHandler.pendingSongs);
     } else {
       this.currentUser.queueToFile = false;
     }

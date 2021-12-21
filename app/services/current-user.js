@@ -3,6 +3,7 @@ import { action } from "@ember/object";
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
+import { fs } from "@tauri-apps/api";
 
 export default class CurrentUserService extends Service {
   @service globalConfig;
@@ -50,5 +51,5 @@ export default class CurrentUserService extends Service {
         console.log('Pues se cierra!');
       }.bind(this));      
     }    
-  }  
+  } 
 }

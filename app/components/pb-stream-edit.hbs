@@ -175,11 +175,10 @@
             </div>
           </div>
           {{#if this.requests}}
-            {{on-key "ctrl+Period" this.nextSong}}
-            {{on-key "ctrl+Comma" this.prevSong}}
-            {{on-key "ctrl+KeyQ" this.modPressed event="keypress"}} 
-            {{on-key "ctrl+KeyQ" this.modNotPressed event="keyup"}}
-            <div class={{if this.overlayLoader "d-none"}}></div>
+            {{on-key "ctrl+Period" this.queueHandler.nextSong}}
+            {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
+            {{on-key "ctrl+KeyQ" this.queueHandler.modPressed event="keypress"}} 
+            {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}
           {{/if}}
           <div class="{{if this.requests (if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightTop (if this.globalConfig.config.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
@@ -195,9 +194,9 @@
                       </div>
                       <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanpending}}>
                         {{#unless this.globalConfig.config.cpanpending}}
-                          <div class="col-md queueframe" {{scroll-position position=this.scrollPendingPosition relative=true}} id="songqueue">
-                            {{#each this.pendingSongs as |pendingsong|}}
-                              <div id={{pendingsong.id}} role="button" {{on "click" (fn this.requestStatus pendingsong)}} class="alert-info d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
+                          <div class="col-md queueframe" {{scroll-position position=this.queueHandler.scrollPendingPosition relative=true}} id="songqueue">
+                            {{#each this.queueHandler.pendingSongs as |pendingsong|}}
+                              <div id={{pendingsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}} class="alert-info d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                                 <div class="row">
                                   <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                                   <div class="col-auto"><small>{{pendingsong.user}}</small></div>
@@ -226,9 +225,9 @@
                       </div>
                       <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanplayed}}>
                         {{#unless this.globalConfig.config.cpanplayed}}
-                          <div class="col-md queueframe" {{scroll-position position=this.scrollPlayedPosition relative=true}}>
-                            {{#each this.playedSongs as |playedsong|}}
-                              <div id={{playedsong.id}} role="button" {{on "click" (fn this.requestStatus playedsong)}} {{on-key "right" (fn this.backToQueue playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
+                          <div class="col-md queueframe" {{scroll-position position=this.queueHandler.scrollPlayedPosition relative=true}}>
+                            {{#each this.queueHandler.playedSongs as |playedsong|}}
+                              <div id={{playedsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} {{on-key "right" (fn this.queueHandler.backToQueue playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
                                 <div class="row">
                                   <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                                   <div class="col-auto"><small>{{playedsong.user}}</small></div>

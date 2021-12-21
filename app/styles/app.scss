@@ -194,9 +194,9 @@ div.pan-buttons-row{
 }
 
 .papermenu *{
-  align-items: baseline!important;
+  align-items: bottom!important;
   .navbar-toggler-icon { width: 27px; height: 27px; }
-  .dragger { cursor: pointer!important; }
+  .dragger { cursor: pointer!important; align-items: bottom!important; }
   svg.logo{
    /*fill: gray;*/
    height: 27px;
