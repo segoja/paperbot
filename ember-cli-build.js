@@ -32,7 +32,8 @@ module.exports = function(defaults) {
     },
     SRI: {
       // crossorigin: 'anonymous',
-      enabled: false,
+      // This fix the tauri build blocking, but I have to check a better solution messing with cors.
+      enabled: false
     },
     // Exclude .png favicons from being fingerprinted
     //origin: 'https://tauri.localhost/',
