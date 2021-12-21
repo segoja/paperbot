@@ -15,7 +15,8 @@ module.exports = function(defaults) {
     
     // IE 11 needs a Polyfill for startsWith
     'ember-cli-babel': {
-      includePolyfill: true
+      includePolyfill: false// ,
+      //disableEmberModulesAPIPolyfill: true      
     },
 
     // Add fonts to Service Worker cache first
@@ -63,7 +64,7 @@ module.exports = function(defaults) {
         plugins: [
           { removeTitle: false },
           { removeDesc: { removeAny: false } },
-          { removeViewBox: false }
+          { removeViewBox: true }
         ]
       },
     },

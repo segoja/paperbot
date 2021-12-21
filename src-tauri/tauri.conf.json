@@ -1,7 +1,7 @@
 {
   "package": {
     "productName": "paperbot",
-    "version": "0.1.0"
+    "version": "0.5.0"
   },
   "build": {
     "distDir": "../dist",
@@ -91,6 +91,10 @@
     ],
     "security": {
       "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'"
+    },
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true
     }
   }
 }
