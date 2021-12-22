@@ -43,6 +43,9 @@ export default class ApplicationController extends Controller {
         })
       }
     });
+    appWindow.listen('tauri://blur', ({ event, payload }) => {
+      console.log(payload);
+    });
   }
 
   get serverStatus(){
@@ -162,6 +165,7 @@ export default class ApplicationController extends Controller {
   }
   
   @action maximizeWindow(){
+    appWindow.minimize();    
     appWindow.toggleMaximize();
   }
   

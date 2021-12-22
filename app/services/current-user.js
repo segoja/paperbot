@@ -1,7 +1,6 @@
-import Service from '@ember/service';
+import Service, { inject as service } from '@ember/service';
 import { action } from "@ember/object";
 import { tracked } from '@glimmer/tracking';
-import { inject as service } from '@ember/service';
 import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
 import { fs } from "@tauri-apps/api";
 

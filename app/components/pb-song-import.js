@@ -2,7 +2,11 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { dialog } from "@tauri-apps/api";
-import { readDir, readTextFile, readBinaryFile } from '@tauri-apps/api/fs';
+import {
+  readDir,
+  readTextFile,
+  readBinaryFile
+} from '@tauri-apps/api/fs';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
@@ -13,6 +17,10 @@ export default class PbSongComponent extends Component {
   @tracked perPage = 10;
   
   @service store;
+  
+  get bootstrapWormhole() {
+    return document.getElementById('ember-bootstrap-wormhole');
+  }  
   
   @tracked isViewing = false;  
   @action toggleModal() {

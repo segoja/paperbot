@@ -22,6 +22,12 @@ html,body{
   max-height: 100%!important;  
 }
 
+.modal, .modal-backdrop {
+  height: calc(100% - 33px);
+  top: 33px;
+  bottom: 0px;
+}
+
 .h-33{
   height: 33%!important;
 }

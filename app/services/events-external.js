@@ -1,10 +1,9 @@
-import Service from '@ember/service';
+import Service, { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import io from 'socket.io-client';
 import moment from 'moment';
 import { htmlSafe } from '@ember/template';
-import { inject as service } from '@ember/service';
 
 export default class EventsExternalService extends Service {
   @service globalConfig;

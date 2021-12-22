@@ -2,3 +2,7 @@
 2021-12-02T09:13:23.472Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
 2021-12-02T09:43:42.312Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
 2021-12-02T09:43:42.317Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
+2021-12-22T16:35:12.731Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
+2021-12-22T16:35:12.732Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
+2021-12-22T16:35:12.734Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
+2021-12-22T16:35:12.734Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs

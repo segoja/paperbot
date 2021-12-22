@@ -1,9 +1,13 @@
-import Service from '@ember/service';
+import Service, { inject as service } from '@ember/service';
 import { action, set } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { inject as service } from '@ember/service';
 import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
-import { writeBinaryFile, writeFile, readTextFile, readBinaryFile } from '@tauri-apps/api/fs';
+import {
+  writeBinaryFile,
+  writeFile,
+  readTextFile,
+  readBinaryFile
+} from '@tauri-apps/api/fs';
 import moment from 'moment';
 import { empty, sort } from '@ember/object/computed';
 import { htmlSafe } from '@ember/template';

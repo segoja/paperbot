@@ -17,7 +17,7 @@ export default class ConfigController extends Controller {
   @action closeConfig() {
     this.isEditing = false;
     this.currentUser.isViewing = false;
-    this.router.transitionTo('settings');      
+    this.router.transitionTo('index');      
   }
   
   @action editConfig(){
