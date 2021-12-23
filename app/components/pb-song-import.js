@@ -58,7 +58,7 @@ export default class PbSongComponent extends Component {
     dialog.open({ directory: true }).then((directory) => {
       // console.log(directory);
       if(directory != null && directory){
-        readDir(directory, { recursive: true } ).then((files)=>{
+        readDir(directory, { recursive: false } ).then((files)=>{
           if(files.length > 0){
             this.songsData = [];
             let idnum = 0;

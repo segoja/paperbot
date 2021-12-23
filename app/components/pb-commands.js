@@ -11,6 +11,7 @@ import { inject as service } from '@ember/service';
 
 export default class PbCommandsComponent extends Component {
   @service currentUser;
+  @service audio;
   
   commandsSorting = Object.freeze(['date:desc']);
   
@@ -45,6 +46,16 @@ export default class PbCommandsComponent extends Component {
     
   }
 
+  @action wipeCommands(){
+    this.args.queryParamsObj.page = 1;
+    this.filteredContent.forEach((command)=>{
+      this.audio.removeFromRegister('sound', command.name);
+      console.log(command.soundfile+ " removed from the soundboard");
+      command.destroyRecord().then(()=>{
+        console.log("Command wiped.")
+      });
+    });
+  }
 
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
@@ -52,7 +63,7 @@ export default class PbCommandsComponent extends Component {
   
   @tracked importcontent;
   
-  @action commandImport(){    
+  @action commandImport(){
     dialog.open({
       directory: false,
       filters: [{name: "csv file", extensions: ['csv']}]

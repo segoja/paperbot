@@ -1,5 +1,4 @@
-﻿<div id="ember-bootstrap-wormhole"></div>
-<HeadLayout />
+﻿<HeadLayout />
 {{#if (not this.currentUser.hideMenu)}}
   <header role="button" class="m-0 p-0">
     <BsNavbar
@@ -59,29 +58,9 @@
             {{!-- <nav.item>
               <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
             </nav.item> --}}
-            <nav.dropdown class="bg-dark py-0" as |dd| >
-              <dd.toggle class="py-1"><FaIcon @icon="cog" /> Settings <span class="caret"></span></dd.toggle>
-              <dd.menu class="dropdown-menu-dark" as |ddm|>            
-                <ddm.item>
-                  <ddm.link-to @route="settings.config" @model={{this.globalConfig.config}} class="font-weight-bold"><h6>Change Settings <FaIcon @icon="wrench" /></h6></ddm.link-to>
-                </ddm.item>
-                <ddm.item>
-                  <hr class="dropdown-divider">
-                </ddm.item>
-                <ddm.item>
-                  <ddm.link-to @route="clients.index" class="dropdown-item ps-3">Clients</ddm.link-to>
-                </ddm.item>              
-                <ddm.item>
-                  <span role="button" class="dropdown-item ps-3" {{on "click" this.handleExport}}>Export Database</span>
-                </ddm.item>
-                <ddm.item>
-                  <span role="button" class="dropdown-item ps-3" {{on "click" this.handleImport}}>Import Database</span>
-                </ddm.item>
-                <ddm.item>
-                  <span role="button" class="dropdown-item ps-3" {{on "click" this.wipeDatabase}}>Wipe DB</span>
-                </ddm.item>
-              </dd.menu>
-            </nav.dropdown>
+            <nav.item>
+              <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+            </nav.item>
           </navbar.nav>
         </navbar.content>
         <div class="row g-0 d-md-flex col col-md-auto d-none">

@@ -26,29 +26,40 @@ export default class CurrentUserService extends Service {
   }
   
   @action showLyrics(){
-    if(this.lyricsViewer != ''){
-      this.lyricsViewer.close();
-      this.lyricsViewer = '';
-    } else {
-      // loading embedded asset:
-      this.lyricsViewer = '';
-      let parentWindow = getCurrent();
-      let options = { url: 'reader', title: 'Paperbot Reader', parent: parentWindow, decorations: false, minWidth: 320, minHeight: 600 };
-      this.lyricsViewer = new WebviewWindow('second', options);
-
-      this.lyricsViewer.once('tauri://created', function () {
-       // webview window successfully created
-       console.log('Pues fufa!');
-      })
-      this.lyricsViewer.once('tauri://error', function (e) {
-       // an error happened creating the webview window
-       console.log('Pues no fufa!');
-       console.log(e);
+    if(this.globalConfig.config.showLyrics && this.lyricsViewer != ''){
+      this.globalConfig.config.showLyrics = false;
+      this.globalConfig.config.save().then(()=>{
+        this.lyricsViewer.close();
+        this.lyricsViewer = '';
       });
-      this.lyricsViewer.listen('tauri://close-requested', function () {
-       // an error happened creating the webview window
-        console.log('Pues se cierra!');
-      }.bind(this));      
-    }    
+      console.log('close!');
+    } else {
+      console.log('open!');
+      // loading embedded asset:
+      this.globalConfig.config.showLyrics = true;
+      this.globalConfig.config.save().then(()=>{
+        this.lyricsViewer = '';
+        
+        let parentWindow = getCurrent();
+        let options = { url: 'reader', title: 'Paperbot Reader', parent: parentWindow, decorations: false, minWidth: 450, minHeight: 600 };
+        this.lyricsViewer = new WebviewWindow('second', options);
+
+        this.lyricsViewer.once('tauri://created', function () {
+         // webview window successfully created
+         console.log('Pues fufa!');
+        })
+        this.lyricsViewer.once('tauri://error', function (e) {
+         // an error happened creating the webview window
+         console.log('Pues no fufa!');
+         console.log(e);
+        });
+        this.lyricsViewer.listen('tauri://close-requested', function () {
+         // an error happened creating the webview window
+          this.globalConfig.config.showLyrics = false;
+          this.globalConfig.config.save();
+          console.log('Pues se cierra!');
+        }.bind(this));
+      });
+    }
   } 
 }

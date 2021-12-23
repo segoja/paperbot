@@ -1,67 +1,99 @@
-<div class="row h-100 flex-fill m-0 p-0">
-  <div class="col-12 h-100 flex-fill p-0 m-0"> 
-      {{!-- config listing --}}
-      <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill"}}">
-        <div class="card-header">
-          <div class="row">          
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-12 col-sm px-1" as |form|>
-              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" {{on "keydown" this.resetPage}}  as |el|>
-                <el.control
-                  placeholder="Filter Configs"
-                  tabIndex={{5}}
-                  class="w-100 m-0"
-                />
-              </form.element>
-            </BsForm>
-            <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">
-              <BsButton @type="secondary" @onClick={{this.configImport}}>Import</BsButton>
-              <BsButton @type="secondary" @onClick={{this.configExportFiltered}}>Export</BsButton>
-              {{!-- <BsButton @type="info" @onClick={{fn @createConfig}}>Add New</BsButton> --}}
+<span role=button" class="nav-link py-1" {{on "click" this.toggleModal}}><FaIcon @icon="wrench" /> Settings</span>
+{{#if this.globalConfig.config}}
+    <BsModal @onSubmit={{this.generateSongs}} @open={{this.isViewing}} @scrollable={{true}} @size="lg" as |Modal|>
+      <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">
+        <div class="row g-0 w-100 bg-dark bg-gradient border-0 rounded-top">
+          <div class="col py-1 ps-3"><span class="h5 text-white">Settings</span></div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}}><FaIcon @icon="times" /></button>
+          </div>
+        </div>
+      </Modal.header>
+      <Modal.body>
+        <BsForm @formLayout="horizontal" @model={{this.globalConfig.config}}  @onSubmit={{this.doneEditing}} as |form|>
+          <form.element @controlType="text" @label="Default channel" class="pb-2" placeholder="Default channel name" @property="defchannel" required />
+          
+          <div class="row pb-2">
+            <label class="control-label col-form-label col-md-4">
+              External event tracking
+              <span role="button">
+                <FaIcon @icon="question-circle" class="text-info" />
+                <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer">Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer">StreamElements</a></BsTooltip>
+              </span>
+            </label>
+            <div class="col-md-8 border-light">
+              <div class="row input-group g-0">
+                <form.element @controlType="password" @label="" placeholder="Default channel name" @formLayout="inline" @property="externaleventskey" class="col rounded-0 rounded-start" />
+                <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline" class="input-group-text col py-1 rounded-0 rounded-end" as |el|>
+                  <el.control @inline={{true}}/>
+                </form.element>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="card-body mx-0 p-0 flex-fill d-flex h-100 overflow-hidden">
-          <div class="row mx-0 flex-fill d-flex h-100 listframe">
-            <table class="table table-hover table-condensed col-12 my-0 h-100 px-0">
-              <thead class="listheader thead-light">
-                <tr>
-                  <th class="col-sm-auto w-25">Config</th>
-                  <th class="col-md d-none d-lg-table-cell">Folder</th>
-                  <th class="col-sm-auto w-25">CouchDB User</th>
-                  <th class="col-sm-auto">Dark</th>
-                  <th scope="col" colspan="2" class="col-sm-auto">Default</th>
-                </tr>
-              </thead>
-              <tbody>
-                {{#each this.pagedContent as |config|}}              
-                  <tr>
-                    <td class="col-sm-auto w-25">{{if config.name config.name "<unnamed>"}}</td>
-                    <td class="col-md-auto d-none d-lg-table-cell w-50">{{config.soundsfolder}}</td>
-                    <td class="col-sm-auto w-25">{{config.couchdbuser}}</td>
-                    <td class="col-sm-auto">{{config.darkmode}}</td>
-                    <td class="col-sm-auto">{{config.isdefault}}</td>
-                    <td class="col-auto py-0 pe-0">
-                      <div class="row g-0">
-                        <div class="col-auto ms-auto btn-group my-0">
-                          <button type="button" class="btn btn-outline-secondary rounded-0 py-2 px-3 alert-secondary" {{on "click" (fn @gridEditConfig config)}}><FaIcon @icon="edit" /></button>
-                          <button type="button" class="btn btn-outline-danger rounded-0 py-2 px-3 alert-danger" {{ on "click" (fn @gridDeleteConfig config)}}><FaIcon @icon="trash" /></button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                {{/each}}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="card-footer py-0 my-0 px-2">
-          <PageNumbers @content={{this.pagedContent}} />
-        </div>
-      </div>
-    {{#if this.currentUser.isViewing}}
-      {{!-- Config content --}}
-      {{yield}}
-    {{/if}}
-  </div>
-</div>
 
+          <div class="row pb-2">
+            <label class="control-label col-form-label col-md-4">
+              Default Bot client 
+              <span role="button">
+                <FaIcon @icon="question-circle" class="text-info" />
+                <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
+              </span>
+            </label>
+              <form.element @controlType="power-select" @property="defbotclient" @onChange={{this.setdefBot}} @formLayout="inline" class="col-md-8 border-light" @invisibleLabel={{true}} @options={{@clients}} required as |client|>
+                <client.control @allowClear={{true}} @placeholder="Select the default Bot Client for new streams" as |option|>
+                  {{option.username}}
+                </client.control>
+              </form.element>
+          </div>
+
+          <div class="row pb-2">
+            <label class="control-label col-form-label col-md-4">
+              Default Chat client 
+              <span role="btn">
+                <FaIcon @icon="question-circle" class="text-info" />
+                <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
+              </span>
+            </label>
+            <form.element @controlType="power-select" @property="defchatclient" @onChange={{this.setdefChat}} @formLayout="inline" class="col-md-8 border-light" @options={{@clients}} required as |client|>
+              <client.control @allowClear={{true}} @placeholder="Select the default Chat Client for new streams" as |option|>
+                {{option.username}}
+              </client.control>
+            </form.element>
+          </div>      
+           
+          <form.element @controlType="text" @property="overlayfolder" class="pb-2" @label="Folder to place queue overlay file" as |el|>
+            <div class="input-group">
+              <el.control disabled class="border-form-control" />
+              <div class="input-group-append">
+                <BsButton @type="secondary" @onClick={{fn this.opendialogfiles this.globalConfig.config}}>Select folder</BsButton>        
+              </div>
+            </div>
+          </form.element>
+          
+          <div class="form-group row pb-2">
+            <label class="col-md-4">Dark mode</label>
+            <div class="col-sm">
+              <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />
+            </div>
+          </div>
+          
+        </BsForm>
+      </Modal.body>
+      <Modal.footer class="py-2 row g-0" as |footer|>
+        <div class="col">
+          <span role="button" class="btn btn-sm btn-secondary" {{on "click" @handleExport}}>Export Database</span>
+          <span role="button" class="btn btn-sm btn-secondary" {{on "click" @handleImport}}>Import Database</span>
+          <span role="button" class="btn btn-sm btn-danger" {{on "click" @wipeDatabase}}>Wipe DB</span>
+        </div>
+        <div class="col-auto">
+          <BsButton @type="success" @onClick={{this.doneEditing}}> 
+            {{#if this.saving}}
+              <span><FaIcon @icon="spinner" class="spin" /> Saving...</span>
+            {{else}}
+              <span class="pe-3 me-1"><FaIcon @icon="save" /> Save</span>
+            {{/if}}
+          </BsButton>
+        </div>
+      </Modal.footer>
+    </BsModal>
+{{/if}}

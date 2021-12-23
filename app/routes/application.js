@@ -1,15 +1,24 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
+import { hash } from 'rsvp';
 
 export default class ApplicationRoute extends Route  {
   @service headData;
   @service store;
   
   model () {
-    let store = this.store;
-    return store.findAll('config');      
+    var store = this.store;
+    return hash({
+      model: store.findAll('config'),
+      clients: store.findAll('client')
+    });
   }
   
+  setupController(controller, models) {
+    super.setupController(controller, models);
+    controller.setProperties(models);
+  }
+
   afterModel(model) {    
     this.headData.title = 'Paperbot, a Twitch.tv bot by Papercat84';
     if(model.length < 1){

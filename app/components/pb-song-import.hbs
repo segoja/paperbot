@@ -1,6 +1,6 @@
 <BsButton @type="warning" @onClick={{this.toggleModal}}><FaIcon @icon="file-import" />Generate</BsButton>
 {{#in-element this.bootstrapWormhole insertBefore=null}}
-  <BsModal @onSubmit={{this.generateSongs}} @open={{this.isViewing}} @size="lg border rounded bg-dark" as |Modal|>
+  <BsModal @onSubmit={{this.generateSongs}} @open={{this.isViewing}} @scrollable={{true}} @size="lg rounded" as |Modal|>
     <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">
       <div class="row g-0 w-100 bg-dark bg-gradient border-0 rounded-top">
         <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i> Import songs from your text files</span></div>
@@ -47,8 +47,12 @@
                         <span class="w-100">{{option}}</span>
                       </element.control>
                     </form.element>
-                    <BsButton @type="btn-outline-secondary rounded-0 col-auto"  @onClick={{this.bulkSelectAll}}>
-                      <FaIcon class="text-secondary" @icon={{if this.isBulk "square" "check-square"}} />
+                    <BsButton 
+                      @type="outline-secondary alert-secondary"
+                      class="rounded-0 col-auto border"  
+                      @onClick={{this.bulkSelectAll}}
+                    >
+                      <FaIcon @icon={{if this.isBulk "square" "check-square"}} />
                     </BsButton>                         
                   </BsForm>
                 </th>
@@ -66,8 +70,12 @@
                           <span class="w-100">{{option}}</span>
                         </element.control>
                       </form.element>
-                      <BsButton @type={{if song.selected "btn-outline-secondary rounded-0 col-auto" "btn-outline-secondary rounded-0 col-auto"}}  @onClick={{fn this.addToImport song}}>
-                        <FaIcon class="text-secondary" @icon={{if song.selected "check-square" "square"}} />
+                      <BsButton 
+                        @type={{if song.selected "outline-success alert-success" "outline-secondary alert-secondary"}}
+                        class="rounded-0 col-auto border" 
+                        @onClick={{fn this.addToImport song}}
+                      >
+                        <FaIcon @icon={{if song.selected "check-square" "square"}} />
                       </BsButton>
                     </BsForm>
                   </td>

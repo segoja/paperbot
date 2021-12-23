@@ -1,6 +1,6 @@
 <BsButton @type={{@btnClass}} @onClick={{this.toggleModal}}><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
 
-<BsModal @size="md border rounded bg-dark" @open={{this.isViewing}} as |Modal|>
+<BsModal @size="md rounded" @open={{this.isViewing}} as |Modal|>
   <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">
     <div class="row g-0 w-100 bg-dark bg-gradient border-0 rounded-top">
       <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i>Confirm action</span></div>

@@ -1,0 +1,79 @@
+<BsButton @type="warning" @onClick={{this.toggleModal}}><FaIcon @icon="file-import" />Generate</BsButton>
+{{#in-element this.bootstrapWormhole insertBefore=null}}
+  <BsModal @onSubmit={{this.generateCommands}} @open={{this.isViewing}} @scrollable={{true}} @size="lg rounded" as |Modal|>
+    <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">
+      <div class="row g-0 w-100 bg-dark bg-gradient border-0 rounded-top">
+        <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i> Import sound commands.</span></div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}}><FaIcon @icon="times" /></button>
+        </div>
+      </div>
+    </Modal.header>
+    <Modal.body>
+      <BsForm @model={{this}} @formLayout="inline" class="row g-0 pb-2"  as |form|>
+        <div class="row g-0 pb-2">
+          <BsButton @type="warning col-auto me-1" @onClick={{this.openCommandsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
+          <form.element @controlType="text" class="col" @property="filterQuery" {{on "keydown" this.resetPage}} as |el|>
+            <el.control
+              placeholder="Filter importable commands."
+              class="w-100 m-0"
+            />
+          </form.element>
+        </div>
+      </BsForm>
+        {{#if this.commands}}
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th class="col" scope="col">File name</th>
+                <th class="col" scope="col">Command</th>
+                <th class="col-auto p-0" scope="col">
+                  <div class="d-inline-block float-end">
+                    <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0" as |form|>
+                      <BsButton 
+                        @type="outline-secondary alert-secondary"
+                        class="rounded-0 col-auto border"  
+                        @onClick={{this.bulkSelectAll}}
+                      >
+                        <FaIcon @icon={{if this.isBulk "square" "check-square"}} />
+                      </BsButton>
+                    </BsForm>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each this.pagedCommands as |command|}}                
+                <tr class={{if command.selected "alert-success"}}>                    
+                  <td class="col">{{command.name}}</td>
+                  <td class="col">{{command.command}}</td>
+                  <td class="col-auto p-0">
+                    <div class="d-inline-block float-end">
+                      <BsForm @model={{command}} @formLayout="inline" class="input-group row g-0" as |form|>
+                        <BsButton 
+                          @type={{if command.selected "outline-success alert-success" "outline-secondary alert-secondary"}}
+                          class="rounded-0 col-auto border" 
+                          @onClick={{fn this.addToImport command}}
+                        >
+                          <FaIcon @icon={{if command.selected "check-square" "square"}} />
+                        </BsButton>
+                      </BsForm>
+                    </div>
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/if}}
+    </Modal.body>
+    <Modal.footer class="py-2 row g-0" as |footer|>
+      {{#if this.commands}}
+        <PageNumbers @content={{this.pagedCommands}} @fullBorder={{true}} class="col" />
+      {{/if}}
+      <div class="col-auto">
+        <BsButton @onClick={{fn this.toggleModal}} @type="danger">Cancel</BsButton>
+        <BsButton @onClick={{this.generateCommands}} @type="success">Import</BsButton>
+      </div>
+    </Modal.footer>
+  </BsModal>
+{{/in-element}}

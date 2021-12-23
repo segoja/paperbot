@@ -22,7 +22,4 @@ Router.map(function() {
   this.route('streams', function() {
     this.route('stream', { path: ':stream_id' });
   });
-  this.route('settings', function() {
-    this.route('config', { path: ':config_id' });
-  });
 });

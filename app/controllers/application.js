@@ -43,9 +43,9 @@ export default class ApplicationController extends Controller {
         })
       }
     });
-    appWindow.listen('tauri://blur', ({ event, payload }) => {
-      console.log(payload);
-    });
+    //appWindow.listen('tauri://blur', ({ event, payload }) => {
+    //  console.log(payload);
+    //});
   }
 
   get serverStatus(){
@@ -61,8 +61,8 @@ export default class ApplicationController extends Controller {
   }
   
   get isLyrics(){
-    console.log(this.router.location);
-    if(this.router.location === 'reader'){
+    if(this.router.currentURL === '/reader'){
+    //if(this.router.location === 'reader'){
       return true;
     }
     return false;
@@ -170,7 +170,14 @@ export default class ApplicationController extends Controller {
   }
   
   @action closeWindow(){
-    appWindow.close();
+    if(this.isLyrics){
+      this.globalConfig.config.showLyrics = false;
+      this.globalConfig.config.save().then(()=>{
+        appWindow.close();
+      });
+    } else {
+      appWindow.close();
+    }
   }
   
   @action dragWindow(){
