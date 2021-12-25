@@ -32,6 +32,9 @@ export default class ApplicationController extends Controller {
           this.eventsExternal.token = this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
+        if(this.globalConfig.config.showOverlay){
+          this.currentUser.toggleOverlay();
+        }
         this.globalConfig.showFirstRun = false;
       } else{
         this.store.createRecord('config',{id: 'myconfig'}).save().then((newconfig)=>{
@@ -67,6 +70,14 @@ export default class ApplicationController extends Controller {
     }
     return false;
   }
+  
+  get isOverlay(){
+    if(this.router.currentURL === '/overlay'){
+    //if(this.router.location === 'reader'){
+      return true;
+    }
+    return false;
+  }  
   
   get updateLight(){
     if(this.globalConfig.config.darkmode){
@@ -176,7 +187,14 @@ export default class ApplicationController extends Controller {
         appWindow.close();
       });
     } else {
-      appWindow.close();
+      if(this.isOverlay){
+        this.globalConfig.config.showOverlay = false;
+        this.globalConfig.config.save().then(()=>{
+          appWindow.close();
+        });
+      } else {
+        appWindow.close();
+      }
     }
   }
   

@@ -76,11 +76,14 @@ export default class QueueHandlerService extends Service {
     } else {
       this.globalConfig.config.lastPlayed = '';
     }
+    
+    // We keep the keue updated in the config so the overlay window updates:
+    this.globalConfig.config.songQueue = this.pendingSongs;
     this.globalConfig.config.save();
     
     if(this.currentUser.queueToFile && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
-    }
+    }    
   }
   
   @action backToQueue(song) {    
@@ -95,6 +98,9 @@ export default class QueueHandlerService extends Service {
     if(this.currentUser.queueToFile && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
     }
+    // We keep the keue updated in the config so the overlay window updates:
+    this.globalConfig.config.songQueue = this.pendingSongs;
+    this.globalConfig.config.save();
   }
 
   
@@ -116,8 +122,11 @@ export default class QueueHandlerService extends Service {
       } else {
         this.globalConfig.config.lastPlayed = '';
       }
-      this.globalConfig.config.save();
     }
+    // We keep the keue updated in the config so the overlay window updates:
+    this.globalConfig.config.songQueue = this.pendingSongs;
+    this.globalConfig.config.save();
+    
     if(this.currentUser.queueToFile && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
     }
@@ -141,8 +150,11 @@ export default class QueueHandlerService extends Service {
       } else {
         this.globalConfig.config.lastPlayed = '';
       }
-      this.globalConfig.config.save();
     }
+    // We keep the keue updated in the config so the overlay window updates:
+    this.globalConfig.config.songQueue = this.pendingSongs;
+    this.globalConfig.config.save();
+    
     if(this.currentUser.queueToFile && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
     }

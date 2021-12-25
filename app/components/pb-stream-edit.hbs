@@ -38,7 +38,7 @@
             {{on-key "ctrl+KeyM" this.soundboardToggle}}  
             <FaIcon @icon={{if this.currentUser.soundBoardEnabled "volume-up" "volume-mute"}} />
           </BsButton>     
-          <BsButton class="btn-sm col-12 col-sm" @type={{if @stream.requests (if this.currentUser.queueToFile "warning" "secondary") "secondary"}} @onClick={{this.queueWriter}} title="Enable/disable overlay queue file">
+          <BsButton class="btn-sm col-12 col-sm" @type={{if @stream.requests (if this.currentUser.queueToFile "warning" "secondary") "secondary"}} @onClick={{this.queueWriter}} title="Enable/disable queue overlay">
             {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
             {{#if (not @stream.requests)}}
               <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>Please, enable the <em>Song Request System</em></BsTooltip>

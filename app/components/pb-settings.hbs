@@ -61,22 +61,50 @@
             </form.element>
           </div>      
            
-          <form.element @controlType="text" @property="overlayfolder" class="pb-2" @label="Folder to place queue overlay file" as |el|>
-            <div class="input-group">
-              <el.control disabled class="border-form-control" />
-              <div class="input-group-append">
-                <BsButton @type="secondary" @onClick={{fn this.opendialogfiles this.globalConfig.config}}>Select folder</BsButton>        
+
+
+          <div class="row">
+            <label class="control-label col-form-label col-md-4">
+              Queue overlay
+            </label>
+            <div class="col-md-8 border-light">
+              <div class="row input-group g-0">
+                <form.element @controlType="power-select" @property="overlayType" @onChange={{fn (mut this.globalConfig.config.overlayType)}} @formLayout="inline" class="col border-light pb-2" @allowClear={{true}} @options={{this.overlayTypes}} required as |type|>
+                  <type.control @placeholder="Select overlay type you want to use" as |option|>
+                    {{option}}
+                  </type.control>
+                </form.element>
               </div>
-            </div>
-          </form.element>
-          
-          <div class="form-group row pb-2">
-            <label class="col-md-4">Dark mode</label>
-            <div class="col-sm">
-              <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />
+              {{#if (eq this.globalConfig.config.overlayType "file")}}
+                <form.element @controlType="text" @formLayout="vertical" @property="overlayfolder" class="pb-2" @label="Folder to place queue overlay file" as |el|>
+                  <div class="input-group">
+                    <el.control disabled class="border-form-control text-secondary" />
+                    <div class="input-group-append">
+                      <BsButton @type="secondary rounded-0 rounded-end" @onClick={{fn this.opendialogfiles this.globalConfig.config}} >Select folder</BsButton>
+                    </div>
+                  </div>
+                </form.element>
+              {{else}}
+                <div class="form-group row">
+                  <div class="col"> 
+                    <form.element @controlType="text" @formLayout="vertical" class="pb-2" @property="chromaColor" as |el|>
+                      <el.control placeholder="Chroma color" />
+                    </form.element>
+                  </div>
+                 <div class="col-auto">
+                    <form.element @controlType="checkbox" @label="Show on start" @formLayout="inline" class="form-check form-check-inline ps-0 mb-0 pt-2" @property="showOverlay" required />
+                  </div>
+                </div>
+              {{/if}}
+              <hr class="mt-0 mb-2">
             </div>
           </div>
-          
+          <div class="form-group row">
+            <label class="col-md-4">Dark mode</label>
+            <div class="col-sm">
+              <form.element @controlType="checkbox" @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />
+            </div>
+          </div>          
         </BsForm>
       </Modal.body>
       <Modal.footer class="py-2 row g-0" as |footer|>

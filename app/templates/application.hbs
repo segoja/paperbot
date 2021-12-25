@@ -1,6 +1,6 @@
 ﻿<HeadLayout />
 {{#if (not this.currentUser.hideMenu)}}
-  <header role="button" class="m-0 p-0">
+  <header role="button" class="m-0 p-0 ">
     <BsNavbar
       @type="dark"
       class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
@@ -76,59 +76,70 @@
     </BsNavbar>
   </header>
 {{else}}
-  <header role="button" class="m-0 p-0">
-    <BsNavbar
-      @type="dark"
-      class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
-      @backgroundColor="dark"
-      @collapsed={{true}}
-      @fluid={{true}}
-      @position="fixed-top"
-      @toggleBreakpoint="md"
-      @onCollapse={{fn (mut this.collapsed) true}}
-      @container="none container-fluid px-0 ps-2"
-      @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
+  {{#if (not this.isOverlay)}}
+    <header role="button" class="m-0 p-0">
+      <BsNavbar
+        @type="dark"
+        class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
+        @backgroundColor="dark"
+        @collapsed={{true}}
+        @fluid={{true}}
+        @position="fixed-top"
+        @toggleBreakpoint="md"
+        @onCollapse={{fn (mut this.collapsed) true}}
+        @container="none container-fluid px-0 ps-2"
+        @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
 
-        <div class="navbar-header row col-md-auto col g-0">
-          <div class="col-auto">
-            <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 m-0 d-none" />
-            <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 ps-2 dragger" {{on "mousedown" this.dragWindow}}>
-              {{svg-jar "papercat-gray-icon" class="logo" }}
-              <span class="d-none d-sm-inline-block pe-3">Paperbot Reader</span> 
-            </button>{{this.loadConfig}}
+          <div class="navbar-header row col-md-auto col g-0">
+            <div class="col-auto">
+              <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 m-0 d-none" />
+              <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 ps-2 dragger" {{on "mousedown" this.dragWindow}}>
+                {{svg-jar "papercat-gray-icon" class="logo" }}
+                <span class="d-none d-sm-inline-block pe-3">Paperbot Reader</span> 
+              </button>{{this.loadConfig}}
+            </div>
+            <div class="col d-md-none d-flex dragger">
+              <div role="button" class="nav-link pt-3 pb-2 w-100" {{on "mousedown" this.dragWindow}}></div>
+            </div>
+            <div class="btn-group btn-group-sm col-auto d-md-none">
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+                <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+              </button>
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+              <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
+            </div>
           </div>
-          <div class="col d-md-none d-flex dragger">
-            <div role="button" class="nav-link pt-3 pb-2 w-100" {{on "mousedown" this.dragWindow}}></div>
+          <navbar.content class="px-md-0 px-3">
+            <navbar.nav class="col" as |nav|>
+              <nav.item class="col-md d-md-flex d-none dragger">
+                <div role="button" class="nav-link w-100 pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
+              </nav.item> 
+            </navbar.nav>
+          </navbar.content>
+          <div class="row g-0 d-md-flex col col-md-auto d-none">
+            <div class="btn-group btn-group-sm col-auto">
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+                <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+              </button>
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+              <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
+            </div>
           </div>
-          <div class="btn-group btn-group-sm col-auto d-md-none">
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
-              <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
-            </button>
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
-            <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
-          </div>
-        </div>
-        <navbar.content class="px-md-0 px-3">
-          <navbar.nav class="col" as |nav|>
-            <nav.item class="col-md d-md-flex d-none dragger">
-              <div role="button" class="nav-link w-100 pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
-            </nav.item> 
-          </navbar.nav>
-        </navbar.content>
-        <div class="row g-0 d-md-flex col col-md-auto d-none">
-          <div class="btn-group btn-group-sm col-auto">
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
-              <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
-            </button>
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
-            <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
-          </div>
-        </div>
-    </BsNavbar>
-  </header>
+      </BsNavbar>
+    </header>
+  {{/if}}
 {{/if}}
-<main class="container-fluid pt-custom px-0">
-  {{outlet}}
-</main>
+{{#if this.isOverlay}}
+  <style>
+    .chroma { background-color: {{this.globalConfig.config.chromaColor}}!important; }
+  </style>
+  <main role="button" class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" {{on "mousedown" this.dragWindow}} title="You can close this window from the stream panel or pressing Alt+F4">
+    {{outlet}}
+  </main>
+{{else}}
+  <main class="container-fluid pt-custom px-0 alert-secondary border border-secondary border-1">
+    {{outlet}}
+  </main>
+{{/if}}

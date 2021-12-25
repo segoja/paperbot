@@ -16,10 +16,9 @@ Router.map(function() {
   this.route('songs', function() {
     this.route('song', { path: ':song_id' });
   });
-  this.route('reader', function() {
-    this.route('song', { path: ':song_id' });
-  });
   this.route('streams', function() {
     this.route('stream', { path: ':stream_id' });
   });
+  this.route('reader');  
+  this.route('overlay');
 });

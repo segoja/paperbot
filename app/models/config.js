@@ -10,10 +10,15 @@ export default class ConfigModel extends Model {
 
   @attr('string', {defaultValue: ""}) externalevents;  
   @attr('string', {defaultValue: ""}) externaleventskey;
-  
-  @attr('string', {defaultValue: ""}) lastPlayed;
 
+
+  @attr songQueue;
+  @attr('string', {defaultValue: ""}) lastPlayed;
   @attr('string', {defaultValue: ""}) defchannel;
+  
+  @attr('string', {defaultValue: ""}) overlayType;
+  @attr('boolean', {defaultValue: false}) showOverlay;
+  @attr('string', {defaultValue: ""}) chromaColor;
 
   @belongsTo('client', { inverse: 'botclientconfigs', save: true }) defbotclient;
   @belongsTo('client', { inverse: 'chatclientconfigs', save: true }) defchatclient;

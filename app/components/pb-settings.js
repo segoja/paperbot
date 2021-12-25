@@ -21,8 +21,9 @@ export default class PbSettingsComponent extends Component {
     super.willDestroy(...arguments);
   }
   
-  externalEventServices = ["StreamLabs", "StreamElements"];
-  
+  externalEventServices = ['StreamLabs','StreamElements'];
+  overlayTypes = ['file','window'];
+
   @tracked isViewing = true;
   @tracked saving = false;
 

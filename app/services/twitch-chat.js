@@ -11,6 +11,7 @@ import tmi from 'tmi.js';
 export default class TwitchChatService extends Service {
   @service audio;
   @service globalConfig;
+  @service queueHandler;
 
   @tracked botclient;
   @tracked chatclient;
@@ -419,8 +420,9 @@ export default class TwitchChatService extends Service {
               this.songqueue.push(this.lastsongrequest);
               if(this.songqueue.length == 1){
                 this.globalConfig.config.lastPlayed = song;
-                this.globalConfig.config.save();
               }
+              this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
+              this.globalConfig.config.save();
             } else {
               this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
             }
