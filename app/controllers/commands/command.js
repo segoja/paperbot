@@ -29,11 +29,11 @@ export default class CommandController extends Controller {
       if (this.model.active){
         this.audio.removeFromRegister('sound', this.model.name);
         this.audio.load(this.model.soundfile).asSound(this.model.name);
-        console.log(this.model.soundfile+ " loaded in the soundboard");
+        console.debug(this.model.soundfile+ " loaded in the soundboard");
         
       } else {
         this.audio.removeFromRegister('sound', this.model.name);
-        console.log(this.model.soundfile+ " removed from the soundboard");
+        console.debug(this.model.soundfile+ " removed from the soundboard");
       }
     }    
   }
@@ -42,7 +42,7 @@ export default class CommandController extends Controller {
     if(this.model.type === 'audio'){
       if (this.model.active){
         this.audio.removeFromRegister('sound', this.model.name);
-        console.log(this.model.soundfile+ " removed from the soundboard");
+        console.debug(this.model.soundfile+ " removed from the soundboard");
       }
     }
     

@@ -141,7 +141,7 @@ export default class TwitchChatService extends Service {
         this.botclient.disconnect();
       }
       if(this.chatUsername === options.identity.username.toString() && this.chatConnected){
-        console.log("chat client is the same of the chat, enabling bot...");
+        console.debug("chat client is the same of the chat, enabling bot...");
         this.botConnected = true;
       }
     }
@@ -151,7 +151,7 @@ export default class TwitchChatService extends Service {
         this.chatclient.disconnect();
       }
       if(this.botUsername === options.identity.username.toString() && this.botConnected){
-        console.log("chat client is the same of the bot, enabling chat...");
+        console.debug("chat client is the same of the bot, enabling chat...");
         this.chatConnected = true;
       }
     }
@@ -171,10 +171,10 @@ export default class TwitchChatService extends Service {
       // Connect the client
       this.botConnected = await this.botclient.connect().then(
         function(){
-          console.log("bot client connected!");
+          console.debug("bot client connected!");
           return true;
         }, function() {
-          console.log("error connecting bot client!");
+          console.debug("error connecting bot client!");
           return false;
         }
       );
@@ -183,7 +183,7 @@ export default class TwitchChatService extends Service {
         this.botclient.join(this.channel);
         this.superHandler(this.botclient);
         this.twitchNameToUser(this.channel);
-        console.log(this.badgespack);
+        console.debug(this.badgespack);
       }
       
       return this.botConnected;
@@ -202,11 +202,11 @@ export default class TwitchChatService extends Service {
       // Connect the client
       this.chatConnected = await this.chatclient.connect().then(
         function() {
-          console.log("chat client connected!");
+          console.debug("chat client connected!");
           return true;
         }, 
         function() {
-          console.log("error connecting chat client!");
+          console.debug("error connecting chat client!");
           return false;
         }
       );
@@ -225,7 +225,7 @@ export default class TwitchChatService extends Service {
         this.channel = '';
         this.botUsername = '';
         isDisconnected = true;
-        console.log("The bot client got disconnected!");
+        console.debug("The bot client got disconnected!");
       });
     }
     if(this.chatConnected === true){
@@ -233,7 +233,7 @@ export default class TwitchChatService extends Service {
         this.chatConnected = false;
         this.channel = '';
         isDisconnected = true;
-        console.log("The chat client got disconnected!");        
+        console.debug("The chat client got disconnected!");        
       });
     }
     return isDisconnected;     
@@ -246,7 +246,7 @@ export default class TwitchChatService extends Service {
         this.channel = '';
         this.botUsername = '';
         isDisconnected = true;
-        console.log("The bot client got disconnected!");
+        console.debug("The bot client got disconnected!");
       });
     }
    return isDisconnected;
@@ -257,13 +257,13 @@ export default class TwitchChatService extends Service {
       if(this.sameClient){
         this.chatConnected = false;
         isDisconnected = true;
-        console.log("The chat has been disabled.");   
+        console.debug("The chat has been disabled.");   
       } else {
         this.chatclient.disconnect().then(() => {
           this.chatConnected = false;
           this.channel = '';
           isDisconnected = true;
-          console.log("The chat client got disconnected!");        
+          console.debug("The chat client got disconnected!");        
         });
       }
     }
@@ -272,49 +272,49 @@ export default class TwitchChatService extends Service {
 
   // Called every time the bot connects to Twitch chat
   @action onBotConnectedHandler (addr, port) {
-    console.log(`* Connected to ${addr}:${port}`);
+    console.debug(`* Connected to ${addr}:${port}`);
   }  
   // Called every time the bot connects to Twitch chat
   @action onChatConnectedHandler (addr, port) {
-    console.log(`* Connected to ${addr}:${port}`);
+    console.debug(`* Connected to ${addr}:${port}`);
   }
 
   @action soundboard(){
-    console.log("Loading the soundboard...");
+    console.debug("Loading the soundboard...");
     if(this.audiocommandslist.length !== 0){
       this.audiocommandslist.forEach((command) => {
         this.audio.load(command.soundfile).asSound(command.name).then(
           function() {
-            console.log(command.soundfile+ " loaded in the soundboard");
+            console.debug(command.soundfile+ " loaded in the soundboard");
           }, 
           function() {
-            console.log("error loading "+command.soundfile+" in the soundboard!");
+            console.debug("error loading "+command.soundfile+" in the soundboard!");
           }
         );
       });
     } else {
-      console.log("No sound commands to load in soundboard!");
+      console.debug("No sound commands to load in soundboard!");
     }
   }  
 
   @action unloadSoundboard(){
-    console.log("Unloading the soundboard...");
+    console.debug("Unloading the soundboard...");
     if(this.audiocommandslist.length !== 0){
       this.audiocommandslist.forEach((command) => {
         this.audio.removeFromRegister('sound', command.name);
-        console.log(command.soundfile+ " unloaded from the soundboard");
+        console.debug(command.soundfile+ " unloaded from the soundboard");
       });
     } else {
-      console.log("No sound commands to unload in soundboard!");
+      console.debug("No sound commands to unload in soundboard!");
     }
   }
 
   @action onHostHandler (channel, target, viewers) {
-    console.log(channel+" hosted "+target+" with our "+viewers+" viewers.");
+    console.debug(channel+" hosted "+target+" with our "+viewers+" viewers.");
   }
 
   @action messageHandler(target, tags, msg, self){
-    // console.log(tags);
+    // console.debug(tags);
     // this.parseBadges(tags['badges']);
     
     this.lastmessage = {
@@ -391,11 +391,11 @@ export default class TwitchChatService extends Service {
         this.requestpattern = song;
         
         if (this.filteredSongs.get('length') !== 0 ) { 
-          console.log("we found songs!");  
+          console.debug("we found songs!");  
           var bestmatch = this.filteredSongs.shift();
-          console.log("=================");
-          console.log(bestmatch);
-          console.log("=================");
+          console.debug("=================");
+          console.debug(bestmatch);
+          console.debug("=================");
           if(bestmatch.active){
             if(this.commandPermissionHandler(bestmatch, tags) === true){
               // changing this could break the reader.
@@ -434,7 +434,7 @@ export default class TwitchChatService extends Service {
           this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');         
         }
       }
-      console.log(`* Executed ${commandName} command`);        
+      console.debug(`* Executed ${commandName} command`);        
     } else {
       this.commandlist.forEach((command) => {
           if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
@@ -454,7 +454,7 @@ export default class TwitchChatService extends Service {
                   
                   this.botclient.say(target, answer);
                   
-                  console.log(`* Executed ${command.name} command`);
+                  console.debug(`* Executed ${command.name} command`);
                   
                   break;
                 }
@@ -469,12 +469,12 @@ export default class TwitchChatService extends Service {
                 }
                 default:{
                   this.botclient.say(target, command.response);
-                  console.log(`* Executed ${command.name} command`);
+                  console.debug(`* Executed ${command.name} command`);
                   break;
                 }
               }
             } else{ 
-              console.log("Not authorized to use "+command.name+" command.")
+              console.debug("Not authorized to use "+command.name+" command.")
             } 
             /*}*/
           }
@@ -485,7 +485,7 @@ export default class TwitchChatService extends Service {
 
   
   @action commandPermissionHandler(command, tags){
-    // console.log(tags['badges']);
+    // console.debug(tags['badges']);
     if(tags['badges'] != null){
       var admin = false;      
       var mod = false;
@@ -512,8 +512,8 @@ export default class TwitchChatService extends Service {
           }          
         }
       }
-      //console.log('User -> admin: '+admin+', mod: '+mod+', vip: '+vip+', sub: '+sub+'');
-      //console.log('Command -> admin: '+command.admin+', mod: '+command.mod+', vip: '+command.vip+', sub: '+command.sub+'');
+      //console.debug('User -> admin: '+admin+', mod: '+mod+', vip: '+vip+', sub: '+sub+'');
+      //console.debug('Command -> admin: '+command.admin+', mod: '+command.mod+', vip: '+command.vip+', sub: '+command.sub+'');
       
       if(command.admin === true && admin === true){
         return true;
@@ -561,11 +561,11 @@ export default class TwitchChatService extends Service {
 
   @action parseBadges(userbadges) {
     var htmlbadges = '';
-    // console.log(userbadges);
+    // console.debug(userbadges);
     for(var category in userbadges) {
-      // console.log("this is the first index: "+category);
+      // console.debug("this is the first index: "+category);
       var badge = userbadges[category];
-      // console.log("this is the second index: "+badge);        
+      // console.debug("this is the second index: "+badge);        
         if (this.allbadges[category]['versions'][badge] !== 'undefined'){
           
           let description = this.allbadges[category]['versions'][badge]['description'];
@@ -635,9 +635,9 @@ export default class TwitchChatService extends Service {
     };
     
     this.kraken(opts).then((data) => {
-      // console.log(username+' id number is: '+data.users[0]._id);
+      // console.debug(username+' id number is: '+data.users[0]._id);
       this.chanId = data.users[0]._id;
-      //console.log(this.chanId);
+      //console.debug(this.chanId);
       this.getBadges(this.chanId);
       this.getBadges('');
     });
@@ -651,15 +651,15 @@ export default class TwitchChatService extends Service {
     };
     
     this.kraken(opts).then((data) => {
-      //console.log('Getting badges!');
-      //console.log(data.badge_sets);
+      //console.debug('Getting badges!');
+      //console.debug(data.badge_sets);
       if(channel){
         this.channelBadges = data.badge_sets;        
       } else {
         this.globalBadges = data.badge_sets;
       }
       if(this.channelBadges && this.globalBadges){
-        //console.log(this.allbadges);
+        //console.debug(this.allbadges);
       }
     });
   }
@@ -740,7 +740,7 @@ export default class TwitchChatService extends Service {
 
     client.on("notice", (channel, msgid, message) => {
         // Do your stuff.
-        console.log("we got a notice!");
+        console.debug("we got a notice!");
         this.chateventHandler(message);    
     });
 
@@ -773,7 +773,7 @@ export default class TwitchChatService extends Service {
 
     client.on("timeout", (channel, username, reason, duration, userstate) => {
         // Do your stuff.
-        // console.log(userstate);
+        // console.debug(userstate);
         let message = "";
         if(reason){
           message = "<strong>@"+username+"</strong> has been timed out for "+duration+"s because: "+reason;
@@ -798,8 +798,8 @@ export default class TwitchChatService extends Service {
     // Vip list
     client.on("vips", (channel, vips) => {
         // Do your stuff.
-        console.log(channel);
-        console.log(vips);
+        console.debug(channel);
+        console.debug(vips);
     });
 
     client.on("whisper", (from, userstate, message, self) => {
@@ -867,26 +867,26 @@ export default class TwitchChatService extends Service {
     
     client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
         // Do your stuff.
-        /*console.log("Mistery gifted: =============================")
-        console.log(methods);
-        console.log(userstate);*/
+        /*console.debug("Mistery gifted: =============================")
+        console.debug(methods);
+        console.debug(userstate);*/
         this.eventHandler("@"+username+" gifted "+numbOfSubs+" subs.", "gift");
     });
     
     client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
         // Do your stuff.
-        /*console.log("Sub gifted: =============================")
-        console.log(methods);
-        console.log(userstate);*/      
+        /*console.debug("Sub gifted: =============================")
+        console.debug(methods);
+        console.debug(userstate);*/      
         this.eventHandler("@"+username+" gifted @"+recipient+" a sub.", "gift");
     });
     
     client.on("subscription", (channel, username, method, message, userstate) => {
         // Do your stuff.
-        /*console.log("Subscribed: =============================")
-        console.log(method);
-        console.log(userstate);
-        console.log(message);*/
+        /*console.debug("Subscribed: =============================")
+        console.debug(method);
+        console.debug(userstate);
+        console.debug(message);*/
         var plan = '';
         if(method['plan'] != null){
           switch (method['plan']) {

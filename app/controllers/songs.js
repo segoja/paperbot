@@ -71,12 +71,12 @@ export default class SongsController extends Controller {
   
   @action udpdateRest(){
     /* fetch('http://paper.bot', {mode: 'no-cors', method: 'POST'}).then(async (response) => {
-      console.log("Server is online");
+      console.debug("Server is online");
       if(this.model.get('leght') != 0){
         this.model.forEach(async (song)=>{
           if(song.remoteid){
             await this.store.findRecord('slsong', song.remoteid).then(async(slsong)=>{
-              await console.log("The song "+slsong.title+" is already in the remote server! Updating...");
+              await console.debug("The song "+slsong.title+" is already in the remote server! Updating...");
               slsong.set('title',song.title);
               slsong.set('artist',song.artist);
               slsong.set('songtype',song.type);
@@ -94,7 +94,7 @@ export default class SongsController extends Controller {
               slsong.set('pouchid',song.id);
               await slsong.save();
             }, async(error)=>{
-              await console.log("Creating copy in the remote server of the song: "+song.title);
+              await console.debug("Creating copy in the remote server of the song: "+song.title);
               let newSlsong = this.store.createRecord('slsong');
               newSlsong.save().then(async(savedSlsong)=>{
                 song.remoteid = savedSlsong.id;
@@ -120,7 +120,7 @@ export default class SongsController extends Controller {
 
             });          
           } else {
-            await console.log("Creating copy in the remote server of the song: "+song.title);
+            await console.debug("Creating copy in the remote server of the song: "+song.title);
             let newSlsong = this.store.createRecord('slsong');
             newSlsong.save().then(async (savedSlsong)=>{
               song.remoteid = savedSlsong.id;
@@ -147,7 +147,7 @@ export default class SongsController extends Controller {
         });
       }
     }, (kaput)=>{
-      console.log("Server is not connected.");
+      console.debug("Server is not connected.");
     });*/
   }
 }

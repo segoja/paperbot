@@ -18,17 +18,17 @@ export default class SongRoute extends Route {
   afterModel(model, transition){
     /* if(model.remoteid){
       this.store.findRecord('slsong', model.remoteid).then(async (data)=>{
-        console.log("Song found in the remote server!");
+        console.debug("Song found in the remote server!");
         this.controllerFor('songs.song').slsong = await data;
       }, (error)=>{
-        console.log("Song deleted from remote, creating a new remote copy.");
+        console.debug("Song deleted from remote, creating a new remote copy.");
         let restModel = this.store.createRecord('slsong');
         restModel.pouchid = model.id;
         restModel.save().then((savedSlsong)=>{
           this.controllerFor('songs.song').slsong = savedSlsong;        
         }, (error)=>{ 
-          console.log(error);
-          console.log("Can't reach the remote server! uh oh..");
+          console.debug(error);
+          console.debug("Can't reach the remote server! uh oh..");
         });
       })    
     } else {
@@ -37,8 +37,8 @@ export default class SongRoute extends Route {
       restModel.save().then((savedSlsong)=>{
         this.controllerFor('songs.song').slsong = savedSlsong;        
       }, (error)=>{ 
-        console.log(error);
-        console.log("Can't reach the remote server! uh oh..");
+        console.debug(error);
+        console.debug("Can't reach the remote server! uh oh..");
       });
     } */
   } 

@@ -44,7 +44,7 @@ export default class EventsExternalService extends Service {
   
   @action streamElementEvents(client, token){
     client.on('connect', function () {
-      console.log('Successfully connected to the websocket');
+      console.debug('Successfully connected to the websocket');
       client.emit('authenticate', {
         method: 'jwt',
         token: token
@@ -53,7 +53,7 @@ export default class EventsExternalService extends Service {
 
     // Socket got disconnected
     client.on('disconnect', function () {
-      console.log('Disconnected from websocket');
+      console.debug('Disconnected from websocket');
       //this.set('connected', false);
       // Reconnect
     });
@@ -62,8 +62,8 @@ export default class EventsExternalService extends Service {
     client.on('authenticated',  function(data) {
       var { channelId } = data;
       //this.set('connected', true);
-      console.log(this.connected);
-      console.log(`Successfully connected to channel ${channelId}`);
+      console.debug(this.connected);
+      console.debug(`Successfully connected to channel ${channelId}`);
     });
       
     
@@ -71,20 +71,20 @@ export default class EventsExternalService extends Service {
       // Structure as on JSON Schema
       var outputmessage = '';
       var type = '';
-      console.log('Event detected');
+      console.debug('Event detected');
       switch (data.listener) {
         case 'follower-latest': {
-          console.log("Follow");
-          //console.log(data.event);            
+          console.debug("Follow");
+          //console.debug(data.event);            
           outputmessage = data.event.name+" Followed the stream.";
           type = "follow";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'subscriber-latest': {
-          console.log("Subscription");
-          console.log(data.event);
+          console.debug("Subscription");
+          console.debug(data.event);
           
           if(data.event.bulkGifted){
             outputmessage = data.event.sender+" gifted "+data.event.amount+" subs to community.";
@@ -120,64 +120,64 @@ export default class EventsExternalService extends Service {
           }
           
 
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'tip-latest': {
-          console.log("Tip");
+          console.debug("Tip");
           outputmessage = data.event.name +" donated "+data.event.amount+"!";
           if(data.event.message){
             outputmessage =  outputmessage.concat(" Message: "+data.event.message);
           } 
           type = "donation";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'cheer-latest': {
-          console.log("Cheer");
+          console.debug("Cheer");
           outputmessage = data.event.name +" cheered "+data.event.amount+" bits!";
           if(data.event.message){
             outputmessage =  outputmessage.concat(" Message: "+data.event.message);
           } 
           type = "cheer";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'raid-latest': {
-          console.log("Raid");
+          console.debug("Raid");
           outputmessage = data.event.name+" raided with "+data.event.amount+" raiders!";
           type = "raid";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'host-latest': {
-          console.log("Host");
+          console.debug("Host");
           outputmessage = data.event.name+" hosted with "+data.event.amount+" viewers!";
           type = "host";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'redemption-latest': {
-          console.log("Redemption");
+          console.debug("Redemption");
           outputmessage = data.event.name+" redeemed a "+data.event.item+"!";
           if(data.event.message){
             outputmessage =  outputmessage.concat(" Message: "+data.event.message);
           } 
-          console.log(outputmessage);
+          console.debug(outputmessage);
           type = "redemption";
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'merch-latest': {
-          console.log("Merch");
+          console.debug("Merch");
           outputmessage = data.event.name+" purchased merch!";
           type = "merch";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
@@ -190,23 +190,23 @@ export default class EventsExternalService extends Service {
     
     
     client.on('event', (data) => {  
-      // console.log(data);
+      // console.debug(data);
       // Structure as on JSON Schema
       var outputmessage = ''
       var type = '';
       switch (data.listener) {
         case 'follower-latest': {
-          console.log("Follow");
-          //console.log(data.event);            
+          console.debug("Follow");
+          //console.debug(data.event);            
           outputmessage = data.event.name+" has followed.";
           type = "follow";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'subscriber-latest': {
-          console.log("Subscription");
-          console.log(data.event);
+          console.debug("Subscription");
+          console.debug(data.event);
           if (data.event.gifted && data.event.sender){
             outputmessage = data.event.sender+" gifted a sub to "+data.event.name+" who ";
           } else {
@@ -235,64 +235,64 @@ export default class EventsExternalService extends Service {
             outputmessage = outputmessage.concat(" Message: "+data.event.message);
           }
           
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'tip-latest': {
-          console.log("Tip");
+          console.debug("Tip");
           outputmessage = data.event.name +" donated "+data.event.amount+"!";
           if(data.event.message){
             outputmessage =  outputmessage.concat(" Message: "+data.event.message);
           } 
           type = "donation";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'cheer-latest': {
-          console.log("Cheer");
+          console.debug("Cheer");
           outputmessage = data.event.name +" cheered "+data.event.amount+" bits!";
           if(data.event.message){
             outputmessage =  outputmessage.concat(" Message: "+data.event.message);
           } 
           type = "cheer";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'raid-latest': {
-          console.log("Raid");
+          console.debug("Raid");
           outputmessage = data.event.name+" raided with "+data.event.amount+" raiders!";
           type = "raid";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'host-latest': {
-          console.log("Host");
+          console.debug("Host");
           outputmessage = data.event.name+" hosted with "+data.event.amount+" viewers!";
           type = "host";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'redemption-latest': {
-          console.log("Redemption");
+          console.debug("Redemption");
           outputmessage = data.event.name+" redeemed a "+data.event.item+"!";
           if(data.event.message){
             outputmessage =  outputmessage.concat(" Message: "+data.event.message);
           } 
-          console.log(outputmessage);
+          console.debug(outputmessage);
           type = "redemption";
           this.eventHandler(outputmessage, type);
           break;
         }
         case 'merch-latest': {
-          console.log("Merch");
+          console.debug("Merch");
           outputmessage = data.event.name+" purchased merch!";
           type = "merch";
-          console.log(outputmessage);
+          console.debug(outputmessage);
           this.eventHandler(outputmessage, type);
           break;
         }
@@ -309,20 +309,20 @@ export default class EventsExternalService extends Service {
   @action streamLabsEvents(client){
     
     client.on('connect', function () {
-      console.log('Successfully connected to the websocket');
+      console.debug('Successfully connected to the websocket');
     });
     
     client.on('disconnect', function (err) {
-      console.log('Disconnected from websocket');
-      console.log(err);
+      console.debug('Disconnected from websocket');
+      console.debug(err);
     });
 
     client.on('error', function (err) {
-      console.log(err);
+      console.debug(err);
     });    
     
     client.on('event', (data) => {
-      // console.log(event);
+      // console.debug(event);
       try {
         if (Array.isArray(data.message)) {
           data.message.forEach((event) => {
@@ -412,7 +412,7 @@ export default class EventsExternalService extends Service {
                 break;
               }
               default: {
-                console.log(data);               
+                console.debug(data);               
                 break;
               }
             }
@@ -420,7 +420,7 @@ export default class EventsExternalService extends Service {
           });
         }
       } catch (error) {
-        console.log(error);
+        console.debug(error);
       }
     });
   }

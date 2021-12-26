@@ -43,9 +43,9 @@ export default class PbSettingsComponent extends Component {
   }
   
   @action setdefBot(client){
-    console.log('Into the setdefBot function');
+    console.debug('Into the setdefBot function');
     if(this.globalConfig.config.get('defbotclient.id') != undefined){
-      console.log('Changing defbotclient');
+      console.debug('Changing defbotclient');
       var oldclient = this.store.peekRecord('client', this.globalConfig.config.get('defbotclient.id'));
       oldclient.botclientconfigs.removeObject(this.globalConfig.config).then(()=>{
         oldclient.save().then(()=>{
@@ -58,7 +58,7 @@ export default class PbSettingsComponent extends Component {
         });
       });      
     } else {
-      console.log('Setting defbotclient');
+      console.debug('Setting defbotclient');
       //Add the defbotclient to our config
       this.globalConfig.config.defbotclient = client;
       //Save the child then the parent
@@ -71,9 +71,9 @@ export default class PbSettingsComponent extends Component {
   }
  
   @action setdefChat(client){
-    console.log('Into the setdefChat function');
+    console.debug('Into the setdefChat function');
     if(this.globalConfig.config.get('defchatclient.id') != undefined){
-      console.log('Changing defchatclient');
+      console.debug('Changing defchatclient');
       var oldclient = this.store.peekRecord('client', this.globalConfig.config.get('defchatclient.id'));
       oldclient.chatclientconfigs.removeObject(this.globalConfig.config).then(()=>{
         oldclient.save().then(()=>{
@@ -86,7 +86,7 @@ export default class PbSettingsComponent extends Component {
         });
       });
     } else {
-      console.log('Setting defchatclient');
+      console.debug('Setting defchatclient');
       //Add the defchatclient to our config
       this.globalConfig.config.defchatclient = client;
       //Save the child then the parent
@@ -100,7 +100,7 @@ export default class PbSettingsComponent extends Component {
 
   @action opendialogfiles(config){
     dialog.open({ directory: true }).then((directory) => {
-      console.log(directory);
+      console.debug(directory);
       if(directory){
         config.overlayfolder = directory;
         this.queueHandler.fileContent(this.queueHandler.pendingSongs, true);

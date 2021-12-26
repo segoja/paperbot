@@ -71,7 +71,7 @@ export default class ClientController extends Controller {
           // We check for duplicated in the child list.
           // Makes no sense to save same model twice without changes (if you do you will get error).
           if(prevchildId != child.id){
-            console.log("The id of the child: "+child.id);
+            console.debug("The id of the child: "+child.id);
             prevchildId = child.id;
             return await child.save();      
           }          

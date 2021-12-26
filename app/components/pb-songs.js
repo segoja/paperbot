@@ -49,7 +49,7 @@ export default class PbSongsComponent extends Component {
     this.args.queryParamsObj.page = 1;
     this.filteredContent.forEach((song)=>{
       song.destroyRecord().then(()=>{
-        console.log("Song wiped.")
+        console.debug("Song wiped.")
       });
     });
   }

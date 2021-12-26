@@ -50,9 +50,9 @@ export default class PbCommandsComponent extends Component {
     this.args.queryParamsObj.page = 1;
     this.filteredContent.forEach((command)=>{
       this.audio.removeFromRegister('sound', command.name);
-      console.log(command.soundfile+ " removed from the soundboard");
+      console.debug(command.soundfile+ " removed from the soundboard");
       command.destroyRecord().then(()=>{
-        console.log("Command wiped.")
+        console.debug("Command wiped.")
       });
     });
   }

@@ -39,7 +39,7 @@ export default class PbSongComponent extends Component {
   @action generateSongs(){
     let newDate = new Date();
     this.filteredSongs.filterBy('selected', true).forEach(async (song)=>{
-      console.log(song.title+' has been imported!');
+      console.debug(song.title+' has been imported!');
       await this.store.createRecord('song', {title: song.title, artist: song.artist, lyrics: song.lyrics, active: true, date_added: newDate, type: song.type }).save();
       song.selected = false;
       song.type = '';
@@ -56,23 +56,23 @@ export default class PbSongComponent extends Component {
   @tracked songsData = [];  
   @action openSongsFolder(){
     dialog.open({ directory: true }).then((directory) => {
-      // console.log(directory);
+      // console.debug(directory);
       if(directory != null && directory){
         readDir(directory, { recursive: false } ).then((files)=>{
           if(files.length > 0){
             this.songsData = [];
             let idnum = 0;
             files.forEach(async (file)=>{
-              //console.log(file);
+              //console.debug(file);
               let filename = file.name.slice(0, -4);
               let extension = file.name.substr(file.name.length - 3);              
               if(filename && extension.toLowerCase() === 'txt'){                
                 this.songsData.push({id: idnum, name: filename, path: file.path});
-                //console.log(newSong);                
+                //console.debug(newSong);                
               }
             });
             this.generateList();
-            //console.log(this.songsData);
+            //console.debug(this.songsData);
           }
         });
       }
@@ -94,8 +94,8 @@ export default class PbSongComponent extends Component {
           let u8arr = new Uint8Array(fileBinarydata);
           newSong.lyrics = ansiDecoder.decode(u8arr);
         }).catch((binErr)=>{
-          console.log(item.path);
-          console.log(binErr);
+          console.debug(item.path);
+          console.debug(binErr);
         });
       });
        

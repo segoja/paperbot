@@ -219,16 +219,16 @@ export default class QueueHandlerService extends Service {
     let thisHtml = '';
     try {
       thisHtml = await newHtml;
-      // console.log(thisHtml);
+      // console.debug(thisHtml);
     }
     catch (exception_var) {
-      console.log('Lentorro');
+      console.debug('Lentorro');
     }
     finally {
       let text = unescape(encodeURIComponent(thisHtml));
       //let arrayBuff = new TextEncoder().encode(text);
       writeFile({'path': pathString, 'contents': thisHtml}).then(()=>{
-        console.log("done!")
+        console.debug("done!")
       });
     }
   }  

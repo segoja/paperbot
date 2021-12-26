@@ -4,7 +4,7 @@ import DarkReader from 'darkreader';
 export default class LightControlService extends Service {  
   
   get isDark(){
-    console.log(DarkReader.isEnabled());
+    console.debug(DarkReader.isEnabled());
     return DarkReader.isEnabled();
   }
 

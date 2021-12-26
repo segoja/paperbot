@@ -4,7 +4,7 @@ import { action } from '@ember/object';
 import moment from 'moment';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
-import { appWindow } from '@tauri-apps/api/window';
+import { appWindow, getCurrent } from '@tauri-apps/api/window';
 import { tracked } from '@glimmer/tracking';
 
 export default class ApplicationController extends Controller {
@@ -25,45 +25,47 @@ export default class ApplicationController extends Controller {
     this.store.findAll('config').then(()=>{
       let currentconfig = this.store.peekRecord('config','myconfig');
       if (currentconfig){
-        console.log("Config found! Loading...");
+        console.debug("Config found! Loading...");
         this.lightControl.toggleMode(currentconfig.darkmode);
         this.globalConfig.config = currentconfig;
         if(this.globalConfig.config.externalevents &&  this.globalConfig.config.externaleventskey){
           this.eventsExternal.token = this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
-        if(this.globalConfig.config.showOverlay){
+        let currentWindow = getCurrent();
+        if(this.globalConfig.config.showOverlay && currentWindow.label === 'Main'){
           this.currentUser.toggleOverlay();
         }
         this.globalConfig.showFirstRun = false;
       } else{
         this.store.createRecord('config',{id: 'myconfig'}).save().then((newconfig)=>{
-          console.log("Config not found! New config created...");
+          console.debug("Config not found! New config created...");
           this.globalConfig.config = newconfig;
           this.globalConfig.showFirstRun = true;
         }).catch(()=>{
-          console.log("Error creating config!");
+          console.debug("Error creating config!");
         })
       }
     });
     //appWindow.listen('tauri://blur', ({ event, payload }) => {
-    //  console.log(payload);
+    //  console.debug(payload);
     //});
   }
 
   get serverStatus(){
     let isOnline = false;
     fetch('http://paper.bot', {mode: 'no-cors'}).then(async () => {
-      console.log("Server is connected.");
+      console.debug("Server is connected.");
       isOnline = true;
     }, ()=>{
-      console.log("Server is not connected.");
+      console.debug("Server is not connected.");
       isOnline = false;
     });
     return isOnline;   
   }
   
   get isLyrics(){
+    console.debug(this.router.currentURL);
     if(this.router.currentURL === '/reader'){
     //if(this.router.location === 'reader'){
       return true;
@@ -132,7 +134,7 @@ export default class ApplicationController extends Controller {
           let importable = Object.assign([],JSON.parse(data));
           
           adapter.db.bulkDocs(importable, {new_edits: false}, (...args) => {
-            console.log('DONE', args);
+            console.debug('DONE', args);
             window.location.reload(true);
           });
           
@@ -145,7 +147,7 @@ export default class ApplicationController extends Controller {
   @action wipeDatabase(){
     var adapter = this.store.adapterFor('application');
     adapter.wipeDatabase().then(()=>{
-      console.log('The database has been wiped.');
+      console.debug('The database has been wiped.');
       window.location.reload(true);      
     });
   }

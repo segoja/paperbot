@@ -30,14 +30,14 @@ export default class StreamsController extends Controller {
 
     
     if(this.globalConfig.defchannel != null){
-      console.log(this.globalConfig.defchannel);
+      console.debug(this.globalConfig.defchannel);
       stream.set('channel', this.globalConfig.defchannel);
     }
     
     if(this.globalConfig.defbotclient != null){
       var botclient = await this.store.peekRecord('client', this.globalConfig.defbotclient);
       if(botclient){
-        console.log(this.globalConfig.defbotclient);
+        console.debug(this.globalConfig.defbotclient);
         stream.set('botclient', botclient);
         await botclient.save().then(()=>stream.save());
       } 
@@ -46,7 +46,7 @@ export default class StreamsController extends Controller {
     if(this.globalConfig.defchatclient != null){
       var chatclient = await this.store.peekRecord('client', this.globalConfig.defchatclient);
       if(chatclient){
-        console.log(this.globalConfig.defchatclient);
+        console.debug(this.globalConfig.defchatclient);
         stream.set('chatclient', chatclient);
         await chatclient.save().then(()=>stream.save());
       }   

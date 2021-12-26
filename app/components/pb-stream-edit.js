@@ -209,7 +209,7 @@ export default class PbStreamEditComponent extends Component {
         }
       }
     );
-      // later(() => { console.log(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     
+      // later(() => { console.debug(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     
   }
   
   @action connectChat(){
@@ -224,11 +224,11 @@ export default class PbStreamEditComponent extends Component {
   @action disconnectBot(){
     this.twitchChat.disconnectBot().then(
       function(){
-        console.log("Bot client disconnected!");
+        console.debug("Bot client disconnected!");
         // 
       }, 
       function(){
-        console.log("Error disconnecting!");        
+        console.debug("Error disconnecting!");        
       }
     );
     if(this.twitchChat.chatConnected){
@@ -242,11 +242,11 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.disconnectChat().then(
       function(){
         if(!this.twitchChat.sameClient){
-          console.log("Chat client disconnected!");
+          console.debug("Chat client disconnected!");
         }
       }.bind(this), 
       function(){
-        console.log("Error disconnecting!");        
+        console.debug("Error disconnecting!");        
       }.bind(this)
     );
   }
@@ -255,11 +255,11 @@ export default class PbStreamEditComponent extends Component {
   @action disconnectClients(){
     this.twitchChat.disconnector().then(
       function(){
-        console.log("Bot and Chat clients disconnected!");    
+        console.debug("Bot and Chat clients disconnected!");    
         // 
       }, 
       function(){
-        console.log("Error disconnecting!");        
+        console.debug("Error disconnecting!");        
       }
     );
     if(this.eventsExternal.connected){

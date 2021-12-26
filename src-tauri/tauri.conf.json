@@ -80,7 +80,8 @@
     },
     "windows": [
       {
-        "title": "PaperBot",
+        "label": "Main",
+        "title": "PaperBot - Main",
         "width": 1080,
         "height": 800,
         "minWidth": 450,
@@ -88,7 +89,7 @@
         "resizable": true,
         "fullscreen": false,
         "decorations": false
-      }
+      }     
     ],
     "security": {
       "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'"

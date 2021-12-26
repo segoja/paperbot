@@ -22,7 +22,7 @@ export default class PbCommandComponent extends Component {
       filters: [{name: "Select audio file...", extensions: ['mp3','wav','ogg']}]
     }).then((path) => {
       if(path != null){ 
-        console.log(path);
+        console.debug(path);
         if(path){
           command.soundfile = path;
           command.save();

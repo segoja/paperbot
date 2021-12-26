@@ -25,10 +25,10 @@ export default class SongController extends Controller {
   @tracked slsong;
 
   @action saveSong () {
-    console.log(this.slsong);
+    console.debug(this.slsong);
     // this.model.remoteid = this.slsong.id;
     this.model.save().then((updatedmodel)=>{
-      console.log(updatedmodel);
+      console.debug(updatedmodel);
       /*this.slsong.set('title',updatedmodel.title);
       this.slsong.set('artist',updatedmodel.artist);
       this.slsong.set('songtype',updatedmodel.type);

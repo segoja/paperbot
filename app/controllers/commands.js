@@ -58,15 +58,15 @@ export default class CommandsController extends Controller {
       if (command.active){
         this.audio.load(command.soundfile).asSound(command.name).then(
           function() {
-            console.log(command.soundfile+ " loaded in the soundboard");
+            console.debug(command.soundfile+ " loaded in the soundboard");
           }, 
           function() {
-            console.log("error loading "+command.soundfile+" in the soundboard!");
+            console.debug("error loading "+command.soundfile+" in the soundboard!");
           }
         );
       } else {
         this.audio.removeFromRegister('sound', command.name);
-        console.log(command.soundfile+ " removed from the soundboard");
+        console.debug(command.soundfile+ " removed from the soundboard");
       }
     }
   } 
@@ -75,7 +75,7 @@ export default class CommandsController extends Controller {
     if(command.type === 'audio'){
       if (command.active){
         this.audio.removeFromRegister('sound', command.name);
-        console.log(command.soundfile+ " removed from the soundboard");
+        console.debug(command.soundfile+ " removed from the soundboard");
 
       }
     }   

@@ -34,7 +34,7 @@ export default class StreamController extends Controller {
 
   @action setBotClient(client){
     if(this.model.get('botclient.id') != undefined){
-      console.log('Changing botclient');
+      console.debug('Changing botclient');
       var oldclient = this.store.peekRecord('client', this.model.get('botclient.id'));
       oldclient.botclientstreams.removeObject(this.model).then(()=>{
         oldclient.save().then(()=>{
@@ -47,7 +47,7 @@ export default class StreamController extends Controller {
         });
       });      
     } else {
-      console.log('Setting botclient');      
+      console.debug('Setting botclient');      
       //Add the defbotclient to our config
       this.model.botclient = client;
       //Save the child then the parent
@@ -61,7 +61,7 @@ export default class StreamController extends Controller {
  
   @action setChatClient(client){
     if(this.model.get('chatclient.id') != undefined){
-      console.log('Changing chatclient');
+      console.debug('Changing chatclient');
       var oldclient = this.store.peekRecord('client', this.model.get('chatclient.id'));
       oldclient.chatclientstreams.removeObject(this.model).then(()=>{
         oldclient.save().then(()=>{
@@ -74,7 +74,7 @@ export default class StreamController extends Controller {
         });
       });      
     } else {
-      console.log('Setting botclient');
+      console.debug('Setting botclient');
       //Add the defchatclient to our config
       this.model.chatclient = client;
       //Save the child then the parent
@@ -88,19 +88,19 @@ export default class StreamController extends Controller {
    
   @tracked oldHtml = '';
   @action overlayGenerator(newHtml, pathString){
-    // console.log('Test tested!');
-    // console.log(newHtml);
+    // console.debug('Test tested!');
+    // console.debug(newHtml);
     //if(this.oldHtml != newHtml){
       this.oldHtml = newHtml;
       fs.writeFile({'contents': newHtml, 'path': pathString}).then(()=>{
-        console.log("done!")
+        console.debug("done!")
       });          
     //}
   }
 
   async deleteClientLinks(){
     if(this.model.get('botclient.id') != undefined){
-      console.log('Changing botclient');
+      console.debug('Changing botclient');
       var oldbotclient = this.store.peekRecord('client', this.model.get('botclient.id'));
       await oldbotclient.botclientstreams.removeObject(this.model);
       await oldbotclient.save().then(()=>this.model.save());

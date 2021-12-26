@@ -37,7 +37,7 @@ export default class ApplicationAdapter extends Adapter {
     this.db.destroy().then(()=>{
       window.location.replace('./');
     }).catch(function (err) {
-      console.log(err);
+      console.debug(err);
       return false;
     });
   }

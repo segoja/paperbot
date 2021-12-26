@@ -46,7 +46,7 @@ export default class PbReaderComponent extends Component {
       if(this.globalConfig.config.lastPlayed){
         song = this.filteredContent.shift();
       } else {
-        console.log('No songs active.');
+        console.debug('No songs active.');
       }      
     }
     return song;

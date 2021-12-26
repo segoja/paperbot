@@ -40,7 +40,7 @@ export default class PbCommandComponent extends Component {
   @action generateCommands(){
     let newDate = new Date();
     this.filteredCommands.filterBy('selected', true).forEach(async (command)=>{
-      console.log(command.name+' has been imported!');
+      console.debug(command.name+' has been imported!');
       let newRecord = await this.store.createRecord('command', {
         name: command.command,
         active: true,
@@ -58,10 +58,10 @@ export default class PbCommandComponent extends Component {
       if(newRecord.active){
         this.audio.removeFromRegister('sound', newRecord.name);        
         this.audio.load(newRecord.soundfile).asSound(newRecord.name);
-        console.log(newRecord.soundfile+ " loaded in the soundboard");
+        console.debug(newRecord.soundfile+ " loaded in the soundboard");
       } else {
         this.audio.removeFromRegister('sound', newRecord.name);
-        console.log(newRecord.soundfile+ " removed from the soundboard");
+        console.debug(newRecord.soundfile+ " removed from the soundboard");
       }
       command.selected = false;
     });
@@ -77,25 +77,25 @@ export default class PbCommandComponent extends Component {
   @tracked commandsData = [];
   @action openCommandsFolder(){
     dialog.open({ directory: true }).then((directory) => {
-      // console.log(directory);
+      // console.debug(directory);
       if(directory != null && directory){
         readDir(directory, { recursive: false } ).then((files)=>{
           if(files.length > 0){
             this.commandsData = [];
             let idnum = 0;
             files.forEach(async (file)=>{
-              console.log(file);
+              console.debug(file);
               let filename = file.name.slice(0, -4);
               let extension = file.name.substr(file.name.length - 3).toLowerCase();
               let command = filename.toLowerCase().replace(/[^a-zA-Z ]/g, "").trim();
               
               if(extension === 'mp3' || extension === 'ogg' || extension === 'wav'){
                 this.commandsData.push({id: idnum, name: filename, command: command, path: file.path});
-                //console.log(newCommand);
+                //console.debug(newCommand);
               }
             });
             this.generateList();
-            //console.log(this.commandsData);
+            //console.debug(this.commandsData);
           }
         });
       }
@@ -106,7 +106,7 @@ export default class PbCommandComponent extends Component {
   @action generateList(){
     this.resetPage();
     this.commands = this.commandsData.map((item)=>{
-      console.log('Test!');
+      console.debug('Test!');
       let newCommand = this.store.createRecord('audiofile');
       newCommand.name = item.name;
       newCommand.command = '!'+item.command;
