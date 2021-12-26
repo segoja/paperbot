@@ -1,7 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import io from 'socket.io-client';
+import io from "socket.io-client";
 import moment from 'moment';
 import { htmlSafe } from '@ember/template';
 
@@ -25,14 +25,14 @@ export default class EventsExternalService extends Service {
   @action createClient(){
     if(this.type && this.token && this.client === null && this.connected === false){
       if(this.type === "StreamLabs"){
-        // this.client = io('https://sockets.streamlabs.com?token=' + this.token, { transports: ['websocket']}); 
-        this.client = io(`https://sockets.streamlabs.com?token=${this.token}`, {transports: ['websocket']});        
+        // No matter how hard you try, only socked.io v 2.4.0 works.
+        this.client = io(`https://sockets.streamlabs.com?token=${this.token}`, { transports: ['websocket']});
         this.streamLabsEvents(this.client);
       } 
       
       if(this.type === "StreamElements"){        
         this.client = io('https://realtime.streamelements.com', { transports: ['websocket']});        
-        this.streamElementEvents(this.client, this.token);        
+        this.streamElementEvents(this.client, this.token);
       }      
     }
   }
@@ -40,7 +40,7 @@ export default class EventsExternalService extends Service {
   @action disconnectClient(){
     this.client.close();
     this.client = null;
-  }  
+  }
   
   @action streamElementEvents(client, token){
     client.on('connect', function () {
@@ -307,7 +307,7 @@ export default class EventsExternalService extends Service {
   
   
   @action streamLabsEvents(client){
-    
+    console.debug('Connecting to streamlabs...')
     client.on('connect', function () {
       console.debug('Successfully connected to the websocket');
     });
