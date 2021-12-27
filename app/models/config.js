@@ -18,7 +18,7 @@ export default class ConfigModel extends Model {
   
   @attr('string', {defaultValue: ""}) overlayType;
   @attr('boolean', {defaultValue: false}) showOverlay;
-  @attr('string', {defaultValue: ""}) chromaColor;
+  @attr('string', {defaultValue: "#006600ff"}) chromaColor;
 
   @belongsTo('client', { inverse: 'botclientconfigs', save: true }) defbotclient;
   @belongsTo('client', { inverse: 'chatclientconfigs', save: true }) defchatclient;

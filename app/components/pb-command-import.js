@@ -29,7 +29,7 @@ export default class PbCommandComponent extends Component {
     if(!this.isViewing){
       this.page = 1;
       this.isBulk = false;
-      this.bulkType = '';
+      this.bulkVolume = 0;
       this.filterQuery = '';
       this.separator = '';
       this.commands = [];
@@ -41,6 +41,19 @@ export default class PbCommandComponent extends Component {
     let newDate = new Date();
     this.filteredCommands.filterBy('selected', true).forEach(async (command)=>{
       console.debug(command.name+' has been imported!');
+      if(command.volume === ''){
+        command.volume = 0;
+      }
+      if(command.volume < 1){
+        command.volume = 0;
+      }
+      if(command.volume > 100){
+        command.volume = 100;
+      }
+      if(isNaN(command.volume)){
+        command.volume = 100;
+      }
+      
       let newRecord = await this.store.createRecord('command', {
         name: command.command,
         active: true,
@@ -51,13 +64,13 @@ export default class PbCommandComponent extends Component {
         cooldown: false,
         timer: 0,
         soundfile: command.soundfile,
-        volume: 100,
+        volume: command.volume,
         date_added: newDate,
         type: 'audio' 
       }).save();
       if(newRecord.active){
         this.audio.removeFromRegister('sound', newRecord.name);        
-        this.audio.load(newRecord.soundfile).asSound(newRecord.name);
+        this.audio.load(newRecord.soundfile).asSound(newRecord.name);      
         console.debug(newRecord.soundfile+ " loaded in the soundboard");
       } else {
         this.audio.removeFromRegister('sound', newRecord.name);
@@ -67,7 +80,7 @@ export default class PbCommandComponent extends Component {
     });
     this.page = 1;
     this.isBulk = false;
-    this.bulkType = '';
+    this.bulkVolume = 0;
     //this.filterQuery = '';
     //this.separator = '';
     //this.commands = [];
@@ -150,11 +163,12 @@ export default class PbCommandComponent extends Component {
     });
     this.isBulk = !this.isBulk;    
   }
-  @tracked bulkType = '';
-  @action bulkChangeType(type){
-    this.bulkType = type;
+  
+  @tracked bulkVolume = 0;
+  @action bulkChangeVolume(volume){
+    this.bulkVolume = volume;
     this.filteredCommands.forEach((command)=>{
-      command.type = type;
+      command.volume = volume;
     });
   }
   

@@ -459,13 +459,19 @@ export default class PbStreamEditComponent extends Component {
 
   @action queueWriter(){
     if(this.globalConfig.config.overlayType === 'file'){
+      
       if(this.args.stream.requests && this.globalConfig.config.overlayfolder != ''){
+        this.currentUser.updateQueueOverlay = true;
         this.currentUser.queueToFile = !this.currentUser.queueToFile;
         this.queueHandler.fileContent(this.queueHandler.pendingSongs);
       } else {
         this.currentUser.queueToFile = false;
+        this.currentUser.updateQueueOverlay = false;
       }
+      
     } else {
+      this.currentUser.queueToFile = false;
+      this.currentUser.updateQueueOverlay = !this.currentUser.updateQueueOverlay;
       this.currentUser.toggleOverlay();
     }
   }

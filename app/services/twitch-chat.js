@@ -12,6 +12,7 @@ export default class TwitchChatService extends Service {
   @service audio;
   @service globalConfig;
   @service queueHandler;
+  @service currentUser;
 
   @tracked botclient;
   @tracked chatclient;
@@ -97,7 +98,7 @@ export default class TwitchChatService extends Service {
   @tracked lastevent = null;
   @tracked lastmodaction = null;
   @tracked lastSoundCommand = null;
-  @tracked takessongrequests;
+  @tracked takessongrequests = false;
   
   @tracked channelBadges = [];
   @tracked globalBadges = [];
@@ -385,56 +386,59 @@ export default class TwitchChatService extends Service {
     const commandName = msg.trim();
     
     // If the command is known, let's execute it      
-    if(String(commandName).startsWith('!sr ') && this.takessongrequests){
-      var song = commandName.replace(/!sr /g, "");
-      if(song){
-        this.requestpattern = song;
-        
-        if (this.filteredSongs.get('length') !== 0 ) { 
-          console.debug("we found songs!");  
-          var bestmatch = this.filteredSongs.shift();
-          console.debug("=================");
-          console.debug(bestmatch);
-          console.debug("=================");
-          if(bestmatch.active){
-            if(this.commandPermissionHandler(bestmatch, tags) === true){
-              // changing this could break the reader.
-              song = '"'+bestmatch.title+'"';
-              if(bestmatch.artist){
-                song = song+' by '+bestmatch.artist+'.';
-              }
-              this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+song);
-              this.lastsongrequest = {
-                id: tags['id'] ? tags['id'].toString() : 'songsys',
-                timestamp: moment().format(),
-                type: tags['message-type'] ? tags['message-type'] : null,
-                song: song,
-                artist: bestmatch.artist? bestmatch.artist:'',
-                user: tags['username'] ? tags['username'].toString() : this.botUsername,
-                displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
-                color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
-                csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),
-                emotes: tags['emotes'] ? tags['emotes'] : null,
-                processed: false,
-              };
-              this.songqueue.push(this.lastsongrequest);
-              if(this.songqueue.length == 1){
-                this.globalConfig.config.lastPlayed = song;
-              }
-              this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
-              this.globalConfig.config.save();
-            } else {
-              this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
-            }
+    if(String(commandName).startsWith('!sr ')){
+      if(this.takessongrequests && this.currentUser.updateQueueOverlay){
+        var song = commandName.replace(/!sr /g, "");
+        if(song){
+          this.requestpattern = song;
           
+          if (this.filteredSongs.get('length') !== 0 ) { 
+            console.debug("we found songs!");  
+            var bestmatch = this.filteredSongs.shift();
+            console.debug("=================");
+            console.debug(bestmatch);
+            console.debug("=================");
+            if(bestmatch.active){
+              if(this.commandPermissionHandler(bestmatch, tags) === true){
+                // changing this could break the reader.
+                song = '"'+bestmatch.title+'"';
+                if(bestmatch.artist){
+                  song = song+' by '+bestmatch.artist+'.';
+                }
+                this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+song);
+                this.lastsongrequest = {
+                  id: tags['id'] ? tags['id'].toString() : 'songsys',
+                  timestamp: moment().format(),
+                  type: tags['message-type'] ? tags['message-type'] : null,
+                  song: song,
+                  artist: bestmatch.artist? bestmatch.artist:'',
+                  user: tags['username'] ? tags['username'].toString() : this.botUsername,
+                  displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
+                  color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
+                  csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),
+                  emotes: tags['emotes'] ? tags['emotes'] : null,
+                  processed: false,
+                };
+                this.songqueue.push(this.lastsongrequest);
+                if(this.songqueue.length == 1){
+                  this.globalConfig.config.lastPlayed = song;
+                }
+                this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
+                this.globalConfig.config.save();
+              } else {
+                this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
+              }            
+            } else {
+              this.botclient.say(target, "/me I coudln't infer the song @"+tags['username']+". Try again!");
+            }
           } else {
-            this.botclient.say(target, "/me I coudln't infer the song @"+tags['username']+". Try again!");
+            this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');         
           }
-        } else {
-          this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');         
         }
+        console.debug(`* Executed ${commandName} command`);
+      } else {
+        this.botclient.say(target, "/me Requests are disabled.");
       }
-      console.debug(`* Executed ${commandName} command`);        
     } else {
       this.commandlist.forEach((command) => {
           if(String(commandName).startsWith(command.name) && command.name != '' && command.active){

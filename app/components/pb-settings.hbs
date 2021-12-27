@@ -87,9 +87,33 @@
               {{else}}
                 <div class="form-group row">
                   <div class="col"> 
-                    <form.element @controlType="text" @formLayout="vertical" class="pb-2" @property="chromaColor" as |el|>
-                      <el.control placeholder="Chroma color" />
-                    </form.element>
+                    <div class="input-group form-row">
+                      <style>
+                        .pickedColor{ 
+                          background-color: {{this.globalConfig.config.chromaColor}}!important; 
+                          color: {{this.globalConfig.config.chromaColor}}!important; 
+                        }
+                        .pickedColor strong {
+                          filter: invert(100%) saturate(200%) grayscale(100%);                          
+                        }
+                      </style>
+                      <div role="button" class="input-group-text rounded rounded-0 rounded-start  col-auto btn btn-secondary">Pick Chroma Color
+                        <BsTooltip class="d-inline colorpicker" @triggerEvents="click" as |tt|>
+                          <Picker
+                            @color={{this.globalConfig.config.chromaColor}}
+                            @onDone={{fn this.changeColor tt.close}}
+                            @onClose={{fn this.changeColor tt.close}}
+                            @popup={{false}}
+                            @editor={{true}}
+                            class="d-inline"
+                           />                
+                        </BsTooltip>
+                      </div>
+                      <div class="px-3 pickedColor rounded-0 col-auto"></div> 
+                      <form.element @controlType="text" @formLayout="inline" class="col" @property="chromaColor" required  as |el|>
+                        <el.control class="form-control rounded-0 rounded-end" />
+                      </form.element>
+                    </div>
                   </div>
                  <div class="col-auto">
                     <form.element @controlType="checkbox" @label="Show on start" @formLayout="inline" class="form-check form-check-inline ps-0 mb-0 pt-2" @property="showOverlay" required />

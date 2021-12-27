@@ -4,7 +4,7 @@ import { action } from '@ember/object';
 import moment from 'moment';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
-import { appWindow, getCurrent } from '@tauri-apps/api/window';
+import { appWindow, getCurrent, getAll } from '@tauri-apps/api/window';
 import { tracked } from '@glimmer/tracking';
 
 export default class ApplicationController extends Controller {
@@ -191,11 +191,12 @@ export default class ApplicationController extends Controller {
     } else {
       if(this.isOverlay){
         this.globalConfig.config.showOverlay = false;
+        this.currentUser.queueToFile = false;
         this.globalConfig.config.save().then(()=>{
           appWindow.close();
         });
       } else {
-        appWindow.close();
+        getAll().forEach((item)=>{ item.close(); });        
       }
     }
   }

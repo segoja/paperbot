@@ -33,7 +33,13 @@ export default class PbSettingsComponent extends Component {
   
   get showUp(){
     return this.isViewing;
-  }  
+  }
+  
+  @action changeColor(closefunc, color){
+    console.debug(color.hex);
+    this.globalConfig.config.chromaColor = color.hex;
+    closefunc();
+  }
   
   @action toggleModal() {
     this.isViewing = !this.isViewing;

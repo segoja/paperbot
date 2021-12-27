@@ -22,12 +22,19 @@
         </div>
       </BsForm>
         {{#if this.commands}}
-          <table class="table table-striped">
+          <table class="table table-hover table-condensed">
             <thead>
               <tr>
-                <th class="col" scope="col">File name</th>
+                <th class="col-6" scope="col">File name</th>
                 <th class="col" scope="col">Command</th>
-                <th class="col-auto p-0" scope="col">
+                <th class="col" scope="col" colspan=2>Volume</th>
+              </tr>
+              <tr>
+                <th class="col-6" scope="col" colspan=2><small class="float-end text-secondary">Bulk actions:</small></th>
+                <td class="col p-0" scope="col">
+                  <Input @type="range" min="1" max="100" @value={{this.bulkVolume}}  {{on "change" (fn this.bulkChangeVolume this.bulkVolume)}} class="form-control slider w-100 border-0 rounded-0 table-secondary" />
+                </td>
+                <td class="col-auto p-0" scope="col">
                   <div class="d-inline-block float-end">
                     <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0" as |form|>
                       <BsButton 
@@ -39,25 +46,30 @@
                       </BsButton>
                     </BsForm>
                   </div>
-                </th>
+                </td>
               </tr>
             </thead>
             <tbody>
-              {{#each this.pagedCommands as |command|}}                
-                <tr class={{if command.selected "alert-success"}}>                    
-                  <td class="col">{{command.name}}</td>
-                  <td class="col">{{command.command}}</td>
+              {{#each this.pagedCommands as |command|}}
+                <tr class={{if command.selected "alert-success"}}>
+                  <td class="col-6">{{command.name}}</td>             
+                  <td class="col p-0 m-0">
+                    <Input @type="text" @value={{command.command}} class="form-control m-0 rounded-0 border-0 bg-transparent outline-transparent" placeholder="Enter command." />
+                  </td>
+                  <td class="col p-0 m-0">
+                    <Input @type="text" @value={{command.volume}} class="form-control m-0 rounded-0 border-0 bg-transparent outline-transparent" placeholder="Enter volume." />
+                  </td>
                   <td class="col-auto p-0">
                     <div class="d-inline-block float-end">
-                      <BsForm @model={{command}} @formLayout="inline" class="input-group row g-0" as |form|>
-                        <BsButton 
+                      <div class="input-group row g-0">
+                        <BsButton
                           @type={{if command.selected "outline-success alert-success" "outline-secondary alert-secondary"}}
                           class="rounded-0 col-auto border" 
                           @onClick={{fn this.addToImport command}}
                         >
                           <FaIcon @icon={{if command.selected "check-square" "square"}} />
                         </BsButton>
-                      </BsForm>
+                      </div>
                     </div>
                   </td>
                 </tr>

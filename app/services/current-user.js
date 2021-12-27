@@ -15,6 +15,7 @@ export default class CurrentUserService extends Service {
     
   // Buttons
   @tracked queueToFile = false;
+  @tracked updateQueueOverlay = false;
   @tracked soundBoardEnabled = false;  
 
   @tracked lyricsViewer = '';
@@ -62,11 +63,12 @@ export default class CurrentUserService extends Service {
   }
   
   @action toggleOverlay(){
+    this.queueToFile = false;
     if(this.globalConfig.config.showOverlay && this.overlayWindow != ''){
       this.globalConfig.config.showOverlay = false;
       this.globalConfig.config.save().then(()=>{
-        this.overlayWindow.close();
-        this.overlayWindow = '';
+        //this.overlayWindow.close();
+        //this.overlayWindow = '';
       });
       console.debug('close!');
     } else {
@@ -77,20 +79,22 @@ export default class CurrentUserService extends Service {
         this.overlayWindow = '';
         
         let parentWindow = getCurrent();
-        let options = { url: 'overlay', label: 'overlay',  title: 'Paperbot - Overlay', parent: parentWindow, decorations: false, minWidth: 550, minHeight: 250 };
+        let options = { url: 'overlay', label: 'overlay',  title: 'Paperbot - Overlay', parent: parentWindow, decorations: false, minWidth: 550, minHeight: 250, width: 550, height: 350 };
         this.overlayWindow = new WebviewWindow('overlay', options);
 
         this.overlayWindow.once('tauri://created', function () {
          // webview window successfully created
+         console.debug('Overlay ready!')
         })
         this.overlayWindow.once('tauri://error', function (e) {
          // an error happened creating the webview window
          console.debug(e);
         });
         this.overlayWindow.listen('tauri://close-requested', function () {
-         // an error happened creating the webview window
+          this.queueToFile = false;
           this.globalConfig.config.showOverlay = false;
           this.globalConfig.config.save();
+          this.overlayWindow.close();
         }.bind(this));
       });
     }

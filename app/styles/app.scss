@@ -388,6 +388,13 @@ span.deleted {
   max-width: inherit!important;
 }
 
+.colorpicker>div.tooltip-inner{
+    width: fit-content;
+    max-width: fit-content;
+
+    padding: 0.2rem;
+    background-color: $secondary;
+}
 
 .btn-control{
   color: #ffffff;

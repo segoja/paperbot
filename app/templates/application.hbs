@@ -135,7 +135,10 @@
   <style>
     .chroma { background-color: {{this.globalConfig.config.chromaColor}}!important; }
   </style>
-  <main role="button" class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" {{on "mousedown" this.dragWindow}} title="You can close this window from the stream panel or pressing Alt+F4">
+  <main role="button" class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" {{on "mousedown" this.dragWindow}}>
+    <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>
+      Press alt+F4 if you want to close this window.
+    </BsTooltip>
     {{outlet}}
   </main>
 {{else}}

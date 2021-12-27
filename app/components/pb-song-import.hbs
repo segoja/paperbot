@@ -30,7 +30,7 @@
         </div>
       </BsForm>
         {{#if this.songs}}
-          <table class="table table-striped">
+          <table class="table table-condensed table-hover">
             <thead>
               <tr>
                 {{#if this.separator}}<th class="col-auto" scope="col">Artist</th>{{/if}}
@@ -39,7 +39,7 @@
               </tr>
               <tr>
                 {{#if this.separator}}<th class="col-auto" scope="col"></th>{{/if}}
-                <th class={{if this.separator "col"}} scope="col"><span class="float-end">Bulk actions:</span></th>
+                <th class={{if this.separator "col"}} scope="col"><small class="float-end text-secondary">Bulk actions:</small></th>
                 <th class="col-auto p-0" scope="col">
                   <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0" as |form|>
                     <form.element @controlType="power-select" @property="bulkType" class="rounded-0 col ms-auto" @options={{@songTypes}} @onChange={{this.bulkChangeType}} as |element| >
