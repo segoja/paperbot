@@ -33,7 +33,7 @@ export default class ApplicationController extends Controller {
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
         let currentWindow = getCurrent();
-        if(this.globalConfig.config.showOverlay && currentWindow.label === 'Main'){
+        if(this.globalConfig.config.showOverlay && this.globalConfig.config.overlayType === 'window'  && currentWindow.label === 'Main'){
           this.currentUser.toggleOverlay();
         }
         this.globalConfig.showFirstRun = false;

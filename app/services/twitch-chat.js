@@ -411,6 +411,7 @@ export default class TwitchChatService extends Service {
                   timestamp: moment().format(),
                   type: tags['message-type'] ? tags['message-type'] : null,
                   song: song,
+                  title: bestmatch.title? bestmatch.title:'',
                   artist: bestmatch.artist? bestmatch.artist:'',
                   user: tags['username'] ? tags['username'].toString() : this.botUsername,
                   displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,

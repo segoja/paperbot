@@ -173,27 +173,43 @@ export default class QueueHandlerService extends Service {
         if(pendingSongs.length > 0){
           let visible = pendingSongs.slice(0, 5);
           visible.forEach((pendingsong)=>{
-            let song = pendingsong.song;
+            let title = pendingsong.title;
+            let artist = pendingsong.artist;
             let time = moment(pendingsong.timestamp).format("YYYY/MM/DD HH:mm:ss");
             let user = pendingsong.user;
             htmlEntries = htmlEntries.concat(`
-      <div class="alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white">
-        <div class="alert-heading h4">${song}</div>
-        <div class="row">
-          <div class="col h6">${time}</div>
-          <div class="col-auto h6">${user}</div>
-        </div>
-      </div>
+          <tr>
+            <td class="bg-transparent text-white">
+              <div class="row g-0">
+                <strong class="col">${title}</strong>
+                <div class="col-auto">${user}</div>
+              </div>
+              <div class="row g-0">
+                <small class="col"><small>${artist}</small></small>
+                <small class="col-auto"><small>${time}</small></small>
+              </div>
+            </td>
+          </tr>
             `);
           });
         } else {
           htmlEntries = htmlEntries.concat(`
-      <div class="alert-dark border-0 rounded py-0 px-2 my-2 bg-transparent text-white">
-        <div class="alert-heading h4">The queue is empty.</div>
-      </div>
+          <tr>
+            <td class="bg-transparent text-white">
+              <div class="row g-0">
+                <strong class="col">The queue is empty.</strong>
+                <div class="col-auto"></div>
+              </div>
+              <div class="row g-0">
+                <small class="col"><small></small></small>
+                <small class="col-auto"><small></small></small>
+              </div>
+            </td>
+          </tr>
           `);
         }
         
+      let chroma = this.globalConfig.config.chromaColor;
       let htmlBase = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -202,10 +218,22 @@ export default class QueueHandlerService extends Service {
     <meta http-equiv="refresh" content="2">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Song queue</title>
+    <style>
+      .chroma { background-color: ${chroma}!important; }
+    </style>
   </head>
-  <body class="bg-transparent" style="overflow-y: hidden;">
-    <div class="container-fluid" style="overflow-y: hidden;">
-    ${htmlEntries}
+  <body class="bg-transparent chroma" style="overflow-y: hidden;">
+    <div class="container-fluid chroma" style="overflow-y: hidden;">
+      <table class="table table-dark">
+        <thead>
+          <tr>
+            <th class="bg-transparent text-white"><span class="d-inline-block float-start">Title</span> <span class="d-inline-block float-end">Requested by</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${htmlEntries}
+        </tbody>
+      </table>
     </div>
   </body>
 </html>`;   
@@ -222,7 +250,7 @@ export default class QueueHandlerService extends Service {
       // console.debug(thisHtml);
     }
     catch (exception_var) {
-      console.debug('Lentorro');
+      console.debug('Too slow...');
     }
     finally {
       let text = unescape(encodeURIComponent(thisHtml));
