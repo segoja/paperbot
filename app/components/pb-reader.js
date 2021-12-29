@@ -4,6 +4,7 @@ import { sort } from '@ember/object/computed';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
+import { getCurrent } from '@tauri-apps/api/window';
 import { later } from '@ember/runloop';
 
 export default class PbReaderComponent extends Component {
@@ -16,6 +17,45 @@ export default class PbReaderComponent extends Component {
   @tracked songQuery = "";
   @tracked restore = true;
   @tracked zoomLevel = 0.85;
+  
+  @service globalConfig;
+  
+  constructor() {
+    super(...arguments);
+    
+    let currentWindow = getCurrent();
+    if(currentWindow.label === 'reader'){
+      if(this.globalConfig.config.readerMax){
+        currentWindow.maximize();
+      }
+      currentWindow.listen('tauri://resize', async function (response) {
+        if(!this.globalConfig.config.readerMax){        
+          this.globalConfig.config.readerWidth = response.payload.width; 
+          this.globalConfig.config.readerHeight = response.payload.height;
+          later(() => {            
+            if(this.globalConfig.config.readerWidth === response.payload.width && this.globalConfig.config.readerHeight === response.payload.height){
+              this.globalConfig.config.save();
+              console.debug('Size saved!');
+            }
+          }, 500); 
+        }
+      }.bind(this));
+      
+      currentWindow.listen('tauri://move', async function (response) { 
+        if(!this.globalConfig.config.readerMax){
+          this.globalConfig.config.readerPosX = response.payload.x;
+          this.globalConfig.config.readerPosY = response.payload.y;
+          later(() => {
+            if(this.globalConfig.config.readerPosX === response.payload.x && this.globalConfig.config.readerPosY === response.payload.y){
+              this.globalConfig.config.save();
+              console.debug('Position saved!.');
+            }          
+          }, 250);
+        }
+      }.bind(this));            
+    }
+  }
+  
   
   songsSorting = Object.freeze(['date_added:asc']);  
   @sort ('args.songs','songsSorting') arrangedContent;

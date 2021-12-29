@@ -1,7 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { action } from "@ember/object";
 import { tracked } from '@glimmer/tracking';
-import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
+import { WebviewWindow, getCurrent, getAll } from "@tauri-apps/api/window"
 import { fs } from "@tauri-apps/api";
 
 export default class CurrentUserService extends Service {
@@ -18,7 +18,7 @@ export default class CurrentUserService extends Service {
   @tracked updateQueueOverlay = false;
   @tracked soundBoardEnabled = false;  
 
-  @tracked lyricsViewer = '';
+  @tracked lyricsWindow = '';
   @tracked overlayWindow = '';  
   get hideMenu(){
     if(this.router.currentURL === '/reader' || this.router.currentURL === '/overlay' ){
@@ -28,86 +28,93 @@ export default class CurrentUserService extends Service {
   }
   
   @action showLyrics(){
-    if(this.globalConfig.config.showLyrics && this.lyricsViewer != ''){
-      this.globalConfig.config.showLyrics = false;
-      this.globalConfig.config.save().then(()=>{
-        this.lyricsViewer.close();
-        this.lyricsViewer = '';
-      });
-      console.debug('close!');
-    } else {
-      console.debug('open!');
-      // loading embedded asset:
-      this.globalConfig.config.showLyrics = true;
-      this.globalConfig.config.save().then(()=>{
-        this.lyricsViewer = '';
-        
-        let parentWindow = getCurrent();
-        let options = { url: 'reader', label: 'reader', title: 'Paperbot - Lyrics', parent: parentWindow, decorations: false, minWidth: 450, minHeight: 600 };
-        this.lyricsViewer = new WebviewWindow('reader', options);
+    let lyricsWindow = '';
+    let currentWindow = getCurrent();
 
-        this.lyricsViewer.once('tauri://created', function () {
-         // webview window successfully created
-        })
-        this.lyricsViewer.once('tauri://error', function (e) {
-         // an error happened creating the webview window
-         console.debug(e);
-        });
-        this.lyricsViewer.listen('tauri://close-requested', function () {
-         // an error happened creating the webview window
-          this.globalConfig.config.showLyrics = false;
-          this.globalConfig.config.save();
-        }.bind(this));
+    getAll().forEach((windowItem)=>{  
+      if(windowItem.label === 'reader'){
+        lyricsWindow = windowItem;
+      }
+    });
+    
+    if(lyricsWindow === '' && currentWindow.label != 'overlay' && currentWindow.label != 'reader'){
+      let options = { 
+        url: 'reader',
+        label: 'reader', 
+        title: 'Paperbot - Lyrics',
+        parent: currentWindow,
+        decorations: false,
+        minWidth: 450,
+        minHeight: 600,
+        maximized: this.globalConfig.config.readerMax,
+        width: Number(this.globalConfig.config.readerWidth), 
+        height: Number(this.globalConfig.config.readerHeight),
+        x: Number(this.globalConfig.config.readerPosX),
+        y: Number(this.globalConfig.config.readerPosY)
+      };
+      lyricsWindow = new WebviewWindow('reader', options);
+
+      lyricsWindow.once('tauri://created', function () {
+       // webview window successfully created
+       console.debug('Reader ready!')
+      })
+      lyricsWindow.once('tauri://error', function (e) {
+       // an error happened creating the webview window
+       console.debug(e);
       });
+      lyricsWindow.listen('tauri://close-requested', function () {
+       // an error happened creating the webview window
+        this.globalConfig.config.save();
+        console.debug('reader closed!');
+      }.bind(this));
+    } else {
+      // lyricsWindow.close();
     }
   }
   
   @action toggleOverlay(){
-    this.queueToFile = false;
-    if(this.globalConfig.config.showOverlay && this.overlayWindow != ''){
-      this.globalConfig.config.showOverlay = false;
-      this.globalConfig.config.save().then(()=>{
-        //this.overlayWindow.close();
-        //this.overlayWindow = '';
+    let overlayWindow = '';
+    let currentWindow = getCurrent();
+
+    getAll().forEach((windowItem)=>{  
+      if(windowItem.label === 'overlay'){
+        overlayWindow = windowItem;
+      }
+    });
+    if(overlayWindow === '' && currentWindow.label != 'overlay' && currentWindow.label != 'reader'){
+      let options = { 
+        url: 'overlay', 
+        label: 'overlay',  
+        title: 'Paperbot - Overlay', 
+        parent: currentWindow, 
+        decorations: false, 
+        minWidth: 550, 
+        minHeight: 175, 
+        width: Number(this.globalConfig.config.overlayWidth), 
+        height: Number(this.globalConfig.config.overlayHeight),
+        x: Number(this.globalConfig.config.overlayPosX),
+        y: Number(this.globalConfig.config.overlayPosY)
+      };
+      overlayWindow = new WebviewWindow('overlay', options);
+
+      overlayWindow.once('tauri://created', function () {
+       // webview window successfully created
+       console.debug('Overlay ready!')
+      }); 
+      
+      overlayWindow.once('tauri://error', function (e) {
+       // an error happened creating the webview window
+       console.debug(e);
       });
-      console.debug('close!');
+      
+      overlayWindow.once('tauri://destroyed', function () {
+        //this.queueToFile = false;
+        //this.globalConfig.config.showOverlay = false;
+        this.globalConfig.config.save();
+        console.debug('overlay closed!');
+      }.bind(this));
     } else {
-      console.debug('open!');
-      // loading embedded asset:
-      this.globalConfig.config.showOverlay = true;
-      this.globalConfig.config.save().then(()=>{
-        this.overlayWindow = '';
-        
-        let parentWindow = getCurrent();
-        let options = { url: 'overlay', label: 'overlay',  title: 'Paperbot - Overlay', parent: parentWindow, decorations: false, minWidth: 550, minHeight: 175, width: 550, height: 325 };
-        this.overlayWindow = new WebviewWindow('overlay', options);
-
-        this.overlayWindow.once('tauri://created', function () {
-         // webview window successfully created
-         console.debug('Overlay ready!')
-        });
-
-        /* this.overlayWindow.listen('tauri://resize', function (e) {
-         // an error happened creating the webview window
-         console.debug(e);
-        });
-        
-        this.overlayWindow.listen('tauri://move', function (e) {
-         // an error happened creating the webview window
-         console.debug(e);
-        }); */
-
-        this.overlayWindow.once('tauri://error', function (e) {
-         // an error happened creating the webview window
-         console.debug(e);
-        });
-        this.overlayWindow.listen('tauri://close-requested', function () {
-          this.queueToFile = false;
-          this.globalConfig.config.showOverlay = false;
-          this.globalConfig.config.save();
-          this.overlayWindow.close();
-        }.bind(this));
-      });
+      // overlayWindow.close();
     }
-  } 
+  }
 }

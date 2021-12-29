@@ -146,6 +146,12 @@
             </div>
           </div>
           <div class="form-group row">
+            <label class="col-md-4">Show lyrics on start</label>
+            <div class="col-sm">
+              <form.element @controlType="checkbox" @formLayout="inline" class="form-check form-check-inline ps-0" @property="showLyrics" required />
+            </div>
+          </div> 
+          <div class="form-group row">
             <label class="col-md-4">Dark mode</label>
             <div class="col-sm">
               <form.element @controlType="checkbox" @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />

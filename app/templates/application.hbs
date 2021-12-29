@@ -136,7 +136,7 @@
     .chroma { background-color: {{this.globalConfig.config.chromaColor}}!important; }
   </style>
   <main role="button" class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" {{on "mousedown" this.dragWindow}}>
-    <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>
+    <BsTooltip @delayHide="0">
       Press alt+F4 if you want to close this window.
     </BsTooltip>
     {{outlet}}

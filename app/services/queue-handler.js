@@ -81,7 +81,7 @@ export default class QueueHandlerService extends Service {
     this.globalConfig.config.songQueue = this.pendingSongs;
     this.globalConfig.config.save();
     
-    if(this.currentUser.queueToFile && this.currentUser.lastStream.requests){
+    if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
     }    
   }
@@ -95,7 +95,7 @@ export default class QueueHandlerService extends Service {
     set(song,'processed', !song.processed);
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
-    if(this.currentUser.queueToFile && this.currentUser.lastStream.requests){
+    if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
     }
     // We keep the keue updated in the config so the overlay window updates:
@@ -127,7 +127,7 @@ export default class QueueHandlerService extends Service {
     this.globalConfig.config.songQueue = this.pendingSongs;
     this.globalConfig.config.save();
     
-    if(this.currentUser.queueToFile && this.currentUser.lastStream.requests){
+    if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
@@ -155,14 +155,14 @@ export default class QueueHandlerService extends Service {
     this.globalConfig.config.songQueue = this.pendingSongs;
     this.globalConfig.config.save();
     
-    if(this.currentUser.queueToFile && this.currentUser.lastStream.requests){
+    if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
     }
   }
   
   @action fileContent(pendingSongs, firstRun = false){
     if (this.globalConfig.config.overlayfolder != ''){
-      if((this.currentUser.queueToFile && this.globalConfig.config.overlayfolder != '' && this.currentUser.lastStream.requests) || firstRun){
+      if((this.currentUser.updateQueueOverlay && this.globalConfig.config.overlayfolder != '' && this.currentUser.lastStream.requests) || firstRun){
         let pathString = this.globalConfig.config.overlayfolder;
         if(pathString.substr(pathString.length - 1) === "\\"){
           pathString = pathString.slice(0, -1)+'\\queue.html';

@@ -21,8 +21,5 @@ export default class ApplicationRoute extends Route  {
 
   afterModel(model) {    
     this.headData.title = 'Paperbot, a Twitch.tv bot by Papercat84';
-    if(model.length < 1){
-      this.router.transitionTo('settings.config', this.store.createRecord('config', {id: 'myconfig', name: "Default settings", isdefault: true}));
-    }
   } 
 }

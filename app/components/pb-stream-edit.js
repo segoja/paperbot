@@ -303,7 +303,7 @@ export default class PbStreamEditComponent extends Component {
     this.scrollPosition = this.messages.get('length');
     this.queueHandler.scrollPlayedPosition = 0;
     this.queueHandler.scrollPendingPosition = 0;
-    if(this.currentUser.queueToFile && this.args.stream.requests){
+    if(this.currentUser.updateQueueOverlay && this.args.stream.requests){
       this.queueHandler.fileContent(this.queueHandler.pendingSongs);
     }
   }
@@ -461,14 +461,14 @@ export default class PbStreamEditComponent extends Component {
     if(this.globalConfig.config.overlayType === 'file'){
       if(this.args.stream.requests && this.globalConfig.config.overlayfolder != ''){
         this.currentUser.updateQueueOverlay = !this.currentUser.updateQueueOverlay;
-        this.currentUser.queueToFile = !this.currentUser.queueToFile;
+        // this.currentUser.queueToFile = !this.currentUser.queueToFile;
         this.queueHandler.fileContent(this.queueHandler.pendingSongs);
       } else {
-        this.currentUser.queueToFile = false;
+        // this.currentUser.queueToFile = false;
         this.currentUser.updateQueueOverlay = false;
       }      
     } else {
-      this.currentUser.queueToFile = false;
+      // this.currentUser.queueToFile = false;
       this.currentUser.updateQueueOverlay = !this.currentUser.updateQueueOverlay;
       this.currentUser.toggleOverlay();
     }

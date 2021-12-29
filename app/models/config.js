@@ -19,11 +19,27 @@ export default class ConfigModel extends Model {
   @attr('string', {defaultValue: ""}) overlayType;
   @attr('boolean', {defaultValue: false}) showOverlay;
   @attr('string', {defaultValue: "#006600ff"}) chromaColor;
+  @attr('number', {defaultValue: 550}) overlayWidth;
+  @attr('number', {defaultValue: 175}) overlayHeight;
+  @attr('number', {defaultValue: 0}) overlayPosX;
+  @attr('number', {defaultValue: 0}) overlayPosY;  
 
   @belongsTo('client', { inverse: 'botclientconfigs', save: true }) defbotclient;
   @belongsTo('client', { inverse: 'chatclientconfigs', save: true }) defchatclient;
 
   @attr('boolean', {defaultValue: false}) showLyrics;
+  @attr('boolean', {defaultValue: false}) readerMax;  
+  @attr('number', {defaultValue: 450}) readerWidth;
+  @attr('number', {defaultValue: 600}) readerHeight;
+  @attr('number', {defaultValue: 0}) readerPosX;
+  @attr('number', {defaultValue: 0}) readerPosY;  
+
+  @attr('boolean', {defaultValue: false}) mainMax;
+  @attr('number', {defaultValue: 1080}) mainWidth;
+  @attr('number', {defaultValue: 800}) mainHeight;
+  @attr('number', {defaultValue: 0}) mainPosX;
+  @attr('number', {defaultValue: 0}) mainPosY;    
+  
   @attr('boolean', {defaultValue: false}) cpanpending;
   @attr('boolean', {defaultValue: false}) cpanplayed;
   @attr('boolean', {defaultValue: false}) cpanmessages;

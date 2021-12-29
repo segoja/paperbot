@@ -4,8 +4,9 @@ import { action } from '@ember/object';
 import moment from 'moment';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
-import { appWindow, getCurrent, getAll } from '@tauri-apps/api/window';
+import { appWindow, getCurrent, getAll, PhysicalPosition, PhysicalSize  } from '@tauri-apps/api/window';
 import { tracked } from '@glimmer/tracking';
+import { later } from '@ember/runloop';
 
 export default class ApplicationController extends Controller {
   @service cloudState;
@@ -21,22 +22,38 @@ export default class ApplicationController extends Controller {
   // We load the existing config or create a new one.  
   constructor() {
     super(...arguments);
-    
+    let currentWindow = getCurrent();
+
     this.store.findAll('config').then(()=>{
       let currentconfig = this.store.peekRecord('config','myconfig');
       if (currentconfig){
+        this.globalConfig.showFirstRun = false;
         console.debug("Config found! Loading...");
         this.lightControl.toggleMode(currentconfig.darkmode);
         this.globalConfig.config = currentconfig;
+        
         if(this.globalConfig.config.externalevents &&  this.globalConfig.config.externaleventskey){
           this.eventsExternal.token = this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
-        let currentWindow = getCurrent();
-        if(this.globalConfig.config.showOverlay && this.globalConfig.config.overlayType === 'window'  && currentWindow.label === 'Main'){
-          this.currentUser.toggleOverlay();
+        if(currentWindow.label === 'Main'){
+          if(this.globalConfig.config.mainMax){
+            currentWindow.maximize();
+          } else {
+            if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
+              let position = new PhysicalPosition (this.globalConfig.config.mainPosX, this.globalConfig.config.mainPosY);
+              currentWindow.setPosition(position);
+            }
+            let size = new PhysicalSize (this.globalConfig.config.mainWidth, this.globalConfig.config.mainHeight);          
+            currentWindow.setSize(size);
+          }
+          if(this.globalConfig.config.showOverlay && this.globalConfig.config.overlayType === 'window'){
+            this.currentUser.toggleOverlay();
+          }
+          if(this.globalConfig.config.showLyrics){
+            this.currentUser.showLyrics();
+          }
         }
-        this.globalConfig.showFirstRun = false;
       } else{
         this.store.createRecord('config',{id: 'myconfig'}).save().then((newconfig)=>{
           console.debug("Config not found! New config created...");
@@ -45,6 +62,39 @@ export default class ApplicationController extends Controller {
         }).catch(()=>{
           console.debug("Error creating config!");
         })
+      }
+      
+      if(currentWindow.label === 'Main'){
+
+        currentWindow.listen('tauri://focus', function (response) {
+          //appWindow.show();
+        }.bind(this));
+        
+        currentWindow.listen('tauri://resize', async function (response) {
+          if(!this.globalConfig.config.mainMax){
+            this.globalConfig.config.mainWidth = response.payload.width; 
+            this.globalConfig.config.mainHeight = response.payload.height;
+            later(() => {
+              if(this.globalConfig.config.mainWidth === response.payload.width && this.globalConfig.config.mainHeight === response.payload.height){
+                this.globalConfig.config.save();
+                console.debug('Size saved!');
+              }          
+            }, 500);
+          }
+        }.bind(this));
+        
+        currentWindow.listen('tauri://move', async function (response) { 
+          if(!this.globalConfig.config.mainMax){
+            this.globalConfig.config.mainPosX = response.payload.x;
+            this.globalConfig.config.mainPosY = response.payload.y;
+            later(() => {
+              if(this.globalConfig.config.mainPosX === response.payload.x && this.globalConfig.config.mainPosY === response.payload.y){
+                this.globalConfig.config.save();
+                console.debug('Position saved!.');
+              }          
+            }, 250);
+          }
+        }.bind(this));
       }
     });
     //appWindow.listen('tauri://blur', ({ event, payload }) => {
@@ -145,6 +195,9 @@ export default class ApplicationController extends Controller {
   
   
   @action wipeDatabase(){
+    getAll().forEach((item)=>{ 
+      if(item.label != 'Main'){ item.close(); }
+    }); 
     var adapter = this.store.adapterFor('application');
     adapter.wipeDatabase().then(()=>{
       console.debug('The database has been wiped.');
@@ -173,35 +226,63 @@ export default class ApplicationController extends Controller {
     this.currentUser.expandMenu = false;
   }
   
+
   @action minimizeWindow(){
-    appWindow.minimize();
+    console.debug('Minimize is buggy. Waiting for tauri fix.');
+    //appWindow.minimize();
   }
   
   @action maximizeWindow(){
-    appWindow.minimize();    
-    appWindow.toggleMaximize();
+    let currentWindow = getCurrent();
+    if(currentWindow.label === 'Main'){
+      if(this.globalConfig.config.mainMax){
+        currentWindow.unmaximize();        
+        this.globalConfig.config.mainMax = false;        
+      } else {
+        currentWindow.maximize();
+        this.globalConfig.config.mainMax = true;
+        later(() => {
+          this.globalConfig.config.save();
+          console.debug('Main maximized saved!');
+        }, 500);
+      }      
+    }
+    if(currentWindow.label === 'reader'){
+      if(this.globalConfig.config.readerMax){
+        currentWindow.unmaximize();        
+        this.globalConfig.config.readerMax = false;        
+      } else {
+        currentWindow.maximize();
+        this.globalConfig.config.readerMax = true;
+        later(() => {
+          this.globalConfig.config.save();
+          console.debug('Reader maximized saved!');
+        }, 500);
+      }   
+    }
   }
   
   @action closeWindow(){
-    if(this.isLyrics){
-      this.globalConfig.config.showLyrics = false;
+    let currentWindow = getCurrent();
+    if(currentWindow.label === 'reader'){
       this.globalConfig.config.save().then(()=>{
-        appWindow.close();
+        currentWindow.close();
       });
     } else {
-      if(this.isOverlay){
-        this.globalConfig.config.showOverlay = false;
-        this.currentUser.queueToFile = false;
+      if(currentWindow.label === 'overlay'){
         this.globalConfig.config.save().then(()=>{
-          appWindow.close();
+          currentWindow.close();
         });
       } else {
-        getAll().forEach((item)=>{ item.close(); });        
+        this.globalConfig.config.save().then(()=>{
+          getAll().forEach((item)=>{ item.close(); });        
+        });
       }
     }
   }
   
   @action dragWindow(){
-    appWindow.startDragging();
+    let currentWindow = getCurrent();    
+    currentWindow.startDragging();
   }  
 }
