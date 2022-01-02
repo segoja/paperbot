@@ -22,7 +22,6 @@ export default class PbStreamEditComponent extends Component {
   
   @tracked saving = false;
   @tracked optsbot = this.args.stream.botclient.get('optsgetter');
-  @tracked optschat = this.args.stream.chatclient.get('optsgetter');
   @tracked scrollPosition = 0;
   @tracked scrollEventsPosition = 0;
   @tracked message = "";
@@ -49,7 +48,7 @@ export default class PbStreamEditComponent extends Component {
   }
   
   get disableChatButton(){
-    if(this.twitchChat.botConnected === false || this.args.stream.finished === true || this.args.stream.chatclient === '' || this.args.stream.channel === ''){
+    if(this.twitchChat.botConnected === false || this.args.stream.finished === true || this.args.stream.channel === ''){
       return true;
     } else {
       return false;
@@ -63,16 +62,7 @@ export default class PbStreamEditComponent extends Component {
       return false;
     }
   }
-  
-  // With this getter we enable/disable the chat input box according to the chat client status.
-  get inputDisabled(){
-    if(this.twitchChat.chatConnected === false){
-      return true;
-    } else {
-      return false;
-    }  
-  }
-  
+    
   // With this getter we limit the number of messages displayed on screen.
   get messages(){
     return this.msglist.slice(-45);
@@ -115,7 +105,7 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.commands = this.args.commands.filterBy('active', true);
     this.twitchChat.songs = this.args.songs.filterBy('active', true);
     
-    if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true){
+    if(this.twitchChat.botConnected === true){
       this.twitchChat.botclient.on('message', this.msgGetter);
     }
     if(this.twitchChat.botConnected === true){
@@ -164,8 +154,7 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.audiocommands = this.audiocommandslist;
     this.twitchChat.commands = this.args.commands.filterBy('active', true);
     this.twitchChat.songs = this.args.songs.filterBy('active', true);
-    this.twitchChat.chatUsername = this.args.stream.botName || '';
-    this.twitchChat.botUsername = this.args.stream.chatName || '';
+    this.twitchChat.botUsername = this.args.stream.botName || '';
 
     
     if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
@@ -211,15 +200,6 @@ export default class PbStreamEditComponent extends Component {
     );
       // later(() => { console.debug(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     
   }
-  
-  @action connectChat(){
-    if(this.args.stream.channel != ''){
-      //this.optschat.channels = [this.args.stream.channel];
-      this.twitchChat.channel = this.args.stream.channel;
-    }
-    this.twitchChat.savechat = this.args.stream.savechat;    
-    this.twitchChat.connector(this.optschat, "chat");
-  }
 
   @action disconnectBot(){
     this.twitchChat.disconnectBot().then(
@@ -231,24 +211,9 @@ export default class PbStreamEditComponent extends Component {
         console.debug("Error disconnecting!");        
       }
     );
-    if(this.twitchChat.chatConnected){
-      this.disconnectChat();          
-    }
     if(this.eventsExternal.connected){
       this.eventsExternal.disconnectClient();      
     }
-  }
-  @action disconnectChat(){
-    this.twitchChat.disconnectChat().then(
-      function(){
-        if(!this.twitchChat.sameClient){
-          console.debug("Chat client disconnected!");
-        }
-      }.bind(this), 
-      function(){
-        console.debug("Error disconnecting!");        
-      }.bind(this)
-    );
   }
 
 
@@ -280,7 +245,7 @@ export default class PbStreamEditComponent extends Component {
         this.args.stream.eventlog = this.twitchChat.events;
       }
       
-      if(this.twitchChat.botConnected === true || this.twitchChat.chatConnected === true || this.eventsExternal.connected){
+      if(this.twitchChat.botConnected === true || this.eventsExternal.connected){
        this.disconnectClients();
       }
       
@@ -321,11 +286,7 @@ export default class PbStreamEditComponent extends Component {
 
   
   @action sendMessage() {
-    if(!this.twitchChat.sameClient){
-      this.twitchChat.chatclient.say(this.twitchChat.channel, this.message);
-    } else {
-      this.twitchChat.botclient.say(this.twitchChat.channel, this.message);
-    }
+    this.twitchChat.botclient.say(this.twitchChat.channel, this.message);
     this.message = "";
   }  
 
@@ -392,12 +353,14 @@ export default class PbStreamEditComponent extends Component {
   // Soundboard toggle
   @action soundboardToggle(){
     this.currentUser.soundBoardEnabled = !this.currentUser.soundBoardEnabled;
-    if(this.currentUser.soundBoardEnabled === false){
-      if(this.twitchChat.lastSoundCommand != null){
-        this.twitchChat.lastSoundCommand.stop();
+    if(!this.currentUser.soundBoardEnabled){
+      if(this.twitchChat.lastSoundCommand != null && this.twitchChat.lastSoundCommand.isPlaying){
+        console.log(this.twitchChat.lastSoundCommand.isPlaying)
+        console.log(this.twitchChat.lastSoundCommand);
+        this.twitchChat.lastSoundCommand.changeGainTo(0).from('percent');
+        this.twitchChat.lastSoundCommand.stop(); 
       }
-    }
-    this.twitchChat.soundBoardEnabled = this.currentUser.soundBoardEnabled;    
+    } 
   }
   
   

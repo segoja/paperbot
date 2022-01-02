@@ -15,7 +15,6 @@ export default class TwitchChatService extends Service {
   @service currentUser;
 
   @tracked botclient;
-  @tracked chatclient;
 
   @tracked savechat = false;
 
@@ -67,18 +66,8 @@ export default class TwitchChatService extends Service {
   @tracked channel = '';
   @tracked botUsername = '';
   @tracked botPassword = '';
-  @tracked chatUsername = '';
 
-
-  get sameClient(){
-    if(this.chatUsername === this.botUsername){
-      return true;
-    }
-    return false;
-  }
-  
   @tracked botConnected = false;
-  @tracked chatConnected = false;
   
   @tracked chanId;
   @tracked commands = [];
@@ -90,14 +79,21 @@ export default class TwitchChatService extends Service {
   get audiocommandslist(){
     return this.audiocommands || [];
   }
-  
-  @tracked soundBoardEnabled = true;
-  
+    
   @tracked lastmessage = null;
   @tracked lastsongrequest = null;
   @tracked lastevent = null;
   @tracked lastmodaction = null;
   @tracked lastSoundCommand = null;
+  get soundPlaying(){
+    if(this.lastSoundCommand){
+      return this.lastSoundCommand.isPlaying;
+    }
+    return false;
+  }
+  
+  
+  
   @tracked takessongrequests = false;
   
   @tracked channelBadges = [];
@@ -141,22 +137,8 @@ export default class TwitchChatService extends Service {
       if(this.botConnected === true){
         this.botclient.disconnect();
       }
-      if(this.chatUsername === options.identity.username.toString() && this.chatConnected){
-        console.debug("chat client is the same of the chat, enabling bot...");
-        this.botConnected = true;
-      }
     }
-    
-    if(clientType === "chat"){
-      if(this.chatConnected === true){
-        this.chatclient.disconnect();
-      }
-      if(this.botUsername === options.identity.username.toString() && this.botConnected){
-        console.debug("chat client is the same of the bot, enabling chat...");
-        this.chatConnected = true;
-      }
-    }
-      
+          
     if(!this.botConnected && clientType === "bot"){      
       // this.channel = options.channels.toString();
       this.botUsername = options.identity.username.toString();
@@ -189,33 +171,6 @@ export default class TwitchChatService extends Service {
       
       return this.botConnected;
     }
-    
-    // We check what kind of client is connecting
-    if(!this.chatConnected && clientType === "chat"){
-      // this.channel = options.channels.toString();
-      this.chatclient = new tmi.client(options);
-      // Register our event handlers (defined below)
-      // this.chatclient.on('connected', this.onChatConnectedHandler);
-      // this.chatclient.on('message', this.messageHandler);
-      this.chatUsername = options.identity.username.toString();
-      this.chatPassword = options.identity.password.replace(/oauth:/g, '');
-   
-      // Connect the client
-      this.chatConnected = await this.chatclient.connect().then(
-        function() {
-          console.debug("chat client connected!");
-          return true;
-        }, 
-        function() {
-          console.debug("error connecting chat client!");
-          return false;
-        }
-      );
-      if(this.chatConnected){
-        this.chatclient.join(this.channel);
-      }
-      return this.chatConnected;
-    }
   }
 
   async disconnector(){
@@ -227,14 +182,6 @@ export default class TwitchChatService extends Service {
         this.botUsername = '';
         isDisconnected = true;
         console.debug("The bot client got disconnected!");
-      });
-    }
-    if(this.chatConnected === true){
-      this.chatclient.disconnect().then(() => {
-        this.chatConnected = false;
-        this.channel = '';
-        isDisconnected = true;
-        console.debug("The chat client got disconnected!");        
       });
     }
     return isDisconnected;     
@@ -252,33 +199,11 @@ export default class TwitchChatService extends Service {
     }
    return isDisconnected;
   }
-  async disconnectChat(){
-    var isDisconnected = false;
-    if(this.chatConnected === true){
-      if(this.sameClient){
-        this.chatConnected = false;
-        isDisconnected = true;
-        console.debug("The chat has been disabled.");   
-      } else {
-        this.chatclient.disconnect().then(() => {
-          this.chatConnected = false;
-          this.channel = '';
-          isDisconnected = true;
-          console.debug("The chat client got disconnected!");        
-        });
-      }
-    }
-   return isDisconnected;
-  }
 
   // Called every time the bot connects to Twitch chat
   @action onBotConnectedHandler (addr, port) {
     console.debug(`* Connected to ${addr}:${port}`);
   }  
-  // Called every time the bot connects to Twitch chat
-  @action onChatConnectedHandler (addr, port) {
-    console.debug(`* Connected to ${addr}:${port}`);
-  }
 
   @action soundboard(){
     console.debug("Loading the soundboard...");
@@ -315,8 +240,10 @@ export default class TwitchChatService extends Service {
   }
 
   @action messageHandler(target, tags, msg, self){
-    // console.debug(tags);
-    // this.parseBadges(tags['badges']);
+    console.debug('=_-=-_-=-_-=-_-=-_-=-_-=-_-=-');
+    console.debug(msg);
+    console.debug(tags);
+    this.parseBadges(tags['badges']);
     
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
@@ -464,11 +391,24 @@ export default class TwitchChatService extends Service {
                   break;
                 }
                 case 'audio':{
-                  if (this.soundBoardEnabled){
-                    let sound = this.audio.getSound(command.name);
-                    sound.changeGainTo(command.volume).from('percent');
-                    this.lastSoundCommand = sound;
-                    sound.play();
+                  if (this.currentUser.soundBoardEnabled){
+                    if(this.lastSoundCommand){
+                      if(this.soundPlaying){
+                        if(this.globalConfig.config.soundOverlap){
+                          this.lastSoundCommand = this.audio.getSound(command.name);
+                          this.lastSoundCommand.changeGainTo(command.volume).from('percent');
+                          this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
+                        }
+                      } else {
+                        this.lastSoundCommand = this.audio.getSound(command.name);
+                        this.lastSoundCommand.changeGainTo(command.volume).from('percent');
+                        this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
+                      }
+                    } else {
+                      this.lastSoundCommand = this.audio.getSound(command.name);
+                      this.lastSoundCommand.changeGainTo(command.volume).from('percent');
+                      this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
+                    }
                   }
                   break;
                 }

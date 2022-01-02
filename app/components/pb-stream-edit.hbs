@@ -17,12 +17,7 @@
         <client.control @allowClear={{true}} @placeholder="Select the Bot Client for the stream" as |option|>
           {{option.username}}
         </client.control>
-      </form.element>
-      <form.element @controlType="power-select" class="pb-2" @property="chatclient" @label="Chat Client" @options={{@clients}} selected={{this.globalConfig.config.defchatclient}}  @onChange={{@setChatClient}}  required as |client|>
-        <client.control @allowClear={{true}} @placeholder="Select the Chat Client for the stream" as |option|>
-          {{option.username}}
-        </client.control>
-      </form.element>  
+      </form.element> 
       <BsButton @type="success" @onClick={{this.doneAndReturnEditing}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Stream updated!</span></div>
@@ -30,48 +25,34 @@
     </BsForm>
   </div>
 {{else}}
-  <div class="card-body p-0">
-    <div class="row g-0 bg-dark">
-      <div class="col-auto">
-        <div class="row g-0">
-          <BsButton class="btn-sm col-12 col-sm" @type={{if this.currentUser.soundBoardEnabled "info" "secondary"}} @onClick={{this.soundboardToggle}} title="Enable/disable soundboard">
-            {{on-key "ctrl+KeyM" this.soundboardToggle}}  
-            <FaIcon @icon={{if this.currentUser.soundBoardEnabled "volume-up" "volume-mute"}} />
-          </BsButton>     
-          <BsButton class="btn-sm col-12 col-sm" @type={{if @stream.requests (if this.currentUser.updateQueueOverlay "warning" "secondary") "secondary"}} @onClick={{this.queueWriter}} title="Enable/disable queue overlay">
+  <div class="card-body p-0 bg-dark">
+    <div class="row g-0 bg-dark border border-dark">
+      <BsButton class="btn-sm col-auto col-sm-auto border rounded-0" @type={{if this.currentUser.soundBoardEnabled "info" "secondary"}} @onClick={{this.soundboardToggle}} title="Enable/disable soundboard">
+        {{on-key "ctrl+KeyM" this.soundboardToggle}}  
+        <FaIcon @icon={{if this.currentUser.soundBoardEnabled "volume-up" "volume-mute"}} /> Soundboard
+      </BsButton>     
+      <div class="col">
+        <div class="row g-0">  
+          <BsButton class="btn-sm col-12 col-sm border rounded-0" @type={{if @stream.requests (if this.currentUser.updateQueueOverlay "warning" "secondary") "secondary"}} @onClick={{this.queueWriter}} title="Enable/disable queue overlay">
             {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
             {{#if (not @stream.requests)}}
               <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>Please, enable the <em>Song Request System</em></BsTooltip>
             {{/if}}
-            <FaIcon @icon={{if @stream.requests (if this.currentUser.updateQueueOverlay "file-alt" "file") "file"}} />
-          </BsButton>
-        </div>
-      </div>
-      <div class="col">
-        <div class="row g-0">
+            <FaIcon @icon={{if @stream.requests (if this.currentUser.updateQueueOverlay "file-alt" "file") "file"}} /> Requests
+          </BsButton>          
           {{#if this.disableBotButton}}
-            <BsButton class="btn-sm col-12 col-sm" @type={{if this.twitchChat.botConnected "primary" "secondary"}} disabled={{this.disableBotButton}}><FaIcon @icon="play" /> Bot</BsButton>
+            <BsButton class="btn-sm col-12 col-sm border rounded-0" @type={{if this.twitchChat.botConnected "primary" "secondary"}} disabled={{this.disableBotButton}}><FaIcon @icon="play" /> Bot</BsButton>
           {{else}}      
-            <BsButton class="btn-sm col-12 col-sm"  @type={{if this.twitchChat.botConnected "primary" "secondary"}} @onClick={{fn (if this.twitchChat.botConnected this.disconnectBot this.connectBot)}}>
+            <BsButton class="btn-sm col-12 col-sm border rounded-0"  @type={{if this.twitchChat.botConnected "primary" "secondary"}} @onClick={{fn (if this.twitchChat.botConnected this.disconnectBot this.connectBot)}}>
               <FaIcon @icon={{if this.twitchChat.botConnected "stop" "play"}} /> Bot
             </BsButton>
           {{/if}}
-          {{#if this.disableChatButton}}
-            <BsButton class="btn-sm col-12 col-sm" @type={{if this.twitchChat.chatConnected "success" "secondary"}} disabled={{this.disableChatButton}} >
-              <FaIcon @icon="play" /> Chat
-            </BsButton>
-          {{else}}
-            <BsButton class="btn-sm col-12 col-sm" @type={{if this.twitchChat.chatConnected "success" "secondary"}} @onClick={{fn (if this.twitchChat.chatConnected this.disconnectChat this.connectChat)}}>
-              <FaIcon @icon={{if this.twitchChat.chatConnected "stop" "play"}} /> Chat
-            </BsButton>
-          {{/if}}
         </div>
       </div>
       <div class="col">
-        <div class="row g-0">
-          {{!-- <BsButton class="btn-sm col-12 col-sm" @type="danger" @onClick={{fn this.disconnectClients}} disabled={{this.disconnectButton}}>Disconnect Clients</BsButton> --}}
-          <BsButton class="btn-sm col-12 col-sm text-truncate" @type="danger" @onClick={{this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished this.disconnectButton true)}}><FaIcon @icon="flag-checkered" /> Finish Stream</BsButton>
-          <BsButton class="btn-sm col-12 col-sm text-editstream text-truncate" @type="warning" @onClick={{@editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
+        <div class="row g-0"> 
+          <BsButton class="btn-sm col-12 col-sm text-truncate border rounded-0" @type="danger" @onClick={{this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished this.disconnectButton true)}}><FaIcon @icon="flag-checkered" /> Stop & Save</BsButton>
+          <BsButton class="btn-sm col col-sm text-editstream text-truncate border rounded-0" @type="warning" @onClick={{@editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
         </div>
       </div>
     </div>
@@ -151,7 +132,7 @@
                       </BsButtonGroup>
                     </div>
                     <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanmessages}}>
-                      {{#unless this.globalConfig.config.cpanmessages}}
+                     {{!--   {{#unless this.globalConfig.config.cpanmessages}}
                         <div class="col-md-12 chatframe" {{scroll-position position=this.scrollPosition relative=false}}>
                           
                           {{#each this.messages as |message|}}
@@ -159,15 +140,16 @@
                               {{message-format message}}
                             </div>
                           {{/each}}
-                                                  
-                         {{!--  <iframe src="https://www.twitch.tv/embed/{{@stream.channel}}/chat?parent=localhost&darkpopout"
-                                  height="100%"
-                                  width="100%"
-                                  sandbox="allow-same-origin allow-scripts allow-popups allow-modals allow-storage-access-by-user-activation allow-popups-to-escape-sandbox"
-                          >
-                          </iframe>--}}  
+                      --}}                            
+                        <iframe 
+                          src="https://www.twitch.tv/embed/{{@stream.channel}}/chat?parent=localhost&{{if this.globalConfig.config.darkmode "darkpopout"}}"
+                          height="100%"
+                          width="100%"
+                          sandbox="allow-same-origin allow-scripts allow-popups allow-modals allow-storage-access-by-user-activation allow-popups-to-escape-sandbox"
+                        />
+                      {{!-- 
                         </div>  
-                      {{/unless}}
+                      {{/unless}} --}}
                     </BsCollapse>  
                   </div>
                 </div>
@@ -275,22 +257,5 @@
         </div>
       </div>
     {{/if}}
-    {{#unless this.disconnectButton}}  
-      <div class="card-footer flex-column flex-fill d-flex p-0 my-0 alert-secondary"> 
-        <div class="row m-0">
-          <BsForm @formLayout="inline" @model={{this}} class="col-md-12 my-1 mx-0 py-1 px-2" @onSubmit={{this.sendMessage}} as |form|>
-            <form.element @property="message" class="mb-0 pb-0"  as |el|>
-              <el.control 
-                @controlType="text"
-                autocomplete="off"
-                placeholder="Type your message here"
-                 class="mb-0 my-0 py-1 rounded-0 chatinput border-dark"
-                readonly={{this.inputDisabled}}        
-              />
-            </form.element>
-          </BsForm>
-        </div>      
-      </div>
-    {{/unless}}
   {{/unless}}
 {{/if}}
