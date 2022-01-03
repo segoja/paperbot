@@ -22,38 +22,6 @@ export default class PbReaderComponent extends Component {
   
   constructor() {
     super(...arguments);
-    
-    let currentWindow = getCurrent();
-    if(currentWindow.label === 'reader'){
-      if(this.globalConfig.config.readerMax){
-        currentWindow.maximize();
-      }
-      currentWindow.listen('tauri://resize', async function (response) {
-        if(!this.globalConfig.config.readerMax){        
-          this.globalConfig.config.readerWidth = response.payload.width; 
-          this.globalConfig.config.readerHeight = response.payload.height;
-          later(() => {            
-            if(this.globalConfig.config.readerWidth === response.payload.width && this.globalConfig.config.readerHeight === response.payload.height){
-              this.globalConfig.config.save();
-              console.debug('Size saved!');
-            }
-          }, 500); 
-        }
-      }.bind(this));
-      
-      currentWindow.listen('tauri://move', async function (response) { 
-        if(!this.globalConfig.config.readerMax){
-          this.globalConfig.config.readerPosX = response.payload.x;
-          this.globalConfig.config.readerPosY = response.payload.y;
-          later(() => {
-            if(this.globalConfig.config.readerPosX === response.payload.x && this.globalConfig.config.readerPosY === response.payload.y){
-              this.globalConfig.config.save();
-              console.debug('Position saved!.');
-            }          
-          }, 250);
-        }
-      }.bind(this));            
-    }
   }
   
   
@@ -113,6 +81,25 @@ export default class PbReaderComponent extends Component {
   
   @action resetZoom(){
     this.zoomLevel = 0.85;
+  }
+  
+  @action autoColumn(){
+    this.globalConfig.config.readerColumns = 0;
+    this.globalConfig.config.save();
+  }  
+
+  @action moreColumn(){
+    if(this.globalConfig.config.readerColumns < 5){
+      this.globalConfig.config.readerColumns = Number(this.globalConfig.config.readerColumns) + 1;
+      this.globalConfig.config.save();
+    }
+  }
+  
+  @action lessColumn(){
+    if(this.globalConfig.config.readerColumns > 0){
+      this.globalConfig.config.readerColumns = Number(this.globalConfig.config.readerColumns) - 1;
+      this.globalConfig.config.save();
+    }
   }
   
   @action addZoom(){

@@ -5,6 +5,7 @@ import moment from 'moment';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
 import { appWindow, getCurrent, getAll, PhysicalPosition, PhysicalSize  } from '@tauri-apps/api/window';
+import { emit } from '@tauri-apps/api/event';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 
@@ -67,7 +68,10 @@ export default class ApplicationController extends Controller {
       if(currentWindow.label === 'Main'){
 
         currentWindow.listen('tauri://focus', function (response) {
-          //appWindow.show();
+          if(this.globalConfig.config.mainMax){
+            currentWindow.unmaximize();
+            currentWindow.maximize();
+          }
         }.bind(this));
         
         currentWindow.listen('tauri://resize', async function (response) {
@@ -93,6 +97,44 @@ export default class ApplicationController extends Controller {
                 console.debug('Position saved!.');
               }          
             }, 250);
+          }
+        }.bind(this));
+      }
+      
+      if(currentWindow.label === 'reader'){
+        if(this.globalConfig.config.readerMax){
+          currentWindow.maximize();
+        }
+        currentWindow.listen('tauri://resize', async function (response) {
+          if(!this.globalConfig.config.readerMax){        
+            this.globalConfig.config.readerWidth = response.payload.width; 
+            this.globalConfig.config.readerHeight = response.payload.height;
+            later(() => {            
+              if(this.globalConfig.config.readerWidth === response.payload.width && this.globalConfig.config.readerHeight === response.payload.height){
+                this.globalConfig.config.save();
+                console.debug('Size saved!');
+              }
+            }, 500); 
+          }
+        }.bind(this));
+        
+        currentWindow.listen('tauri://move', async function (response) { 
+          if(!this.globalConfig.config.readerMax){
+            this.globalConfig.config.readerPosX = response.payload.x;
+            this.globalConfig.config.readerPosY = response.payload.y;
+            later(() => {
+              if(this.globalConfig.config.readerPosX === response.payload.x && this.globalConfig.config.readerPosY === response.payload.y){
+                this.globalConfig.config.save();
+                console.debug('Position saved!.');
+              }          
+            }, 250);
+          }
+        }.bind(this));
+        
+        currentWindow.listen('tauri://focus', function (response) {
+          if(this.globalConfig.config.readerMax){
+            currentWindow.unmaximize();
+            currentWindow.maximize();
           }
         }.bind(this));
       }
@@ -228,8 +270,20 @@ export default class ApplicationController extends Controller {
   
 
   @action minimizeWindow(){
-    console.debug('Minimize is buggy. Waiting for tauri fix.');
-    //appWindow.minimize();
+    let currentWindow = getCurrent();
+    if(currentWindow.label === 'Main'){
+      //console.debug('Minimize is buggy. Waiting for tauri fix.');
+      if(this.globalConfig.config.mainMax){
+        currentWindow.unmaximize();
+      }
+      currentWindow.minimize();
+    }
+    if(currentWindow.label === 'reader'){      
+      if(this.globalConfig.config.readerMax){
+        currentWindow.unmaximize();
+      }
+      currentWindow.minimize();
+    }    
   }
   
   @action maximizeWindow(){

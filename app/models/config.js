@@ -32,7 +32,8 @@ export default class ConfigModel extends Model {
   @attr('number', {defaultValue: 450}) readerWidth;
   @attr('number', {defaultValue: 600}) readerHeight;
   @attr('number', {defaultValue: 0}) readerPosX;
-  @attr('number', {defaultValue: 0}) readerPosY;  
+  @attr('number', {defaultValue: 0}) readerPosY;
+  @attr('number', {defaultValue: 0}) readerColumns;
 
   @attr('boolean', {defaultValue: false}) mainMax;
   @attr('number', {defaultValue: 1080}) mainWidth;

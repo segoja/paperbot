@@ -252,11 +252,13 @@ div.pan-buttons-row{
 .fancy-colums {
   max-height: 75%!important;
   column-count: 3;
-  display: block;
+  column-gap: 40px;
+  word-break: break-word;
+  white-space: normal;
   font-family: var(--bs-font-monospace);
   font-size: 0.85em;
   direction: ltr /* rtl:ignore */;
-  white-space: pre;
+  white-space: pre-wrap;
   unicode-bidi: bidi-override;
   margin: 1em 0px;
   @include media-breakpoint-down(xl) { column-count: 2; }  
