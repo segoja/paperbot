@@ -87,6 +87,16 @@ export default class PbStreamEditComponent extends Component {
     return this.args.stream.requests;
   }
     
+  get embedChatUrl(){
+    let hostname = window.location.hostname;
+    let channel = this.args.stream.channel;
+    let darkmode = '';
+    if(this.globalConfig.config.darkmode){
+      darkmode = '&darkpopout';
+    }
+    return 'https://www.twitch.tv/embed/'+channel+'/chat?parent='+hostname+darkmode;
+  }  
+    
   constructor() {
     super(...arguments);
     // These lines is to allow switching to other routes
