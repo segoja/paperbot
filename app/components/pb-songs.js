@@ -8,9 +8,13 @@ import PapaParse from 'papaparse';
 import { dialog } from "@tauri-apps/api";
 import { readTextFile } from '@tauri-apps/api/fs';
 import { inject as service } from '@ember/service';
+import moment from 'moment';
 
 export default class PbSongsComponent extends Component {
   @service currentUser;
+  @service queueHandler;
+  @service twitchChat;
+  @service globalConfig;
   
   songsSorting = Object.freeze(['date_added:asc']);
   
@@ -44,6 +48,41 @@ export default class PbSongsComponent extends Component {
   }
   
   @tracked importcontent;
+  
+  
+  @action songToQueue(selected){
+    // changing this could break the reader.
+    let song = '"'+selected.title+'"';
+    if(selected.artist){
+      song = song+' by '+selected.artist+'.';
+    }
+    let queuesong = {
+      id: 'songsys',
+      timestamp: moment().format(),
+      type: null,
+      song: song,
+      songId: selected.get('id'),
+      title: selected.title? selected.title:'',
+      artist: selected.artist? selected.artist:'',
+      user: '',
+      displayname: '',
+      color: 'orange',
+      csscolor: '#ffcc00',
+      emotes: null,
+      processed: false,
+    };
+    
+    this.twitchChat.songqueue.push(this.twitchChat.lastsongrequest);
+    this.queueHandler.songqueue = this.songqueue;
+    if(this.twitchChat.songqueue.length == 1){
+      this.globalConfig.config.lastPlayed = song;
+    }
+    this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
+    // Song statistics:
+    selected.times_requested = Number(selected.times_requested) + 1;
+    selected.last_request = new Date();
+    selected.save();
+  }
 
   @action wipeSongs(){
     this.args.queryParamsObj.page = 1;

@@ -306,7 +306,7 @@ export default class TwitchChatService extends Service {
   
   
   // Called every time a message comes in
-  @action commandHandler (target, tags, msg, self) {
+  @action async commandHandler (target, tags, msg, self) {
     // Ignore messages from the bot so you don't create command infinite loops
     if (self) { return; }
     // Remove whitespace from chat message
@@ -321,7 +321,7 @@ export default class TwitchChatService extends Service {
           
           if (this.filteredSongs.get('length') !== 0 ) { 
             console.debug("we found songs!");  
-            var bestmatch = this.filteredSongs.shift();
+            var bestmatch = await this.filteredSongs.shift();
             console.debug("=================");
             console.debug(bestmatch);
             console.debug("=================");
@@ -338,6 +338,7 @@ export default class TwitchChatService extends Service {
                   timestamp: moment().format(),
                   type: tags['message-type'] ? tags['message-type'] : null,
                   song: song,
+                  songId: bestmatch.get('id'),
                   title: bestmatch.title? bestmatch.title:'',
                   artist: bestmatch.artist? bestmatch.artist:'',
                   user: tags['username'] ? tags['username'].toString() : this.botUsername,
@@ -353,6 +354,10 @@ export default class TwitchChatService extends Service {
                   this.globalConfig.config.lastPlayed = song;
                 }
                 this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
+                // Song statistics:
+                  bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
+                  bestmatch.last_request = new Date();
+                  await bestmatch.save();
                 this.globalConfig.config.save();
               } else {
                 this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");

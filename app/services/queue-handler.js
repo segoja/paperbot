@@ -15,6 +15,7 @@ import { htmlSafe } from '@ember/template';
 export default class QueueHandlerService extends Service {
   @service globalConfig;
   @service currentUser;
+  @service store;
   @service router;
   @tracked songqueue = []; 
   @tracked lastStream = '';
@@ -68,6 +69,17 @@ export default class QueueHandlerService extends Service {
       set(song,'timestamp',moment().format());
     }
     set(song,'processed', !song.processed);
+    
+    if(song.processed){
+      this.store.findRecord('song', song.songId).then(async (actualSong)=>{
+        if(await actualSong.isLoaded){
+          actualSong.last_played = new Date();
+          actualSong.times_played = Number(actualSong.times_played) + 1;
+          await actualSong.save();
+        }
+      });
+    }
+    
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
     
@@ -114,6 +126,13 @@ export default class QueueHandlerService extends Service {
         // set(firstSong, 'timestamp', moment().format());
       //}
       set(firstSong,'processed', true);
+      this.store.findRecord('song', firstSong.songId).then(async (song)=>{
+        if(await song.isLoaded){
+          console.log(song);
+          song.times_played = Number(song.times_played) + 1;
+          await song.save();
+        }
+      });
       this.scrollPlayedPosition = 0;
       this.scrollPendingPosition = 0;
       this.fileContent(this.pendingSongs);

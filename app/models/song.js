@@ -16,11 +16,12 @@ export default class SongModel extends Model {
   @attr('boolean', {defaultValue: false}) vip;
   @attr('boolean', {defaultValue: false}) sub;
   
-  @attr('string', {defaultValue: ""}) date_added;  
-  @attr('string', {defaultValue: ""}) last_request;  
+  @attr('date', {defaultValue: ""}) date_added;  
+  @attr('date', {defaultValue: ""}) last_request;  
+  @attr('date', {defaultValue: ""}) last_played;  
   
-  @attr('number', {defaultValue: ""}) times_requested;
-  @attr('number', {defaultValue: ""}) times_played;
+  @attr('number', {defaultValue: 0}) times_requested;
+  @attr('number', {defaultValue: 0}) times_played;
   
   @attr('string', {defaultValue: ""}) account;
   

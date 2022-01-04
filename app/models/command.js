@@ -16,5 +16,5 @@ export default class CommandModel extends Model {
   @attr('string', {defaultValue: ""}) response;
   @attr('string', {defaultValue: ""}) soundfile;
   @attr('string', {defaultValue: "0"}) volume;
-  @attr('string', {defaultValue: ""}) date_added;
+  @attr('date', {defaultValue: ""}) date_added;
 }
