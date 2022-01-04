@@ -39,9 +39,9 @@
                   <th scope="col" class="col-sm">Artist</th>
                   <th scope="col" class="d-none d-lg-table-cell col-md">Type</th>
                   <th scope="col" class="d-none d-lg-table-cell col-md text-end">Played</th>
-                  <th scope="col" class="d-none d-lg-table-cell col-md">Last played</th>
+                  {{!-- <th scope="col" class="d-none d-lg-table-cell col-md">Last played</th> --}}
                   <th scope="col" class="d-none d-lg-table-cell col-md text-end">Requested</th>
-                  <th scope="col" class="d-none d-lg-table-cell col-md">Last request</th>
+                  {{!-- <th scope="col" class="d-none d-lg-table-cell col-md">Last request</th> --}}
                   <th scope="col" class="col-sm"></th>
                 </tr>
               </thead>
@@ -52,21 +52,21 @@
                     <td class="col-sm align-top">{{song.artist}}</td>
                     <td class="d-none d-lg-table-cell col-md align-top">{{song.type}}</td>
                     <td class="d-none d-lg-table-cell col-md align-top text-end">{{song.times_played}}</td>
-                    <td class="d-none d-lg-table-cell col-md align-top">
+                    {{!-- <td class="d-none d-lg-table-cell col-md align-top">
                       {{#if song.last_played}}
                         {{nicer-date song.last_played format="DD/MM/YYYY"}}
                       {{else}}
                         Never
                       {{/if}}
-                    </td>
+                    </td> --}}
                     <td class="d-none d-lg-table-cell col-md align-top text-end">{{song.times_requested}}</td>
-                    <td class="d-none d-lg-table-cell col-md align-top">
+                    {{!-- <td class="d-none d-lg-table-cell col-md align-top">
                       {{#if song.last_requested}}
                         {{nicer-date song.last_requested format="DD/MM/YYYY"}}
                       {{else}}
                         Never
                       {{/if}}
-                    </td>
+                    </td>--}}
                     <td class="col-auto py-0 pe-0">
                       <div class="row g-0">
                         <div class="col-auto ms-auto btn-group my-0">

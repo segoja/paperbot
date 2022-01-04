@@ -356,7 +356,7 @@ export default class TwitchChatService extends Service {
                 this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
                 // Song statistics:
                   bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
-                  bestmatch.last_request = new Date();
+                  bestmatch.last_requested = new Date();
                   await bestmatch.save();
                 this.globalConfig.config.save();
               } else {

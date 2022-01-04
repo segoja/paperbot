@@ -14,7 +14,7 @@ export default class SlsongModel extends Model {
   @attr('boolean', {defaultValue: false}) is_sub;
   
   @attr('date', {defaultValue: ""}) date_added;
-  @attr('date', {defaultValue: ""}) last_request;
+  @attr('date', {defaultValue: ""}) last_requested;
   @attr('date', {defaultValue: ""}) last_played;
 
   @attr('number', {defaultValue: ""}) times_requested;
