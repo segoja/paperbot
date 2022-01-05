@@ -93,66 +93,12 @@
           <div class="{{if this.globalConfig.config.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
               <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.extraPanLeftTop (if this.globalConfig.config.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
                 <d.Container class="col h-100 border m-0 p-0">
-                   {{#if @stream.events}}
-                      <div id="events" class="row {{unless this.globalConfig.config.cpanevents "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                        <div class="col {{unless this.globalConfig.config.cpanevents "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
-                          <div class="row bg-secondary text-light">
-                            <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Events</h6></div>
-                            <BsButtonGroup class="col-auto px-0" as |bg|>
-                              <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "events"}} ><FaIcon @icon="{{if this.globalConfig.config.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
-                            </BsButtonGroup>
-                          </div>                          
-                          <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanevents}}>
-                            {{#unless this.globalConfig.config.cpanevents}}                                                          
-                              <div class="col-md eventsframe" {{scroll-position position=this.scrollEventsPosition relative=true}} id="eventlist">
-                                {{#each this.events as |event|}}
-                                  <div class="alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
-                                    <div class="row">
-                                      <div class="col"><small>{{nicer-date event.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
-                                    </div>
-                                    <div class="alert-heading h6">{{event.parsedbody}}</div>
-                                  </div>
-                                {{/each}}
-                              </div>
-                            {{/unless}}  
-                          </BsCollapse>                          
-                        </div>
-                      </div>
-                    {{/if}}
+                   <PbStreamEditEvents @stream={{@stream}} />
                 </d.Container>
               </div>          
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanLeftBottom (if this.globalConfig.config.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
               <d.Container class="col h-100 border m-0 p-0">
-                <div id="chat" class="row {{unless this.globalConfig.config.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                  <div class="col {{unless this.globalConfig.config.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
-                    <div class="row  bg-secondary text-light">
-                      <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Recent messages</h6></div>
-                      <BsButtonGroup class="col-auto px-0" as |bg|>
-                        <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "messages"}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
-                      </BsButtonGroup>
-                    </div>
-                    <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanmessages}}>
-                     {{!--   {{#unless this.globalConfig.config.cpanmessages}}
-                        <div class="col-md-12 chatframe" {{scroll-position position=this.scrollPosition relative=false}}>
-                          
-                          {{#each this.messages as |message|}}
-                            <div class="row" id="{{message.id}}">
-                              {{message-format message}}
-                            </div>
-                          {{/each}}
-                      --}}                            
-                        <iframe 
-                          src={{this.embedChatUrl}}
-                          height="100%"
-                          width="100%"
-                          sandbox="allow-same-origin allow-scripts allow-popups allow-modals allow-storage-access-by-user-activation allow-popups-to-escape-sandbox"
-                        />
-                      {{!-- 
-                        </div>  
-                      {{/unless}} --}}
-                    </BsCollapse>  
-                  </div>
-                </div>
+                <PbStreamEditChat @stream={{@stream}} />
               </d.Container>
             </div>
           </div>
@@ -165,64 +111,12 @@
           <div class="{{if this.requests (if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightTop (if this.globalConfig.config.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
               <d.Container class="col h-100 m-0 p-0"> 
-                {{#if this.requests}}
-                  <div id="pending" class="row {{unless this.globalConfig.config.cpanpending "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                    <div class="col {{unless this.globalConfig.config.cpanpending "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
-                      <div class="row bg-secondary text-light">
-                        <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Songs pending</h6></div>
-                        <BsButtonGroup class="col-auto px-0" as |bg|>
-                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "pending"}} ><FaIcon @icon="{{if this.globalConfig.config.cpanpending "window-maximize" "window-minimize"}}" /></bg.button>
-                        </BsButtonGroup>
-                      </div>
-                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanpending}}>
-                        {{#unless this.globalConfig.config.cpanpending}}
-                          <div class="col-md queueframe" {{scroll-position position=this.queueHandler.scrollPendingPosition relative=true}} id="songqueue">
-                            {{#each this.queueHandler.pendingSongs as |pendingsong|}}
-                              <div id={{pendingsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}} class="alert-info d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
-                                <div class="row">
-                                  <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
-                                  <div class="col-auto"><small>{{pendingsong.user}}</small></div>
-                                </div>
-                                <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
-                              </div>
-                            {{/each}}
-                          </div>
-                        {{/unless}}
-                      </BsCollapse>  
-                    </div>
-                  </div>
-                {{/if}}
+                <PbStreamEditPending @requests={{this.requests}} />
               </d.Container>
             </div>
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightBottom (if this.globalConfig.config.extraPanRightTop "h-50" "h-100") "d-none"}} border">
               <d.Container class="col h-100 m-0 p-0"> 
-                {{#if this.requests}}
-                  <div id="played" class="row {{unless this.globalConfig.config.cpanplayed "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-                    <div class="col {{unless this.globalConfig.config.cpanplayed "h-100"}} flex-column flex-fill d-flex overflow-hidden ">
-                      <div class="row bg-secondary text-light">
-                        <div class="col d-block align-self-center pe-0 ps-2"><h6 class="my-0">Songs played</h6></div>
-                        <BsButtonGroup class="col-auto px-0" as |bg|>
-                          <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{fn this.togglePan "played"}} ><FaIcon @icon="{{if this.globalConfig.config.cpanplayed "window-maximize" "window-minimize"}}" /></bg.button>
-                        </BsButtonGroup>
-                      </div>
-                      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanplayed}}>
-                        {{#unless this.globalConfig.config.cpanplayed}}
-                          <div class="col-md queueframe" {{scroll-position position=this.queueHandler.scrollPlayedPosition relative=true}}>
-                            {{#each this.queueHandler.playedSongs as |playedsong|}}
-                              <div id={{playedsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} {{on-key "right" (fn this.queueHandler.backToQueue playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
-                                <div class="row">
-                                  <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
-                                  <div class="col-auto"><small>{{playedsong.user}}</small></div>
-                                </div>
-                                <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
-                              </div>
-                            {{/each}}
-                          </div>
-                        {{/unless}}
-                      </BsCollapse>
-                    </div>      
-                  </div>
-                {{/if}}
+                <PbStreamEditPlayed @requests={{this.requests}} />
               </d.Container>
             </div>
           </div>
