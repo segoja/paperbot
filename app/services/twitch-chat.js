@@ -310,7 +310,7 @@ export default class TwitchChatService extends Service {
     // Ignore messages from the bot so you don't create command infinite loops
     if (self) { return; }
     // Remove whitespace from chat message
-    const commandName = msg.trim();
+    const commandName = msg.trim().toLowerCase();
     
     // If the command is known, let's execute it      
     if(String(commandName).startsWith('!sr ')){
@@ -319,51 +319,54 @@ export default class TwitchChatService extends Service {
         if(song){
           this.requestpattern = song;
           
-          if (this.filteredSongs.get('length') !== 0 ) { 
+          if (this.filteredSongs.get('length') > 0 ) { 
             console.debug("we found songs!");  
             var bestmatch = await this.filteredSongs.shift();
-            console.debug("=================");
-            console.debug(bestmatch);
-            console.debug("=================");
-            if(bestmatch.active){
-              if(this.commandPermissionHandler(bestmatch, tags) === true){
-                // changing this could break the reader.
-                song = '"'+bestmatch.title+'"';
-                if(bestmatch.artist){
-                  song = song+' by '+bestmatch.artist+'.';
-                }
-                this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+song);
-                this.lastsongrequest = {
-                  id: tags['id'] ? tags['id'].toString() : 'songsys',
-                  timestamp: moment().format(),
-                  type: tags['message-type'] ? tags['message-type'] : null,
-                  song: song,
-                  songId: bestmatch.get('id'),
-                  title: bestmatch.title? bestmatch.title:'',
-                  artist: bestmatch.artist? bestmatch.artist:'',
-                  user: tags['username'] ? tags['username'].toString() : this.botUsername,
-                  displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
-                  color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
-                  csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),
-                  emotes: tags['emotes'] ? tags['emotes'] : null,
-                  processed: false,
-                };
-                this.songqueue.push(this.lastsongrequest);
-                this.queueHandler.songqueue = this.songqueue;
-                if(this.songqueue.length == 1){
-                  this.globalConfig.config.lastPlayed = song;
-                }
-                this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
-                // Song statistics:
-                  bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
-                  bestmatch.last_requested = new Date();
-                  await bestmatch.save();
-                this.globalConfig.config.save();
-              } else {
-                this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
-              }            
+            song = '"'+bestmatch.title+'"';
+            if(bestmatch.artist){
+              song = song+' by '+bestmatch.artist+'.';
+            }            
+            let hasBeenRequested = this.queueHandler.songqueue.find(item => item.song === song);
+            if(await hasBeenRequested){
+              this.botclient.say(target, "/me The song "+song+" has already been requested!");
             } else {
-              this.botclient.say(target, "/me I coudln't infer the song @"+tags['username']+". Try again!");
+              if(bestmatch.active){
+                if(this.commandPermissionHandler(bestmatch, tags) === true){
+                  // changing this could break the reader.
+                  this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+song);
+                  this.lastsongrequest = {
+                    id: tags['id'] ? tags['id'].toString() : 'songsys',
+                    timestamp: moment().format(),
+                    type: tags['message-type'] ? tags['message-type'] : null,
+                    song: song,
+                    songId: bestmatch.get('id'),
+                    title: bestmatch.title? bestmatch.title:'',
+                    artist: bestmatch.artist? bestmatch.artist:'',
+                    user: tags['username'] ? tags['username'].toString() : this.botUsername,
+                    displayname: tags['display-name'] ? tags['display-name'].toString() : this.botUsername,
+                    color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
+                    csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),
+                    emotes: tags['emotes'] ? tags['emotes'] : null,
+                    processed: false,
+                  };
+                                    
+                  this.songqueue.push(this.lastsongrequest);
+                  this.queueHandler.songqueue = this.songqueue;
+                  if(this.songqueue.length == 1){
+                    this.globalConfig.config.lastPlayed = song;
+                  }
+                  this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
+                  // Song statistics:
+                    bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
+                    bestmatch.last_requested = new Date();
+                    await bestmatch.save();
+                  this.globalConfig.config.save();
+                } else {
+                  this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
+                }            
+              } else {
+                this.botclient.say(target, "/me I coudln't infer the song @"+tags['username']+". Try again!");
+              }
             }
           } else {
             this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');         
@@ -374,33 +377,103 @@ export default class TwitchChatService extends Service {
         this.botclient.say(target, "/me Requests are disabled.");
       }
     } else {
-      this.commandlist.forEach((command) => {
-          if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
-            /*if (self) { 
-              return;  
-            } else {*/
-            if(this.commandPermissionHandler(command, tags) === true){
-              switch (command.type) {
-                case 'parameterized':{
-                  let pattern = new RegExp(`${command.name}`, 'gi');
-                  
-                  let param = commandName.replace(pattern, '').trim();
-                  
-                  let answerraw = command.response;
-                  
-                  let answer = answerraw.replace(/\$param/g, param).trim();
-                  
-                  this.botclient.say(target, answer);
-                  
-                  console.debug(`* Executed ${command.name} command`);
-                  
-                  break;
-                }
-                case 'audio':{
-                  if (this.currentUser.soundBoardEnabled){
-                    if(this.lastSoundCommand){
-                      if(this.soundPlaying){
-                        if(this.globalConfig.config.soundOverlap){
+      
+      // !queue lists the songs in queue:
+      if(String(commandName).startsWith('!queue')){
+        if(this.queueHandler.pendingSongs.length > 0){
+          let count = 0;
+          this.botclient.say(target, "/me Songs in queue:");
+          this.songqueue.forEach((item)=>{
+            count = Number(count) + 1;
+            this.botclient.say(target, '/me '+count+' - '+item.title);
+          });
+        } else {
+          this.botclient.say(target, "/me There are no songs in the queue.")
+        }
+        // !ws removes the last song the user requested. Allows one param (mods only), to delete the last request from another user.
+      } else if(String(commandName).startsWith('!ws') ){
+        if(this.queueHandler.pendingSongs.length > 0){        
+          let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };
+          let targetUser = commandName.toLowerCase().replace(/!ws/g, "").trim();
+          
+          if(this.commandPermissionHandler(internalCommand, tags) === true && targetUser){
+            let targetLastSong = await this.queueHandler.pendingSongs.reverse().find(item => item.user == targetUser);
+            if(targetLastSong){
+              
+              let updatedlist = this.songqueue.filter((item) => { 
+                if(targetLastSong.song != item.song && targetLastSong.timestamp != item.timestamp ){
+                    return item;
+                  }
+                });
+              this.songqueue = updatedlist;
+              this.queueHandler.songqueue = this.songqueue;
+              this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
+              this.globalConfig.config.save();
+              this.botclient.say(target, "/me the song '"+targetLastSong.title+"' has been removed.");
+              
+            } else {             
+              this.botclient.say(target, "/me The user @"+targetUser+" doesn't have any song in the queue.");
+            }
+          } else {
+            let commandUser = tags['username'] ? tags['username'].toString() : this.botUsername;
+            if(targetUser){
+              this.botclient.say(target, "/me you don't have permissions to delete someone else's songs." );
+            } else {
+              let userLastSong = await this.queueHandler.pendingSongs.reverse().find(item => item.user == commandUser);
+              if(userLastSong){
+                
+                let updatedlist = this.songqueue.filter((item) => { 
+                  if(userLastSong.song != item.song && userLastSong.timestamp != item.timestamp ){
+                    return item;
+                  }
+                });
+                this.songqueue = await updatedlist;
+                this.queueHandler.songqueue = this.songqueue;
+                this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
+                this.globalConfig.config.save();
+                this.botclient.say(target, "/me the song '"+userLastSong.title+"' has been removed.");
+              } else {
+                this.botclient.say(target, "/me you don't have songs in the queue." );
+              }
+            }
+          }  
+        } else {
+          this.botclient.say(target, "/me There are no songs to be removed.");
+        }          
+
+      } else{
+        this.commandlist.forEach((command) => {
+            if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
+              /*if (self) { 
+                return;  
+              } else {*/
+              if(this.commandPermissionHandler(command, tags) === true){
+                switch (command.type) {
+                  case 'parameterized':{
+                    let pattern = new RegExp(`${command.name}`, 'gi');
+                    
+                    let param = commandName.replace(pattern, '').trim();
+                    
+                    let answerraw = command.response;
+                    
+                    let answer = answerraw.replace(/\$param/g, param).trim();
+                    
+                    this.botclient.say(target, answer);
+                    
+                    console.debug(`* Executed ${command.name} command`);
+                    
+                    break;
+                  }
+                  case 'audio':{
+                    if (this.currentUser.soundBoardEnabled){
+                      if(this.lastSoundCommand){
+                        if(this.soundPlaying){
+                          if(this.globalConfig.config.soundOverlap){
+                            this.lastSoundCommand = this.audio.getSound(command.name);
+                            this.lastSoundCommand.changeGainTo(command.volume).from('percent');
+                            this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
+                          }
+                        } else {
                           this.lastSoundCommand = this.audio.getSound(command.name);
                           this.lastSoundCommand.changeGainTo(command.volume).from('percent');
                           this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
@@ -410,27 +483,22 @@ export default class TwitchChatService extends Service {
                         this.lastSoundCommand.changeGainTo(command.volume).from('percent');
                         this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
                       }
-                    } else {
-                      this.lastSoundCommand = this.audio.getSound(command.name);
-                      this.lastSoundCommand.changeGainTo(command.volume).from('percent');
-                      this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
                     }
+                    break;
                   }
-                  break;
+                  default:{
+                    this.botclient.say(target, command.response);
+                    console.debug(`* Executed ${command.name} command`);
+                    break;
+                  }
                 }
-                default:{
-                  this.botclient.say(target, command.response);
-                  console.debug(`* Executed ${command.name} command`);
-                  break;
-                }
-              }
-            } else{ 
-              console.debug("Not authorized to use "+command.name+" command.")
-            } 
-            /*}*/
-          }
-
-      });        
+              } else{ 
+                console.debug("Not authorized to use "+command.name+" command.")
+              } 
+              /*}*/
+            }
+        });           
+      }
     }
   }
 
