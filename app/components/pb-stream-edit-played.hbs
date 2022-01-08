@@ -16,7 +16,7 @@
                   <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                   <div class="col-auto"><small>{{playedsong.user}}</small></div>
                 </div>
-                <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.song}}</div>
+                <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.fullText}}</div>
               </div>
             {{/each}}
           </div>

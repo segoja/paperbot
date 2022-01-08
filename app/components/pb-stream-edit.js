@@ -108,7 +108,7 @@ export default class PbStreamEditComponent extends Component {
     }
 
     this.msglist = this.twitchChat.messages;
-    this.queueHandler.songqueue = this.twitchChat.songqueue;
+    // this.queueHandler.songqueue = this.twitchChat.songqueue.toArray();
     this.queueHandler.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
     this.queueHandler.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
     
@@ -247,7 +247,14 @@ export default class PbStreamEditComponent extends Component {
       if(this.args.stream.savechat){
         this.args.stream.chatlog = this.twitchChat.messages;        
       }
-      this.args.stream.songqueue = this.twitchChat.songqueue;
+      
+      this.args.stream.songqueue = [];
+      if(this.twitchChat.songqueue.length > 0 ){
+        this.twitchChat.songqueue.forEach((request)=>{
+          let entry = { 'timestamp': request.timestamp, 'song': request.fullText, 'user': request.user, 'processed': request.processed };
+          this.args.stream.songqueue.push(entry);
+        });
+      }
       
       if(this.eventsExternal.connected){
         this.args.stream.eventlog = this.eventsExternal.events;
@@ -264,8 +271,6 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.eventlist = [];    
       this.twitchChat.whisperlist = [];
       this.twitchChat.msglist = [];
-      this.twitchChat.songqueue = [];    
-      this.queueHandler.songqueue = [];
       this.msglist = [];
     }
   }
@@ -274,7 +279,6 @@ export default class PbStreamEditComponent extends Component {
   // message and updates both the chatlog and the song queue.
   @action msgGetter() {
     this.msglist = this.twitchChat.messages;    
-    this.queueHandler.songqueue = this.twitchChat.songqueue;
     this.scrollPosition = this.messages.get('length');
     this.queueHandler.scrollPlayedPosition = 0;
     this.queueHandler.scrollPendingPosition = 0;
@@ -312,9 +316,7 @@ export default class PbStreamEditComponent extends Component {
         }
       }
       if(this.isQueueEmpty === false){
-        if(this.queueHandler.songqueue != this.args.stream.songqueue){
-          this.args.stream.songqueue = this.queueHandler.songqueue;
-        }
+        this.args.stream.songqueue = this.queueHandler.songqueue.toArray();
       }
       if(this.isEventsEmpty === false){
         if(this.eventlist != this.args.stream.eventlog){
@@ -342,9 +344,7 @@ export default class PbStreamEditComponent extends Component {
         }
       }
       if(this.isQueueEmpty === false){
-        if(this.queueHandler.songqueue != this.args.stream.songqueue){
-          this.args.stream.songqueue = this.queueHandler.songqueue;
-        }
+        this.args.stream.songqueue = this.queueHandler.songqueue.toArray();
       }
       if(this.isEventsEmpty === false){
         if(this.eventlist != this.args.stream.eventlog){

@@ -11,14 +11,17 @@ export default class ConfigModel extends Model {
   @attr('string', {defaultValue: ""}) externalevents;  
   @attr('string', {defaultValue: ""}) externaleventskey;
 
-
   @attr songQueue;
+  
   @attr('string', {defaultValue: ""}) lastPlayed;
+  @attr('string', {defaultValue: ""}) nextPlayed;
+  
   @attr('string', {defaultValue: ""}) defchannel;
   
   @attr('string', {defaultValue: ""}) overlayType;
   @attr('boolean', {defaultValue: false}) showOverlay;
   @attr('string', {defaultValue: "#006600ff"}) chromaColor;
+  @attr('number', {defaultValue: 5}) overlayLength;
   @attr('number', {defaultValue: 550}) overlayWidth;
   @attr('number', {defaultValue: 175}) overlayHeight;
   @attr('number', {defaultValue: 0}) overlayPosX;

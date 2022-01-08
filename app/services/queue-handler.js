@@ -17,14 +17,17 @@ export default class QueueHandlerService extends Service {
   @service currentUser;
   @service store;
   @service router;
-  @tracked songqueue = []; 
   @tracked lastStream = '';
   @tracked scrollPlayedPosition = 0;
   @tracked scrollPendingPosition = 0;
   @tracked oldHtml = '';
 
   // We use this property to track if a key is pressed or not using ember-keyboard helpers.
-  @tracked modifierkey =  false;  
+  @tracked modifierkey =  false;
+  
+  get songqueue(){
+    return this.store.peekAll('request');
+  }
   
   queueAscSorting = Object.freeze(['timestamp:asc']); 
   @sort (
@@ -36,8 +39,7 @@ export default class QueueHandlerService extends Service {
   @sort (
     'songqueue',
     'queueDescSorting'
-  ) arrangedDescQueue;
-  
+  ) arrangedDescQueue;  
     
   get pendingSongs() {
     return this.arrangedAscQueue.filterBy('processed', false);
@@ -62,88 +64,96 @@ export default class QueueHandlerService extends Service {
     }
   }
 
-  @action requestStatus(song) {    
+  @action async requestStatus(request) {    
     // We use set in order to make sure the context updates properly.
-    if(song.processed === true && this.modifierkey === true){
+    if(request.processed === true && this.modifierkey === true){
       // Next line makes the element to get back in the pending list but in the last position:
-      set(song,'timestamp',moment().format());
-    }
-    set(song,'processed', !song.processed);
-    
-    if(song.processed){
-      this.store.findRecord('song', song.songId).then(async (actualSong)=>{
-        if(await actualSong.isLoaded){
-          actualSong.last_played = new Date();
-          actualSong.times_played = Number(actualSong.times_played) + 1;
-          await actualSong.save();
-        }
-      });
+      request.timestamp = new Date();
     }
     
-    this.scrollPlayedPosition = 0;
-    this.scrollPendingPosition = 0;
+    request.processed = !request.processed;
     
-    if(this.pendingSongs.get('length') != 0){
-      this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
-    } else {
-      this.globalConfig.config.lastPlayed = '';
-    }
-    
-    // We keep the keue updated in the config so the overlay window updates:
-    this.globalConfig.config.songQueue = this.pendingSongs;
-    this.globalConfig.config.save();
-    
-    if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
-      this.fileContent(this.pendingSongs);
-    }    
+    request.save().then(()=>{
+      if(request.processed){        
+        this.store.findRecord('song', request.song.get('id')).then(async (actualSong)=>{
+          if(await actualSong.isLoaded){
+            actualSong.last_played = new Date();
+            actualSong.times_played = Number(actualSong.times_played) + 1;
+            await actualSong.save();
+          }
+        });
+      }
+      
+      this.scrollPlayedPosition = 0;
+      this.scrollPendingPosition = 0;
+      
+      if(this.pendingSongs.get('length') > 0){
+        this.globalConfig.config.lastPlayed = this.pendingSongs.get('firstObject').fullText;
+        this.globalConfig.config.nextPlayed = this.pendingSongs.get('firstObject').song.get('id');
+      } else {
+        this.globalConfig.config.lastPlayed = '';
+        this.globalConfig.config.nextPlayed = '';
+      }
+      
+      // We keep the keue updated in the config so the overlay window updates:
+      // this.globalConfig.config.songQueue = this.pendingSongs;
+      this.globalConfig.config.save();
+      
+      if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
+        this.fileContent(this.pendingSongs);
+      }
+    });
   }
   
-  @action backToQueue(song) {    
+  @action async backToQueue(request) {    
     // We use set in order to make sure the context updates properly.
-    if(song.processed === true){
+    if(request.processed === true){
       // Next line makes the element to get back in the pending list but in the last position:
-      set(song,'timestamp',moment().format());
+      request.timestamp = new Date();
     }
-    set(song,'processed', !song.processed);
+    
+    request.processed = !request.processed;
+    
     this.scrollPlayedPosition = 0;
     this.scrollPendingPosition = 0;
+    
     if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
       this.fileContent(this.pendingSongs);
     }
     // We keep the keue updated in the config so the overlay window updates:
-    this.globalConfig.config.songQueue = this.pendingSongs;
+    // this.globalConfig.config.songQueue = this.pendingSongs;
     this.globalConfig.config.save();
   }
 
   
-  @action nextSong(){
-    if(this.pendingSongs.get('length') != 0){
+  @action async nextSong(){
+    if(this.pendingSongs.get('length') > 0){
       // For selecting the last element of the array:
-      // let firstSong = this.pendingSongs[this.pendingSongs.length-1];
-      // For selecting the first element of the array:
-      let firstSong = this.pendingSongs[0];
-      //if(firstSong.processed === true){
-        // set(firstSong, 'timestamp', moment().format());
-      //}
-      set(firstSong,'processed', true);
-      this.store.findRecord('song', firstSong.songId).then(async (song)=>{
-        if(await song.isLoaded){
-          console.log(song);
-          song.times_played = Number(song.times_played) + 1;
-          await song.save();
-        }
+      let firstRequest = this.pendingSongs.get('firstObject');
+
+      firstRequest.processed = true;
+      
+      firstRequest.save().then(()=>{
+        this.store.findRecord('song', firstRequest.song.get('id')).then(async (song)=>{
+          if(await song.isLoaded){
+            console.log(song);
+            song.times_played = Number(song.times_played) + 1;
+            await song.save();
+          }
+        });
+        this.scrollPlayedPosition = 0;
+        this.scrollPendingPosition = 0;
+        this.fileContent(this.pendingSongs);
+        if(this.pendingSongs.get('length') > 0){
+          this.globalConfig.config.lastPlayed = this.pendingSongs.get('firstObject').fullText;
+          this.globalConfig.config.nextPlayed = this.pendingSongs.get('firstObject').song.get('id');
+        } else {
+          this.globalConfig.config.lastPlayed = '';
+          this.globalConfig.config.nextPlayed = '';
+        }        
       });
-      this.scrollPlayedPosition = 0;
-      this.scrollPendingPosition = 0;
-      this.fileContent(this.pendingSongs);
-      if(this.pendingSongs.get('length') != 0){
-        this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
-      } else {
-        this.globalConfig.config.lastPlayed = '';
-      }
     }
     // We keep the keue updated in the config so the overlay window updates:
-    this.globalConfig.config.songQueue = this.pendingSongs;
     this.globalConfig.config.save();
     
     if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
@@ -151,27 +161,30 @@ export default class QueueHandlerService extends Service {
     }
   }
   
-  @action prevSong(){
-    if(this.playedSongs.get('length') != 0){
-      // For selecting the last element of the array:
-      // let firstSong = this.playedSongs[this.playedSongs.length-1];
+  @action async prevSong(){
+    if(this.playedSongs.get('length') > 0){
       // For selecting the first element of the array:
-      let firstSong = this.playedSongs[0];
-      if(firstSong.processed === true && this.modifierkey === true){
+      let firstRequest = this.playedSongs.get('firstObject');
+      if(firstRequest.processed === true && this.modifierkey === true){
         // Next line makes the element to get back in the pending list but in the last position:
-        set(firstSong,'timestamp',moment().format());
+        firstRequest.timestamp = new Date();
       }
-      set(firstSong,'processed', false);
-      this.scrollPlayedPosition = 0;
-      this.scrollPendingPosition = 0;
-      if(this.pendingSongs.get('length') != 0){
-        this.globalConfig.config.lastPlayed = this.pendingSongs[0].song;
-      } else {
-        this.globalConfig.config.lastPlayed = '';
-      }
+      
+      firstRequest.processed = false;
+      
+      firstRequest.save().then(()=>{
+        this.scrollPlayedPosition = 0;
+        this.scrollPendingPosition = 0;
+        if(this.pendingSongs.get('length') > 0){
+          this.globalConfig.config.lastPlayed = this.pendingSongs.get('firstObject').fullText;
+          this.globalConfig.config.nextPlayed = this.pendingSongs.get('firstObject').song.get('id');
+        } else {
+          this.globalConfig.config.lastPlayed = '';
+          this.globalConfig.config.nextPlayed = '';
+        }
+      });
     }
     // We keep the keue updated in the config so the overlay window updates:
-    this.globalConfig.config.songQueue = this.pendingSongs;
     this.globalConfig.config.save();
     
     if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){

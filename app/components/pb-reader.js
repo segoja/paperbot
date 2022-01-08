@@ -24,41 +24,19 @@ export default class PbReaderComponent extends Component {
     super(...arguments);
   }
   
+  requestSorting = Object.freeze(['timestamp:asc']);  
+  @sort ('args.requests','requestSorting') arrangedRequests;
   
-  songsSorting = Object.freeze(['date_added:asc']);  
-  @sort ('args.songs','songsSorting') arrangedContent;
-  
-  @computed('globalConfig.config.lastPlayed', 'restore', 'selected')
-  get filterQueryString(){
-    let restore = this.restore;
-    let lastPlayed = this.globalConfig.config.lastPlayed;
-    let selected = this.selected;
-    if( lastPlayed != '' && !selected ){
-      return lastPlayed.replace(' by ',' ').replace(/"/g, "").replace(/.$/, " ");
+  get firstRequest(){
+    let pending = this.arrangedRequests.filterBy('processed', false);
+    if(pending.length > 0){
+      return pending.get('firstObject');
     }
     return '';
   }
-
-  @computedFilterByQuery(
-    'arrangedContent',
-    ['title','artist'],
-    'filterQueryString',
-    { conjunction: 'and', sort: false}
-  ) filteredContent;  
-
-  get currentSong(){
-    let song = [];
-    if(this.selected){
-      song = this.selected;
-    } else {
-      if(this.globalConfig.config.lastPlayed){
-        song = this.filteredContent.shift();
-      } else {
-        console.debug('No songs active.');
-      }      
-    }
-    return song;
-  }
+  
+  songsSorting = Object.freeze(['date_added:asc']);  
+  @sort ('args.songs','songsSorting') arrangedContent;
   
   @computedFilterByQuery(
     'arrangedContent',
@@ -66,12 +44,25 @@ export default class PbReaderComponent extends Component {
     'songQuery',
     { conjunction: 'and', sort: false, limit: 20}
   ) filteredSongs; 
+  
+  get currentSong(){
+    let song = [];
+    if(this.selected){
+      song = this.selected;
+    } else {
+      if(this.firstRequest){
+        song = this.firstRequest.song;
+      } else {
+        console.debug('No songs active.');
+      }      
+    }
+    return song;
+  }
 
   @action searchSong(query){
     this.songQuery = query;
     return this.filteredSongs;
-  } 
-  
+  }   
   
   @action selectSong(song){
     this.selected = song;

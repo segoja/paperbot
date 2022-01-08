@@ -10,7 +10,8 @@ export default class ApplicationRoute extends Route  {
     var store = this.store;
     return hash({
       model: store.findAll('config'),
-      clients: store.findAll('client')
+      clients: store.findAll('client'),
+      requests: store.findAll('request')
     });
   }
   
@@ -21,5 +22,10 @@ export default class ApplicationRoute extends Route  {
 
   afterModel(model) {    
     this.headData.title = 'Paperbot, a Twitch.tv bot by Papercat84';
+    if(model.requests.length > 0){
+      model.requests.map(async (request)=>{
+        await request.destroyRecord();
+      });
+    }
   } 
 }

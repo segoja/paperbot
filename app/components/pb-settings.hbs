@@ -98,6 +98,7 @@
                     </div>
                   </div>
                 </div>
+                <form.element @controlType="number" @label="Number of elements" class="pb-2" placeholder="Default channel name" @property="overlayLength" required />
               {{else}}
                 <div class="form-group row">
                   <div class="col"> 
@@ -124,6 +125,7 @@
                     <form.element @controlType="checkbox" @label="Show on start" @formLayout="inline" class="form-check form-check-inline ps-0 mb-0 pt-2" @property="showOverlay" required />
                   </div>
                 </div>
+                <form.element @controlType="number" @label="Number of elements" class="pb-2" placeholder="Default channel name" @property="overlayLength" required />
               {{/if}}
               <hr class="mt-0 mb-2">
             </div>

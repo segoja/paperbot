@@ -31,4 +31,12 @@ export default class SongModel extends Model {
     let string = this.title.toString()+' '+this.artist.toString()+' '+this.keywords.toString();
     return string.toString();
   }
+
+  get fullText(){
+    let text = '"'+this.title+'"';
+    if(this.artist){
+      text = text+' by '+this.artist+'.';
+    }
+    return text;    
+  }  
 }

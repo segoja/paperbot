@@ -16,7 +16,7 @@
                   <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                   <div class="col-auto"><small>{{pendingsong.user}}</small></div>
                 </div>
-                <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.song}}</div>
+                <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.fullText}}</div>
               </div>
             {{/each}}
           </div>

@@ -8,7 +8,7 @@ export default class OverlayRoute extends Route {
   @service globalConfig;
 
   model () {
-    return this.store.findAll('song');
+    return this.store.findAll('request');
   }
     
   afterModel(){

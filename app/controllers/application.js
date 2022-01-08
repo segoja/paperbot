@@ -24,6 +24,7 @@ export default class ApplicationController extends Controller {
   constructor() {
     super(...arguments);
     let currentWindow = getCurrent();
+    // We wipe requests on every app start;
 
     this.store.findAll('config').then(()=>{
       let currentconfig = this.store.peekRecord('config','myconfig');
