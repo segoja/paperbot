@@ -7,6 +7,7 @@ import { sort } from '@ember/object/computed';
 import moment from 'moment';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import tmi from 'tmi.js';
+import { later } from '@ember/runloop';
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -47,14 +48,17 @@ export default class TwitchChatService extends Service {
   @tracked botConnected = false;
   
   @tracked chanId;
-  @tracked commands = [];
+  
   get commandlist(){
-    return this.commands || [];
+    return this.store.peekAll('command').filterBy('active', true);
   }
 
-  @tracked audiocommands = [];
   get audiocommandslist(){
-    return this.audiocommands || [];
+    return this.commandlist.filterBy('type', 'audio');
+  }
+
+  get songs(){
+    return this.store.peekAll('song').filterBy('active', true);
   }
     
   @tracked lastmessage = null;
@@ -98,9 +102,7 @@ export default class TwitchChatService extends Service {
     ('SpringGreen', 'rgb(0, 255, 127)'),
   ];
  
-  @tracked songs = '';
-  @tracked streamlabs;
-  
+  @tracked streamlabs;  
   
   constructor() {
     super(...arguments);
@@ -182,9 +184,9 @@ export default class TwitchChatService extends Service {
     console.debug(`* Connected to ${addr}:${port}`);
   }  
 
-  @action soundboard(){
+  @action async soundboard(){
     console.debug("Loading the soundboard...");
-    if(this.audiocommandslist.length !== 0){
+    if(await this.audiocommandslist.length > 0){
       this.audiocommandslist.forEach((command) => {
         this.audio.load(command.soundfile).asSound(command.name).then(
           function() {
@@ -202,7 +204,7 @@ export default class TwitchChatService extends Service {
 
   @action unloadSoundboard(){
     console.debug("Unloading the soundboard...");
-    if(this.audiocommandslist.length !== 0){
+    if(this.audiocommandslist.get('length') > 0){
       this.audiocommandslist.forEach((command) => {
         this.audio.removeFromRegister('sound', command.name);
         console.debug(command.soundfile+ " unloaded from the soundboard");
@@ -245,7 +247,7 @@ export default class TwitchChatService extends Service {
         if(song){
           this.requestpattern = song;
           
-          if (this.filteredSongs.get('length') > 0 ) { 
+          if (await this.filteredSongs.get('length') > 0 ) { 
             var bestmatch = await this.filteredSongs.shift();          
             let hasBeenRequested = this.queueHandler.songqueue.find(item => item.fullText === bestmatch.fullText);
             if(await hasBeenRequested){
@@ -272,7 +274,9 @@ export default class TwitchChatService extends Service {
                     await bestmatch.save();
                     
                     console.log(bestmatch.fullText+' added at position '+nextPosition);
-                    
+                    this.queueHandler.scrollPendingPosition = 0;
+                    this.queueHandler.scrollPlayedPosition = 0;
+
                     // changing this could break the reader.
                     this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);                    
                   });
@@ -296,15 +300,13 @@ export default class TwitchChatService extends Service {
     }
   }
 
-  songsSorting = Object.freeze(['date_added:asc']);
-  
+  songsSorting = Object.freeze(['date_added:asc']);  
   @sort (
     'songs',
     'songsSorting'
   ) arrangedSongs; 
   
-  @tracked requestpattern = '';
-  
+  @tracked requestpattern = '';  
   @computedFilterByQuery(
     'arrangedSongs',
     ['title','artist','keywords'],
@@ -358,6 +360,8 @@ export default class TwitchChatService extends Service {
                     
                     console.log(bestmatch.fullText+' added at position '+nextPosition);
                     
+                    this.queueHandler.scrollPendingPosition = 0;
+                    this.queueHandler.scrollPlayedPosition = 0;
                     // changing this could break the reader.
                     this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);                    
                   });
@@ -380,7 +384,7 @@ export default class TwitchChatService extends Service {
       
       // !queue lists the songs in queue:
       if(String(commandName).startsWith('!queue') || String(commandName).startsWith('!sq')){
-        if(await this.queueHandler.pendingSongs.length > 0){
+        if(await this.queueHandler.pendingSongs.get('length') > 0){
           let count = 0;
           this.botclient.say(target, "/me Songs in queue:");
           this.queueHandler.pendingSongs.forEach(async (item)=>{
@@ -394,7 +398,7 @@ export default class TwitchChatService extends Service {
         }
         // !ws removes the last song the user requested. Allows one param (mods only), to delete the last request from another user.
       } else if(String(commandName).startsWith('!ws') ){
-        if(this.queueHandler.pendingSongs.length > 0){        
+        if(this.queueHandler.pendingSongs.get('length') > 0){        
           let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };
           let targetUser = commandName.toLowerCase().replace(/!ws/g, "").trim();
           
@@ -403,7 +407,7 @@ export default class TwitchChatService extends Service {
             if(targetLastSong){
               let songname = targetLastSong.fullText;
               targetLastSong.destroyRecord().then(()=>{
-                this.botclient.say(target, "/me the song '"+songname+"' has been removed.");
+                this.botclient.say(target, "/me the song "+songname+" has been removed.");
               });
             } else {             
               this.botclient.say(target, "/me The user @"+targetUser+" doesn't have any song in the queue.");
@@ -417,7 +421,7 @@ export default class TwitchChatService extends Service {
               if(userLastSong){
                 let songname = userLastSong.fullText;
                 userLastSong.destroyRecord().then(()=>{
-                  this.botclient.say(target, "/me the song '"+songname+"' has been removed.");
+                  this.botclient.say(target, "/me the song "+songname+" has been removed.");
                 });
               } else {
                 this.botclient.say(target, "/me you don't have songs in the queue." );
@@ -429,33 +433,44 @@ export default class TwitchChatService extends Service {
         }          
 
       } else{
-        this.commandlist.forEach((command) => {
-            if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
-              /*if (self) { 
-                return;  
-              } else {*/
-              if(this.commandPermissionHandler(command, tags) === true){
-                switch (command.type) {
-                  case 'parameterized':{
-                    let pattern = new RegExp(`${command.name}`, 'gi');
-                    
-                    let param = commandName.replace(pattern, '').trim();
-                    
-                    let answerraw = command.response;
-                    
-                    let answer = answerraw.replace(/\$param/g, param).trim();
-                    
-                    this.botclient.say(target, answer);
-                    
-                    console.debug(`* Executed ${command.name} command`);
-                    
-                    break;
-                  }
-                  case 'audio':{
-                    if (this.currentUser.soundBoardEnabled){
-                      if(this.lastSoundCommand){
-                        if(this.soundPlaying){
-                          if(this.globalConfig.config.soundOverlap){
+        if(await this.commandlist.get('length') > 0){
+          this.commandlist.forEach((command) => {
+              if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
+                /*if (self) { 
+                  return;  
+                } else {*/
+                if(this.commandPermissionHandler(command, tags) === true){
+                  switch (command.type) {
+                    case 'parameterized':{
+                      let pattern = new RegExp(`${command.name}`, 'gi');
+                      
+                      let param = commandName.replace(pattern, '').trim();
+                      
+                      let answerraw = command.response;
+                      
+                      let answer = answerraw.replace(/\$param/g, param).trim();
+                      
+                      if(isNaN(command.timer)){
+                        this.botclient.say(target, answer);                    
+                        console.debug(`* Executed ${command.name} command`);
+                      } else {
+                        later(() => { 
+                          this.botclient.say(target, answer);                    
+                          console.debug(`* Executed ${command.name} command`);
+                        }, command.timer);
+                      }                    
+                      break;
+                    }
+                    case 'audio':{
+                      if (this.currentUser.soundBoardEnabled){
+                        if(this.lastSoundCommand){
+                          if(this.soundPlaying){
+                            if(this.globalConfig.config.soundOverlap){
+                              this.lastSoundCommand = this.audio.getSound(command.name);
+                              this.lastSoundCommand.changeGainTo(command.volume).from('percent');
+                              this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
+                            }
+                          } else {
                             this.lastSoundCommand = this.audio.getSound(command.name);
                             this.lastSoundCommand.changeGainTo(command.volume).from('percent');
                             this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
@@ -465,26 +480,31 @@ export default class TwitchChatService extends Service {
                           this.lastSoundCommand.changeGainTo(command.volume).from('percent');
                           this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
                         }
-                      } else {
-                        this.lastSoundCommand = this.audio.getSound(command.name);
-                        this.lastSoundCommand.changeGainTo(command.volume).from('percent');
-                        this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
                       }
+                      break;
                     }
-                    break;
+                    default:{
+                      if(isNaN(command.timer)){
+                        this.botclient.say(target, command.response);
+                        console.debug(`* Executed ${command.name} command`);
+                      } else {
+                        later(() => { 
+                          this.botclient.say(target, command.response);
+                          console.debug(`* Executed ${command.name} command`);
+                        }, command.timer);
+                      }
+                      break;
+                    }
                   }
-                  default:{
-                    this.botclient.say(target, command.response);
-                    console.debug(`* Executed ${command.name} command`);
-                    break;
-                  }
-                }
-              } else{ 
-                console.debug("Not authorized to use "+command.name+" command.")
-              } 
-              /*}*/
-            }
-        });           
+                } else{ 
+                  console.debug("Not authorized to use "+command.name+" command.")
+                } 
+                /*}*/
+              }
+          });
+        } else {
+          this.botclient.say(target, "/me There are no commands to lauch.");
+        }
       }
     }
   }

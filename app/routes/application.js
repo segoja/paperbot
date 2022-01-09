@@ -12,6 +12,10 @@ export default class ApplicationRoute extends Route  {
     return hash({
       model: store.findAll('config'),
       clients: store.findAll('client'),
+      songs: store.findAll('song'),
+      streams: store.findAll('stream'),
+      commands: store.findAll('command'),
+      events: store.findAll('event'),
       requests: store.findAll('request')
     });
   }
@@ -29,5 +33,10 @@ export default class ApplicationRoute extends Route  {
         await request.destroyRecord();
       });
     }
+    if(model.events.length > 0 && currentWindow.label === 'Main'){
+      model.events.map(async (event)=>{
+        await event.destroyRecord();
+      });
+    }    
   } 
 }

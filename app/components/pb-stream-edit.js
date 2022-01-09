@@ -1,11 +1,8 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { action, set } from '@ember/object';
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { empty, sort } from '@ember/object/computed';
-import moment from 'moment';
 import { later } from '@ember/runloop';
-import { fs } from "@tauri-apps/api";
 
 export default class PbStreamEditComponent extends Component {
   @service eventsExternal;
@@ -14,30 +11,15 @@ export default class PbStreamEditComponent extends Component {
   @service audio;
   @service currentUser;
   @service queueHandler;
-
-  @empty ('twitchChat.messages') isChatEmpty;
-  @empty ('twitchChat.songqueue') isQueueEmpty;
-  @empty ('twitchChat.events') isEventsEmpty;
-  @empty ('eventsExternal.events') isEventsExternalEmpty;
   
   @tracked saving = false;
-  @tracked optsbot = this.args.stream.botclient.get('optsgetter');
-  @tracked scrollPosition = 0;
-  @tracked scrollEventsPosition = 0;
-  @tracked message = "";
-  @tracked eventlist = [];  
-  @tracked msglist = [];
-    
-  eventsDescSorting = Object.freeze(['timestamp:desc']);    
-  @sort (
-    'eventlist',
-    'eventsDescSorting'
-  ) arrangedDescEvents;
   
-  @sort (
-    'eventsExternal.evenlist',
-    'eventsDescSorting'
-  ) arrangedDescEventsExternal;  
+  get optsbot(){
+    return this.args.stream.botclient.get('optsgetter');
+  }
+
+  @tracked message = ""; 
+  @tracked msglist = [];
   
   get disableBotButton(){
     if(this.args.stream.finished === true || this.args.stream.botclient === '' || this.args.stream.channel === ''){
@@ -112,8 +94,6 @@ export default class PbStreamEditComponent extends Component {
     this.queueHandler.scrollPlayedPosition = this.queueHandler.pendingSongs.get('length');
     this.queueHandler.scrollPendingPosition = this.queueHandler.playedSongs.get('length');
     
-    this.twitchChat.commands = this.args.commands.filterBy('active', true);
-    this.twitchChat.songs = this.args.songs.filterBy('active', true);
     
     if(this.twitchChat.botConnected === true){
       this.twitchChat.botclient.on('message', this.msgGetter);
@@ -138,7 +118,7 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.botclient.on("whisper", this.msgGetter);
       
       //  Stream events:
-      this.twitchChat.botclient.on("cheer", this.eventGetter);
+      /*this.twitchChat.botclient.on("cheer", this.eventGetter);
       this.twitchChat.botclient.on("hosted", this.eventGetter);
       this.twitchChat.botclient.on("raided", this.eventGetter);
       this.twitchChat.botclient.on("resub", this.eventGetter);
@@ -148,7 +128,7 @@ export default class PbStreamEditComponent extends Component {
       if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
         this.eventsExternal.client.on("event", this.eventGetter);
         this.eventsExternal.client.on("event:test", this.eventGetter);
-      }
+      }*/
     }
   }
 
@@ -166,11 +146,7 @@ export default class PbStreamEditComponent extends Component {
     }
     this.twitchChat.savechat = this.args.stream.savechat;
     
-    this.twitchChat.audiocommands = this.audiocommandslist;
-    this.twitchChat.commands = this.args.commands.filterBy('active', true);
-    this.twitchChat.songs = this.args.songs.filterBy('active', true);
     this.twitchChat.botUsername = this.args.stream.botName || '';
-
     
     if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
       this.eventsExternal.token = this.globalConfig.config.externaleventskey;
@@ -199,7 +175,7 @@ export default class PbStreamEditComponent extends Component {
         this.twitchChat.botclient.on("whisper", this.msgGetter);
         
         //  Stream events:
-        this.twitchChat.botclient.on("cheer", this.eventGetter);
+        /*this.twitchChat.botclient.on("cheer", this.eventGetter);
         this.twitchChat.botclient.on("follow", this.eventGetter);
         this.twitchChat.botclient.on("hosted", this.eventGetter);
         this.twitchChat.botclient.on("raided", this.eventGetter);
@@ -210,7 +186,7 @@ export default class PbStreamEditComponent extends Component {
         if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
           this.eventsExternal.client.on("event", this.eventGetter);
           this.eventsExternal.client.on("event:test", this.eventGetter);
-        }
+        }*/
       }
     );
       // later(() => { console.debug(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     
@@ -255,16 +231,30 @@ export default class PbStreamEditComponent extends Component {
       
       this.args.stream.songqueue = [];
       if(this.queueHandler.songqueue.length > 0 ){
-        this.queueHandler.songqueue.sortBy('position').forEach((request)=>{
+
+        this.queueHandler.playedSongs.reverse().forEach(async (request)=>{
           let entry = { 'timestamp': request.timestamp, 'song': request.fullText, 'user': request.user, 'processed': request.processed };
           this.args.stream.songqueue.push(entry);
+          await request.destroyRecord();
         });
+
+        this.queueHandler.pendingSongs.forEach(async (request)=>{
+          let entry = { 'timestamp': request.timestamp, 'song': request.fullText, 'user': request.user, 'processed': request.processed };
+          this.args.stream.songqueue.push(entry);
+          await request.destroyRecord();
+        });
+        
       }
       
+      this.args.stream.eventlog = [];
       if(this.eventsExternal.connected){
-        this.args.stream.eventlog = this.eventsExternal.events;
-      } else {
-        this.args.stream.eventlog = this.twitchChat.events;
+        if(this.eventsExternal.arrangedEvents.length > 0 ){
+          this.eventsExternal.arrangedEvents.forEach(async (event)=>{
+            let entry = { 'type': event.type, 'timestamp': event.timestamp, 'parsedbody': event.parsedbody };
+            this.args.stream.eventlog.push(entry);
+            await event.destroyRecord();            
+          });
+        }
       }
       
       if(this.twitchChat.botConnected === true || this.eventsExternal.connected){
@@ -277,35 +267,17 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.whisperlist = [];
       this.twitchChat.msglist = [];
       this.msglist = [];
-      this.queueHandler.songqueue.forEach(async (request)=>{
-        await request.destroyRecord();
-      });
     }
   }
   
   // This action gets triggered every time the channel receives a 
   // message and updates both the chatlog and the song queue.
   @action msgGetter() {
-    this.msglist = this.twitchChat.messages;    
-    this.scrollPosition = this.messages.get('length');
-    this.queueHandler.scrollPlayedPosition = 0;
-    this.queueHandler.scrollPendingPosition = 0;
+    this.msglist = this.twitchChat.messages;
     if(this.currentUser.updateQueueOverlay && this.args.stream.requests){
       this.queueHandler.fileContent(this.queueHandler.pendingSongs);
     }
   }
-
-  // This action gets triggered every time the an event gets triggered in the channel
-  @action eventGetter() {
-    if(this.eventsExternal.connected){
-      this.eventlist = this.eventsExternal.events;      
-    } else {    
-      this.eventlist = this.twitchChat.events;      
-    }
-
-    this.scrollEventsPosition = 0;
-  }
-
   
   @action sendMessage() {
     this.twitchChat.botclient.say(this.twitchChat.channel, this.message);
@@ -315,56 +287,12 @@ export default class PbStreamEditComponent extends Component {
   // Stream saving actions  
   
   @action doneEditing() {
-    if(this.args.stream.finished === false){
-      if(this.isChatEmpty === false){
-        if(this.args.stream.savechat){
-          if(this.msglist != this.args.stream.chatlog){
-            this.args.stream.chatlog = this.msglist;
-          }
-        }
-      }
-      if(this.isQueueEmpty === false){
-        this.args.stream.songqueue = this.queueHandler.songqueue.toArray();
-      }
-      if(this.isEventsEmpty === false){
-        if(this.eventlist != this.args.stream.eventlog){
-          this.args.stream.eventlog = this.eventlist;
-        }
-      }
-      if(this.isEventsExternalEmpty === false){
-        if(this.eventsExternal.eventlist != this.args.stream.eventlog){
-          this.args.stream.eventlog = this.eventsExternal.eventlist;
-        }
-      }
-    }
     this.args.saveStream();
     this.saving = true;
     later(() => { this.saving = false; }, 500);    
   }  
 
   @action doneAndReturnEditing() {
-    if(this.args.stream.finished === false){
-      if(this.isChatEmpty === false){
-        if(this.args.stream.savechat){
-          if(this.msglist != this.args.stream.chatlog){
-            this.args.stream.chatlog = this.msglist;
-          }
-        }
-      }
-      if(this.isQueueEmpty === false){
-        this.args.stream.songqueue = this.queueHandler.songqueue.toArray();
-      }
-      if(this.isEventsEmpty === false){
-        if(this.eventlist != this.args.stream.eventlog){
-          this.args.stream.eventlog = this.eventlist;
-        }
-      } 
-      if(this.isEventsExternalEmpty === false){
-        if(this.eventsExternal.eventlist != this.args.stream.eventlog){
-          this.args.stream.eventlog = this.eventsExternal.eventlist;
-        }
-      }
-    }
     this.args.saveAndReturnStream(); 
   }    
 

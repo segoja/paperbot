@@ -4,9 +4,11 @@ import { tracked } from '@glimmer/tracking';
 import io from "socket.io-client";
 import moment from 'moment';
 import { htmlSafe } from '@ember/template';
+import { sort } from '@ember/object/computed';
 
 export default class EventsExternalService extends Service {
   @service globalConfig;
+  @service store;
 
   @tracked type = null;  
   @tracked token = null;  
@@ -302,7 +304,6 @@ export default class EventsExternalService extends Service {
         }
       }
     });
-   
   }
   
   
@@ -424,30 +425,47 @@ export default class EventsExternalService extends Service {
       }
     });
   }
-  
-  @tracked eventlist = [];  
+
   get events(){
-    return this.eventlist;
+    return this.store.peekAll('event');
   }
   
-  @tracked lastevent = null;
-  @action eventHandler(event, type){    
-    this.lastevent = {
-      id: 'event',
-      timestamp: moment().format(),
-      parsedbody: this.parseMessage(event, []).toString(),    
-      user: "event",
-      displayname: "event",      
-      color: "#cccccc",
-      csscolor: htmlSafe('color: #cccccc'),        
-      badges: null,
-      htmlbadges:  '',
-      type: type ? "event-"+type.toString() : "event",
-      usertype: null,
-      reward: false,
-      emotes: null,
-    };
-    this.eventlist.push(this.lastevent);
+  eventsSorting = Object.freeze(['timestamp:desc']);  
+  @sort (
+    'events',
+    'eventsSorting'
+  ) arrangedEvents;
+  
+  get lastevent(){
+    if(arrangedEvents.get('length') > 0){
+      return this.arrangedEvents.get('firstObject');
+    }
+    return [];
+  }
+  
+  @tracked lastevent = '';
+  @action eventHandler(event, type){
+    let nextEvent = this.store.createRecord('event'); 
+    
+    nextEvent.eventId = 'event';
+    nextEvent.timestamp = new Date();
+    nextEvent.parsedbody = this.parseMessage(event, []).toString();    
+    nextEvent.user = "event";
+    nextEvent.displayname = "event";      
+    nextEvent.color = "#cccccc",
+    nextEvent.csscolor = htmlSafe('color = #cccccc');        
+    nextEvent.badges = null;
+    nextEvent.htmlbadges =  '';    
+    if(type){
+      nextEvent.type = "event-"+type.toString();      
+    } else {
+      nextEvent.type = "event";      
+    }
+    nextEvent.usertype = null;
+    nextEvent.reward = false;
+    nextEvent.emotes = null;
+    
+    nextEvent.save();
   }
   
   @action parseMessage(text, emotes) {

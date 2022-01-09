@@ -9,6 +9,7 @@ export default class PbStreamEditPlayedComponent extends Component {
     
   constructor() {
     super(...arguments);
+    this.queueHandler.scrollPlayedPosition = 0;
   }
    
   @action togglePan(){

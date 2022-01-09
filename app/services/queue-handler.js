@@ -85,7 +85,7 @@ export default class QueueHandlerService extends Service {
         count = Number(count) +1
         pending.position = count;
         pending.save();
-        console.debug(pending.position+'. '+pending.title);
+        //console.debug(pending.position+'. '+pending.title);
       });      
     } else {
       let oldPlayed = this.playedSongs;
@@ -94,7 +94,7 @@ export default class QueueHandlerService extends Service {
         count = Number(count) -1;
         played.position = count;
         played.save();
-        console.debug(played.position+'. '+played.title);
+        //console.debug(played.position+'. '+played.title);
       });
     }
     
@@ -132,7 +132,7 @@ export default class QueueHandlerService extends Service {
         count = Number(count) -1;
         played.position = count;
         played.save();
-        console.debug(played.position+'. '+played.title);
+        //console.debug(played.position+'. '+played.title);
       }); 
       
       firstRequest.position = 0;
@@ -166,7 +166,7 @@ export default class QueueHandlerService extends Service {
         count = Number(count) +1
         pending.position = count;
         pending.save();
-        console.debug(pending.position+'. '+pending.title);
+        //console.debug(pending.position+'. '+pending.title);
       });
       
       let firstRequest = this.playedSongs.get('firstObject');      
@@ -274,7 +274,7 @@ export default class QueueHandlerService extends Service {
       // console.debug(thisHtml);
     }
     catch (exception_var) {
-      console.debug('Too slow...');
+      //console.debug('Too slow...');
     }
     finally {
       let text = unescape(encodeURIComponent(thisHtml));

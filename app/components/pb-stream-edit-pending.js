@@ -9,6 +9,7 @@ export default class PbStreamEditPendingComponent extends Component {
     
   constructor() {
     super(...arguments);
+    this.queueHandler.scrollPendingPosition = 0;
   }
 
   @action togglePan(){
@@ -21,7 +22,7 @@ export default class PbStreamEditPendingComponent extends Component {
     sortedList.forEach((item)=>{
       item.position = count;
       item.save().then(()=>{        
-        console.debug(item.position+'. '+item.title);
+        // console.debug(item.position+'. '+item.title);
       });
       count = Number(count) +1;
     });
@@ -29,7 +30,7 @@ export default class PbStreamEditPendingComponent extends Component {
     this.queueHandler.playedSongs.reverse().forEach((played)=>{
       played.position = playedCount;
       played.save().then(()=>{        
-        console.log(played.position+'. '+played.title);
+        // console.debug(played.position+'. '+played.title);
       });
       playedCount = Number(playedCount)+1;
     });
