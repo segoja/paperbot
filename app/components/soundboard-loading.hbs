@@ -1,0 +1,22 @@
+{{#if this.isSoundboardLoading}}
+<div class="row g-0">
+  <div class="col">
+    <BsProgress as |pg|>
+      <pg.bar
+        @value={{this.progressValue}}
+        @minValue={{0}}
+        @maxValue={{this.maxValue}}
+        @showLabel={{true}}
+        @roundDigits={{0}}
+        @type="info"
+        @striped={{true}}
+        @animate={{true}}
+        
+        as |percent|
+       >
+        <center>Loading soundboard {{percent}}%</center>
+       </pg.bar>
+    </BsProgress>
+  </div>
+</div>
+{{/if}}

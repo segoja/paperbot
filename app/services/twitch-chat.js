@@ -189,12 +189,12 @@ export default class TwitchChatService extends Service {
     if(await this.audiocommandslist.length > 0){
       this.audiocommandslist.forEach((command) => {
         this.audio.load(command.soundfile).asSound(command.name).then(
-          function() {
-            console.debug(command.soundfile+ " loaded in the soundboard");
-          }, 
-          function() {
-            console.debug("error loading "+command.soundfile+" in the soundboard!");
-          }
+          function(msg) {
+            console.debug(command.soundfile+ " loaded in the soundboard", msg);
+          }.bind(this), 
+          function(err) {
+            console.log("error loading "+command.soundfile+" in the soundboard!", err);
+          }.bind(this)
         );
       });
     } else {

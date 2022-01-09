@@ -1,29 +1,40 @@
 import audio from 'ember-audio/services/audio';
 import { readBinaryFile } from '@tauri-apps/api/fs'
 import { resolve } from 'rsvp';
+import { tracked } from '@glimmer/tracking';
+import { TrackedMap } from 'tracked-maps-and-sets';
 
 export default class AudioService extends audio {
+
+  /**
+   * This acts as a register for Sound instances. Sound instances are placed in
+   * the register by name, and can be called via audioService.getSound('name')
+   *
+   * @private
+   * @property _sounds
+   * @type {map}
+   */
+  _sounds = new TrackedMap();
   
-  // We need to override _load in order to load audio files from the computer in tauri.
-  
+  // We need to override _load in order to load audio files from the computer in tauri.  
   _load(name, src, type) {
-    const audioContext = this.audioContext;
-    const register = this._getRegisterFor(type);
+    let audioContext = this.audioContext;
+    let register = this._getRegisterFor(type);
  
     if (register.has(name)) {
       return resolve(register.get(name));
     }
     return readBinaryFile(src)
       .then(async (response) => {      
-        var arraybuffer = new ArrayBuffer(await response.length);
-        var view = new Uint8Array(arraybuffer);
+        let arraybuffer = new ArrayBuffer(await response.length);
+        let view = new Uint8Array(arraybuffer);
         for (var i = 0; i < response.length; ++i) {
             view[i] = response[i];
         }
         return audioContext.decodeAudioData(arraybuffer); 
       })
       .then((audioBuffer) => {
-        const sound = this._createSoundFor(type, { audioBuffer, audioContext, name });
+        let sound = this._createSoundFor(type, { audioBuffer, audioContext, name });
         register.set(name, sound);
         return sound;
       })
@@ -32,5 +43,20 @@ export default class AudioService extends audio {
         console.error('ember-audio:', 'This error was probably caused by a 404 or an incompatible audio file type');
       });
   }
-
+  
+  /**
+   * Given a sound's name and type, removes the sound from it's register.
+   *
+   * @public
+   * @method removeFromRegister
+   *
+   * @param {string} type The type of sound that should be removed. Can be
+   * 'sound', 'track', 'font', 'beatTrack', or 'sampler'.
+   *
+   * @param {string} name The name of the sound that should be removed.
+   */
+  async removeFromRegister(type, name) {
+    let register = this._getRegisterFor(type);
+    register.delete(name);
+  }
 }

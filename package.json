@@ -106,6 +106,7 @@
     "sass": "^1.47.0",
     "socket.io-client": "^2.4.0",
     "tmi.js": "^1.8.5",
+    "tracked-maps-and-sets": "^3.0.2",
     "webpack": "^5.65.0"
   },
   "engines": {
