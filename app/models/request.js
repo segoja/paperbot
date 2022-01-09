@@ -13,6 +13,8 @@ export default class RequestModel extends Model {
   @attr('string', {defaultValue: ""}) csscolor;
   @attr('string', {defaultValue: ""}) emotes;
   
+  @attr('number', {defaultValue: 0}) position;
+  
   @attr('boolean',{defaultValue: false}) processed;
     
   @belongsTo('song') song;  

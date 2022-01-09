@@ -22,6 +22,21 @@ html,body{
   max-height: 100%!important;  
 }
 
+.handle{
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  color: rgba(5,85,96,0.35);
+  background-color: rgba(255,255,255, 0.25);
+}
+
+.handle:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
 .modal, .modal-backdrop {
   height: calc(100% - 33px);
   top: 33px;

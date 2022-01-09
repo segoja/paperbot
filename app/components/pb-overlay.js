@@ -48,7 +48,7 @@ export default class PbReaderComponent extends Component {
     }
   }
   
-  requestSorting = Object.freeze(['timestamp:asc']);  
+  requestSorting = Object.freeze(['position:asc','timestamp:desc']);  
   @sort ('args.requests','requestSorting') arrangedContent;
   
   get pendingRequests(){

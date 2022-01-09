@@ -1,6 +1,7 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { hash } from 'rsvp';
+import { getCurrent } from "@tauri-apps/api/window"
 
 export default class ApplicationRoute extends Route  {
   @service headData;
@@ -22,7 +23,8 @@ export default class ApplicationRoute extends Route  {
 
   afterModel(model) {    
     this.headData.title = 'Paperbot, a Twitch.tv bot by Papercat84';
-    if(model.requests.length > 0){
+    let currentWindow = getCurrent();
+    if(model.requests.length > 0 && currentWindow.label === 'Main'){
       model.requests.map(async (request)=>{
         await request.destroyRecord();
       });

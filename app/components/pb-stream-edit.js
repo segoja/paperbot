@@ -108,9 +108,9 @@ export default class PbStreamEditComponent extends Component {
     }
 
     this.msglist = this.twitchChat.messages;
-    // this.queueHandler.songqueue = this.twitchChat.songqueue.toArray();
-    this.queueHandler.scrollPlayedPosition = this.twitchChat.pendingSongs.get('length');
-    this.queueHandler.scrollPendingPosition = this.twitchChat.playedSongs.get('length');
+    // this.queueHandler.songqueue = this.queueHandler.songqueue.toArray();
+    this.queueHandler.scrollPlayedPosition = this.queueHandler.pendingSongs.get('length');
+    this.queueHandler.scrollPendingPosition = this.queueHandler.playedSongs.get('length');
     
     this.twitchChat.commands = this.args.commands.filterBy('active', true);
     this.twitchChat.songs = this.args.songs.filterBy('active', true);
@@ -150,6 +150,11 @@ export default class PbStreamEditComponent extends Component {
         this.eventsExternal.client.on("event:test", this.eventGetter);
       }
     }
+  }
+
+
+  @action moves(el, container, handle) {
+    return handle.classList.contains('dragula-handle');
   }
 
   // Bot and Chat related actions:
@@ -249,8 +254,8 @@ export default class PbStreamEditComponent extends Component {
       }
       
       this.args.stream.songqueue = [];
-      if(this.twitchChat.songqueue.length > 0 ){
-        this.twitchChat.songqueue.forEach((request)=>{
+      if(this.queueHandler.songqueue.length > 0 ){
+        this.queueHandler.songqueue.sortBy('position').forEach((request)=>{
           let entry = { 'timestamp': request.timestamp, 'song': request.fullText, 'user': request.user, 'processed': request.processed };
           this.args.stream.songqueue.push(entry);
         });
@@ -272,6 +277,9 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.whisperlist = [];
       this.twitchChat.msglist = [];
       this.msglist = [];
+      this.queueHandler.songqueue.forEach(async (request)=>{
+        await request.destroyRecord();
+      });
     }
   }
   

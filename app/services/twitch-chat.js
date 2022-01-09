@@ -37,33 +37,7 @@ export default class TwitchChatService extends Service {
   get events(){
     return this.eventlist || [];
   } 
-  
-  get songqueue(){
-    return this.store.peekAll('request');
-  }
-  
-  queueAscSorting = Object.freeze(['timestamp:asc']); 
-  @sort (
-    'songqueue',
-    'queueAscSorting'
-  ) arrangedAscQueue;
-  
-  queueDescSorting = Object.freeze(['timestamp:desc']);    
-  @sort (
-    'songqueue',
-    'queueDescSorting'
-  ) arrangedDescQueue;
-  
-  get pendingSongs() {
-    return this.arrangedDescQueue.filterBy('processed', false);
-  }
-  
-  get playedSongs() {
-    return this.arrangedAscQueue.filterBy('processed', true);
-  }
-  
-
-  
+    
   @tracked modactions = []; 
 
   @tracked channel = '';
@@ -243,9 +217,9 @@ export default class TwitchChatService extends Service {
   }
 
   @action async messageHandler(target, tags, msg, self){
-    console.debug('=_-=-_-=-_-=-_-=-_-=-_-=-_-=-');
-    console.debug(msg);
-    console.debug(tags);
+    //console.debug('__________________________');
+    //console.debug(msg);
+    //console.debug(tags);
     this.parseBadges(tags['badges']);
     
     this.lastmessage = {
@@ -279,8 +253,8 @@ export default class TwitchChatService extends Service {
             } else {
               if(bestmatch.active){
                 if(this.commandPermissionHandler(bestmatch, tags) === true){
-                  // changing this could break the reader.
-                  this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);
+                  
+                  let nextPosition = this.queueHandler.nextPosition;
                   
                   this.lastsongrequest = this.store.createRecord('request'); 
                   this.lastsongrequest.chatid = tags['id'] ? tags['id'].toString() : 'songsys';
@@ -289,17 +263,18 @@ export default class TwitchChatService extends Service {
                   this.lastsongrequest.song = bestmatch;
                   this.lastsongrequest.user = tags['username'] ? tags['username'].toString() : this.botUsername;
                   this.lastsongrequest.displayname = tags['display-name'] ? tags['display-name'].toString() : this.botUsername;
-                  this.lastsongrequest.processed = false;
+                  this.lastsongrequest.position = nextPosition;                  
                   
                   this.lastsongrequest.save().then(async()=>{
-                    if(this.songqueue.length == 1){
-                      this.globalConfig.config.lastPlayed = this.lastsongrequest.fullText;
-                    }
                     // Song statistics:
                     bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
                     bestmatch.last_requested = new Date();
-                    await bestmatch.save();                    
-                    await this.globalConfig.config.save();
+                    await bestmatch.save();
+                    
+                    console.log(bestmatch.fullText+' added at position '+nextPosition);
+                    
+                    // changing this could break the reader.
+                    this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);                    
                   });
                 } else {
                   this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
@@ -362,9 +337,9 @@ export default class TwitchChatService extends Service {
             } else {
               if(bestmatch.active){
                 if(this.commandPermissionHandler(bestmatch, tags) === true){
-                  // changing this could break the reader.
-                  this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);
-                  
+
+                  let nextPosition = this.queueHandler.nextPosition;
+
                   this.lastsongrequest = this.store.createRecord('request'); 
                   this.lastsongrequest.chatid = tags['id'] ? tags['id'].toString() : 'songsys';
                   this.lastsongrequest.timestamp = new Date();
@@ -373,17 +348,18 @@ export default class TwitchChatService extends Service {
                   this.lastsongrequest.user = tags['username'] ? tags['username'].toString() : this.botUsername;
                   this.lastsongrequest.displayname = tags['display-name'] ? tags['display-name'].toString() : this.botUsername;
                   this.lastsongrequest.processed = false;
+                  this.lastsongrequest.position = nextPosition;                  
                   
                   this.lastsongrequest.save().then(async()=>{
-                    if(this.songqueue.length == 1){
-                      this.globalConfig.config.lastPlayed = bestmatch.fullText;
-                      this.globalConfig.config.nextPlayed = bestmatch.get('id');
-                    }
                     // Song statistics:
                     bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
                     bestmatch.last_requested = new Date();
-                    await bestmatch.save();                    
-                    await this.globalConfig.config.save();
+                    await bestmatch.save();
+                    
+                    console.log(bestmatch.fullText+' added at position '+nextPosition);
+                    
+                    // changing this could break the reader.
+                    this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);                    
                   });
                 } else {
                   this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
@@ -407,10 +383,10 @@ export default class TwitchChatService extends Service {
         if(await this.queueHandler.pendingSongs.length > 0){
           let count = 0;
           this.botclient.say(target, "/me Songs in queue:");
-          this.songqueue.forEach(async (item)=>{
-            if(!item.processed && count < 6){
+          this.queueHandler.pendingSongs.forEach(async (item)=>{
+            if(count < 6){
               count = Number(count) + 1;
-              await this.botclient.say(target, '/me '+count+' - '+item.title);
+              await this.botclient.say(target, '/me '+count+'. '+item.title);
             }
           });
         } else {
@@ -425,18 +401,10 @@ export default class TwitchChatService extends Service {
           if(this.commandPermissionHandler(internalCommand, tags) === true && targetUser){
             let targetLastSong = await this.queueHandler.pendingSongs.reverse().find(item => item.user == targetUser);
             if(targetLastSong){
-              
-              let updatedlist = this.songqueue.filter((item) => { 
-                if(targetLastSong.song != item.song && targetLastSong.timestamp != item.timestamp ){
-                    return item;
-                  }
-                });
-              this.songqueue = updatedlist;
-              this.queueHandler.songqueue = this.songqueue;
-              this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
-              this.globalConfig.config.save();
-              this.botclient.say(target, "/me the song '"+targetLastSong.title+"' has been removed.");
-              
+              let songname = targetLastSong.fullText;
+              targetLastSong.destroyRecord().then(()=>{
+                this.botclient.say(target, "/me the song '"+songname+"' has been removed.");
+              });
             } else {             
               this.botclient.say(target, "/me The user @"+targetUser+" doesn't have any song in the queue.");
             }
@@ -447,17 +415,10 @@ export default class TwitchChatService extends Service {
             } else {
               let userLastSong = await this.queueHandler.pendingSongs.reverse().find(item => item.user == commandUser);
               if(userLastSong){
-                
-                let updatedlist = this.songqueue.filter((item) => { 
-                  if(userLastSong.song != item.song && userLastSong.timestamp != item.timestamp ){
-                    return item;
-                  }
+                let songname = userLastSong.fullText;
+                userLastSong.destroyRecord().then(()=>{
+                  this.botclient.say(target, "/me the song '"+songname+"' has been removed.");
                 });
-                this.songqueue = await updatedlist;
-                this.queueHandler.songqueue = this.songqueue;
-                this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
-                this.globalConfig.config.save();
-                this.botclient.say(target, "/me the song '"+userLastSong.title+"' has been removed.");
               } else {
                 this.botclient.say(target, "/me you don't have songs in the queue." );
               }
