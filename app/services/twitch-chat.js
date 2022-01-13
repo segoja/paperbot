@@ -190,7 +190,7 @@ export default class TwitchChatService extends Service {
       this.audiocommandslist.forEach((command) => {
         this.audio.load(command.soundfile).asSound(command.name).then(
           function(msg) {
-            console.debug(command.soundfile+ " loaded in the soundboard", msg);
+            console.debug(command.soundfile+ " loaded in the soundboard"/*, msg*/);
           }.bind(this), 
           function(err) {
             console.log("error loading "+command.soundfile+" in the soundboard!", err);

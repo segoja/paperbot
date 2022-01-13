@@ -16,7 +16,7 @@ export default class PbStreamEditEventsComponent extends Component {
   
   constructor() {
     super(...arguments);
-    if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
+    if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents && this.eventsExternal.client){
       this.eventsExternal.client.on("event", this.eventGetter);
       this.eventsExternal.client.on("event:test", this.eventGetter);
     }

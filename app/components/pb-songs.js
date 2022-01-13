@@ -15,6 +15,7 @@ export default class PbSongsComponent extends Component {
   @service queueHandler;
   @service twitchChat;
   @service globalConfig;
+  @service store;
   
   songsSorting = Object.freeze(['date_added:asc']);
   
@@ -51,37 +52,33 @@ export default class PbSongsComponent extends Component {
   
   
   @action songToQueue(selected){
-    // changing this could break the reader.
-    let song = '"'+selected.title+'"';
-    if(selected.artist){
-      song = song+' by '+selected.artist+'.';
+    let nextPosition = this.queueHandler.nextPosition;
+
+    let newRequest = this.store.createRecord('request'); 
+    newRequest.chatid = 'songsys';
+    newRequest.timestamp = new Date();
+    newRequest.type = 'setlist';
+    newRequest.song = selected;
+    newRequest.user = this.twitchChat.botUsername;
+    if(this.globalConfig.config.defbotclient){
+      newRequest.user = this.globalConfig.config.defbotclient.get('username');
+    } else {
+      newRequest.displayname = 'setlist';
     }
-    let queuesong = {
-      id: 'songsys',
-      timestamp: moment().format(),
-      type: null,
-      song: song,
-      songId: selected.get('id'),
-      title: selected.title? selected.title:'',
-      artist: selected.artist? selected.artist:'',
-      user: '',
-      displayname: '',
-      color: 'orange',
-      csscolor: '#ffcc00',
-      emotes: null,
-      processed: false,
-    };
+    newRequest.processed = false;
+    newRequest.position = nextPosition;                  
     
-    this.twitchChat.songqueue.push(this.twitchChat.lastsongrequest);
-    this.queueHandler.songqueue = this.songqueue;
-    if(this.twitchChat.songqueue.length == 1){
-      this.globalConfig.config.lastPlayed = song;
-    }
-    this.globalConfig.config.songQueue = this.queueHandler.pendingSongs;
-    // Song statistics:
-    selected.times_requested = Number(selected.times_requested) + 1;
-    selected.last_request = new Date();
-    selected.save();
+    newRequest.save().then(async()=>{
+      // Song statistics:
+      selected.times_requested = Number(selected.times_requested) + 1;
+      selected.last_requested = new Date();
+      await selected.save();
+      
+      console.log(selected.fullText+' added at position '+nextPosition);
+      
+      this.queueHandler.scrollPendingPosition = 0;
+      this.queueHandler.scrollPlayedPosition = 0;                  
+    });
   }
 
   @action wipeSongs(){

@@ -382,5 +382,4 @@ export default class PbStreamEditComponent extends Component {
       this.currentUser.toggleOverlay();
     }
   }
-  
 }

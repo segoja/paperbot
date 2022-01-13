@@ -118,13 +118,14 @@
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightBottom (if this.globalConfig.config.extraPanRightTop "h-50" "h-100") "d-none"}} border">
               <d.Container class="col h-100 m-0 p-0"> 
                 <PbStreamEditPlayed @requests={{this.requests}} />
-              </d.Container>
+              </d.Container>        
             </div>
           </div>
         </EmberDragula>
         <div role="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanRight}}>
           <span class="d-block align-self-center"><FaIcon @icon={{if this.globalConfig.config.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
         </div>
+
       </div>
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">

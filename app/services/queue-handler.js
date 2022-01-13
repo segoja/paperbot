@@ -61,6 +61,43 @@ export default class QueueHandlerService extends Service {
    
   // Buttons
   
+  @action exportQueue(){
+    if(this.songqueue.length > 0 ){
+      
+      let setlist = "";
+      
+      this.playedSongs.reverse().forEach(async (request)=>{
+        setlist = setlist + '[x] '+request.title+'\n';
+      });
+      this.pendingSongs.forEach(async (request)=>{
+        setlist = setlist + '[ ] '+request.title+'\n';
+      });
+      
+      
+      let filename = moment().format('YYYY-MM-DD')+' - setlist.txt'; 
+      // Create an invisible A element
+      const link = document.createElement('a');
+      link.style.display = 'none';
+      document.body.appendChild(link);
+
+      // Set the HREF to a Blob representation of the data to be downloaded
+      //link.href = window.URL.createObjectURL( new Blob(setlist, 'text/plain') );
+      link.href = window.URL.createObjectURL(
+        new Blob([setlist], { type: 'text/plain' })
+      );
+      // Use download attribute to set set desired file name
+      link.setAttribute("download", filename);
+
+      // Trigger the download by simulating click
+      link.click();
+
+      // Cleanup
+      window.URL.revokeObjectURL(link.href);
+      document.body.removeChild(link);
+      
+    }
+  }
+  
   // Song processing related actions  
   @action modPressed(){
     if(this.modifierkey === false){
