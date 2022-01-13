@@ -381,9 +381,32 @@ export default class TwitchChatService extends Service {
         this.botclient.say(target, "/me Requests are disabled.");
       }
     } else {
-      
+    if(String(commandName).startsWith('!ykq')){
+      let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };      
+      if(this.commandPermissionHandler(internalCommand, tags) === true && this.currentUser.soundBoardEnabled){
+        let quietTime = Number(commandName.toLowerCase().replace(/!ykq/g, "").trim());
+        this.currentUser.soundBoardEnabled = false;
+        console.log(quietTime);
+        if(!isNaN(quietTime)){
+          if(quietTime > 0){
+            later(() => { 
+              this.currentUser.soundBoardEnabled = true;
+            }, quietTime * 1000);
+            this.botclient.say(target, '/me Enjoy the silence a little bit...');          
+          } else {
+            this.botclient.say(target, '/me Enjoy the silence...');
+          }
+        } else {
+          this.botclient.say(target, '/me Enjoy the silence...');
+        }
+        //this.botclient.say(target, '/me MrDestructoid enjoy the silence...');        
+        if(this.lastSoundCommand != null && this.lastSoundCommand.isPlaying){
+          this.lastSoundCommand.changeGainTo(0).from('percent');
+          this.lastSoundCommand.stop();
+        }
+      }
       // !queue lists the songs in queue:
-      if(String(commandName).startsWith('!queue') || String(commandName).startsWith('!sq')){
+    } else if(String(commandName).startsWith('!queue') || String(commandName).startsWith('!sq')){
         if(await this.queueHandler.pendingSongs.get('length') > 0){
           let count = 0;
           this.botclient.say(target, "/me Songs in queue:");
