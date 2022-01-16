@@ -50,37 +50,17 @@ export default class PbSongsComponent extends Component {
   
   @tracked importcontent;
   
-  
-  @action songToQueue(selected){
-    let nextPosition = this.queueHandler.nextPosition;
-
-    let newRequest = this.store.createRecord('request'); 
-    newRequest.chatid = 'songsys';
-    newRequest.timestamp = new Date();
-    newRequest.type = 'setlist';
-    newRequest.song = selected;
-    newRequest.user = this.twitchChat.botUsername;
-    if(this.globalConfig.config.defbotclient){
-      newRequest.user = this.globalConfig.config.defbotclient.get('username');
-    } else {
-      newRequest.displayname = 'setlist';
+  get isSetlist(){
+    if(!this.currentUser.isViewing && this.currentUser.showSetlist){
+      return true;
     }
-    newRequest.processed = false;
-    newRequest.position = nextPosition;                  
-    
-    newRequest.save().then(async()=>{
-      // Song statistics:
-      selected.times_requested = Number(selected.times_requested) + 1;
-      selected.last_requested = new Date();
-      await selected.save();
-      
-      console.log(selected.fullText+' added at position '+nextPosition);
-      
-      this.queueHandler.scrollPendingPosition = 0;
-      this.queueHandler.scrollPlayedPosition = 0;                  
-    });
+    return false
   }
-
+  
+  @action toggleSetlist(){
+    this.currentUser.showSetlist = !this.currentUser.showSetlist;
+  }
+  
   @action wipeSongs(){
     this.args.queryParamsObj.page = 1;
     this.filteredContent.forEach((song)=>{

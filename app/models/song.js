@@ -1,5 +1,5 @@
 import { Model } from 'ember-pouch';
-import { attr } from '@ember-data/model';
+import { attr, hasMany } from '@ember-data/model';
 
 export default class SongModel extends Model {
   @attr('string', {defaultValue: ""}) title;
@@ -19,6 +19,8 @@ export default class SongModel extends Model {
   @attr('date', {defaultValue: ""}) date_added;  
   @attr('date', {defaultValue: ""}) last_requested;  
   @attr('date', {defaultValue: ""}) last_played;  
+  
+  @hasMany('song') requests;
   
   @attr('number', {defaultValue: 0}) times_requested;
   @attr('number', {defaultValue: 0}) times_played;

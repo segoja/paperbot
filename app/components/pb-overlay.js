@@ -15,9 +15,9 @@ export default class PbReaderComponent extends Component {
       currentWindow.listen('tauri://resize', async function (response) {
         this.globalConfig.config.overlayWidth = response.payload.width; 
         this.globalConfig.config.overlayHeight = response.payload.height;
-        later(() => {
+        await later(async() => {
           if(this.globalConfig.config.overlayWidth === response.payload.width && this.globalConfig.config.overlayHeight === response.payload.height){
-            this.globalConfig.config.save();
+            await this.globalConfig.config.save();
             console.debug('Size saved!');
           }          
         }, 500);
@@ -26,9 +26,9 @@ export default class PbReaderComponent extends Component {
       currentWindow.listen('tauri://move', async function (response) { 
         this.globalConfig.config.overlayPosX = response.payload.x;
         this.globalConfig.config.overlayPosY = response.payload.y;
-        later(() => {
+        await later(async() => {
           if(this.globalConfig.config.overlayPosX === response.payload.x && this.globalConfig.config.overlayPosY === response.payload.y){
-            this.globalConfig.config.save();
+            await this.globalConfig.config.save();
             console.debug('Position saved!.');
           }          
         }, 250);
@@ -39,10 +39,10 @@ export default class PbReaderComponent extends Component {
        console.debug(e);
       });
       
-      currentWindow.once('tauri://destroyed', function () {
+      currentWindow.once('tauri://destroyed', async function () {
         //this.queueToFile = false;
         //this.globalConfig.config.showOverlay = false;
-        this.globalConfig.config.save();
+        await this.globalConfig.config.save();
         console.debug('overlay closed!');
       }.bind(this));      
     }

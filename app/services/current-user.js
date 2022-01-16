@@ -10,7 +10,8 @@ export default class CurrentUserService extends Service {
   @tracked isViewing = false;
   @tracked expandMenu = false;
   @tracked expandSubmenu = false;
-  @tracked songqueue = []; 
+  @tracked songqueue = [];
+  @tracked showSetlist = false;
   @tracked lastStream = '';
     
   // Buttons

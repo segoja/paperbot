@@ -276,6 +276,7 @@ export default class TwitchChatService extends Service {
                     console.log(bestmatch.fullText+' added at position '+nextPosition);
                     this.queueHandler.scrollPendingPosition = 0;
                     this.queueHandler.scrollPlayedPosition = 0;
+                    this.queueHandler.lastsongrequest = this.lastsongrequest;
 
                     // changing this could break the reader.
                     this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);                    
@@ -362,6 +363,8 @@ export default class TwitchChatService extends Service {
                     
                     this.queueHandler.scrollPendingPosition = 0;
                     this.queueHandler.scrollPlayedPosition = 0;
+                    this.queueHandler.lastsongrequest = this.lastsongrequest;
+                    
                     // changing this could break the reader.
                     this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);                    
                   });

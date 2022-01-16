@@ -1,6 +1,6 @@
 {
   "name": "paperbot",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "description": "Paperbot",
   "repository": "",
@@ -71,6 +71,7 @@
     "ember-fetch": "^8.1.1",
     "ember-intl": "^5.7.2",
     "ember-keyboard": "^6.0.4",
+    "ember-line-clamp": "^2.2.2",
     "ember-load-initializers": "^2.1.2",
     "ember-maybe-import-regenerator": "^1.0.0",
     "ember-modifier": "^3.0.0",

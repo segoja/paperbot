@@ -20,6 +20,7 @@ export default class RequestModel extends Model {
   @belongsTo('song') song;  
   @readOnly('song.title') title;
   @readOnly('song.artist') artist;
+  @readOnly('song.id') songId;  
   
   get fullText(){
     let text = '"'+this.title+'"';

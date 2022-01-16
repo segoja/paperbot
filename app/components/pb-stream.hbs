@@ -21,7 +21,7 @@
             </bg.button>
             <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
           {{/unless}}
-          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.queueHandler.exportQueue}} ><FaIcon @icon="file-export" /></bg.button>
+          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.queueHandler.exportQueue}} ><FaIcon @icon="file-download" /></bg.button>
           <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.currentUser.showLyrics}} ><FaIcon @icon="align-center" /></bg.button>
           <bg.button @type="dark" class="rounded-0 rounded-top-right border-0" @onClick={{@closeStream}}><FaIcon @icon="times" /></bg.button>
         </BsButtonGroup>

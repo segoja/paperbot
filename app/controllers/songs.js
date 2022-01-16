@@ -6,7 +6,7 @@ import moment from 'moment';
 
 class QueryParamsObj {
   @tracked page = 1;
-  @tracked perPage = 10;  
+  @tracked perPage = 15;  
   @tracked query = '';
   @tracked type = '';
 }

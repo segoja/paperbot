@@ -1,4 +1,4 @@
-<BsButton @type="warning" @onClick={{this.toggleModal}}><FaIcon @icon="file-import" />Generate</BsButton>
+<BsButton @type="warning" @onClick={{this.toggleModal}} title="Generate songs from your text files"><FaIcon @icon="file-import" />Generate</BsButton>
 {{#in-element this.bootstrapWormhole insertBefore=null}}
   <BsModal @onSubmit={{this.generateSongs}} @open={{this.isViewing}} @scrollable={{true}} @size="lg rounded" as |Modal|>
     <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">

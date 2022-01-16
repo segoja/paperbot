@@ -43,7 +43,17 @@
                 {{#each this.pagedContent as |command|}}
                   <tr class={{if command.active "table-success"}}>
                     <td class="col">{{if command.name command.name "unnamed"}}</td>
-                    <td class="d-none d-lg-table-cell col-lg"><small class="muted">{{command.response}}</small></td>
+                    <td class="d-none d-lg-table-cell col-lg overflow-hidden"> 
+                      <small class="muted">
+                        {{line-clamp
+                          text=command.response
+                          lines=1
+                          ellipsis="..."
+                          seeMoreText="+ more"
+                          seeLessText="- less"
+                        }}
+                      </small>
+                    </td>
                     <td class="col-lg">{{command.type}}</td>
                     <td class="col-auto py-0 pe-0">
                       <div class="btn-group text-nowrap float-end">
@@ -65,7 +75,7 @@
           </div>
         </div>
         <div class="card-footer py-0 my-0 px-0">
-          <PageNumbers @content={{this.pagedContent}} />
+          <PageNumbers @content={{this.pagedContent}} @showTotal={{true}} />
         </div>
       </div>
     {{#if this.currentUser.isViewing}}

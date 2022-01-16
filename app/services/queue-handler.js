@@ -1,6 +1,8 @@
 import Service, { inject as service } from '@ember/service';
 import { action, set } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
+import { uniqBy } from '@ember/object/computed';
+
 import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
 import {
   writeBinaryFile,
@@ -15,12 +17,14 @@ import { htmlSafe } from '@ember/template';
 export default class QueueHandlerService extends Service {
   @service globalConfig;
   @service currentUser;
+  @service twitchChat;
   @service store;
   @service router;
   @tracked lastStream = '';
   @tracked scrollPlayedPosition = 0;
   @tracked scrollPendingPosition = 0;
   @tracked oldHtml = '';
+  @tracked lastsongrequest;
 
   // We use this property to track if a key is pressed or not using ember-keyboard helpers.
   @tracked modifierkey =  false;
@@ -60,6 +64,25 @@ export default class QueueHandlerService extends Service {
   }
    
   // Buttons
+
+  
+  @action clearPending(){
+    //if(uniqBy('pendingSongs', 'songId').length > 0){
+      this.pendingSongs.uniqBy('songId').forEach((item)=>{
+        item.song.then((song)=>{
+          let requests = this.pendingSongs.filterBy('song.id', song.get('id'));        
+          let times = requests.get('length');        
+          song.times_requested = Number(song.times_requested) - Number(times);        
+          requests.forEach((request)=>{
+            request.destroyRecord()
+          })
+          song.save().then(()=>{
+            console.debug(song.title+' requests adjusted by -'+times);
+          });          
+        })
+      });
+    //}
+  }
   
   @action exportQueue(){
     if(this.songqueue.length > 0 ){
@@ -157,6 +180,34 @@ export default class QueueHandlerService extends Service {
     });
   }
   
+  @action songToQueue(selected){
+    let nextPosition = this.nextPosition;
+
+    let newRequest = this.store.createRecord('request'); 
+    newRequest.chatid = 'songsys';
+    newRequest.timestamp = new Date();
+    newRequest.type = 'setlist';
+    newRequest.song = selected;
+    newRequest.user = this.twitchChat.botUsername;
+    if(this.globalConfig.config.defbotclient){
+      newRequest.user = this.globalConfig.config.defbotclient.get('username');
+    } else {
+      newRequest.displayname = 'setlist';
+    }
+    newRequest.processed = false;
+    newRequest.position = nextPosition;                  
+    
+    newRequest.save().then(async()=>{
+      // Song statistics:
+      selected.times_requested = Number(selected.times_requested) + 1;
+      await selected.save();
+      
+      console.log(selected.fullText+' added at position '+nextPosition);
+      this.lastsongrequest = newRequest;
+      this.scrollPendingPosition = 0;
+      this.scrollPlayedPosition = 0;               
+    });
+  }
   
   @action async nextSong(){
     if(this.pendingSongs.get('length') > 0){

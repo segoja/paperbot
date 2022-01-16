@@ -79,9 +79,9 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.mainMax){
             this.globalConfig.config.mainWidth = response.payload.width; 
             this.globalConfig.config.mainHeight = response.payload.height;
-            later(() => {
+            await later(async() => {
               if(this.globalConfig.config.mainWidth === response.payload.width && this.globalConfig.config.mainHeight === response.payload.height){
-                this.globalConfig.config.save();
+                await this.globalConfig.config.save();
                 console.debug('Size saved!');
               }          
             }, 500);
@@ -92,9 +92,9 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.mainMax){
             this.globalConfig.config.mainPosX = response.payload.x;
             this.globalConfig.config.mainPosY = response.payload.y;
-            later(() => {
+            await later(async() => {
               if(this.globalConfig.config.mainPosX === response.payload.x && this.globalConfig.config.mainPosY === response.payload.y){
-                this.globalConfig.config.save();
+                await this.globalConfig.config.save();
                 console.debug('Position saved!.');
               }          
             }, 250);
@@ -110,9 +110,9 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.readerMax){        
             this.globalConfig.config.readerWidth = response.payload.width; 
             this.globalConfig.config.readerHeight = response.payload.height;
-            later(() => {            
+            await later(async() => {            
               if(this.globalConfig.config.readerWidth === response.payload.width && this.globalConfig.config.readerHeight === response.payload.height){
-                this.globalConfig.config.save();
+                await this.globalConfig.config.save();
                 console.debug('Size saved!');
               }
             }, 500); 
@@ -123,9 +123,9 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.readerMax){
             this.globalConfig.config.readerPosX = response.payload.x;
             this.globalConfig.config.readerPosY = response.payload.y;
-            later(() => {
+            await later(async () => {
               if(this.globalConfig.config.readerPosX === response.payload.x && this.globalConfig.config.readerPosY === response.payload.y){
-                this.globalConfig.config.save();
+                await this.globalConfig.config.save();
                 console.debug('Position saved!.');
               }          
             }, 250);
