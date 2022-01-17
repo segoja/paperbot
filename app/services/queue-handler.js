@@ -2,7 +2,7 @@ import Service, { inject as service } from '@ember/service';
 import { action, set } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { uniqBy } from '@ember/object/computed';
-
+import { dialog } from "@tauri-apps/api";
 import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
 import {
   writeBinaryFile,
@@ -90,34 +90,24 @@ export default class QueueHandlerService extends Service {
       let setlist = "";
       
       this.playedSongs.reverse().forEach(async (request)=>{
-        setlist = setlist + '[x] '+request.title+'\n';
+        setlist = setlist + '+ '+request.title+'\n';
       });
       this.pendingSongs.forEach(async (request)=>{
-        setlist = setlist + '[ ] '+request.title+'\n';
+        setlist = setlist + '- '+request.title+'\n';
       });
+            
+      let filename = moment().format('YYYYMMDD-HHmmss')+'-setlist.txt'; 
       
-      
-      let filename = moment().format('YYYY-MM-DD')+' - setlist.txt'; 
-      // Create an invisible A element
-      const link = document.createElement('a');
-      link.style.display = 'none';
-      document.body.appendChild(link);
-
-      // Set the HREF to a Blob representation of the data to be downloaded
-      //link.href = window.URL.createObjectURL( new Blob(setlist, 'text/plain') );
-      link.href = window.URL.createObjectURL(
-        new Blob([setlist], { type: 'text/plain' })
-      );
-      // Use download attribute to set set desired file name
-      link.setAttribute("download", filename);
-
-      // Trigger the download by simulating click
-      link.click();
-
-      // Cleanup
-      window.URL.revokeObjectURL(link.href);
-      document.body.removeChild(link);
-      
+      dialog.save({
+        defaultPath: filename,
+        filters: [{name: '', extensions: ['txt']}]
+      }).then((path)=>{
+        if(path){
+          writeFile({'path': path, 'contents': setlist}).then(()=>{
+            console.debug('Setlist file saved!');
+          });
+        }
+      });
     }
   }
   

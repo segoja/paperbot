@@ -6,7 +6,11 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
 import { dialog } from "@tauri-apps/api";
-import { readTextFile } from '@tauri-apps/api/fs';
+import {
+  writeFile,
+  readTextFile
+} from '@tauri-apps/api/fs';
+import moment from 'moment';
 import { inject as service } from '@ember/service';
 
 export default class PbCommandsComponent extends Component {
@@ -102,15 +106,18 @@ export default class PbCommandsComponent extends Component {
       });
       
       csvdata = PapaParse.unparse(csvdata, { delimiter: ',', header: true, quotes: true, quoteChar: '"' });        
+      let filename = moment().format('YYYYMMDD-HHmmss')+'-commands.csv'; 
 
-      let { document, URL } = window;
-      let anchor = document.createElement('a');
-      anchor.download = 'commands.csv';
-      anchor.href = URL.createObjectURL(new Blob([csvdata], { type: 'text/csv' }));
-
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
+      dialog.save({
+        defaultPath: filename, 
+        filters: [{name: '', extensions: ['csv']}]
+      }).then((path)=>{
+        if(path){
+          writeFile({'path': path, 'contents': csvdata}).then(()=>{
+            console.debug('Commands export csv file saved!');
+          });
+        }
+      });
     }
   }
 }

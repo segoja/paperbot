@@ -3,7 +3,10 @@ import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import moment from 'moment';
 import { dialog } from "@tauri-apps/api";
-import { readTextFile } from '@tauri-apps/api/fs';
+import {
+  writeFile,
+  readTextFile
+} from '@tauri-apps/api/fs';
 import { appWindow, getCurrent, getAll, PhysicalPosition, PhysicalSize  } from '@tauri-apps/api/window';
 import { emit } from '@tauri-apps/api/event';
 import { tracked } from '@glimmer/tracking';
@@ -186,12 +189,23 @@ export default class ApplicationController extends Controller {
   
   @action handleExport () {
     let adapter = this.store.adapterFor('application');
-    
     adapter.db.allDocs({include_docs: true, attachments: true}, (error, doc) => {
       if (error) {
         console.error(error);
       } else {
-        this.download(JSON.stringify(doc.rows.map(({doc}) => doc), null, "  "),moment(new Date).format("YYYYMMDD-HHmmss")+'paperbot-backup.json','text/plain');
+        let content = JSON.stringify(doc.rows.map(({doc}) => doc), null, "  ");
+        let filename = moment().format('YYYYMMDD-HHmmss')+'-paperbot-backup.json'; 
+
+        dialog.save({
+          defaultPath: filename, 
+          filters: [{name: '', extensions: ['json']}]
+        }).then((path)=>{
+          if(path){
+            writeFile({'path': path, 'contents': content}).then(()=>{
+              console.debug('Database backup file saved!');
+            });
+          }
+        });
       }
     });
   }
