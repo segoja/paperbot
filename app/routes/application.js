@@ -15,6 +15,7 @@ export default class ApplicationRoute extends Route  {
       songs: store.findAll('song'),
       streams: store.findAll('stream'),
       commands: store.findAll('command'),
+      timers: store.findAll('timer'),
       events: store.findAll('event'),
       requests: store.findAll('request')
     });

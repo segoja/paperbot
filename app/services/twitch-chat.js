@@ -7,7 +7,7 @@ import { sort } from '@ember/object/computed';
 import moment from 'moment';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import tmi from 'tmi.js';
-import { later } from '@ember/runloop';
+import { later, cancel } from '@ember/runloop';
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -56,6 +56,12 @@ export default class TwitchChatService extends Service {
   get audiocommandslist(){
     return this.commandlist.filterBy('type', 'audio');
   }
+  
+  
+  @tracked activeTimers = {};
+  get timersList(){
+    return this.store.peekAll('timer').filterBy('active', true);
+  }  
 
   get songs(){
     return this.store.peekAll('song').filterBy('active', true);
@@ -126,6 +132,7 @@ export default class TwitchChatService extends Service {
       this.botclient = new tmi.client(options);
       // Register our event handlers (defined below)
       this.botclient.on('connecting', this.soundboard);
+      this.botclient.on('connected', this.timersLauncher);      
       this.botclient.on('connected', this.onBotConnectedHandler);
       this.botclient.on('disconnected', this.unloadSoundboard);
       this.botclient.on('message', this.messageHandler);
@@ -144,6 +151,7 @@ export default class TwitchChatService extends Service {
       if(this.botConnected){
         this.botclient.join(this.channel);
         this.superHandler(this.botclient);
+        this.timersLauncher();
         this.twitchNameToUser(this.channel);
         console.debug(this.badgespack);
       }
@@ -183,6 +191,30 @@ export default class TwitchChatService extends Service {
   @action onBotConnectedHandler (addr, port) {
     console.debug(`* Connected to ${addr}:${port}`);
   }  
+  
+  @action async timersLauncher(){
+    this.timersList.map((timer)=>{
+      this.timerScheduler(timer);
+    });
+  }  
+
+  async timerScheduler(timer){
+    if(!timer.isDeleted && this.botConnected && this.channel){
+      if(this.activeTimers[timer.id] && !timer.active){
+        console.log('The timer was active, cancelling')
+        cancel(this.activeTimers[timer.id]);
+        this.activeTimers[timer.id] = '';
+      } else { 
+        console.log('Scheduling the timer...')
+        let time = timer.time * 60 * 1000;
+        this.activeTimers[timer.id] = await later(() => {        
+          this.botclient.say(this.channel, timer.message);
+          this.timerScheduler(timer);
+        }, time);
+      }
+    }
+    console.log(this.activeTimers);
+  }
 
   @action async soundboard(){
     console.debug("Loading the soundboard...");
@@ -190,10 +222,10 @@ export default class TwitchChatService extends Service {
       this.audiocommandslist.forEach((command) => {
         this.audio.load(command.soundfile).asSound(command.name).then(
           function(msg) {
-            console.debug(command.soundfile+ " loaded in the soundboard"/*, msg*/);
+            //console.debug(command.soundfile+ " loaded in the soundboard"/*, msg*/);
           }.bind(this), 
           function(err) {
-            console.log("error loading "+command.soundfile+" in the soundboard!", err);
+            //console.log("error loading "+command.soundfile+" in the soundboard!", err);
           }.bind(this)
         );
       });

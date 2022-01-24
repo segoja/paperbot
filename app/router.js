@@ -13,6 +13,9 @@ Router.map(function() {
   this.route('clients', function() {
     this.route('client', { path: ':client_id' });
   });
+  this.route('timers', function() {
+    this.route('timer', { path: ':timer_id' });
+  });  
   this.route('songs', function() {
     this.route('song', { path: ':song_id' });
   });
