@@ -64,10 +64,42 @@ export default class QueueHandlerService extends Service {
   }
    
   // Buttons
+  @action async removePending(request){
+    await request.get('song').then(async(song)=>{
+      await request.destroyRecord().then(async()=>{
+        let times = Number(song.times_requested) + Number(-1);  
+        song.times_requested = times;          
+        await song.save().then(()=>{
+          let count = 0;
+          this.pendingSongs.forEach((item)=>{
+            if(!item.isDeleted){
+              item.position = count;
+              item.save().then(()=>{        
+                console.debug(item.position+'. '+item.title);
+              });
+              count = Number(count) +1;
+            }
+          });          
+        });
+      });
+    });
+  }
 
-  
+  @action async removePlayed(request){
+    await request.destroyRecord().then(async()=>{     
+      let count = 0;
+      this.playedSongs.forEach((item)=>{
+        item.position = count;
+        item.save().then(()=>{        
+          console.debug(item.position+'. '+item.title);
+        });
+        count = Number(count) +1;
+      }); 
+    });
+  }
+
   @action clearPending(){
-    //if(uniqBy('pendingSongs', 'songId').length > 0){
+    if(this.pendingSongs.length > 0){
       this.pendingSongs.uniqBy('songId').forEach((item)=>{
         item.song.then((song)=>{
           let requests = this.pendingSongs.filterBy('song.id', song.get('id'));        
@@ -81,8 +113,24 @@ export default class QueueHandlerService extends Service {
           });          
         })
       });
-    //}
+    }
   }
+  
+  @action clearPlayed(){
+    if(this.playedSongs.length > 0){
+      this.playedSongs.forEach((item)=>{
+         item.destroyRecord();
+      });
+    }
+  }
+
+  @action clearAll(){
+    if(this.arrangedAscQueue.length > 0){
+      this.arrangedAscQueue.forEach((item)=>{
+         item.destroyRecord();
+      });
+    }
+  }  
   
   @action exportQueue(){
     if(this.songqueue.length > 0 ){
@@ -126,48 +174,50 @@ export default class QueueHandlerService extends Service {
 
   @action async requestStatus(request) {    
     // We use set in order to make sure the context updates properly.
-    request.position = 0;
-    if(request.processed === true){
-      // Next line makes the element to get back in the pending list but in the last position:
-      let oldPending = this.pendingSongs.removeObject(request);
-      let count = 0
-      oldPending.forEach((pending)=>{
-        count = Number(count) +1
-        pending.position = count;
-        pending.save();
-        //console.debug(pending.position+'. '+pending.title);
-      });      
-    } else {
-      let oldPlayed = this.playedSongs;
-      let count = 0
-      oldPlayed.forEach((played)=>{
-        count = Number(count) -1;
-        played.position = count;
-        played.save();
-        //console.debug(played.position+'. '+played.title);
-      });
-    }
-    
-    request.processed = !request.processed;
-    
-    request.save().then(()=>{
-      if(request.processed){        
-        this.store.findRecord('song', request.song.get('id')).then(async (actualSong)=>{
-          if(await actualSong.isLoaded){
-            actualSong.last_played = new Date();
-            actualSong.times_played = Number(actualSong.times_played) + 1;
-            await actualSong.save();
-          }
+    if(!request.isDeleted){
+      request.position = 0;
+      if(request.processed === true){
+        // Next line makes the element to get back in the pending list but in the last position:
+        let oldPending = this.pendingSongs.removeObject(request);
+        let count = 0
+        oldPending.forEach((pending)=>{
+          count = Number(count) +1
+          pending.position = count;
+          pending.save();
+          //console.debug(pending.position+'. '+pending.title);
+        });      
+      } else {
+        let oldPlayed = this.playedSongs;
+        let count = 0
+        oldPlayed.forEach((played)=>{
+          count = Number(count) -1;
+          played.position = count;
+          played.save();
+          //console.debug(played.position+'. '+played.title);
         });
       }
       
-      this.scrollPlayedPosition = 0;
-      this.scrollPendingPosition = 0;
-            
-      if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
-        this.fileContent(this.pendingSongs);
-      }
-    });
+      request.processed = !request.processed;
+      
+      request.save().then(()=>{
+        if(request.processed){        
+          this.store.findRecord('song', request.song.get('id')).then(async (actualSong)=>{
+            if(await actualSong.isLoaded){
+              actualSong.last_played = new Date();
+              actualSong.times_played = Number(actualSong.times_played) + 1;
+              await actualSong.save();
+            }
+          });
+        }
+        
+        this.scrollPlayedPosition = 0;
+        this.scrollPendingPosition = 0;
+              
+        if(this.currentUser.updateQueueOverlay && this.currentUser.lastStream.requests){
+          this.fileContent(this.pendingSongs);
+        }
+      });
+    }
   }
   
   @action songToQueue(selected){

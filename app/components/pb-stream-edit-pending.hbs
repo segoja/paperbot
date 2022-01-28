@@ -4,6 +4,7 @@
       <div class="row bg-secondary text-light">
         <div class="col d-block align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Songs pending</h6></div>
         <BsButtonGroup class="col-auto px-0" as |bg|>
+          <ButtonConfirm @btnClass="btn btn-secondary btn-sm rounded-0 border-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to wipe the queue?" @targetAction={{this.queueHandler.clearPending}} @buttonTitle="Wipe queue" />    
           <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanpending "window-maximize" "window-minimize"}}" /></bg.button>
         </BsButtonGroup>
       </div>
@@ -15,20 +16,31 @@
             {{scroll-position position=this.queueHandler.scrollPendingPosition relative=true}} 
             {{sortable-group onChange=(fn this.reorderItems this.queueHandler.pendingSongs)}}
           >
-            {{#each this.queueHandler.pendingSongs as |pendingsong|}}
+            {{#each this.queueHandler.pendingSongs as |pendingsong|}}              
               <div id={{pendingsong.id}} class="row g-0 alert-info w-100 text-decoration-none py-0 px-0 my-1" {{sortable-item model=pendingsong}}>
                 <div class="col-auto align-middle px-3 pt-2 rounded-0 handle" {{sortable-handle}}>
                   <FaIcon @icon="grip-vertical" @size="1x" class="d-block" />
                   <FaIcon @icon="grip-vertical" @size="1x" class="d-block" />
                 </div>              
-                <div class="col px-2" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}} role="button">
-                  <div class="row">
+                <div class="col ps-2" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}} role="button">
+                  <div class="row g-0">
                     <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
-                    <div class="col-auto"><small>{{pendingsong.user}}</small></div>
+                    <div class="col-auto">
+                      <small class="pe-1">{{pendingsong.user}}</small>
+                    </div>                    
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-sm handle" {{on "click" (fn this.queueHandler.removePending pendingsong)}}>
+                        <FaIcon @icon="times" @size="1x" class="d-block" />
+                      </button>              
+                    </div>
                   </div>
-                  <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.fullText}}</div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.fullText}}</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </div> 
             {{/each}}
           </div>
         {{/unless}}

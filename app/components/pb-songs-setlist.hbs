@@ -1,10 +1,14 @@
 <div class="card col h-100 flex-column flex-fill d-flex overflow-hidden bg-white">
   <div class="card-header">
     <div class="row">
-      <div class="col py-2 pe-1"><span class="h5 card-title">Setlist/Queue manager</span></div>
+      <div class="col py-2 pe-1"><span class="h5 card-title">Setlist/Queue</span></div>
       <div class="col-auto px-1">
+        <button type="button" class="btn btn-secondary" {{on "click" this.togglePlayed}}>
+          Show played ({{this.playedSongs.length}})
+          <FaIcon @icon={{if this.showPlayed "minus-square" "plus-square"}} @size="1x" />
+        </button>
         <BsButton @type="secondary" @onClick={{this.queueHandler.exportQueue}} title="Download setlist intext"><FaIcon @icon="file-download" /></BsButton>
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="If you do this while streaming, you will wipe all pending songs in the queue too. Are you sure?" @targetAction={{this.queueHandler.clearPending}} @buttonTitle="Wipe setlist" />        
+        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="If you do this while streaming you will wipe all requests. Are you sure?" @targetAction={{this.queueHandler.clearAll}} @buttonTitle="Wipe setlist" />        
       </div>
     </div>
   </div>
@@ -15,17 +19,33 @@
       {{scroll-position position=this.scrollPendingPosition relative=false}}
       {{sortable-group groupName="setlist" onChange=(fn this.reorderItems this.queueHandler.pendingSongs)}}
     >
+      {{#if this.showPlayed}}
+        {{#each this.playedSongs as |playedsong|}}
+          <div id={{playedsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 ps-2 my-1">
+            <div class="row g-0">
+              <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
+              <div class="col-auto"><small class="pe-2">{{playedsong.user}}</small></div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-sm handle" {{on "click" (fn this.queueHandler.removePlayed playedsong)}}>
+                  <FaIcon @icon="times" @size="1x" class="d-block" />
+                </button>              
+              </div>
+            </div>
+            <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.fullText}}</div>
+          </div>
+        {{/each}}
+      {{/if}}
       {{#each this.queueHandler.pendingSongs as |pendingsong|}}
         <div id={{pendingsong.id}} class="row g-0 alert-info w-100 text-decoration-none py-0 px-0 my-1" {{sortable-item groupName="setlist" model=pendingsong}}>
           <div class="col-auto align-middle px-3 pt-2 rounded-0 handle" {{sortable-handle}}>
             <FaIcon @icon="grip-vertical" @size="1x" class="d-block" />
             <FaIcon @icon="grip-vertical" @size="1x" class="d-block" />
           </div>              
-          <div class="col px-2">
+          <div class="col ps-2">
             <div class="row">
               <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
               <div class="col-auto">
-                <button type="button" class="btn btn-sm" {{on "click" (fn this.removeRequest pendingsong)}}>
+                <button type="button" class="btn btn-sm" {{on "click" (fn this.queueHandler.removePending pendingsong)}}>
                   <FaIcon @icon="times" @size="1x" class="d-block" />
                 </button>              
               </div>
@@ -33,10 +53,10 @@
             <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.fullText}}</div>
           </div>
         </div>
-      {{/each}}
+      {{/each}}     
     </div>
   </div>
   <div class="card-footer py-0 my-0 px-0">
-    <span class="page-link disabled float-end bg-transparent border-0 text-secondary">Total: {{this.queueHandler.pendingSongs.length}}</span>
+    <span class="page-link disabled float-end bg-transparent border-0 text-secondary">Total: {{this.total}}</span>
   </div>  
 </div>

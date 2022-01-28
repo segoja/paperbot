@@ -235,13 +235,13 @@ export default class PbStreamEditComponent extends Component {
         this.queueHandler.playedSongs.reverse().forEach(async (request)=>{
           let entry = { 'timestamp': request.timestamp, 'song': request.fullText, 'user': request.user, 'processed': request.processed };
           this.args.stream.songqueue.push(entry);
-          await request.destroyRecord();
+          // await request.destroyRecord();
         });
 
         this.queueHandler.pendingSongs.forEach(async (request)=>{
           let entry = { 'timestamp': request.timestamp, 'song': request.fullText, 'user': request.user, 'processed': request.processed };
           this.args.stream.songqueue.push(entry);
-          await request.destroyRecord();
+          // await request.destroyRecord();
         });
         
       }

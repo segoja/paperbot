@@ -4,6 +4,7 @@
       <div class="row bg-secondary text-light">
         <div class="col d-block align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Songs played</h6></div>
         <BsButtonGroup class="col-auto px-0" as |bg|>
+          <ButtonConfirm @btnClass="btn btn-secondary btn-sm rounded-0 border-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to wipe the played list?" @targetAction={{this.queueHandler.clearPlayed}} @buttonTitle="Wipe played" />
           <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanplayed "window-maximize" "window-minimize"}}" /></bg.button>
         </BsButtonGroup>
       </div>
@@ -11,10 +12,15 @@
         {{#unless this.globalConfig.config.cpanplayed}}
           <div class="col-md queueframe" {{scroll-position position=this.queueHandler.scrollPlayedPosition relative=true}}>
             {{#each this.queueHandler.playedSongs as |playedsong|}}
-              <div id={{playedsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 px-2 my-1">
-                <div class="row">
+              <div id={{playedsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 ps-2 my-1">
+                <div class="row g-0">
                   <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
-                  <div class="col-auto"><small>{{playedsong.user}}</small></div>
+                  <div class="col-auto"><small class="pe-2">{{playedsong.user}}</small></div>
+                  <div class="col-auto">
+                    <button type="button" class="btn btn-sm handle" {{on "click" (fn this.queueHandler.removePlayed playedsong)}}>
+                      <FaIcon @icon="times" @size="1x" class="d-block" />
+                    </button>              
+                  </div>
                 </div>
                 <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.fullText}}</div>
               </div>

@@ -240,6 +240,11 @@ div.pan-buttons-row{
   align: center;
 }
 
+.click-through {
+  pointer-events: none;
+  .btn { pointer-events: initial; } 
+}
+
 .papermenu *{
   align-items: bottom!important;
   .navbar-toggler-icon { width: 27px; height: 27px; }
