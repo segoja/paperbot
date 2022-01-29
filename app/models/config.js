@@ -25,7 +25,8 @@ export default class ConfigModel extends Model {
   @attr('number', {defaultValue: 550}) overlayWidth;
   @attr('number', {defaultValue: 175}) overlayHeight;
   @attr('number', {defaultValue: 0}) overlayPosX;
-  @attr('number', {defaultValue: 0}) overlayPosY;  
+  @attr('number', {defaultValue: 0}) overlayPosY;
+  @attr('number', {defaultValue: 5}) timerAfterLines;
 
   @belongsTo('client', { inverse: 'botclientconfigs', save: true }) defbotclient;
   @belongsTo('client', { inverse: 'chatclientconfigs', save: true }) defchatclient;
@@ -37,6 +38,7 @@ export default class ConfigModel extends Model {
   @attr('number', {defaultValue: 0}) readerPosX;
   @attr('number', {defaultValue: 0}) readerPosY;
   @attr('number', {defaultValue: 0}) readerColumns;
+  @attr('number', {defaultValue: 1}) readerZoom;
 
   @attr('boolean', {defaultValue: false}) mainMax;
   @attr('number', {defaultValue: 1080}) mainWidth;

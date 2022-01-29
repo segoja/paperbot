@@ -56,8 +56,8 @@ export default class TwitchChatService extends Service {
   get audiocommandslist(){
     return this.commandlist.filterBy('type', 'audio');
   }
-  
-  
+  @tracked lastTimerId = '';
+  @tracked lastTimerPos = 0;
   @tracked activeTimers = {};
   get timersList(){
     return this.store.peekAll('timer').filterBy('active', true);
@@ -193,12 +193,17 @@ export default class TwitchChatService extends Service {
   }  
   
   @action async timersLauncher(){
-    this.timersList.map((timer)=>{
+    this.timersList.forEach((timer)=>{
       this.timerScheduler(timer);
     });
   }  
 
   async timerScheduler(timer){
+    /*let lastest = this.msglist.map(msg => msg.user).indexOf(this.botclient.username);
+    if(latest.length > 0){
+      latest.get('lastObject')
+    }
+    console.debug(this.botclient);*/
     if(!timer.isDeleted && this.botConnected && this.channel){
       if(this.activeTimers[timer.id] && !timer.active){
         //console.log('The timer was active, cancelling')
@@ -206,11 +211,19 @@ export default class TwitchChatService extends Service {
         this.activeTimers[timer.id] = '';
       } else { 
         //console.log('Scheduling the timer...')
-        let time = timer.time * 60 * 1000;
-        this.activeTimers[timer.id] = await later(() => {        
-          this.botclient.say(this.channel, timer.message);
+        let time = timer.time * 1000;
+        // let time = timer.time * 60 * 1000;
+        this.activeTimers[timer.id] = await later(() => {
+          if(this.msglist.length > 0){
+            let diff = this.msglist.length - this.lastTimerPos;
+            if(diff >= timer.chatlines && this.lastTimerId != timer.id){
+              this.botclient.say(this.channel, timer.message);
+              this.lastTimerId = timer.id;
+              this.lastTimerPos = this.msglist.get('length');
+            }
+          }          
           this.timerScheduler(timer);
-        }, time);
+        }, time); 
       }
     }
     //console.log(this.activeTimers);
@@ -360,255 +373,260 @@ export default class TwitchChatService extends Service {
     if (self) { return; }
     // Remove whitespace from chat message
     const commandName = msg.trim().toLowerCase();
-    
-    // If the command is known, let's execute it      
-    if(String(commandName).startsWith('!sr ')){
-      if(this.takessongrequests && this.currentUser.updateQueueOverlay){
-        var song = commandName.replace(/!sr /g, "");
-        song = song.replace(/&/g, " ");
-        song = song.replace(/\//g, " ");
-        song = song.replace(/\-/g, " ");
-        song = song.replace(/[^a-zA-Z0-9'?! ]/g, "");
-        console.debug(song);
-        if(song){
-          this.requestpattern = song;
-          
-          if (this.filteredSongs.get('length') > 0 ) { 
-            var bestmatch = await this.filteredSongs.shift();
-          
-            let hasBeenRequested = this.queueHandler.songqueue.find(item => item.fullText === bestmatch.fullText);
-            if(await hasBeenRequested){
-              this.botclient.say(target, "/me The song "+bestmatch.fullText+" has already been requested!");
-            } else {
-              if(bestmatch.active){
-                if(this.commandPermissionHandler(bestmatch, tags) === true){
-
-                  let nextPosition = this.queueHandler.nextPosition;
-
-                  this.lastsongrequest = this.store.createRecord('request'); 
-                  this.lastsongrequest.chatid = tags['id'] ? tags['id'].toString() : 'songsys';
-                  this.lastsongrequest.timestamp = new Date();
-                  this.lastsongrequest.type = tags['message-type'] ? tags['message-type'] : null;
-                  this.lastsongrequest.song = bestmatch;
-                  this.lastsongrequest.user = tags['username'] ? tags['username'].toString() : this.botUsername;
-                  this.lastsongrequest.displayname = tags['display-name'] ? tags['display-name'].toString() : this.botUsername;
-                  this.lastsongrequest.processed = false;
-                  this.lastsongrequest.position = nextPosition;                  
-                  
-                  this.lastsongrequest.save().then(async()=>{
-                    // Song statistics:
-                    bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
-                    bestmatch.last_requested = new Date();
-                    await bestmatch.save();
-                    
-                    console.log(bestmatch.fullText+' added at position '+nextPosition);
-                    
-                    this.queueHandler.scrollPendingPosition = 0;
-                    this.queueHandler.scrollPlayedPosition = 0;
-                    this.queueHandler.lastsongrequest = this.lastsongrequest;
-                    
-                    // changing this could break the reader.
-                    this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);                    
-                  });
-                } else {
-                  this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
-                }            
+    if(String(commandName).startsWith('!')){
+      // If the command is known, let's execute it      
+      if(String(commandName).startsWith('!sr ')){
+        if(this.takessongrequests && this.currentUser.updateQueueOverlay){
+          var song = commandName.replace(/!sr /g, "");
+          song = song.replace(/&/g, " ");
+          song = song.replace(/\//g, " ");
+          song = song.replace(/\-/g, " ");
+          song = song.replace(/[^a-zA-Z0-9'?! ]/g, "");
+          console.debug(song);
+          if(song){
+            this.requestpattern = song;
+            
+            if (this.filteredSongs.get('length') > 0 ) { 
+              var bestmatch = await this.filteredSongs.shift();
+            
+              let hasBeenRequested = this.queueHandler.songqueue.find(item => item.fullText === bestmatch.fullText);
+              if(await hasBeenRequested){
+                this.botclient.say(target, "/me The song "+bestmatch.fullText+" has already been requested!");
               } else {
-                this.botclient.say(target, "/me I coudln't infer the song @"+tags['username']+". Try again!");
+                if(bestmatch.active){
+                  if(this.commandPermissionHandler(bestmatch, tags) === true){
+
+                    let nextPosition = this.queueHandler.nextPosition;
+
+                    this.lastsongrequest = this.store.createRecord('request'); 
+                    this.lastsongrequest.chatid = tags['id'] ? tags['id'].toString() : 'songsys';
+                    this.lastsongrequest.timestamp = new Date();
+                    this.lastsongrequest.type = tags['message-type'] ? tags['message-type'] : null;
+                    this.lastsongrequest.song = bestmatch;
+                    this.lastsongrequest.user = tags['username'] ? tags['username'].toString() : this.botUsername;
+                    this.lastsongrequest.displayname = tags['display-name'] ? tags['display-name'].toString() : this.botUsername;
+                    this.lastsongrequest.processed = false;
+                    this.lastsongrequest.position = nextPosition;                  
+                    
+                    this.lastsongrequest.save().then(async()=>{
+                      // Song statistics:
+                      bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
+                      bestmatch.last_requested = new Date();
+                      await bestmatch.save();
+                      
+                      console.log(bestmatch.fullText+' added at position '+nextPosition);
+                      
+                      this.queueHandler.scrollPendingPosition = 0;
+                      this.queueHandler.scrollPlayedPosition = 0;
+                      this.queueHandler.lastsongrequest = this.lastsongrequest;
+                      
+                      // changing this could break the reader.
+                      this.botclient.say(target, '/me @'+tags['username']+ ' requested the song '+bestmatch.fullText);                    
+                    });
+                  } else {
+                    this.botclient.say(target, "/me @"+tags['username']+" you are not allowed to request that song.");
+                  }            
+                } else {
+                  this.botclient.say(target, "/me I coudln't infer the song @"+tags['username']+". Try again!");
+                }
               }
+            } else {
+              this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');         
             }
-          } else {
-            this.botclient.say(target, '/me @'+tags['username']+ ' that song is not in the songlist. Try again!');         
           }
+          console.debug(`* Executed ${commandName} command`);
+        } else {
+          this.botclient.say(target, "/me Requests are disabled.");
         }
-        console.debug(`* Executed ${commandName} command`);
       } else {
-        this.botclient.say(target, "/me Requests are disabled.");
-      }
-    } else {
-      if(String(commandName).startsWith('!ykq')){
-        let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };      
-        if(this.commandPermissionHandler(internalCommand, tags) === true && this.currentUser.soundBoardEnabled){
-          let quietTime = Number(commandName.toLowerCase().replace(/!ykq/g, "").trim());
-          this.currentUser.soundBoardEnabled = false;
-          console.log(quietTime);
-          if(!isNaN(quietTime)){
-            if(quietTime > 0){
-              later(() => { 
-                this.currentUser.soundBoardEnabled = true;
-              }, quietTime * 1000);
-              this.botclient.say(target, '/me Enjoy the silence a little bit...');          
+        if(String(commandName).startsWith('!ykq')){
+          let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };      
+          if(this.commandPermissionHandler(internalCommand, tags) === true && this.currentUser.soundBoardEnabled){
+            let quietTime = Number(commandName.toLowerCase().replace(/!ykq/g, "").trim());
+            this.currentUser.soundBoardEnabled = false;
+            console.log(quietTime);
+            if(!isNaN(quietTime)){
+              if(quietTime > 0){
+                later(() => { 
+                  this.currentUser.soundBoardEnabled = true;
+                }, quietTime * 1000);
+                this.botclient.say(target, '/me Enjoy the silence a little bit...');          
+              } else {
+                this.botclient.say(target, '/me Enjoy the silence...');
+              }
             } else {
               this.botclient.say(target, '/me Enjoy the silence...');
             }
-          } else {
-            this.botclient.say(target, '/me Enjoy the silence...');
+            //this.botclient.say(target, '/me MrDestructoid enjoy the silence...');        
+            if(this.lastSoundCommand != null && this.lastSoundCommand.isPlaying){
+              this.lastSoundCommand.changeGainTo(0).from('percent');
+              this.lastSoundCommand.stop();
+            }
           }
-          //this.botclient.say(target, '/me MrDestructoid enjoy the silence...');        
-          if(this.lastSoundCommand != null && this.lastSoundCommand.isPlaying){
-            this.lastSoundCommand.changeGainTo(0).from('percent');
-            this.lastSoundCommand.stop();
-          }
-        }
-        // !random adds a random non played/requested song to the queue:
-      } else if(this.takessongrequests && this.currentUser.updateQueueOverlay && String(commandName).startsWith('!random')){
-        if(await this.queueHandler.availableSongs.get('length') > 0){
-          let max = this.queueHandler.availableSongs.get('length');
-          let position = Math.floor(Math.random() * max);
-          let firstSong = this.queueHandler.availableSongs[position];
-          
-          if(firstSong){
+          // !random adds a random non played/requested song to the queue:
+        } else if(this.takessongrequests && this.currentUser.updateQueueOverlay && String(commandName).startsWith('!random')){
+          if(await this.queueHandler.availableSongs.get('length') > 0){
+            let max = this.queueHandler.availableSongs.get('length');
+            let position = Math.floor(Math.random() * max);
+            let firstSong = this.queueHandler.availableSongs[position];
             
-            let nextPosition = this.queueHandler.nextPosition;
+            if(firstSong){
+              
+              let nextPosition = this.queueHandler.nextPosition;
 
-            this.lastsongrequest = this.store.createRecord('request'); 
-            this.lastsongrequest.chatid = tags['id'] ? tags['id'].toString() : 'songsys';
-            this.lastsongrequest.timestamp = new Date();
-            this.lastsongrequest.type = tags['message-type'] ? tags['message-type'] : null;
-            this.lastsongrequest.song = firstSong;
-            this.lastsongrequest.user = tags['username'] ? tags['username'].toString() : this.botUsername;
-            this.lastsongrequest.displayname = tags['display-name'] ? tags['display-name'].toString() : this.botUsername;
-            this.lastsongrequest.processed = false;
-            this.lastsongrequest.position = nextPosition;                  
-            
-            this.lastsongrequest.save().then(async()=>{
-              // Song statistics:
-              firstSong.times_requested = Number(firstSong.times_requested) + 1;
-              firstSong.last_requested = new Date();
-              await firstSong.save();
+              this.lastsongrequest = this.store.createRecord('request'); 
+              this.lastsongrequest.chatid = tags['id'] ? tags['id'].toString() : 'songsys';
+              this.lastsongrequest.timestamp = new Date();
+              this.lastsongrequest.type = tags['message-type'] ? tags['message-type'] : null;
+              this.lastsongrequest.song = firstSong;
+              this.lastsongrequest.user = tags['username'] ? tags['username'].toString() : this.botUsername;
+              this.lastsongrequest.displayname = tags['display-name'] ? tags['display-name'].toString() : this.botUsername;
+              this.lastsongrequest.processed = false;
+              this.lastsongrequest.position = nextPosition;                  
               
-              console.log(firstSong.fullText+' added at position '+nextPosition);
-              
-              this.queueHandler.scrollPendingPosition = 0;
-              this.queueHandler.scrollPlayedPosition = 0;
-              this.queueHandler.lastsongrequest = this.lastsongrequest;
-              
-              // changing this could break the reader.
-              this.botclient.say(target, '/me @'+tags['username']+ ' randomly requested the song '+firstSong.fullText);                    
-            });
-          }
-        } else {
-          this.botclient.say(target, "/me There are no songs available to add.");
-        }
-        // !next or!nextsong  show the last song played:
-      } else if(String(commandName).startsWith('!next') || String(commandName).startsWith('!nextsong')){
-        if(await this.queueHandler.pendingSongs.get('length') > 1){
-          let firstSong = this.queueHandler.pendingSongs[1];
-          if(firstSong){
-            this.botclient.say(target, '/me Next song is: '+firstSong.fullText);
-          }
-        } else {
-          this.botclient.say(target, "/me There are no songs to play next.");
-        }     
-        // !last,!lastsong or !lastplayed show the last song played:
-      } else if(String(commandName).startsWith('!last') 
-        || String(commandName).startsWith('!lastplayed') 
-        || String(commandName).startsWith('!lastsong') 
-        || String(commandName).startsWith('!previous') 
-        || String(commandName).startsWith('!previoussong') 
-        || String(commandName).startsWith('!ps')){
-        if(await this.queueHandler.playedSongs.get('length') > 0){
-          let firstSong = this.queueHandler.playedSongs.get('firstObject');
-          if(firstSong){
-            this.botclient.say(target, '/me Last played song was: '+firstSong.fullText);
-          }
-        } else {
-          this.botclient.say(target, "/me There are no songs in the played list.");
-        }     
-        // !current or !song show the song the streamer is playing:
-      } else if(String(commandName).startsWith('!current') || String(commandName).startsWith('!song') || String(commandName).startsWith('!cs')){
-        if(await this.queueHandler.pendingSongs.get('length') > 0){
-          let firstSong = this.queueHandler.pendingSongs.get('firstObject');
-          if(firstSong){
-            this.botclient.say(target, '/me Playing: '+firstSong.fullText);
-          }
-        } else {
-          this.botclient.say(target, "/me There are no songs in the queue.");
-        }
-        // !queue lists the songs in queue:
-      } else if(String(commandName).startsWith('!queue') || String(commandName).startsWith('!sq')){
-        if(await this.queueHandler.pendingSongs.get('length') > 0){
-          let count = 0;
-          this.botclient.say(target, "/me Songs in queue:");
-          this.queueHandler.pendingSongs.forEach(async (item)=>{
-            if(count < 6){
-              count = Number(count) + 1;
-              await this.botclient.say(target, '/me '+count+'. '+item.title);
-            }
-          });
-        } else {
-          this.botclient.say(target, "/me There are no songs in the queue.")
-        }
-        // !ws removes the last song the user requested. Allows one param (mods only), to delete the last request from another user.
-      } else if(String(commandName).startsWith('!ws') ){
-        if(this.queueHandler.pendingSongs.get('length') > 0){        
-          let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };
-          let targetUser = commandName.toLowerCase().replace(/!ws/g, "").trim();
-          
-          if(this.commandPermissionHandler(internalCommand, tags) === true && targetUser){
-            let targetLastSong = await this.queueHandler.pendingSongs.reverse().find(item => item.user == targetUser);
-            if(targetLastSong){
-              let songname = targetLastSong.fullText;
-              targetLastSong.destroyRecord().then(()=>{
-                this.botclient.say(target, "/me the song "+songname+" has been removed.");
+              this.lastsongrequest.save().then(async()=>{
+                // Song statistics:
+                firstSong.times_requested = Number(firstSong.times_requested) + 1;
+                firstSong.last_requested = new Date();
+                await firstSong.save();
+                
+                console.log(firstSong.fullText+' added at position '+nextPosition);
+                
+                this.queueHandler.scrollPendingPosition = 0;
+                this.queueHandler.scrollPlayedPosition = 0;
+                this.queueHandler.lastsongrequest = this.lastsongrequest;
+                
+                // changing this could break the reader.
+                this.botclient.say(target, '/me @'+tags['username']+ ' randomly requested the song '+firstSong.fullText);                    
               });
-            } else {             
-              this.botclient.say(target, "/me The user @"+targetUser+" doesn't have any song in the queue.");
             }
           } else {
-            let commandUser = tags['username'] ? tags['username'].toString() : this.botUsername;
-            if(targetUser){
-              this.botclient.say(target, "/me you don't have permissions to delete someone else's songs." );
-            } else {
-              let userLastSong = await this.queueHandler.pendingSongs.reverse().find(item => item.user == commandUser);
-              if(userLastSong){
-                let songname = userLastSong.fullText;
-                userLastSong.destroyRecord().then(()=>{
+            this.botclient.say(target, "/me There are no songs available to add.");
+          }
+          // !next or!nextsong  show the last song played:
+        } else if(String(commandName).startsWith('!next') || String(commandName).startsWith('!nextsong')){
+          if(await this.queueHandler.pendingSongs.get('length') > 1){
+            let firstSong = this.queueHandler.pendingSongs[1];
+            if(firstSong){
+              this.botclient.say(target, '/me Next song is: '+firstSong.fullText);
+            }
+          } else {
+            this.botclient.say(target, "/me There are no songs to play next.");
+          }     
+          // !last,!lastsong or !lastplayed show the last song played:
+        } else if(String(commandName).startsWith('!last') 
+          || String(commandName).startsWith('!lastplayed') 
+          || String(commandName).startsWith('!lastsong') 
+          || String(commandName).startsWith('!previous') 
+          || String(commandName).startsWith('!previoussong') 
+          || String(commandName).startsWith('!ps')){
+          if(await this.queueHandler.playedSongs.get('length') > 0){
+            let firstSong = this.queueHandler.playedSongs.get('firstObject');
+            if(firstSong){
+              this.botclient.say(target, '/me Last played song was: '+firstSong.fullText);
+            }
+          } else {
+            this.botclient.say(target, "/me There are no songs in the played list.");
+          }     
+          // !current or !song show the song the streamer is playing:
+        } else if(String(commandName).startsWith('!current') || String(commandName).startsWith('!song') || String(commandName).startsWith('!cs')){
+          if(await this.queueHandler.pendingSongs.get('length') > 0){
+            let firstSong = this.queueHandler.pendingSongs.get('firstObject');
+            if(firstSong){
+              this.botclient.say(target, '/me Playing: '+firstSong.fullText);
+            }
+          } else {
+            this.botclient.say(target, "/me There are no songs in the queue.");
+          }
+          // !queue lists the songs in queue:
+        } else if(String(commandName).startsWith('!queue') || String(commandName).startsWith('!sq')){
+          if(await this.queueHandler.pendingSongs.get('length') > 0){
+            let count = 0;
+            this.botclient.say(target, "/me Songs in queue:");
+            this.queueHandler.pendingSongs.forEach(async (item)=>{
+              if(count < 6){
+                count = Number(count) + 1;
+                await this.botclient.say(target, '/me '+count+'. '+item.title);
+              }
+            });
+          } else {
+            this.botclient.say(target, "/me There are no songs in the queue.")
+          }
+          // !ws removes the last song the user requested. Allows one param (mods only), to delete the last request from another user.
+        } else if(String(commandName).startsWith('!ws') ){
+          if(this.queueHandler.pendingSongs.get('length') > 0){        
+            let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };
+            let targetUser = commandName.toLowerCase().replace(/!ws/g, "").trim();
+            
+            if(this.commandPermissionHandler(internalCommand, tags) === true && targetUser){
+              let targetLastSong = await this.queueHandler.pendingSongs.reverse().find(item => item.user == targetUser);
+              if(targetLastSong){
+                let songname = targetLastSong.fullText;
+                targetLastSong.destroyRecord().then(()=>{
                   this.botclient.say(target, "/me the song "+songname+" has been removed.");
                 });
-              } else {
-                this.botclient.say(target, "/me you don't have songs in the queue." );
+              } else {             
+                this.botclient.say(target, "/me The user @"+targetUser+" doesn't have any song in the queue.");
               }
-            }
-          }  
-        } else {
-          this.botclient.say(target, "/me There are no songs to be removed.");
-        }          
+            } else {
+              let commandUser = tags['username'] ? tags['username'].toString() : this.botUsername;
+              if(targetUser){
+                this.botclient.say(target, "/me you don't have permissions to delete someone else's songs." );
+              } else {
+                let userLastSong = await this.queueHandler.pendingSongs.reverse().find(item => item.user == commandUser);
+                if(userLastSong){
+                  let songname = userLastSong.fullText;
+                  userLastSong.destroyRecord().then(()=>{
+                    this.botclient.say(target, "/me the song "+songname+" has been removed.");
+                  });
+                } else {
+                  this.botclient.say(target, "/me you don't have songs in the queue." );
+                }
+              }
+            }  
+          } else {
+            this.botclient.say(target, "/me There are no songs to be removed.");
+          }          
 
-      } else{
-        if(await this.commandlist.get('length') > 0){
-          this.commandlist.forEach((command) => {
-              if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
-                /*if (self) { 
-                  return;  
-                } else {*/
-                if(this.commandPermissionHandler(command, tags) === true){
-                  switch (command.type) {
-                    case 'parameterized':{
-                      let pattern = new RegExp(`${command.name}`, 'gi');
-                      
-                      let param = commandName.replace(pattern, '').trim();
-                      
-                      let answerraw = command.response;
-                      
-                      let answer = answerraw.replace(/\$param/g, param).trim();
-                      
-                      if(isNaN(command.timer)){
-                        this.botclient.say(target, answer);                    
-                        console.debug(`* Executed ${command.name} command`);
-                      } else {
-                        later(() => { 
+        } else{
+          if(await this.commandlist.get('length') > 0){
+            this.commandlist.forEach((command) => {
+                if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
+                  /*if (self) { 
+                    return;  
+                  } else {*/
+                  if(this.commandPermissionHandler(command, tags) === true){
+                    switch (command.type) {
+                      case 'parameterized':{
+                        let pattern = new RegExp(`${command.name}`, 'gi');
+                        
+                        let param = commandName.replace(pattern, '').trim();
+                        
+                        let answerraw = command.response;
+                        
+                        let answer = answerraw.replace(/\$param/g, param).trim();
+                        
+                        if(isNaN(command.timer)){
                           this.botclient.say(target, answer);                    
                           console.debug(`* Executed ${command.name} command`);
-                        }, command.timer);
-                      }                    
-                      break;
-                    }
-                    case 'audio':{
-                      if (this.currentUser.soundBoardEnabled){
-                        if(this.lastSoundCommand){
-                          if(this.soundPlaying){
-                            if(this.globalConfig.config.soundOverlap){
+                        } else {
+                          later(() => { 
+                            this.botclient.say(target, answer);                    
+                            console.debug(`* Executed ${command.name} command`);
+                          }, command.timer);
+                        }                    
+                        break;
+                      }
+                      case 'audio':{
+                        if (this.currentUser.soundBoardEnabled){
+                          if(this.lastSoundCommand){
+                            if(this.soundPlaying){
+                              if(this.globalConfig.config.soundOverlap){
+                                this.lastSoundCommand = this.audio.getSound(command.name);
+                                this.lastSoundCommand.changeGainTo(command.volume).from('percent');
+                                this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
+                              }
+                            } else {
                               this.lastSoundCommand = this.audio.getSound(command.name);
                               this.lastSoundCommand.changeGainTo(command.volume).from('percent');
                               this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
@@ -618,35 +636,31 @@ export default class TwitchChatService extends Service {
                             this.lastSoundCommand.changeGainTo(command.volume).from('percent');
                             this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
                           }
-                        } else {
-                          this.lastSoundCommand = this.audio.getSound(command.name);
-                          this.lastSoundCommand.changeGainTo(command.volume).from('percent');
-                          this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
                         }
+                        break;
                       }
-                      break;
-                    }
-                    default:{
-                      if(isNaN(command.timer)){
-                        this.botclient.say(target, command.response);
-                        console.debug(`* Executed ${command.name} command`);
-                      } else {
-                        later(() => { 
+                      default:{
+                        if(isNaN(command.timer)){
                           this.botclient.say(target, command.response);
                           console.debug(`* Executed ${command.name} command`);
-                        }, command.timer);
+                        } else {
+                          later(() => { 
+                            this.botclient.say(target, command.response);
+                            console.debug(`* Executed ${command.name} command`);
+                          }, command.timer);
+                        }
+                        break;
                       }
-                      break;
                     }
-                  }
-                } else{ 
-                  console.debug("Not authorized to use "+command.name+" command.")
-                } 
-                /*}*/
-              }
-          });
-        } else {
-          this.botclient.say(target, "/me There are no commands to lauch.");
+                  } else{ 
+                    console.debug("Not authorized to use "+command.name+" command.")
+                  } 
+                  /*}*/
+                }
+            });
+          } else {
+            console.debug("There are no commands to lauch.");
+          }
         }
       }
     }

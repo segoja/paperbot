@@ -71,7 +71,8 @@ export default class PbReaderComponent extends Component {
   }
   
   @action resetZoom(){
-    this.zoomLevel = 0.85;
+    this.globalConfig.config.readerZoom = Number(0.85);
+    this.globalConfig.config.save();
   }
   
   @action autoColumn(){
@@ -94,11 +95,14 @@ export default class PbReaderComponent extends Component {
   }
   
   @action addZoom(){
-    this.zoomLevel = this.zoomLevel + 0.025;
+    this.globalConfig.config.readerZoom = Number(this.globalConfig.config.readerZoom) + Number(0.025);
+    this.globalConfig.config.save();
+    
   }
   
   @action subZoom(){
-    this.zoomLevel = this.zoomLevel - 0.025;
+    this.globalConfig.config.readerZoom = Number(this.globalConfig.config.readerZoom) - Number(0.025);
+    this.globalConfig.config.save();
   }
   
   get updateLight(){

@@ -11,10 +11,10 @@ export default class CommandModel extends Model {
   @attr('boolean', {defaultValue: false}) vip;
   @attr('boolean', {defaultValue: false}) sub;
 
-  @attr('string', {defaultValue: "0"}) cooldown;
-  @attr('string', {defaultValue: "300"}) timer;
+  @attr('number', {defaultValue: 0}) cooldown;
+  @attr('number', {defaultValue: 0}) timer;
   @attr('string', {defaultValue: ""}) response;
   @attr('string', {defaultValue: ""}) soundfile;
-  @attr('string', {defaultValue: "0"}) volume;
+  @attr('number', {defaultValue: 0}) volume;
   @attr('date', {defaultValue: ""}) date_added;
 }

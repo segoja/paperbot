@@ -20,6 +20,17 @@
         </div>
       </div>
       <div class="form-group row pb-2">
+        <label class="col-md-4">Chat lines interval</label>    
+        <div class="col-sm">
+          <div class="input-group bg-light rounded">
+            <Input @type="range" min="5" max="50" @value={{@timer.chatlines}}  class="form-control slider w-75" />
+            <div class="input-group-append w-25">
+              <Input @type="text" @value={{@timer.chatlines}} class="form-control rounded-0" />
+            </div>
+          </div>
+        </div>
+      </div>  
+      <div class="form-group row pb-2">
         <label class="col-md-4">Time (minutes)</label>    
         <div class="col-sm">
           <div class="input-group bg-light rounded">
