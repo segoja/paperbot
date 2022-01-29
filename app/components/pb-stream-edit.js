@@ -18,7 +18,7 @@ export default class PbStreamEditComponent extends Component {
     return this.args.stream.botclient.get('optsgetter');
   }
 
-  @tracked message = ""; 
+  @tracked message = ''; 
   @tracked msglist = [];
   
   get disableBotButton(){
@@ -100,35 +100,22 @@ export default class PbStreamEditComponent extends Component {
     }
     if(this.twitchChat.botConnected === true){
       // Chat events:
-      this.twitchChat.botclient.on("ban", this.msgGetter);
-      this.twitchChat.botclient.on("clearchat", this.msgGetter);
-      this.twitchChat.botclient.on("emoteonly", this.msgGetter);
-      this.twitchChat.botclient.on("follow", this.msgGetter);
-      this.twitchChat.botclient.on("followersonly", this.msgGetter);
-      this.twitchChat.botclient.on("hosting", this.msgGetter);
-      this.twitchChat.botclient.on("messagedeleted", this.msgGetter);
-      this.twitchChat.botclient.on("mod", this.msgGetter);
-      this.twitchChat.botclient.on("notice", this.msgGetter);
-      this.twitchChat.botclient.on("slowmode", this.msgGetter);
-      this.twitchChat.botclient.on("subscribers", this.msgGetter);
-      this.twitchChat.botclient.on("timeout", this.msgGetter);
-      this.twitchChat.botclient.on("unban", this.msgGetter);
-      this.twitchChat.botclient.on("unhost", this.msgGetter);
-      this.twitchChat.botclient.on("unmod", this.msgGetter);
-      this.twitchChat.botclient.on("whisper", this.msgGetter);
-      
-      //  Stream events:
-      /*this.twitchChat.botclient.on("cheer", this.eventGetter);
-      this.twitchChat.botclient.on("hosted", this.eventGetter);
-      this.twitchChat.botclient.on("raided", this.eventGetter);
-      this.twitchChat.botclient.on("resub", this.eventGetter);
-      this.twitchChat.botclient.on("subgift", this.eventGetter);
-      this.twitchChat.botclient.on("submysterygift", this.eventGetter);
-      this.twitchChat.botclient.on("subscription", this.eventGetter);
-      if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
-        this.eventsExternal.client.on("event", this.eventGetter);
-        this.eventsExternal.client.on("event:test", this.eventGetter);
-      }*/
+      this.twitchChat.botclient.on('ban', this.msgGetter);
+      this.twitchChat.botclient.on('clearchat', this.msgGetter);
+      this.twitchChat.botclient.on('emoteonly', this.msgGetter);
+      this.twitchChat.botclient.on('follow', this.msgGetter);
+      this.twitchChat.botclient.on('followersonly', this.msgGetter);
+      this.twitchChat.botclient.on('hosting', this.msgGetter);
+      this.twitchChat.botclient.on('messagedeleted', this.msgGetter);
+      this.twitchChat.botclient.on('mod', this.msgGetter);
+      this.twitchChat.botclient.on('notice', this.msgGetter);
+      this.twitchChat.botclient.on('slowmode', this.msgGetter);
+      this.twitchChat.botclient.on('subscribers', this.msgGetter);
+      this.twitchChat.botclient.on('timeout', this.msgGetter);
+      this.twitchChat.botclient.on('unban', this.msgGetter);
+      this.twitchChat.botclient.on('unhost', this.msgGetter);
+      this.twitchChat.botclient.on('unmod', this.msgGetter);
+      this.twitchChat.botclient.on('whisper', this.msgGetter);
     }
   }
 
@@ -154,52 +141,37 @@ export default class PbStreamEditComponent extends Component {
       this.eventsExternal.createClient();
     }
     
-    this.twitchChat.connector(this.optsbot, "bot").then(()=>{
+    this.twitchChat.connector(this.optsbot, 'bot').then(()=>{
         // Chat events:
         this.twitchChat.botclient.on('message', this.msgGetter);
-        this.twitchChat.botclient.on("unban", this.msgGetter);
-        this.twitchChat.botclient.on("ban", this.msgGetter);
-        this.twitchChat.botclient.on("clearchat", this.msgGetter);
-        this.twitchChat.botclient.on("emoteonly", this.msgGetter);
-        this.twitchChat.botclient.on("follow", this.msgGetter);
-        this.twitchChat.botclient.on("followersonly", this.msgGetter);
-        this.twitchChat.botclient.on("hosting", this.msgGetter);
-        this.twitchChat.botclient.on("messagedeleted", this.msgGetter);
-        this.twitchChat.botclient.on("mod", this.msgGetter);
-        this.twitchChat.botclient.on("notice", this.msgGetter);
-        this.twitchChat.botclient.on("slowmode", this.msgGetter);
-        this.twitchChat.botclient.on("subscribers", this.msgGetter);
-        this.twitchChat.botclient.on("timeout", this.msgGetter);
-        this.twitchChat.botclient.on("unhost", this.msgGetter);
-        this.twitchChat.botclient.on("unmod", this.msgGetter);
-        this.twitchChat.botclient.on("whisper", this.msgGetter);
-        
-        //  Stream events:
-        /*this.twitchChat.botclient.on("cheer", this.eventGetter);
-        this.twitchChat.botclient.on("follow", this.eventGetter);
-        this.twitchChat.botclient.on("hosted", this.eventGetter);
-        this.twitchChat.botclient.on("raided", this.eventGetter);
-        this.twitchChat.botclient.on("resub", this.eventGetter);
-        this.twitchChat.botclient.on("subgift", this.eventGetter);
-        this.twitchChat.botclient.on("submysterygift", this.eventGetter);
-        this.twitchChat.botclient.on("subscription", this.eventGetter);
-        if(this.args.stream.events && this.globalConfig.config.externaleventskey && this.globalConfig.config.externalevents){
-          this.eventsExternal.client.on("event", this.eventGetter);
-          this.eventsExternal.client.on("event:test", this.eventGetter);
-        }*/
+        this.twitchChat.botclient.on('unban', this.msgGetter);
+        this.twitchChat.botclient.on('ban', this.msgGetter);
+        this.twitchChat.botclient.on('clearchat', this.msgGetter);
+        this.twitchChat.botclient.on('emoteonly', this.msgGetter);
+        this.twitchChat.botclient.on('follow', this.msgGetter);
+        this.twitchChat.botclient.on('followersonly', this.msgGetter);
+        this.twitchChat.botclient.on('hosting', this.msgGetter);
+        this.twitchChat.botclient.on('messagedeleted', this.msgGetter);
+        this.twitchChat.botclient.on('mod', this.msgGetter);
+        this.twitchChat.botclient.on('notice', this.msgGetter);
+        this.twitchChat.botclient.on('slowmode', this.msgGetter);
+        this.twitchChat.botclient.on('subscribers', this.msgGetter);
+        this.twitchChat.botclient.on('timeout', this.msgGetter);
+        this.twitchChat.botclient.on('unhost', this.msgGetter);
+        this.twitchChat.botclient.on('unmod', this.msgGetter);
+        this.twitchChat.botclient.on('whisper', this.msgGetter);
       }
     );
-      // later(() => { console.debug(document.getElementById('actualtwitchchat').contentWindow.document.getElementsByClassName('chat-input')); }, 5000);     
   }
 
   @action disconnectBot(){
     this.twitchChat.disconnectBot().then(
       function(){
-        console.debug("Bot client disconnected!");
+        console.debug('Bot client disconnected!');
         // 
       }, 
       function(){
-        console.debug("Error disconnecting!");        
+        console.debug('Error disconnecting!');        
       }
     );
     if(this.eventsExternal.connected){
@@ -211,11 +183,11 @@ export default class PbStreamEditComponent extends Component {
   @action disconnectClients(){
     this.twitchChat.disconnector().then(
       function(){
-        console.debug("Bot and Chat clients disconnected!");    
+        console.debug('Bot and Chat clients disconnected!');    
         // 
       }, 
       function(){
-        console.debug("Error disconnecting!");        
+        console.debug('Error disconnecting!');        
       }
     );
     if(this.eventsExternal.connected){
@@ -281,7 +253,7 @@ export default class PbStreamEditComponent extends Component {
   
   @action sendMessage() {
     this.twitchChat.botclient.say(this.twitchChat.channel, this.message);
-    this.message = "";
+    this.message = '';
   }  
 
   // Stream saving actions  
@@ -313,16 +285,16 @@ export default class PbStreamEditComponent extends Component {
   // Pannels interaction
   
   @action togglePan(pannel){
-    if (pannel === "pending"){
+    if (pannel === 'pending'){
       this.globalConfig.config.cpanpending = !this.globalConfig.config.cpanpending;
     }
-    if (pannel === "played"){
+    if (pannel === 'played'){
       this.globalConfig.config.cpanplayed = !this.globalConfig.config.cpanplayed;
     } 
-    if (pannel === "messages"){
+    if (pannel === 'messages'){
       this.globalConfig.config.cpanmessages = !this.globalConfig.config.cpanmessages;
     }
-    if (pannel === "events"){
+    if (pannel === 'events'){
       this.globalConfig.config.cpanevents = !this.globalConfig.config.cpanevents;
     }   
     this.globalConfig.config.save();
@@ -376,10 +348,12 @@ export default class PbStreamEditComponent extends Component {
         // this.currentUser.queueToFile = false;
         this.currentUser.updateQueueOverlay = false;
       }      
-    } else {
+    } else if(this.args.stream.requests && this.globalConfig.config.overlayType === 'window') {
       // this.currentUser.queueToFile = false;
       this.currentUser.updateQueueOverlay = !this.currentUser.updateQueueOverlay;
       this.currentUser.toggleOverlay();
+    } else if(this.args.stream.requests) {
+      this.currentUser.updateQueueOverlay = !this.currentUser.updateQueueOverlay;      
     }
   }
 }

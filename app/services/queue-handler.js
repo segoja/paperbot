@@ -13,6 +13,7 @@ import {
 import moment from 'moment';
 import { empty, sort } from '@ember/object/computed';
 import { htmlSafe } from '@ember/template';
+import { filter } from '@ember/object/computed';
 
 export default class QueueHandlerService extends Service {
   @service globalConfig;
@@ -45,11 +46,19 @@ export default class QueueHandlerService extends Service {
     'queueDescSorting'
   ) arrangedDescQueue;  
     
-
   get pendingSongs() {
     return this.arrangedAscQueue.filterBy('processed', false);
   }
   
+  get pendingSongsRecords(){
+    let songs = [];
+    return this.pendingSongs.map((request) => {
+      return request.song.then(async (song)=>{
+        return await song;
+      });
+    });
+  }
+    
   get nextPosition(){
     let positioned = this.pendingSongs.filter(item => !isNaN(item.position));
     let nextPos = 0;
@@ -62,7 +71,41 @@ export default class QueueHandlerService extends Service {
   get playedSongs() {
     return this.arrangedDescQueue.filterBy('processed', true);
   }
-   
+  
+  get playedSongsRecords(){
+    let songs = [];
+    return this.playedSongs.map((request) => {
+      return request.song.then(async (song)=>{
+        return await song;
+      });
+    });
+  } 
+  
+  get wastedSongs(){
+    return this.songqueue.map(async (request)=>{
+      return await request.song.then(async(song)=>{
+        return await song;
+      });      
+    });
+  }
+  
+  get songs(){
+    return this.store.peekAll('song');
+  } 
+  
+  get availableSongs(){
+    return this.songs.map((song)=>{
+      let exclude = false;
+      this.songqueue.forEach((request)=>{      
+        if(song.id === request.songId){
+          // console.log('Song '+song.title+' excluded');
+          exclude =  true;
+        }
+      });
+      if(!exclude){ return song; }
+    }).filter(item => item);
+  }
+    
   // Buttons
   @action async removePending(request){
     await request.get('song').then(async(song)=>{
@@ -125,11 +168,8 @@ export default class QueueHandlerService extends Service {
   }
 
   @action clearAll(){
-    if(this.arrangedAscQueue.length > 0){
-      this.arrangedAscQueue.forEach((item)=>{
-         item.destroyRecord();
-      });
-    }
+    this.clearPending();
+    this.clearPlayed();
   }  
   
   @action exportQueue(){
@@ -314,7 +354,11 @@ export default class QueueHandlerService extends Service {
   
   @action fileContent(pendingSongs, firstRun = false){
     if (this.globalConfig.config.overlayfolder != ''){
-      if((this.currentUser.updateQueueOverlay && this.globalConfig.config.overlayfolder != '' && this.currentUser.lastStream.requests) || firstRun){
+      if((this.currentUser.updateQueueOverlay 
+        && this.globalConfig.config.overlayfolder != ''
+        && this.globalConfig.config.overlayType ==='file'
+        && this.currentUser.lastStream.requests) 
+        || firstRun){
         let pathString = this.globalConfig.config.overlayfolder;
         if(pathString.substr(pathString.length - 1) === "\\"){
           pathString = pathString.slice(0, -1)+'\\queue.html';

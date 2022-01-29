@@ -22,7 +22,7 @@ export default class PbSettingsComponent extends Component {
   }
   
   externalEventServices = ['StreamLabs','StreamElements'];
-  overlayTypes = ['file','window'];
+  overlayTypes = Object.freeze(['disabled','file','window']);
 
   @tracked isViewing = true;
   @tracked saving = false;

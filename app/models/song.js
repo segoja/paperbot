@@ -37,7 +37,7 @@ export default class SongModel extends Model {
   get fullText(){
     let text = '"'+this.title+'"';
     if(this.artist){
-      text = text+' by '+this.artist+'.';
+      text = text+' by '+this.artist;
     }
     return text;    
   }  

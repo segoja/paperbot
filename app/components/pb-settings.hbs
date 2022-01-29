@@ -11,7 +11,7 @@
       </Modal.header>
       <Modal.body>
         <BsForm @formLayout="horizontal" @model={{this.globalConfig.config}}  @onSubmit={{this.doneEditing}} as |form|>
-          <form.element @controlType="text" @label="Default channel" class="pb-2" placeholder="Default channel name" @property="defchannel" required />
+          <form.element @controlType="text" @label="Default channel (name)" class="pb-2" placeholder="Default channel name" @property="defchannel" required />
           
           <div class="row pb-2">
             <label class="control-label col-form-label col-md-4">
@@ -68,7 +68,7 @@
                 }
               </style>
               {{#if (eq this.globalConfig.config.overlayType "file")}}
-                <form.element @controlType="text" @formLayout="vertical" @property="overlayfolder" class="pb-2" @label="Folder to place queue overlay file" as |el|>
+                <form.element @controlType="text" @formLayout="inline" @property="overlayfolder" class="pb-2" @label="Folder to place queue overlay file" as |el|>
                   <div class="input-group">
                     <el.control disabled class="border-form-control text-secondary" />
                     <div class="input-group-append">
@@ -76,7 +76,7 @@
                     </div>
                   </div>
                 </form.element>
-                <div class="form-group row">
+                <div class="form-group row pb-2">
                   <div class="col"> 
                     <div class="input-group form-row">
                       <div role="button" class="input-group-text rounded rounded-0 rounded-start  col-auto btn btn-secondary">Pick Chroma Color
@@ -98,9 +98,10 @@
                     </div>
                   </div>
                 </div>
-                <form.element @controlType="number" @label="Number of elements" class="pb-2" placeholder="Default channel name" @property="overlayLength" required />
-              {{else}}
-                <div class="form-group row">
+                <form.element @controlType="number" @formLayout="inline" class="w-100" @label="Number of elements" placeholder="5" @property="overlayLength" required />
+              {{/if}}
+              {{#if (eq this.globalConfig.config.overlayType "window")}}
+                <div class="form-group row pb-2">
                   <div class="col"> 
                     <div class="input-group form-row">
                       <div role="button" class="input-group-text rounded rounded-0 rounded-start  col-auto btn btn-secondary">Pick Chroma Color
@@ -121,13 +122,12 @@
                       </form.element>
                     </div>
                   </div>
-                 <div class="col-auto">
+                  <div class="col-auto">
                     <form.element @controlType="checkbox" @label="Show on start" @formLayout="inline" class="form-check form-check-inline ps-0 mb-0 pt-2" @property="showOverlay" required />
                   </div>
                 </div>
-                <form.element @controlType="number" @label="Number of elements" class="pb-2" placeholder="Default channel name" @property="overlayLength" required />
+                <form.element @controlType="number" @formLayout="inline" class="w-100" @label="Number of elements" placeholder="5" @property="overlayLength" required />
               {{/if}}
-              <hr class="mt-0 mb-2">
             </div>
           </div>
           <div class="form-group row">
