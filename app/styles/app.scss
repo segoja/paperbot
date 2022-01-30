@@ -260,7 +260,7 @@ div.pan-buttons-row{
 .slider {
   -webkit-appearance: none;
   width: 100%;
-  background: #efefef;
+  background: #efefef!important;
   border: 1px solid #ced4da;
   outline: none;
   padding: 0px;
@@ -269,11 +269,13 @@ div.pan-buttons-row{
   vertical-align: middle;
   -webkit-transition: .2s;
   transition: opacity .2s;
+  box-shadow: none!important;
 }
 
 .slider::hover, .slider:active, .slider:visited {
   opacity: 1;
-  background: #ededed;  
+  background: #efefef;
+  box-shadow: none!important;
 }
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -284,6 +286,7 @@ div.pan-buttons-row{
   border-left: 1px solid #ced4da;
   border-right: 1px solid #ced4da;
   cursor: pointer;
+  box-shadow: none!important;
 }
 
 .slider::-moz-range-thumb {
@@ -293,6 +296,7 @@ div.pan-buttons-row{
   border-left: 1px solid #ced4da;
   border-right: 1px solid #ced4da;
   cursor: pointer;
+  box-shadow: none!important;
 }
 
 .fancy-colums {

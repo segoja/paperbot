@@ -19,32 +19,34 @@
           <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check form-check-inline ps-0" @property="active" />
         </div>
       </div>
-      <div class="form-group row pb-2">
-        <label class="col-md-4">Chat lines interval</label>    
-        <div class="col-sm">
-          <div class="input-group bg-light rounded">
-            <Input @type="range" min="5" max="50" @value={{@timer.chatlines}}  class="form-control slider w-75" />
-            <div class="input-group-append w-25">
-              <Input @type="text" @value={{@timer.chatlines}} class="form-control rounded-0" />
+      {{!-- 
+        <div class="form-group row pb-2">
+          <label class="col-md-4">Chat lines interval</label>    
+          <div class="col-sm">
+            <div class="input-group bg-light border rounded">
+              <Input @type="range" min="5" max="50" @value={{@timer.chatlines}}  class="form-control slider w-75 border-0" />
+              <div class="input-group-append w-25">
+                <Input @type="text" @value={{@timer.chatlines}} class="form-control border-0" />
+              </div>
+            </div>
+          </div>
+        </div>  
+        <div class="form-group row pb-2">
+          <label class="col-md-4">Time (minutes)</label>    
+          <div class="col-sm">
+            <div class="input-group bg-light border rounded">
+              <Input @type="range" min="1" max="60" @value={{@timer.time}}  class="form-control slider w-75 border-0" />
+              <div class="input-group-append w-25">
+                <Input @type="text" @value={{@timer.time}} class="form-control border-0" />
+              </div>
             </div>
           </div>
         </div>
-      </div>  
-      <div class="form-group row pb-2">
-        <label class="col-md-4">Time (minutes)</label>    
-        <div class="col-sm">
-          <div class="input-group bg-light rounded">
-            <Input @type="range" min="1" max="60" @value={{@timer.time}}  class="form-control slider w-75" />
-            <div class="input-group-append w-25">
-              <Input @type="text" @value={{@timer.time}} class="form-control rounded-0" />
-            </div>
-          </div>
-        </div>
-      </div>      
+      --}}
       <div class="form-group row pb-2">
         <label class="col-md-4">Message:</label>    
         <div class="col-sm">
-          <Textarea @value={{@timer.message}} placeholder="Type the timer message..." class="form-control"/>
+          <Textarea @value={{@timer.message}} placeholder="Type the timer message..." rows="4" class="form-control"/>
         </div>
       </div>
       <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
@@ -61,10 +63,10 @@
       <div class="form-group row pb-2">
         <label class="col-md-4">Volume %:</label>    
         <div class="col-sm">
-          <div class="input-group bg-light rounded">
-            <Input @type="range" min="1" max="100" @value={{@timer.volume}}  {{on "change" (fn this.adjustVolume @timer.volume)}} class="form-control slider w-75" />
+          <div class="input-group bg-light border rounded">
+            <Input @type="range" min="1" max="100" @value={{@timer.volume}}  {{on "change" (fn this.adjustVolume @timer.volume)}} class="form-control slider border-0 w-75" />
             <div class="input-group-append w-25">
-              <Input @type="text" @value={{@timer.volume}} {{on "keyup" (fn this.adjustVolume @timer.volume)}} class="form-control rounded-0" />
+              <Input @type="text" @value={{@timer.volume}} {{on "keyup" (fn this.adjustVolume @timer.volume)}} class="form-control border-0" />
             </div>
           </div>
         </div>

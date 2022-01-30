@@ -58,6 +58,7 @@ export default class TwitchChatService extends Service {
   }
   @tracked lastTimerId = '';
   @tracked lastTimerPos = 0;
+  @tracked lastTimerOrder = 0;
   @tracked activeTimers = {};
   get timersList(){
     return this.store.peekAll('timer').filterBy('active', true);
@@ -193,17 +194,14 @@ export default class TwitchChatService extends Service {
   }  
   
   @action async timersLauncher(){
-    this.timersList.forEach((timer)=>{
-      this.timerScheduler(timer);
+    let count = 1;
+    this.timersList.map((timer)=>{
+      this.timerScheduler(timer, count);
+      count = count +1;
     });
   }  
 
-  async timerScheduler(timer){
-    /*let lastest = this.msglist.map(msg => msg.user).indexOf(this.botclient.username);
-    if(latest.length > 0){
-      latest.get('lastObject')
-    }
-    console.debug(this.botclient);*/
+  async timerScheduler(timer, order){
     if(!timer.isDeleted && this.botConnected && this.channel){
       if(this.activeTimers[timer.id] && !timer.active){
         //console.log('The timer was active, cancelling')
@@ -211,18 +209,23 @@ export default class TwitchChatService extends Service {
         this.activeTimers[timer.id] = '';
       } else { 
         //console.log('Scheduling the timer...')
-        let time = timer.time * 1000;
-        // let time = timer.time * 60 * 1000;
+        let time = this.globalConfig.config.timerTime * 60 * 1000;
+        
         this.activeTimers[timer.id] = await later(() => {
           if(this.msglist.length > 0){
             let diff = this.msglist.length - this.lastTimerPos;
-            if(diff >= timer.chatlines && this.lastTimerId != timer.id){
-              this.botclient.say(this.channel, timer.message);
+            if(diff >= this.globalConfig.config.timerLines && this.lastTimerId != timer.id && this.lastTimerOrder < order){
               this.lastTimerId = timer.id;
+              if(this.timersList.length === order){
+                this.lastTimerOrder = 0;
+              } else {
+                this.lastTimerOrder = order;                
+              }
+              this.botclient.say(this.channel, timer.message);          
               this.lastTimerPos = this.msglist.get('length');
             }
-          }          
-          this.timerScheduler(timer);
+          }
+          this.timerScheduler(timer, order);
         }, time); 
       }
     }

@@ -26,7 +26,8 @@ export default class ConfigModel extends Model {
   @attr('number', {defaultValue: 175}) overlayHeight;
   @attr('number', {defaultValue: 0}) overlayPosX;
   @attr('number', {defaultValue: 0}) overlayPosY;
-  @attr('number', {defaultValue: 5}) timerAfterLines;
+  @attr('number', {defaultValue: 25}) timerLines;
+  @attr('number', {defaultValue: 0}) timerTime;
 
   @belongsTo('client', { inverse: 'botclientconfigs', save: true }) defbotclient;
   @belongsTo('client', { inverse: 'chatclientconfigs', save: true }) defchatclient;
