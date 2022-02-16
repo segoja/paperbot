@@ -87,7 +87,12 @@ export default class TwitchChatService extends Service {
   @tracked channelBadges = [];
   @tracked globalBadges = [];
   get allbadges(){
-    let pack = assign(this.globalBadges, this.channelBadges);
+    let pack = [];
+    console.log(this.globalBadges);
+    console.log(this.channelBadges);
+    if(this.channelBadges > 0){
+      pack = assign(this.globalBadges, this.channelBadges);
+    }
     return pack;    
   }
   
@@ -153,8 +158,8 @@ export default class TwitchChatService extends Service {
         this.botclient.join(this.channel);
         this.superHandler(this.botclient);
         this.timersLauncher();
-        this.twitchNameToUser(this.channel);
-        console.debug(this.badgespack);
+        // this.twitchNameToUser(this.channel);
+        // console.debug(this.badgespack);
       }
       
       return this.botConnected;
@@ -270,7 +275,7 @@ export default class TwitchChatService extends Service {
     //console.debug('__________________________');
     //console.debug(msg);
     //console.debug(tags);
-    this.parseBadges(tags['badges']);
+    // this.parseBadges(tags['badges']);
     
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
@@ -282,7 +287,7 @@ export default class TwitchChatService extends Service {
       color: tags['color'] ? tags['color'].toString() : this.setDefaultColor(tags['username']).toString(),
       csscolor: tags['color'] ? htmlSafe('color: ' + tags['color']) : htmlSafe('color: ' + this.setDefaultColor(tags['username']).toString()),        
       badges: tags['badges'] ? tags['badges'] : null,
-      htmlbadges:  tags['badges'] ? this.parseBadges(tags['badges']).toString() : '',
+      htmlbadges:  '', //tags['badges'] ? this.parseBadges(tags['badges']).toString() : '',
       type: tags['message-type'] ? tags['message-type'] : null,
       usertype: tags['user-type'] ? tags['user-type'].toString() : null,
       reward: tags['msg-id'] ? true : false,
@@ -748,18 +753,22 @@ export default class TwitchChatService extends Service {
   @action parseBadges(userbadges) {
     var htmlbadges = '';
     // console.debug(userbadges);
-    for(var category in userbadges) {
-      // console.debug("this is the first index: "+category);
-      var badge = userbadges[category];
-      // console.debug("this is the second index: "+badge);        
-        if (this.allbadges[category]['versions'][badge] !== 'undefined'){
-          
-          let description = this.allbadges[category]['versions'][badge]['description'];
-          let url = this.allbadges[category]['versions'][badge]['image_url_4x'];
-          
-          htmlbadges = htmlbadges+'<img class="twitch-badge" title="'+description+'" src="'+url+'">';            
-        }    
-    }    
+    if(this.allbadges.length > 0){
+      for(var category in userbadges) {
+        // console.debug("this is the first index: "+category);
+        var badge = userbadges[category];
+        // console.debug("this is the second index: "+badge);        
+          if (this.allbadges[category]['versions'][badge] !== 'undefined'){
+            
+            let description = this.allbadges[category]['versions'][badge]['description'];
+            let url = this.allbadges[category]['versions'][badge]['image_url_4x'];
+            
+            htmlbadges = htmlbadges+'<img class="twitch-badge" title="'+description+'" src="'+url+'">';            
+          }    
+      } 
+    } else {
+      console.debug('No badges to parse');
+    }  
     return htmlSafe(htmlbadges);    
   }
 

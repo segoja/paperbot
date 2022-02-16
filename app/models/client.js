@@ -20,6 +20,7 @@ export default class ClientModel extends Model {
     let opts = {
       options: { 
         debug: this.debug, 
+        skipUpdatingEmotesets: true
       },
       connection: {
         reconnect: this.reconnect,
