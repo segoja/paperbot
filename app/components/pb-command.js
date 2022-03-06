@@ -9,6 +9,40 @@ export default class PbCommandComponent extends Component {
   @service audio;
 
   @tracked saving = false;
+
+  constructor() {
+    super(...arguments);
+    
+    if(this.soundClip){
+      if(this.soundClip.isPlaying){
+        this.soundClip.stop();
+      }
+      this.audio.removeFromRegister('sound', 'preview');
+    }
+    
+    if(this.args.command.soundfile){  
+      this.audio.load(this.args.command.soundfile).asSound('preview').then(
+        function(msg) {
+          this.soundClip = this.audio.getSound('preview');
+          console.debug(this.args.command.soundfile+ " preview loaded in the soundboard"/*, msg*/);
+        }.bind(this), 
+        function(err) {
+          console.log("error loading "+this.args.command.soundfile+" in the soundboard!", err);
+        }.bind(this)
+      );
+    }
+  }
+  
+  willDestroy() {
+    super.willDestroy(...arguments);
+    if(this.soundClip){
+      if(this.soundClip.isPlaying){
+        this.soundClip.stop();
+      }
+      this.soundClip = '';
+    } 
+    this.audio.removeFromRegister('sound', 'preview');
+  }  
   
   @action doneEditing() {  
     this.args.saveCommand();
@@ -25,20 +59,31 @@ export default class PbCommandComponent extends Component {
         console.debug(path);
         if(path){
           command.soundfile = path;
-          command.save();
+          // command.save()
+          this.audio.load(command.soundfile).asSound('preview').then(
+            function(msg) {
+              this.soundClip = this.audio.getSound('preview');
+              console.debug(command.soundfile+ " preview loaded in the soundboard"/*, msg*/);
+            }.bind(this), 
+            function(err) {
+              console.log("error loading "+command.soundfile+" in the soundboard!", err);
+            }.bind(this)
+          );
         }
       }
     });
   }  
       
-  @tracked soundClip;
+  @tracked soundClip = '';
   
   @tracked isPlaying =  false;
   
   get loadPreview(){
     if(this.args.command.soundfile){
-      this.audio.removeFromRegister('sound', 'preview');
-      return this.audio.load(this.args.command.soundfile).asSound('preview');      
+      console.log(this.soundClip);
+      //this.audio.removeFromRegister('sound', 'preview');
+      //return this.audio.load(this.args.command.soundfile).asSound('preview'); 
+      return true;
     } else {
       return false;
     }
@@ -52,18 +97,18 @@ export default class PbCommandComponent extends Component {
   }
   
   @action adjustVolume(volume){
-    if(this.args.command.soundfile){
+    if(this.args.command.soundfile){    
       if(volume === ''){
         volume = 0;
-        set(this.args.command, "volume", 0);
+        this.args.command.volume = 0;
       }
       if(volume > 100){
         volume = 100;
-        set(this.args.command, "volume", 100);
+        this.args.command.volume = 100;
       }
       if(isNaN(volume)){
         volume = 100;
-        set(this.args.command, "volume", 100);
+        this.args.command.volume = 100;
       }
       if(this.soundClip){    
         this.soundClip.changeGainTo(volume).from('percent');
@@ -74,13 +119,12 @@ export default class PbCommandComponent extends Component {
   @action playSound(){
     if(this.args.command.soundfile){
       this.soundClip = this.audio.getSound('preview');
-      this.soundClip.changeGainTo(this.args.command.volume).from('percent');    
-      // We get the sound duratiaon in miliseconds.
-      var duration = this.soundClip.duration.raw*1000;
-      this.isPlaying = true;
-      later(() => { this.isPlaying = false; }, duration);
-      
-      this.soundClip.play();
+      this.soundClip.changeGainTo(this.args.command.volume).from('percent');
+      this.soundClip.playFor(this.soundClip.duration.raw);
+      //let duration = newPreview.duration.raw*1000;
+      //this.isPlaying = true;
+      //later(() => { this.isPlaying = false; }, duration);
+      //newPreview.play();
     }
   }
 }

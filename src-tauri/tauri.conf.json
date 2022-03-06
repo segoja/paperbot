@@ -65,11 +65,10 @@
     "allowlist": {
       "all": true,
       "fs": {
+        "scope": ["$HOME/*", "$APP/*", "$DOCUMENT/*", "$DESKTOP/*", "$AUDIO/*"],
         "all": true,
-        "readTextFile": true,
-        "readBinaryFile": true,
+        "readFile": true,
         "writeFile": true,
-        "writeBinaryFile": true,
         "readDir": true,
         "copyFile": true,
         "createDir": true,
@@ -78,6 +77,7 @@
         "renameFile": true
       }
     },
+    
     "windows": [
       {
         "label": "Main",

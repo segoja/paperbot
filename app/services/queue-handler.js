@@ -2,14 +2,8 @@ import Service, { inject as service } from '@ember/service';
 import { action, set } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { uniqBy } from '@ember/object/computed';
-import { dialog } from "@tauri-apps/api";
+import { dialog, invoke } from "@tauri-apps/api";
 import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
-import {
-  writeBinaryFile,
-  writeFile,
-  readTextFile,
-  readBinaryFile
-} from '@tauri-apps/api/fs';
 import moment from 'moment';
 import { empty, sort } from '@ember/object/computed';
 import { htmlSafe } from '@ember/template';
@@ -189,9 +183,9 @@ export default class QueueHandlerService extends Service {
       dialog.save({
         defaultPath: filename,
         filters: [{name: '', extensions: ['txt']}]
-      }).then((path)=>{
+      }).then(async(path)=>{
         if(path){
-          writeFile({'path': path, 'contents': setlist}).then(()=>{
+          await invoke('file_writer', { filepath: path, filecontent: setlist}).then(()=>{
             console.debug('Setlist file saved!');
           });
         }
@@ -451,7 +445,7 @@ export default class QueueHandlerService extends Service {
     finally {
       let text = unescape(encodeURIComponent(thisHtml));
       //let arrayBuff = new TextEncoder().encode(text);
-      writeFile({'path': pathString, 'contents': thisHtml}).then(()=>{
+      invoke('file_writer', { filepath: pathString, filecontent: thisHtml}).then(()=>{
         console.debug("done!")
       });
     }

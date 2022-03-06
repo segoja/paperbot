@@ -1,5 +1,6 @@
 import audio from 'ember-audio/services/audio';
 import { readBinaryFile } from '@tauri-apps/api/fs'
+import { invoke } from "@tauri-apps/api";
 import { resolve } from 'rsvp';
 import { tracked } from '@glimmer/tracking';
 import { TrackedMap } from 'tracked-maps-and-sets';
@@ -24,13 +25,13 @@ export default class AudioService extends audio {
     if (register.has(name)) {
       return resolve(register.get(name));
     }
-    return readBinaryFile(src)
-      .then(async (response) => {      
-        let arraybuffer = new ArrayBuffer(await response.length);
-        let view = new Uint8Array(arraybuffer);
-        for (var i = 0; i < response.length; ++i) {
-            view[i] = response[i];
-        }
+    return invoke('audio_loader', { filepath: src })
+      .then(async (response) => {
+          let arraybuffer = new ArrayBuffer(await response.length);
+          let view = new Uint8Array(arraybuffer);
+          for (var i = 0; i < response.length; ++i) {
+              view[i] = response[i];
+          }
         return audioContext.decodeAudioData(arraybuffer); 
       })
       .then((audioBuffer) => {

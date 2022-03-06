@@ -52,8 +52,8 @@
               <tbody id="preheight">
                 {{#each this.pagedContent as |song|}}            
                   <tr>
-                    <td class="col-sm align-top">{{if song.title song.title "<unntitled>"}}</td>
-                    <td class="col-sm align-top">{{song.artist}}</td>
+                    <td class="col-sm align-top"><span class="overflow-hidden">{{if song.title song.title "<unntitled>"}}</span></td>
+                    <td class="col-sm align-top"><span class="overflow-hidden">{{song.artist}}</span></td>
                     {{#unless this.isSetlist}}
                       <td class="d-none d-lg-table-cell col-md align-top">{{song.type}}</td>
                       <td class="d-none d-lg-table-cell col-md align-top text-end">{{song.times_played}}</td>
