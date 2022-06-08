@@ -5,7 +5,11 @@ import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
-import { dialog, invoke } from "@tauri-apps/api";
+import { dialog } from "@tauri-apps/api";
+import {
+  writeFile,
+  readTextFile
+} from '@tauri-apps/api/fs';
 import moment from 'moment';
 import { inject as service } from '@ember/service';
 
@@ -41,9 +45,9 @@ export default class PbClientsComponent extends Component {
     dialog.open({
       directory: false,
       filters: [{name: "csv file", extensions: ['csv']}]
-    }).then(async(path) => {
+    }).then((path) => {
       if(path != null){
-        await invoke('text_reader', { filepath: path }).then((text)=>{
+        readTextFile(path).then((text)=>{
           let reference = '"username","oauth","channel","debug","reconnect","secure"';
 
           let rows = PapaParse.parse(text,{ delimiter: ',', header: true, quotes: false, quoteChar: '"', skipEmptyLines: true }).data;
@@ -85,11 +89,11 @@ export default class PbClientsComponent extends Component {
         dialog.save({
           defaultPath: filename, 
           filters: [{name: '', extensions: ['csv']}]
-        }).then(async(path)=>{
+        }).then((path)=>{
         if(path){
-          await invoke('file_writer', { filepath: path, filecontent: csvdata}).then(()=>{
+          writeFile({'path': path, 'contents': csvdata}).then(()=>{
             console.debug('Clients export csv file saved!');
-          })
+          });
         }
       });
     }

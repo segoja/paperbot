@@ -13,13 +13,20 @@
                 />
               </form.element>
             </BsForm>
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md-auto col-sm-6 col-12 px-1" as |form|>
-              <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@commandTypes}} @onchange={{this.resetPage}} as |element| >
-                <element.control  @triggerClass="w-100 m-0" @allowClear={{true}} @placeholder="Filter by type" class="w-100" as |option|>
-                  <span class="w-100">{{option}}</span>
-                </element.control>
-              </form.element>
-            </BsForm>
+            <div class="col-md-auto col-sm-6 col-12 px-1">
+              <PowerSelect
+                @options={{@commandTypes}}
+                @onChange={{fn this.selectType}}
+                @selected={{@queryParamsObj.type}}
+                @allowClear={{true}}
+                @placeholder="Filter by type"
+                class="w-100 my-0 mb-1"
+                @triggerClass="w-100 m-0" as |element|
+              >
+                
+                <span class="w-100">{{element}}</span>                
+              </PowerSelect>
+            </div>
             <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">
               <PbCommandImport @songTypes={{@commandTypes}} />
               <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered commands?" @targetAction={{this.wipeCommands}} />

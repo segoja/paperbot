@@ -42,14 +42,11 @@
       "shortDescription": "",
       "longDescription": "",
       "deb": {
-        "depends": [],
-        "useBootstrapper": false
+        "depends": []
       },
       "macOS": {
         "frameworks": [],
         "minimumSystemVersion": "",
-        "useBootstrapper": false,
-        "exceptionDomain": "",
         "signingIdentity": null,
         "entitlements": null
       },
@@ -65,7 +62,7 @@
     "allowlist": {
       "all": true,
       "fs": {
-        "scope": ["$HOME/*", "$APP/*", "$DOCUMENT/*", "$DESKTOP/*", "$AUDIO/*"],
+        "scope": ["*"],
         "all": true,
         "readFile": true,
         "writeFile": true,

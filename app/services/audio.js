@@ -1,6 +1,5 @@
 import audio from 'ember-audio/services/audio';
 import { readBinaryFile } from '@tauri-apps/api/fs'
-import { invoke } from "@tauri-apps/api";
 import { resolve } from 'rsvp';
 import { tracked } from '@glimmer/tracking';
 import { TrackedMap } from 'tracked-maps-and-sets';
@@ -25,13 +24,13 @@ export default class AudioService extends audio {
     if (register.has(name)) {
       return resolve(register.get(name));
     }
-    return invoke('audio_loader', { filepath: src })
-      .then(async (response) => {
-          let arraybuffer = new ArrayBuffer(await response.length);
-          let view = new Uint8Array(arraybuffer);
-          for (var i = 0; i < response.length; ++i) {
-              view[i] = response[i];
-          }
+    return readBinaryFile(src)
+      .then(async (response) => {      
+        let arraybuffer = new ArrayBuffer(await response.length);
+        let view = new Uint8Array(arraybuffer);
+        for (var i = 0; i < response.length; ++i) {
+            view[i] = response[i];
+        }
         return audioContext.decodeAudioData(arraybuffer); 
       })
       .then((audioBuffer) => {
@@ -60,4 +59,19 @@ export default class AudioService extends audio {
     let register = this._getRegisterFor(type);
     register.delete(name);
   }
+  
+  /**
+   * Gets a Sound instance by name from the _sounds register
+   *
+   * @public
+   * @method getSound
+   *
+   * @param {string} name The name of the sound that should be retrieved
+   * from the _sounds register.
+   *
+   * @return {Sound} returns the Sound instance that matches the provided name.
+   */
+  async getSound(name) {
+    return await this.get('_sounds').get(name);
+  }  
 }

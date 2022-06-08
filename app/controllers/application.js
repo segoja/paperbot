@@ -2,7 +2,11 @@ import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import moment from 'moment';
-import { dialog, invoke } from "@tauri-apps/api";
+import { dialog } from "@tauri-apps/api";
+import {
+  writeFile,
+  readTextFile
+} from '@tauri-apps/api/fs';
 import { appWindow, getCurrent, getAll, PhysicalPosition, PhysicalSize  } from '@tauri-apps/api/window';
 import { emit } from '@tauri-apps/api/event';
 import { tracked } from '@glimmer/tracking';
@@ -183,24 +187,23 @@ export default class ApplicationController extends Controller {
     }
   }
   
-  @action async handleExport () {
-    let adapter = await this.store.adapterFor('application');
-    await adapter.db.allDocs({include_docs: true, attachments: true}, async (error, doc) => {
+  @action handleExport () {
+    let adapter = this.store.adapterFor('application');
+    adapter.db.allDocs({include_docs: true, attachments: true}, (error, doc) => {
       if (error) {
         console.error(error);
       } else {
-        let content = await JSON.stringify(doc.rows.map(({doc}) => doc), null, "  ");
+        let content = JSON.stringify(doc.rows.map(({doc}) => doc), null, "  ");
         let filename = moment().format('YYYYMMDD-HHmmss')+'-paperbot-backup.json'; 
 
         dialog.save({
           defaultPath: filename, 
           filters: [{name: '', extensions: ['json']}]
-        }).then(async (path)=>{
+        }).then((path)=>{
           if(path){
-            await invoke('file_writer', { filepath: path, filecontent: content});
-            /*await writeFile({'path': path, 'contents': content}).then(()=>{
+            writeFile({'path': path, 'contents': content}).then(()=>{
               console.debug('Database backup file saved!');
-            });*/
+            });
           }
         });
       }
@@ -230,9 +233,9 @@ export default class ApplicationController extends Controller {
     dialog.open({
       directory: false,
       filters: [{name: "backup file", extensions: ['json']}]
-    }).then(async(path) => {
+    }).then((path) => {
       if(path != null){
-        await invoke('text_reader', { filepath: path }).then((data)=>{
+        readTextFile(path).then((data)=>{
           
           let adapter = this.store.adapterFor('application');
           let importable = Object.assign([],JSON.parse(data));

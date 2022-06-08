@@ -9,10 +9,22 @@
   </div>
   <div class="card-body">
     <BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{@saveCommand}} as |form|>
-      <form.element @controlType="text" @label="Name" class="pb-2" placeholder="Type the command name" @property="name" required /> 
-      <form.element @controlType="power-select" @property="type" @label="Type" class="pb-2" @options={{@commandTypes}} as |element| >
-        <element.control placeholder="Select the command type" @allowClear={{true}} />
-      </form.element>
+      <form.element @controlType="text" @label="Name" class="pb-0" placeholder="Type the command name" @property="name" required />
+      <div class="row pb-2">
+        <label class="form-label col-md-4 col-form-label">Type</label>
+        <div class="col-md-8">
+          <PowerSelect
+            @options={{@commandTypes}}
+            @onChange={{fn (mut @command.type)}}
+            @selected={{@command.type}}
+            @allowClear={{true}}
+            @placeholder="Select the command type"
+            @triggerClass="w-100 m-0" as |element|
+          >
+            <span class="w-100">{{element}}</span>                
+          </PowerSelect>
+        </div>
+      </div>
       <div class="form-group row pb-2">
         <label class="col-md-4">Active</label>
         <div class="col-sm">

@@ -23,8 +23,10 @@ export default class PbCommandComponent extends Component {
     if(this.args.command.soundfile){  
       this.audio.load(this.args.command.soundfile).asSound('preview').then(
         function(msg) {
-          this.soundClip = this.audio.getSound('preview');
-          console.debug(this.args.command.soundfile+ " preview loaded in the soundboard"/*, msg*/);
+          this.audio.getSound('preview').then(async(soundclip)=>{
+            this.soundClip = await soundclip;
+            console.debug(this.args.command.soundfile+ " preview loaded in the soundboard"/*, msg*/);
+          });
         }.bind(this), 
         function(err) {
           console.log("error loading "+this.args.command.soundfile+" in the soundboard!", err);
@@ -39,7 +41,7 @@ export default class PbCommandComponent extends Component {
       if(this.soundClip.isPlaying){
         this.soundClip.stop();
       }
-      this.soundClip = '';
+      //this.soundClip = '';
     } 
     this.audio.removeFromRegister('sound', 'preview');
   }  
@@ -56,11 +58,12 @@ export default class PbCommandComponent extends Component {
       filters: [{name: "Select audio file...", extensions: ['mp3','wav','ogg']}]
     }).then((path) => {
       if(path != null){ 
-        console.debug(path);
+        //console.debug(path);
         if(path){
           command.soundfile = path;
           // command.save()
-          this.audio.load(command.soundfile).asSound('preview').then(
+          this.audio.removeFromRegister('sound', 'preview');
+          this.audio.load(path).asSound('preview').then(
             function(msg) {
               this.soundClip = this.audio.getSound('preview');
               console.debug(command.soundfile+ " preview loaded in the soundboard"/*, msg*/);
@@ -81,8 +84,8 @@ export default class PbCommandComponent extends Component {
   get loadPreview(){
     if(this.args.command.soundfile){
       console.log(this.soundClip);
-      //this.audio.removeFromRegister('sound', 'preview');
-      //return this.audio.load(this.args.command.soundfile).asSound('preview'); 
+      this.audio.removeFromRegister('sound', 'preview');
+      return this.audio.load(this.args.command.soundfile).asSound('preview'); 
       return true;
     } else {
       return false;
@@ -118,9 +121,15 @@ export default class PbCommandComponent extends Component {
   
   @action playSound(){
     if(this.args.command.soundfile){
-      this.soundClip = this.audio.getSound('preview');
-      this.soundClip.changeGainTo(this.args.command.volume).from('percent');
-      this.soundClip.playFor(this.soundClip.duration.raw);
+      if(this.soundClip.isPlaying){
+        this.soundClip.stop();       
+      } else {
+        this.audio.getSound('preview').then(async(soundclip)=>{
+          this.soundClip = await soundclip;
+          this.soundClip.changeGainTo(this.args.command.volume).from('percent');
+          this.soundClip.playFor(this.soundClip.duration.raw);        
+        });
+      }
       //let duration = newPreview.duration.raw*1000;
       //this.isPlaying = true;
       //later(() => { this.isPlaying = false; }, duration);

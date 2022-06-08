@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { dialog, invoke } from "@tauri-apps/api";
+import { dialog } from "@tauri-apps/api";
 import {
   readDir,
   readTextFile,
