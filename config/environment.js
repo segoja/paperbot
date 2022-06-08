@@ -5,7 +5,7 @@ module.exports = function (environment) {
     modulePrefix: 'paperbot',
     environment,
     rootURL: '/',
-    locationType: 'auto',
+    locationType: 'history',
     emberPouch: {
       saveHasMany: true,
     },
