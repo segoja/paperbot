@@ -12,12 +12,6 @@ module.exports = function(defaults) {
         }
       }
     },    
-    
-    // IE 11 needs a Polyfill for startsWith
-    'ember-cli-babel': {
-      includePolyfill: false// ,
-      //disableEmberModulesAPIPolyfill: true      
-    },
 
     // Add fonts to Service Worker cache first
     'esw-cache-first': {
@@ -30,11 +24,13 @@ module.exports = function(defaults) {
       versionStrategy: 'every-build',
       enabled: config != 'development'
     },
+    
     SRI: {
       // crossorigin: 'anonymous',
       // This fix the tauri build blocking, but I have to check a better solution messing with cors.
       enabled: false
     },
+    
     // Exclude .png favicons from being fingerprinted
     //origin: 'https://tauri.localhost/',
     fingerprint: {
