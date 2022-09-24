@@ -73,7 +73,7 @@ export default class PbTimerComponent extends Component {
   
   @action playSound(){
     if(this.args.timer.soundfile){
-      this.soundClip = this.audio.getSound('preview');
+     this.soundClip = this.audio.getSound('preview');
       this.soundClip.changeGainTo(this.args.timer.volume).from('percent');    
       // We get the sound duratiaon in miliseconds.
       var duration = this.soundClip.duration.raw*1000;

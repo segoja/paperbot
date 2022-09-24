@@ -2,29 +2,17 @@
 
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
-module.exports = function(defaults) {
+module.exports = function (defaults) {
   let config = process.env.EMBER_ENV || 'development';
   let app = new EmberApp(defaults, {
+    // Add options here
     outputPaths: {
       app: {
         css: {
           'app': 'assets/paperbot.css', // FOR LIGHT THEME => app.scss
         }
       }
-    },    
-
-    // Add fonts to Service Worker cache first
-    'esw-cache-first': {
-      patterns: [
-        'fonts/fontawesome(.+)',
-      ]
     },
-
-    'ember-service-worker': {
-      versionStrategy: 'every-build',
-      enabled: config != 'development'
-    },
-    
     SRI: {
       // crossorigin: 'anonymous',
       // This fix the tauri build blocking, but I have to check a better solution messing with cors.
@@ -44,15 +32,13 @@ module.exports = function(defaults) {
                  'mstile-150x150.png'
                ]
     },
-
-    'ember-power-select': {
-       theme: 'bootstrap'
-    },
-
     'ember-bootstrap': {
       'bootstrapVersion': 5,
       'importBootstrapCSS': false,
       'insertEmberWormholeElementToDom': true
+    },
+    'ember-power-select': {
+       theme: 'bootstrap'
     },
     'svgJar': {
       strategy: 'inline',
@@ -63,13 +49,6 @@ module.exports = function(defaults) {
           { removeViewBox: true }
         ]
       },
-    },
-    /*fontawesome: {
-      defaultPrefix: 'fas' // fas for Solid, fab for brands, fal for light(pro)
-    },*/
-    
-    sassOptions: {
-
     },
   });
 

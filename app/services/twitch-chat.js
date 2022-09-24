@@ -243,7 +243,7 @@ export default class TwitchChatService extends Service {
       this.audiocommandslist.forEach((command) => {
         this.audio.load(command.soundfile).asSound(command.name).then(
           function(msg) {
-            //console.debug(command.soundfile+ " loaded in the soundboard"/*, msg*/);
+            //console.debug(command.soundfile+ " loaded in the soundboard");
           }.bind(this), 
           function(err) {
             //console.log("error loading "+command.soundfile+" in the soundboard!", err);
@@ -626,6 +626,7 @@ export default class TwitchChatService extends Service {
                         break;
                       }
                       case 'audio':{
+                        
                         if (this.currentUser.soundBoardEnabled){
                           if(this.lastSoundCommand){
                             if(this.soundPlaying){

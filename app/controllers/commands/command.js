@@ -26,7 +26,7 @@ export default class CommandController extends Controller {
     this.model.save();
     
     if(this.model.type === 'audio'){
-      if (this.model.active){
+     if (this.model.active){
         this.audio.removeFromRegister('sound', this.model.name);
         this.audio.load(this.model.soundfile).asSound(this.model.name);
         console.debug(this.model.soundfile+ " loaded in the soundboard");

@@ -19,11 +19,7 @@ module.exports = {
   env: {
     browser: true,
   },
-  rules: {
-    //'ember/no-jquery': 0,
-    //'ember/no-mixins': 0, 
-    //'no-console': 'off', 
-  },
+  rules: {},
   overrides: [
     // node files
     {

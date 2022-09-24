@@ -16,13 +16,8 @@ module.exports = function (environment) {
       },
       EXTEND_PROTOTYPES: {
         // Prevent Ember Data from overriding Date.parse.
-        Date: false,
+        // Date: false,
       },
-    },
-    fontawesome: {
-      warnIfNoIconsIncluded: false,
-      defaultPrefix: 'fas', // fas for Solid, fab for brands, fal for light(pro)
-      // ...
     },
     // This fix the huge deprecated warning.
     emberKeyboard: {
@@ -30,20 +25,28 @@ module.exports = function (environment) {
       listeners: ['keyUp', 'keyDown', 'keyPress', 'click'], // use only `keyUp`, `keyDown`, and `click`,
       propagation: true,
     },
+    fontawesome: {
+      warnIfNoIconsIncluded: false,
+      defaultPrefix: 'fas', // fas for Solid, fab for brands, fal for light(pro)
+      // ...
+    },
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-    }
+    },
   };
-
+  
+  ENV.local_couch = 'paperbot';
+  ENV.authAdapter = 'application';
+  
   if (environment === 'development') {
-     /*ENV.APP.LOG_RESOLVER = true;
-     ENV.APP.LOG_ACTIVE_GENERATION = true;
-     ENV.APP.LOG_TRANSITIONS = true;
-     ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
-     ENV.APP.LOG_VIEW_LOOKUPS = true;*/
+    // ENV.APP.LOG_RESOLVER = true;
+    // ENV.APP.LOG_ACTIVE_GENERATION = true;
+    // ENV.APP.LOG_TRANSITIONS = true;
+    // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
+    // ENV.APP.LOG_VIEW_LOOKUPS = true;
   }
-
+    
   if (environment === 'test') {
     // Testem prefers this...
     ENV.locationType = 'none';
@@ -56,9 +59,6 @@ module.exports = function (environment) {
     ENV.APP.autoboot = false;
   }
 
-  // ENV.remote_couch = ''; // 'http://192.168.1.222:5984/paperbot';
-  ENV.local_couch = 'paperbot';
-  ENV.authAdapter = 'application';
   if (environment === 'production') {
     // ENV.rootURL = '/';
     // ENV.remote_couch = 'https://my.couchcluster.com/bloggr';
@@ -71,6 +71,6 @@ module.exports = function (environment) {
       'connect-src': "'self' " + remote_couch_hostname
     };
   }
-  
+
   return ENV;
 };

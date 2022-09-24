@@ -59,7 +59,7 @@ export default class TimersController extends Controller {
     timer.save();
     if(timer.type === 'audio'){
       if (timer.active){
-        this.audio.load(timer.soundfile).asSound(timer.name).then(
+       this.audio.load(timer.soundfile).asSound(timer.name).then(
           function() {
             console.debug(timer.soundfile+ " loaded in the soundboard");
           }, 

@@ -21,7 +21,5 @@
 /bower.json.ember-try
 /npm-shrinkwrap.json.ember-try
 /package.json.ember-try
-
-/tests/
 /package-lock.json.ember-try
 /yarn.lock.ember-try

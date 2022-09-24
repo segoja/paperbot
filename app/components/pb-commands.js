@@ -5,7 +5,7 @@ import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
-import { dialog } from "@tauri-apps/api";
+import { dialog, invoke } from "@tauri-apps/api";
 import {
   writeFile,
   readTextFile
@@ -76,9 +76,9 @@ export default class PbCommandsComponent extends Component {
     dialog.open({
       directory: false,
       filters: [{name: "csv file", extensions: ['csv']}]
-    }).then((path) => {
+    }).then(async (path) => {
       if(path != null){
-        readTextFile(path).then((text)=>{
+        await invoke('text_reader', { filepath: path }).then((text)=>{
           let reference = '"name","type","active","admin","mod","vip","sub","cooldown","timer","response","soundfile","volume"';
 
           let rows = PapaParse.parse(text,{ delimiter: ',', header: true, quotes: false, quoteChar: '"', skipEmptyLines: true }).data;
@@ -116,9 +116,9 @@ export default class PbCommandsComponent extends Component {
       dialog.save({
         defaultPath: filename, 
         filters: [{name: '', extensions: ['csv']}]
-      }).then((path)=>{
+      }).then(async (path)=>{
         if(path){
-          writeFile({'path': path, 'contents': csvdata}).then(()=>{
+          await invoke('file_writer', { filepath: path, filecontent: csvdata}).then(()=>{
             console.debug('Commands export csv file saved!');
           });
         }

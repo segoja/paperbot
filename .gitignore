@@ -25,13 +25,8 @@
 /bower.json.ember-try
 /npm-shrinkwrap.json.ember-try
 /package.json.ember-try
-
-# macos
-.DS_Store
-
 /package-lock.json.ember-try
 /yarn.lock.ember-try
 
 # broccoli-debug
 /DEBUG/
-

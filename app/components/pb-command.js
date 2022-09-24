@@ -13,25 +13,15 @@ export default class PbCommandComponent extends Component {
   constructor() {
     super(...arguments);
     
-    if(this.soundClip){
-      if(this.soundClip.isPlaying){
-        this.soundClip.stop();
+    if(this.audio.previewSound){
+      if(this.audio.previewSound.playing()){
+        this.audio.previewSound.stop();
       }
-      this.audio.removeFromRegister('sound', 'preview');
+      // this.audio.previewSound.unload();
     }
     
     if(this.args.command.soundfile){  
-      this.audio.load(this.args.command.soundfile).asSound('preview').then(
-        function(msg) {
-          this.audio.getSound('preview').then(async(soundclip)=>{
-            this.soundClip = await soundclip;
-            console.debug(this.args.command.soundfile+ " preview loaded in the soundboard"/*, msg*/);
-          });
-        }.bind(this), 
-        function(err) {
-          console.log("error loading "+this.args.command.soundfile+" in the soundboard!", err);
-        }.bind(this)
-      );
+      this.audio.loadSound(this.args.command.soundfile);
     }
   }
   
@@ -43,7 +33,7 @@ export default class PbCommandComponent extends Component {
       }
       //this.soundClip = '';
     } 
-    this.audio.removeFromRegister('sound', 'preview');
+    // this.audio.removeFromRegister('sound', 'preview');
   }  
   
   @action doneEditing() {  
@@ -61,17 +51,9 @@ export default class PbCommandComponent extends Component {
         //console.debug(path);
         if(path){
           command.soundfile = path;
-          // command.save()
-          this.audio.removeFromRegister('sound', 'preview');
-          this.audio.load(path).asSound('preview').then(
-            function(msg) {
-              this.soundClip = this.audio.getSound('preview');
-              console.debug(command.soundfile+ " preview loaded in the soundboard"/*, msg*/);
-            }.bind(this), 
-            function(err) {
-              console.log("error loading "+command.soundfile+" in the soundboard!", err);
-            }.bind(this)
-          );
+          // command.save();
+          //this.audio.removeFromRegister('sound', 'preview');
+          this.audio.loadSound(path);
         }
       }
     });
@@ -80,23 +62,25 @@ export default class PbCommandComponent extends Component {
   @tracked soundClip = '';
   
   @tracked isPlaying =  false;
-  
-  get loadPreview(){
-    if(this.args.command.soundfile){
-      console.log(this.soundClip);
-      this.audio.removeFromRegister('sound', 'preview');
-      return this.audio.load(this.args.command.soundfile).asSound('preview'); 
-      return true;
-    } else {
-      return false;
+
+  get previewLoaded(){
+    let status = false;
+    if(this.audio.previewSound){
+      if(this.audio.previewSound.state() == 'loaded'){
+        status = true;
+      }
     }
+    console.log('Loaded: '+status);
+    return status;
   }
-  
-  @action stopSound(){
-    if(this.soundClip.isPlaying){
-      this.soundClip.stop(); 
-      this.isPlaying = false;
+
+  get previewPlaying (){
+    let status = false;
+    if(this.audio.previewSound){
+      status = this.audio.previewSound.playing();
     }
+    console.log('Playing: '+status);
+    return status;
   }
   
   @action adjustVolume(volume){
@@ -113,27 +97,23 @@ export default class PbCommandComponent extends Component {
         volume = 100;
         this.args.command.volume = 100;
       }
-      if(this.soundClip){    
-        this.soundClip.changeGainTo(volume).from('percent');
+      if(this.previewLoaded){
+        let finalVol = volume / 100;
+        console.log('Setting volume to: '+finalVol);
+        this.audio.previewSound.volume(finalVol);
       }
     }
   }
   
   @action playSound(){
     if(this.args.command.soundfile){
-      if(this.soundClip.isPlaying){
-        this.soundClip.stop();       
-      } else {
-        this.audio.getSound('preview').then(async(soundclip)=>{
-          this.soundClip = await soundclip;
-          this.soundClip.changeGainTo(this.args.command.volume).from('percent');
-          this.soundClip.playFor(this.soundClip.duration.raw);        
-        });
+      if(this.previewLoaded){
+        if(this.previewPlaying){
+          this.audio.previewSound.stop();
+        } else {
+          this.audio.previewSound.play();
+        }
       }
-      //let duration = newPreview.duration.raw*1000;
-      //this.isPlaying = true;
-      //later(() => { this.isPlaying = false; }, duration);
-      //newPreview.play();
     }
   }
 }

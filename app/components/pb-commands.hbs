@@ -50,16 +50,24 @@
                 {{#each this.pagedContent as |command|}}
                   <tr class={{if command.active "table-success"}}>
                     <td class="col">{{if command.name command.name "unnamed"}}</td>
-                    <td class="d-none d-lg-table-cell col-lg overflow-hidden"> 
-                      <small class="muted">
-                        {{line-clamp
-                          text=command.response
-                          lines=1
-                          ellipsis="..."
-                          seeMoreText="+ more"
-                          seeLessText="- less"
-                        }}
-                      </small>
+                    <td class="d-none d-lg-table-cell col-lg overflow-hidden">
+                      {{#if command.response}}
+                        <small class="muted">
+                          {{!-- {{line-clamp
+                            text=command.response
+                            lines=1
+                            ellipsis="..."
+                            seeMoreText="+ more"
+                            seeLessText="- less"
+                          }} --}}
+                        </small>
+                         <label>
+                          <span role="button">
+                            <FaIcon @icon="eye" class="text-info" />
+                            <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>{{command.response}}</BsTooltip>
+                          </span>
+                        </label>
+                      {{/if}}
                     </td>
                     <td class="col-lg">{{command.type}}</td>
                     <td class="col-auto py-0 pe-0">

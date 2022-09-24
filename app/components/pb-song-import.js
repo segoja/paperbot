@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { dialog } from "@tauri-apps/api";
+import { dialog, invoke } from "@tauri-apps/api";
 import {
   readDir,
   readTextFile,
@@ -84,13 +84,12 @@ export default class PbSongComponent extends Component {
   @action generateList(){
     this.resetPage();
     let ansiDecoder = new TextDecoder('windows-1252');
-    this.songs = this.songsData.map((item)=>{
+    this.songs = this.songsData.map(async (item)=>{
       let newSong = this.store.createRecord('textfile');
-      
-      readTextFile(item.path).then((filedata)=>{
+      await invoke('text_reader', { filepath: item.path }).then((filedata)=>{
         newSong.lyrics = filedata;
-      }).catch((err)=>{ 
-        readBinaryFile(item.path).then((fileBinarydata)=>{
+      }).catch(async (err)=>{ 
+        await invoke('binary_loader', { filepath: item.path }).then((fileBinarydata)=>{
           let u8arr = new Uint8Array(fileBinarydata);
           newSong.lyrics = ansiDecoder.decode(u8arr);
         }).catch((binErr)=>{

@@ -2,7 +2,7 @@ import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import moment from 'moment';
-import { dialog } from "@tauri-apps/api";
+import { dialog, invoke } from "@tauri-apps/api";
 import {
   writeFile,
   readTextFile
@@ -233,9 +233,9 @@ export default class ApplicationController extends Controller {
     dialog.open({
       directory: false,
       filters: [{name: "backup file", extensions: ['json']}]
-    }).then((path) => {
+    }).then(async (path) => {
       if(path != null){
-        readTextFile(path).then((data)=>{
+        await invoke('text_reader', { filepath: path }).then((data)=>{
           
           let adapter = this.store.adapterFor('application');
           let importable = Object.assign([],JSON.parse(data));
