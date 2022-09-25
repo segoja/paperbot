@@ -30,7 +30,9 @@ export default class CommandsController extends Controller {
 
   @action createCommand() {
     let newCommand = this.store.createRecord('command');
-    this.router.transitionTo('commands.command', newCommand.save());
+    newCommand.save().then(()=>{
+      this.router.transitionTo('commands.command', newCommand);
+    });
   }
   
   @action importCommands(command){

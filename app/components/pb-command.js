@@ -7,8 +7,9 @@ import { dialog } from "@tauri-apps/api";
 
 export default class PbCommandComponent extends Component {
   @service audio;
-
   @tracked saving = false;
+  @tracked isPlaying =  false; 
+  @tracked isLoaded =  false; 
 
   constructor() {
     super(...arguments);
@@ -21,7 +22,9 @@ export default class PbCommandComponent extends Component {
     }
     
     if(this.args.command.soundfile){  
-      this.audio.loadSound(this.args.command.soundfile);
+      this.audio.loadPreview(this.args.command.soundfile).then(()=>{
+        this.audio.previewSound.once('load', ()=>{ this.isLoaded = true; });
+      });
     }
   }
   
@@ -34,7 +37,7 @@ export default class PbCommandComponent extends Component {
       //this.soundClip = '';
     } 
     // this.audio.removeFromRegister('sound', 'preview');
-  }  
+  }   
   
   @action doneEditing() {  
     this.args.saveCommand();
@@ -53,15 +56,13 @@ export default class PbCommandComponent extends Component {
           command.soundfile = path;
           // command.save();
           //this.audio.removeFromRegister('sound', 'preview');
-          this.audio.loadSound(path);
+          this.audio.loadPreview(path).then(()=>{
+            this.audio.previewSound.once('load', ()=>{ this.isLoaded = true; });
+          });
         }
       }
     });
-  }  
-      
-  @tracked soundClip = '';
-  
-  @tracked isPlaying =  false;
+  }
 
   get previewLoaded(){
     let status = false;
@@ -81,6 +82,14 @@ export default class PbCommandComponent extends Component {
     }
     console.log('Playing: '+status);
     return status;
+  }
+  
+  get isPreviewLoaded(){
+    return this.isLoaded;
+  }
+
+  get isPreviewPlaying(){
+    return this.isPlaying;
   }
   
   @action adjustVolume(volume){
@@ -103,15 +112,22 @@ export default class PbCommandComponent extends Component {
         this.audio.previewSound.volume(finalVol);
       }
     }
-  }
+  } 
   
   @action playSound(){
     if(this.args.command.soundfile){
       if(this.previewLoaded){
+        this.isLoaded = true;
         if(this.previewPlaying){
           this.audio.previewSound.stop();
+          this.isPlaying =  false;
         } else {
           this.audio.previewSound.play();
+          this.isPlaying = true;
+          let duration = this.audio.previewSound.duration() * 1000;
+          later(this, function() {
+            this.isPlaying = false;
+          }, duration);
         }
       }
     }

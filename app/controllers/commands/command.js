@@ -23,26 +23,30 @@ export default class CommandController extends Controller {
   }
   
   @action saveCommand () {
-    this.model.save();
-    
-    if(this.model.type === 'audio'){
-     if (this.model.active){
-        this.audio.removeFromRegister('sound', this.model.name);
-        this.audio.load(this.model.soundfile).asSound(this.model.name);
-        console.debug(this.model.soundfile+ " loaded in the soundboard");
-        
-      } else {
-        this.audio.removeFromRegister('sound', this.model.name);
-        console.debug(this.model.soundfile+ " removed from the soundboard");
-      }
-    }    
+    this.model.save().then(()=>{
+      if(this.model.type === 'audio'){
+       if (this.model.active){
+          this.audio.removeSound(this.model);
+          this.audio.loadSound(this.model).then(()=>{
+            console.debug(this.model.soundfile+ " loaded in the soundboard");
+            
+          });
+          
+        } else {
+          this.audio.removeSound(this.model).then(()=>{
+            console.debug(this.model.soundfile+ " removed from the soundboard");
+          });
+        }
+      }       
+    });
   }
   
   @action deleteCommand() {
     if(this.model.type === 'audio'){
       if (this.model.active){
-        this.audio.removeFromRegister('sound', this.model.name);
-        console.debug(this.model.soundfile+ " removed from the soundboard");
+        this.audio.removeSound(this.model).then(()=>{
+          console.debug(this.model.soundfile+ " removed from the soundboard");
+        });
       }
     }
     

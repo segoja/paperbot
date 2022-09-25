@@ -33,7 +33,7 @@ export default class AudioService extends Service {
    */
   _soundLibrary = new TrackedMap();
 
-  async loadSound(src){
+  async loadPreview(src){
     await invoke('binary_loader', { filepath: src }).then(async (response)=>{    
       // converted the arraybuffer to a arraybufferview
       let extension = src.split(/[#?]/)[0].split('.').pop().trim();
@@ -61,6 +61,35 @@ export default class AudioService extends Service {
   get previewSound(){
     return this.preview;
   }
+  
+  async loadSound(command){
+    
+    if(this._soundLibrary[command.name]){    
+      await invoke('binary_loader', { filepath: command.soundfile }).then(async (response)=>{    
+        // converted the arraybuffer to a arraybufferview
+        let extension = command.soundfile.split(/[#?]/)[0].split('.').pop().trim();
+        var arrayBufferView = new Uint8Array(await response);
+        // create a blob from this
+        var blob = new Blob( [ arrayBufferView ], { type: 'data:audio/'+extension } );
+        // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
+        var howlSource = URL.createObjectURL(blob);
+        //console.log(howlSource);
+        // then inatialized the new howl as
+        this.preview = new Howl({
+          src: [howlSource],
+          html5: true,
+          format: [extension],
+          onloaderror: function() {
+            console.log('Error loading audio file '+src);
+          }       
+        });
+      }).catch((binErr)=>{
+        console.debug(src);
+        console.debug(binErr);
+      });
+    }
+  } 
+ 
   
   async loadSounds(soundCommands){
     if(soundCommands.length > 0){
