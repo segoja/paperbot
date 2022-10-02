@@ -27,9 +27,9 @@
 {{else}}
   <div class="card-body p-0 bg-dark">
     <div class="row g-0 bg-dark border border-dark">
-      <BsButton class="btn-sm col-auto col-sm-auto border rounded-0" @type={{if this.currentUser.soundBoardEnabled "info" "secondary"}} @onClick={{this.soundboardToggle}} title="Enable/disable soundboard">
-        {{on-key "ctrl+KeyM" this.soundboardToggle}}  
-        <FaIcon @icon={{if this.currentUser.soundBoardEnabled "volume-up" "volume-mute"}} /> Soundboard
+      <BsButton class="btn-sm col-auto col-sm-auto border rounded-0" @type={{if this.audio.SBstatus "info" "secondary"}} @onClick={{this.audio.toggle}} title="Enable/disable soundboard">
+        {{on-key "ctrl+KeyM" this.audio.toggle}}  
+        <FaIcon @icon={{if this.audio.SBstatus "volume-up" "volume-mute"}} /> Soundboard
       </BsButton>     
       <div class="col">
         <div class="row g-0">  
@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    {{#unless @stream.finished}}<SoundboardLoading />{{/unless}}    
+    {{#unless @stream.finished}}<SoundboardLoading />{{/unless}}
   </div>
   {{#unless @stream.finished}}  
     {{#if this.twitchChat.botConnected}}

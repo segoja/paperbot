@@ -240,28 +240,16 @@ export default class TwitchChatService extends Service {
   @action async soundboard(){
     console.debug("Loading the soundboard...");
     if(await this.audiocommandslist.length > 0){
-      this.audiocommandslist.forEach((command) => {
-        this.audio.load(command.soundfile).asSound(command.name).then(
-          function(msg) {
-            //console.debug(command.soundfile+ " loaded in the soundboard");
-          }.bind(this), 
-          function(err) {
-            //console.log("error loading "+command.soundfile+" in the soundboard!", err);
-          }.bind(this)
-        );
-      });
+      this.audio.loadSounds(this.audiocommandslist);
     } else {
       console.debug("No sound commands to load in soundboard!");
     }
   }  
 
-  @action unloadSoundboard(){
+  @action async unloadSoundboard(){
     console.debug("Unloading the soundboard...");
-    if(this.audiocommandslist.get('length') > 0){
-      this.audiocommandslist.forEach((command) => {
-        this.audio.removeFromRegister('sound', command.name);
-        console.debug(command.soundfile+ " unloaded from the soundboard");
-      });
+    if(await this.audiocommandslist.length > 0){
+      this.audio.unloadSounds(this.audiocommandslist);
     } else {
       console.debug("No sound commands to unload in soundboard!");
     }
@@ -449,14 +437,14 @@ export default class TwitchChatService extends Service {
       } else {
         if(String(commandName).startsWith('!ykq')){
           let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };      
-          if(this.commandPermissionHandler(internalCommand, tags) === true && this.currentUser.soundBoardEnabled){
+          if(this.commandPermissionHandler(internalCommand, tags) === true && this.audio.SBstatus){
             let quietTime = Number(commandName.toLowerCase().replace(/!ykq/g, "").trim());
-            this.currentUser.soundBoardEnabled = false;
+            this.audio.isEnabled = false;
             console.log(quietTime);
             if(!isNaN(quietTime)){
               if(quietTime > 0){
                 later(() => { 
-                  this.currentUser.soundBoardEnabled = true;
+                  this.audio.isEnabled = true;
                 }, quietTime * 1000);
                 this.botclient.say(target, '/me Enjoy the silence a little bit...');          
               } else {
@@ -599,7 +587,9 @@ export default class TwitchChatService extends Service {
         } else{
           if(await this.commandlist.get('length') > 0){
             this.commandlist.forEach((command) => {
-                if(String(commandName).startsWith(command.name) && command.name != '' && command.active){
+                if(String(commandName).startsWith(command.name) && command.name != '' && command.active && 
+                  (String(commandName).endsWith(command.name) || String(commandName).startsWith(command.name+' '))                
+                ){
                   /*if (self) { 
                     return;  
                   } else {*/
@@ -627,7 +617,9 @@ export default class TwitchChatService extends Service {
                       }
                       case 'audio':{
                         
-                        if (this.currentUser.soundBoardEnabled){
+                        if (this.audio.SBstatus){
+                          this.audio.playSound(command.name);
+                          /*
                           if(this.lastSoundCommand){
                             if(this.soundPlaying){
                               if(this.globalConfig.config.soundOverlap){
@@ -644,7 +636,7 @@ export default class TwitchChatService extends Service {
                             this.lastSoundCommand = this.audio.getSound(command.name);
                             this.lastSoundCommand.changeGainTo(command.volume).from('percent');
                             this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
-                          }
+                          }*/
                         }
                         break;
                       }

@@ -5,34 +5,35 @@ import { TrackedMap } from 'tracked-maps-and-sets';
 import Service, { inject as service } from '@ember/service';
 import {Howl, Howler} from 'howler';
 import { dialog, invoke } from "@tauri-apps/api";
-
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-
-// Polyfill AudioContext for Safari
-// https://gist.github.com/jakearchibald/131d7101b134b6f7bed1d8320e4da599
-if (!window.AudioContext && window.webkitAudioContext) {
-  const oldFunction = AudioContext.prototype.decodeAudioData;
-
-  AudioContext.prototype.decodeAudioData = function(arraybuffer) {
-    return new Promise((resolve, reject) => oldFunction.call(this, arraybuffer, resolve, reject));
-  }
-}
+import { action } from '@ember/object';
 
 export default class AudioService extends Service {
-
-  audioContext = new AudioContext();
-  @tracked preview = '';
-
   /**
    * This acts as a register for Sound instances. Sound instances are placed in
    * the register by name, and can be called via audioService.getSound('name')
    *
    * @private
-   * @property _sounds
+   * @property sounds
    * @type {map}
    */
-  _soundLibrary = new TrackedMap();
-
+  sounds = new TrackedMap();
+    
+  @tracked preview = '';
+  
+  @tracked isEnabled = false;
+  
+  get SBstatus(){
+    return this.isEnabled;
+  }
+    
+  get previewSound(){
+    return this.preview;
+  }
+  
+  
+  
+  
+  
   async loadPreview(src){
     await invoke('binary_loader', { filepath: src }).then(async (response)=>{    
       // converted the arraybuffer to a arraybufferview
@@ -57,14 +58,9 @@ export default class AudioService extends Service {
       console.debug(binErr);
     });
   }
-    
-  get previewSound(){
-    return this.preview;
-  }
   
-  async loadSound(command){
-    
-    if(this._soundLibrary[command.name]){    
+  async loadSound(command){    
+    if(this.sounds[command.name]){    
       await invoke('binary_loader', { filepath: command.soundfile }).then(async (response)=>{    
         // converted the arraybuffer to a arraybufferview
         let extension = command.soundfile.split(/[#?]/)[0].split('.').pop().trim();
@@ -89,77 +85,158 @@ export default class AudioService extends Service {
       });
     }
   } 
- 
+
+  /**
+   * Loads a list of sound commands to the sounds register
+   *
+   * @public
+   * @method loadSounds
+   *
+   * @param {array} soundCommands The array of sound commands that should be added
+   * to the sounds register.
+   */
   
   async loadSounds(soundCommands){
-    if(soundCommands.length > 0){
-      soundCommands.map(async(command)=>{
-        if(command.soundfile){
+    soundCommands.map(async(command)=>{
+      if(command.soundfile){
+        let src = command.soundfile;
+        await invoke('binary_loader', { filepath: src }).then(async (response)=>{
+          // We get the file extension to use it for the type
+          let extension = src.split(/[#?]/)[0].split('.').pop().trim();
+          // converted the arraybuffer to a arraybufferview
+          let arrayBufferView = new Uint8Array(await response);
           
-          await invoke('binary_loader', { filepath: src }).then(async (response)=>{
-            // We get the file extension to use it for the type
-            let extension = src.split(/[#?]/)[0].split('.').pop().trim();
-            // converted the arraybuffer to a arraybufferview
-            let arrayBufferView = new Uint8Array(await response);
-            
-            console.log(arrayBufferView);
-            // create a blob from this
-            let blob = new Blob( [ arrayBufferView ], { type: 'data:audio/'+extension } );
-            // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
-            let howlSource = URL.createObjectURL(blob);
-            // console.log(howlSource);
-            // then inatialize the new howl in the sound library
-            _soundLibrary.set(
-              command.name, 
-              new Howl({
-                src: [howlSource], 
-                html5: true, 
-                format: [extension],
-                onload: function(){
-                  console.log(src+' loaded into audio library!');
-                },
-                onloaderror: function() {
-                  console.log('Error loading audio file '+src);
-                }       
-              })
-            ); 
-          }).catch((binErr)=>{
-            console.debug(src);
-            console.debug(binErr);
-          });
-        }
-      });
+          // console.log(arrayBufferView);
+          // create a blob from this
+          let blob = new Blob( [ arrayBufferView ], { type: 'data:audio/'+extension } );
+          // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
+          let howlSource = URL.createObjectURL(blob);
+          // console.log(howlSource);
+          
+          let itExist = this.sounds.has(command.name);
+          if(itExist){
+            let oldsound = this.sounds.get(command.name);
+            oldsound.unload();
+            this.sounds.delete(command.name);
+            console.log('Sound '+command.name+' already existed, replacing...');
+          }
+          
+          // then inatialize the new howl in the sound library
+          this.sounds.set(
+            command.name, 
+            new Howl({
+              src: [howlSource], 
+              html5: true,
+              volume: command.volume > 0 ? command.volume / 100 : 100,
+              format: [extension],
+              onload: function(){
+                console.log(src+' loaded in the soundboard');
+              },
+              onloaderror: function() {
+                console.log('error loading '+src+' in the soundboard!');
+              }       
+            })
+          ); 
+        }).catch((binErr)=>{
+          console.debug(src);
+          console.debug(binErr);
+        });
+      }
+    });
+    console.log(this.sounds);
+  }
+
+
+  /**
+   * Checks for a sound in the sounds register and plays it
+   *
+   * @public
+   * @method playSound
+   *
+   * @param {string} id The name of the sound that should be played
+   * to the sounds register.
+   */ 
+  
+  async playSound(id){
+    let hasSound = this.sounds.has(id);
+    if(hasSound){
+      let sound = this.sounds.get(id);
+      sound.play();
     }
   }
   
+
   /**
-   * Given a sound's name and type, removes the sound from it's register.
+   * Mutes and stops all sounds in the sounds register
+   *
+   * @public
+   * @method toggle
+   */
+    
+  @action toggle(){    
+    this.isEnabled = !this.isEnabled;  
+    
+    Howler.mute(!this.isEnabled);
+    if(!this.isEnabled){
+      Howler.stop();
+    }
+  }
+
+  /**
+   * Removes a Sound instance by its id from the sounds register
    *
    * @public
    * @method removeFromRegister
    *
-   * @param {string} type The type of sound that should be removed. Can be
-   * 'sound', 'track', 'font', 'beatTrack', or 'sampler'.
-   *
-   * @param {string} name The name of the sound that should be removed.
+   * @param {string} id The id of the sound that should be removed
+   * from the sounds register.
    */
-  async removeFromRegister(type, name) {
-    let register = this._getRegisterFor(type);
-    register.delete(name);
+
+  async removeFromRegister(id) {
+    let hasSound = this.sounds.has(id);
+    if(hasSound){
+      let sound = this.sounds.get(id);
+      if(sound.state() == 'loaded'){
+        sound.unload();
+        this.sounds.delete(id);
+        console.log(id+' removed from the sounds register.');
+      }
+    }
   }
   
   /**
-   * Gets a Sound instance by name from the _sounds register
+   * Gets a Sound instance by id from the sounds register
    *
    * @public
    * @method getSound
    *
-   * @param {string} name The name of the sound that should be retrieved
-   * from the _sounds register.
+   * @param {string} id The id of the sound that should be retrieved
+   * from the sounds register.
    *
-   * @return {Sound} returns the Sound instance that matches the provided name.
+   * @return {Sound} returns the Sound instance that matches the provided id.
    */
-  async getSound(name) {
-    return await this.get('_sounds').get(name);
+  async getSound(id) {
+    return this.sounds.get(id); 
+  }
+
+  /**
+   * Removes a list of sound commands to the sounds register
+   *
+   * @public
+   * @method unloadSounds
+   *
+   * @param {array} soundCommands The array of sound commands that should be removed
+   * from the sounds register.
+   */
+
+  async unloadSounds(soundCommands) {
+    if(soundCommands.length > 0){
+      soundCommands.forEach((command)=>{
+        this.removeFromRegister(command.name);
+      });
+      Howler.stop();
+      Howler.unload();
+      console.log(this.sounds);
+    }
   }  
 }

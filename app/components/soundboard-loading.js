@@ -20,8 +20,8 @@ export default class SoundboardLoadingComponent extends Component {
   }
     
   get progressValue(){
-    console.log('Loaded sounds: '+this.audio._sounds.size);
-    return this.audio._sounds.size;
+    console.log('Loaded sounds: '+this.audio.sounds.size);
+    return this.audio.sounds.size;
   }  
      
   @uniqBy('twitchChat.audiocommandslist', 'soundfile') uniqueByfile;

@@ -270,7 +270,7 @@ export default class PbStreamEditComponent extends Component {
 
   // Soundboard toggle
   @action soundboardToggle(){
-    this.currentUser.soundBoardEnabled = !this.currentUser.soundBoardEnabled;
+    /*this.currentUser.soundBoardEnabled = !this.currentUser.soundBoardEnabled;
     if(!this.currentUser.soundBoardEnabled){
       if(this.twitchChat.lastSoundCommand != null && this.twitchChat.lastSoundCommand.isPlaying){
         console.log(this.twitchChat.lastSoundCommand.isPlaying)
@@ -278,7 +278,8 @@ export default class PbStreamEditComponent extends Component {
         this.twitchChat.lastSoundCommand.changeGainTo(0).from('percent');
         this.twitchChat.lastSoundCommand.stop(); 
       }
-    } 
+    } */
+    this.audio.toggle();
   }
   
   
