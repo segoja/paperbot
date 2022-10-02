@@ -6,8 +6,11 @@ import Service, { inject as service } from '@ember/service';
 import {Howl, Howler} from 'howler';
 import { dialog, invoke } from "@tauri-apps/api";
 import { action } from '@ember/object';
+import { later } from '@ember/runloop';
 
 export default class AudioService extends Service {
+  
+  @service globalConfig;
   /**
    * This acts as a register for Sound instances. Sound instances are placed in
    * the register by name, and can be called via audioService.getSound('name')
@@ -19,6 +22,8 @@ export default class AudioService extends Service {
   sounds = new TrackedMap();
     
   @tracked preview = '';
+  @tracked isPlaying = false;
+  @tracked lastPlayed = '';
   
   @tracked isEnabled = false;
   
@@ -44,14 +49,23 @@ export default class AudioService extends Service {
       // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
       var howlSource = URL.createObjectURL(blob);
       //console.log(howlSource);
+      
+      if(this.preview){
+        this.preview.unload();
+        console.log('Unloading previous preview, replacing...');
+      }
+        
       // then inatialized the new howl as
       this.preview = new Howl({
         src: [howlSource],
         html5: true,
         format: [extension],
+        onload: function(){
+          console.log(src+' loaded in the soundboard');
+        },
         onloaderror: function() {
-          console.log('Error loading audio file '+src);
-        }       
+          console.log('error loading '+src+' in the soundboard!');
+        }     
       });
     }).catch((binErr)=>{
       console.debug(src);
@@ -60,7 +74,7 @@ export default class AudioService extends Service {
   }
   
   async loadSound(command){    
-    if(this.sounds[command.name]){    
+    //if(this.sounds.get(command.name)){    
       await invoke('binary_loader', { filepath: command.soundfile }).then(async (response)=>{    
         // converted the arraybuffer to a arraybufferview
         let extension = command.soundfile.split(/[#?]/)[0].split('.').pop().trim();
@@ -70,20 +84,36 @@ export default class AudioService extends Service {
         // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
         var howlSource = URL.createObjectURL(blob);
         //console.log(howlSource);
+        
+        let itExist = this.sounds.has(command.name);
+        if(itExist){
+          let oldsound = this.sounds.get(command.name);
+          oldsound.unload();
+          this.sounds.delete(command.name);
+          console.log('Sound '+command.name+' already exist, replacing...');
+        }
+        
         // then inatialized the new howl as
-        this.preview = new Howl({
-          src: [howlSource],
-          html5: true,
-          format: [extension],
-          onloaderror: function() {
-            console.log('Error loading audio file '+src);
-          }       
-        });
+        this.sounds.set(
+          command.name, 
+          new Howl({
+            src: [howlSource], 
+            html5: true,
+            volume: command.volume ? command.volume / 100 : 100,
+            format: [extension],
+            onload: function(){
+              console.log(command.soundfile+' loaded in the soundboard');
+            },
+            onloaderror: function() {
+              console.log('error loading '+command.soundfile+' in the soundboard!');
+            }       
+          })
+        ); 
       }).catch((binErr)=>{
-        console.debug(src);
+        console.debug(command.soundfile);
         console.debug(binErr);
       });
-    }
+    //}
   } 
 
   /**
@@ -118,7 +148,7 @@ export default class AudioService extends Service {
             let oldsound = this.sounds.get(command.name);
             oldsound.unload();
             this.sounds.delete(command.name);
-            console.log('Sound '+command.name+' already existed, replacing...');
+            console.log('Sound '+command.name+' already exist, replacing...');
           }
           
           // then inatialize the new howl in the sound library
@@ -127,7 +157,7 @@ export default class AudioService extends Service {
             new Howl({
               src: [howlSource], 
               html5: true,
-              volume: command.volume > 0 ? command.volume / 100 : 100,
+              volume: command.volume ? command.volume / 100 : 100,
               format: [extension],
               onload: function(){
                 console.log(src+' loaded in the soundboard');
@@ -145,10 +175,9 @@ export default class AudioService extends Service {
     });
     console.log(this.sounds);
   }
-
-
+  
   /**
-   * Checks for a sound in the sounds register and plays it
+   * Checks for a sound in the sounds register and plays it. Allows sound overlapping if is set in the settings.
    *
    * @public
    * @method playSound
@@ -158,13 +187,40 @@ export default class AudioService extends Service {
    */ 
   
   async playSound(id){
-    let hasSound = this.sounds.has(id);
-    if(hasSound){
-      let sound = this.sounds.get(id);
-      sound.play();
+    if(this.globalConfig.config.soundOverlap){
+      console.log('Sound overlapping');
+      let hasSound = this.sounds.has(id);
+      if(hasSound){
+        let sound = this.sounds.get(id);
+        let duration = sound.duration() * 1000;
+        sound.play();
+        
+        this.isPlaying = true;
+        this.lastPlayed = id;
+        
+        later(this, function() {
+          this.isPlaying = false;
+        }, duration);
+      } 
+    } else {
+      console.log('No overlapping');
+      if(!this.isPlaying){
+        let hasSound = this.sounds.has(id);
+        if(hasSound){
+          let sound = this.sounds.get(id);
+          let duration = sound.duration() * 1000;
+          sound.play();
+          
+          this.isPlaying = true;
+          this.lastPlayed = id;
+          
+          later(this, function() {
+            this.isPlaying = false;
+          }, duration);
+        }          
+      }
     }
-  }
-  
+  }  
 
   /**
    * Mutes and stops all sounds in the sounds register

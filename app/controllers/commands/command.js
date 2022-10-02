@@ -26,16 +26,10 @@ export default class CommandController extends Controller {
     this.model.save().then(()=>{
       if(this.model.type === 'audio'){
        if (this.model.active){
-          this.audio.removeSound(this.model);
-          this.audio.loadSound(this.model).then(()=>{
-            console.debug(this.model.soundfile+ " loaded in the soundboard");
-            
-          });
-          
+          this.audio.removeFromRegister(this.model.name);
+          this.audio.loadSound(this.model);          
         } else {
-          this.audio.removeSound(this.model).then(()=>{
-            console.debug(this.model.soundfile+ " removed from the soundboard");
-          });
+          this.audio.removeFromRegister(this.model.name);
         }
       }       
     });
@@ -44,9 +38,7 @@ export default class CommandController extends Controller {
   @action deleteCommand() {
     if(this.model.type === 'audio'){
       if (this.model.active){
-        this.audio.removeSound(this.model).then(()=>{
-          console.debug(this.model.soundfile+ " removed from the soundboard");
-        });
+        this.audio.removeFromRegister(this.model.name);
       }
     }
     
