@@ -43,15 +43,7 @@
                   <tr class={{if timer.active "table-success"}}>
                     <td class="col">{{if timer.name timer.name "unnamed"}}</td>
                     <td class="d-none d-lg-table-cell col-lg overflow-hidden"> 
-                      <small class="muted">
-                        {{line-clamp
-                          text=timer.message
-                          lines=1
-                          ellipsis="..."
-                          seeMoreText="+ more"
-                          seeLessText="- less"
-                        }}
-                      </small>
+                      <small class="muted"> {{timer.message}}</small>
                     </td>
                     <td class="col-lg">{{timer.type}}</td>
                     <td class="col-auto py-0 pe-0">

@@ -58,17 +58,9 @@ export default class CommandsController extends Controller {
     command.save();
     if(command.type === 'audio'){
       if (command.active){
-        this.audio.load(command.soundfile).asSound(command.name).then(
-          function() {
-            console.debug(command.soundfile+ " loaded in the soundboard");
-          }, 
-          function() {
-            console.debug("error loading "+command.soundfile+" in the soundboard!");
-          }
-        );
+        this.audio.loadSound(command);          
       } else {
-        this.audio.removeFromRegister('sound', command.name);
-        console.debug(command.soundfile+ " removed from the soundboard");
+        this.audio.removeFromRegister(command.name);
       }
     }
   } 
@@ -76,9 +68,7 @@ export default class CommandsController extends Controller {
   @action gridDeleteCommand(command) {
     if(command.type === 'audio'){
       if (command.active){
-        this.audio.removeFromRegister('sound', command.name);
-        console.debug(command.soundfile+ " removed from the soundboard");
-
+        this.audio.removeFromRegister(command.name);
       }
     }   
     

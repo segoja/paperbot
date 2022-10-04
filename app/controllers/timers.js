@@ -32,7 +32,9 @@ export default class TimersController extends Controller {
 
   @action createTimer() {
     let newTimer = this.store.createRecord('timer');
-    this.router.transitionTo('timers.timer', newTimer.save());
+    newTimer.save().then(()=>{
+      this.router.transitionTo('timers.timer', newTimer);
+    });
   }
   
   @action importTimers(timer){
@@ -59,16 +61,9 @@ export default class TimersController extends Controller {
     timer.save();
     if(timer.type === 'audio'){
       if (timer.active){
-       this.audio.load(timer.soundfile).asSound(timer.name).then(
-          function() {
-            console.debug(timer.soundfile+ " loaded in the soundboard");
-          }, 
-          function() {
-            console.debug("error loading "+timer.soundfile+" in the soundboard!");
-          }
-        );
+        this.audio.loadSound(timer);
       } else {
-        this.audio.removeFromRegister('sound', timer.name);
+        this.audio.removeFromRegister(timer.name);
         console.debug(timer.soundfile+ " removed from the soundboard");
       }
     }
@@ -78,7 +73,7 @@ export default class TimersController extends Controller {
   @action gridDeleteTimer(timer) {
     if(timer.type === 'audio'){
       if (timer.active){
-        this.audio.removeFromRegister('sound', timer.name);
+        this.audio.removeFromRegister(timer.name);
         console.debug(timer.soundfile+ " removed from the soundboard");
 
       }

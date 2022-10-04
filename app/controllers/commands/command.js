@@ -18,8 +18,7 @@ export default class CommandController extends Controller {
   
   @action saveAndReturnCommand(){
     this.saveCommand();
-    this.router.transitionTo('commands');
-    
+    this.router.transitionTo('commands');    
   }
   
   @action saveCommand () {

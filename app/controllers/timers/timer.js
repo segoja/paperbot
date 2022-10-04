@@ -18,8 +18,7 @@ export default class TimerController extends Controller {
   
   @action saveAndReturnTimer(){
     this.saveTimer();
-    this.router.transitionTo('timers');
-    
+    this.router.transitionTo('timers');    
   }
   
   @action saveTimer () {
@@ -27,12 +26,10 @@ export default class TimerController extends Controller {
     
     if(this.model.type === 'audio'){
      if (this.model.active){
-        this.audio.removeFromRegister('sound', this.model.name);
-        this.audio.load(this.model.soundfile).asSound(this.model.name);
-        console.debug(this.model.soundfile+ " loaded in the soundboard");
-        
+        this.audio.removeFromRegister(this.model.name);
+        this.audio.loadSound(this.model);        
       } else {
-        this.audio.removeFromRegister('sound', this.model.name);
+        this.audio.removeFromRegister(this.model.name);
         console.debug(this.model.soundfile+ " removed from the soundboard");
       }
     }    
@@ -41,7 +38,7 @@ export default class TimerController extends Controller {
   @action deleteTimer() {
    if(this.model.type === 'audio'){
       if (this.model.active){
-        this.audio.removeFromRegister('sound', this.model.name);
+        this.audio.removeFromRegister(this.model.name);
         console.debug(this.model.soundfile+ " removed from the soundboard");
       }
     }

@@ -57,9 +57,9 @@ export default class StreamsController extends Controller {
 
   @action createStream() {
     var newStream = this.store.createRecord('stream');
-    this.stream.isEditing = true;
 
     newStream.save().then((stream)=>{
+      this.stream.isEditing = true;
       return this.defaultSetter(stream);
     });
   }
