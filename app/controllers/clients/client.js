@@ -64,6 +64,7 @@ export default class ClientController extends Controller {
   @action deleteClient() {
     //Wait for children to be destroyed then destroy the client      
     this.unlinkChildren().then((children)=>{
+      console.log('Children unlinked?');
       this.model.destroyRecord().then(() => {
         this.currentUser.isViewing = false;
         var prevchildId = null;

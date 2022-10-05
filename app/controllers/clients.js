@@ -54,23 +54,19 @@ export default class ClientController extends Controller {
    // collect the children before deletion
     var childrenList = [];
     
-    var botclientstreams = await client.botclientstreams;
-    botclientstreams.forEach((stream) => {
+    await client.botclientstreams.forEach((stream) => {
       childrenList.push(stream);
     });
     
-    var chatclientstreams = await client.chatclientstreams;
-    chatclientstreams.forEach((stream) => {
+    await client.chatclientstreams.forEach((stream) => {
       childrenList.push(stream);
     });
       
-    var botclientconfigs = await client.botclientconfigs;
-    botclientconfigs.forEach((config) => {
+    await client.botclientconfigs.forEach((config) => {
       childrenList.push(config);
     });
 
-    var chatclientconfigs = await client.chatclientconfigs;
-    chatclientconfigs.forEach((config) => {
+    await client.chatclientconfigs.forEach((config) => {
       childrenList.push(config);
     });
     
@@ -81,6 +77,7 @@ export default class ClientController extends Controller {
   @action gridDeleteClient(client) {
     //Wait for children to be destroyed then destroy the client      
     this.unlinkChildren(client).then((children)=>{
+      console.log('Children unlinked?');
       client.destroyRecord().then(() => {
         this.currentUser.isViewing = false;
         var prevchildId = null;
@@ -90,7 +87,7 @@ export default class ClientController extends Controller {
           if(prevchildId != child.id){
             console.debug("The id of the child: "+child.id);
             prevchildId = child.id;
-            return await child.save();      
+            return child.save();      
           }          
         });
         this.router.transitionTo('clients');        
