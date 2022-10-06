@@ -57,7 +57,7 @@ export default class CommandsController extends Controller {
     command.active = !command.active;
     command.save();
     if(command.type === 'audio'){
-      if (command.active){
+      if (command.active){     
         this.audio.loadSound(command);          
       } else {
         this.audio.removeFromRegister(command.name);

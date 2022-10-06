@@ -67,15 +67,16 @@ export default class PbCommandComponent extends Component {
         volume: command.volume,
         date_added: newDate,
         type: 'audio' 
-      }).save();
-      if(newRecord.active){
-        this.audio.removeFromRegister('sound', newRecord.name);        
-        this.audio.load(newRecord.soundfile).asSound(newRecord.name);      
-        console.debug(newRecord.soundfile+ " loaded in the soundboard");
-      } else {
-        this.audio.removeFromRegister('sound', newRecord.name);
-        console.debug(newRecord.soundfile+ " removed from the soundboard");
-      }
+      });
+      newRecord.save().then(()=>{
+        // We should not do this
+        /*if(newRecord.active){
+          this.audio.removeFromRegister(newRecord.name);        
+          this.audio.loadSound(newRecord);
+        } else {
+          this.audio.removeFromRegister(newRecord.name);
+        }*/       
+      });
       command.selected = false;
     });
     this.page = 1;

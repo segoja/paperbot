@@ -81,10 +81,12 @@ export default class PbSongComponent extends Component {
 
   @tracked separator = '';
   @tracked songs = [];
+  
   @action generateList(){
     this.resetPage();
     let ansiDecoder = new TextDecoder('windows-1252');
     this.songs = this.songsData.map(async (item)=>{
+      console.log(item);
       let newSong = this.store.createRecord('textfile');
       await invoke('text_reader', { filepath: item.path }).then((filedata)=>{
         newSong.lyrics = filedata;
@@ -92,6 +94,7 @@ export default class PbSongComponent extends Component {
         await invoke('binary_loader', { filepath: item.path }).then((fileBinarydata)=>{
           let u8arr = new Uint8Array(fileBinarydata);
           newSong.lyrics = ansiDecoder.decode(u8arr);
+          console.log(filedata);
         }).catch((binErr)=>{
           console.debug(item.path);
           console.debug(binErr);
@@ -111,6 +114,7 @@ export default class PbSongComponent extends Component {
         newSong.title = item.name.trimStart().trimEnd();
       } 
       newSong.selected = false;
+      console.log(newSong);
       return newSong;
     });
   }
