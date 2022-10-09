@@ -2,11 +2,7 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { dialog, invoke } from "@tauri-apps/api";
-import {
-  readDir,
-  readTextFile,
-  readBinaryFile
-} from '@tauri-apps/api/fs';
+import { readDir } from '@tauri-apps/api/fs';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
@@ -35,6 +31,7 @@ export default class PbSongComponent extends Component {
       this.songsData = [];     
     }
   }
+  
   
   @action generateSongs(){
     let newDate = new Date();
@@ -85,41 +82,56 @@ export default class PbSongComponent extends Component {
   @action generateList(){
     this.resetPage();
     let ansiDecoder = new TextDecoder('windows-1252');
-    this.songs = this.songsData.map(async (item)=>{
-      console.log(item);
-      let newSong = this.store.createRecord('textfile');
-      await invoke('text_reader', { filepath: item.path }).then((filedata)=>{
-        newSong.lyrics = filedata;
-      }).catch(async (err)=>{ 
-        await invoke('binary_loader', { filepath: item.path }).then((fileBinarydata)=>{
-          let u8arr = new Uint8Array(fileBinarydata);
-          newSong.lyrics = ansiDecoder.decode(u8arr);
-          console.log(filedata);
+    let utf8Decoder = new TextDecoder();
+    this.songs = this.songsData.map((item)=>{      
+      let extension = item.path.split(/[#?]/)[0].split('.').pop().trim();
+      if(extension === 'txt'){
+        let newSong = this.store.createRecord('textfile');
+        
+        invoke('binary_loader', { filepath: item.path }).then((fileBinarydata)=>{          
+          var arrayBufferView = new Uint8Array(fileBinarydata);
+
+          // create a blob from this
+          let lyrics = utf8Decoder.decode(arrayBufferView);            
+          
+          if(lyrics === ''){
+            console.log('Lyrics are ANSI encoded.');
+            lyrics = ansiDecoder.decode(arrayBufferView);
+          }
+          newSong.lyrics = lyrics;
         }).catch((binErr)=>{
           console.debug(item.path);
           console.debug(binErr);
         });
-      });
        
-      if(this.separator){
-        let data = item.name.split(this.separator);
-        newSong.title = data[1];        
-        if(data[2]){ newSong.title = newSong.title+' - '+data[2]; }
-        if(data[3]){ newSong.title = newSong.title+' - '+data[3]; }
-        if(data[4]){ newSong.title = newSong.title+' - '+data[4]; }        
-        if(newSong.title){ newSong.title = newSong.title.trimStart().trimEnd(); }
-        newSong.artist = data[0];            
-        if(newSong.artist){ newSong.artist = newSong.artist.trimStart().trimEnd(); }
-      } else {
-        newSong.title = item.name.trimStart().trimEnd();
-      } 
-      newSong.selected = false;
-      console.log(newSong);
-      return newSong;
+        if(this.separator != ''){
+          let data = item.name.split(this.separator);
+          newSong.title = data[1];     
+          if(data[2]){ newSong.title = newSong.title+' - '+data[2]; }
+          if(data[3]){ newSong.title = newSong.title+' - '+data[3]; }
+          if(data[4]){ newSong.title = newSong.title+' - '+data[4]; }        
+          if(newSong.title){ newSong.title = newSong.title.trimStart().trimEnd(); }
+          newSong.artist = data[0];            
+          if(newSong.artist){ newSong.artist = newSong.artist.trimStart().trimEnd(); }
+        } else {
+          newSong.title = item.name.trimStart().trimEnd();
+        }
+        newSong.selected = false;
+        
+        return newSong;
+      }
     });
   }
   
   @tracked filterQuery = '';
+  
+  get newSongs(){
+    if(this.songs.length > 0){
+      return this.songs;
+    }
+    return '';
+  }
+  
   @computedFilterByQuery(
     'songs',
     ['title','artist'],
