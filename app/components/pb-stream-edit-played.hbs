@@ -12,7 +12,7 @@
         {{#unless this.globalConfig.config.cpanplayed}}
           <div class="col-md queueframe" {{scroll-position position=this.queueHandler.scrollPlayedPosition relative=true}}>
             {{#each this.queueHandler.playedSongs as |playedsong|}}
-              <div id={{playedsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} class="alert-secondary border-light border d-flex flex-column text-decoration-none py-0 ps-2 my-1">
+              <div id={{playedsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} class="alert alert-secondary w-100 text-decoration-none py-0 ps-2 pe-0 my-1">
                 <div class="row g-0">
                   <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                   <div class="col-auto"><small class="pe-2">{{playedsong.user}}</small></div>
@@ -22,7 +22,9 @@
                     </button>              
                   </div>
                 </div>
-                <div class="alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.fullText}}</div>
+                <div class="row g-0">
+                  <div class="col alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.fullText}}</div>
+                </div>
               </div>
             {{/each}}
           </div>

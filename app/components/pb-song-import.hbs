@@ -60,7 +60,7 @@
             </thead>
             <tbody>
               {{#each this.pagedSongs as |song|}}                
-                <tr class={{if song.selected "alert-success"}}>                    
+                <tr class={{if song.selected "table-success"}}>                    
                   {{#if this.separator}}<td class="col-auto">{{song.artist}}</td>{{/if}}
                   <td class={{if this.separator "col"}}>{{song.title}}</td>
                   <td class="col-auto p-0">

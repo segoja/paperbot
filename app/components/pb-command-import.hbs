@@ -51,7 +51,7 @@
             </thead>
             <tbody>
               {{#each this.pagedCommands as |command|}}
-                <tr class={{if command.selected "alert-success"}}>
+                <tr class={{if command.selected "table-success"}}>
                   <td class="col-6">{{command.name}}</td>             
                   <td class="col p-0 m-0">
                     <Input @type="text" @value={{command.command}} class="form-control m-0 rounded-0 border-0 bg-transparent outline-transparent" placeholder="Enter command." />

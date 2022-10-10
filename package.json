@@ -33,7 +33,7 @@
     "@glimmer/component": "^1.1.2",
     "@glimmer/tracking": "^1.1.2",
     "@popperjs/core": "^2.11.6",
-    "@tauri-apps/cli": "^1.0.5",
+    "@tauri-apps/cli": "^1.1.1",
     "@zestia/ember-dragula": "^11.0.2",
     "babel-eslint": "^10.1.0",
     "bootstrap": "^5.2.0",
@@ -98,6 +98,6 @@
     "edition": "octane"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.0.2"
+    "@tauri-apps/api": "^1.1.0"
   }
 }
