@@ -63,8 +63,7 @@ export default class TimersController extends Controller {
       if (timer.active){
         this.audio.loadSound(timer);
       } else {
-        this.audio.removeFromRegister(timer.name);
-        console.debug(timer.soundfile+ " removed from the soundboard");
+        this.audio.removeFromRegister(timer.id);
       }
     }
     this.twitchChat.timerScheduler(timer);
@@ -73,9 +72,7 @@ export default class TimersController extends Controller {
   @action gridDeleteTimer(timer) {
     if(timer.type === 'audio'){
       if (timer.active){
-        this.audio.removeFromRegister(timer.name);
-        console.debug(timer.soundfile+ " removed from the soundboard");
-
+        this.audio.removeFromRegister(timer.id);
       }
     }   
     

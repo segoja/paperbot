@@ -4,7 +4,6 @@ export function initialize(application) {
   };
 
   application.register('globals:main', globals, { instantiate: false });
-  application.inject('controller', 'globals', 'globals:main');
 }
 
 export default {

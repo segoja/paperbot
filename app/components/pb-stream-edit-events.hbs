@@ -11,7 +11,7 @@
         {{#unless this.globalConfig.config.cpanevents}}                                                          
           <div class="col-md eventsframe" {{scroll-position position=this.scrollEventsPosition relative=true}} id="eventlist">
             {{#each this.eventsExternal.arrangedEvents as |event|}}
-              <div class="alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
+              <div class="alert alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                 <div class="row">
                   <div class="col"><small>{{nicer-date event.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                 </div>

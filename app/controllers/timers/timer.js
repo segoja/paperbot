@@ -22,24 +22,22 @@ export default class TimerController extends Controller {
   }
   
   @action saveTimer () {
-    this.model.save();
-    
-    if(this.model.type === 'audio'){
-     if (this.model.active){
-        this.audio.removeFromRegister(this.model.name);
-        this.audio.loadSound(this.model);        
-      } else {
-        this.audio.removeFromRegister(this.model.name);
-        console.debug(this.model.soundfile+ " removed from the soundboard");
-      }
-    }    
+    this.model.save().then(()=>{
+      if(this.model.type === 'audio'){
+       if (this.model.active){
+          this.audio.removeFromRegister(this.model.id);
+          this.audio.loadSound(this.model);        
+        } else {
+          this.audio.removeFromRegister(this.model.id);
+        }
+      }      
+    });
   }
   
   @action deleteTimer() {
    if(this.model.type === 'audio'){
       if (this.model.active){
-        this.audio.removeFromRegister(this.model.name);
-        console.debug(this.model.soundfile+ " removed from the soundboard");
+        this.audio.removeFromRegister(this.model.id);
       }
     }
     

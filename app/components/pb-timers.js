@@ -53,8 +53,7 @@ export default class PbTimersComponent extends Component {
   @action wipeTimers(){
     this.args.queryParamsObj.page = 1;
     this.filteredContent.forEach((timer)=>{
-      this.audio.removeFromRegister('sound', timer.name);
-      console.debug(timer.soundfile+ " removed from the soundboard");
+      this.audio.removeFromRegister(timer.id);
       timer.destroyRecord().then(()=>{
         console.debug("Timer wiped.")
       });

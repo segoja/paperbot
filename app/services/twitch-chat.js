@@ -200,6 +200,16 @@ export default class TwitchChatService extends Service {
   
   @action async timersLauncher(){
     let count = 1;
+    
+    let audioTimersList = this.timersList.filterBy('type', 'audio');
+    if(await audioTimersList.length > 0){
+      if(await this.timersList.length > 0){
+        this.audio.loadSounds(audioTimersList);
+      } else {
+        console.debug("No sound timers to load in soundboard!");
+      }      
+    }
+    
     this.timersList.map((timer)=>{
       this.timerScheduler(timer, count);
       count = count +1;
@@ -226,7 +236,10 @@ export default class TwitchChatService extends Service {
               } else {
                 this.lastTimerOrder = order;                
               }
-              this.botclient.say(this.channel, timer.message);          
+              this.botclient.say(this.channel, timer.message);
+              if(timer.type === 'audio'){
+                this.audio.playSound(timer);
+              }
               this.lastTimerPos = this.msglist.get('length');
             }
           }
@@ -618,25 +631,7 @@ export default class TwitchChatService extends Service {
                       case 'audio':{
                         
                         if (this.audio.SBstatus){
-                          this.audio.playSound(command.name);
-                          /*
-                          if(this.lastSoundCommand){
-                            if(this.soundPlaying){
-                              if(this.globalConfig.config.soundOverlap){
-                                this.lastSoundCommand = this.audio.getSound(command.name);
-                                this.lastSoundCommand.changeGainTo(command.volume).from('percent');
-                                this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
-                              }
-                            } else {
-                              this.lastSoundCommand = this.audio.getSound(command.name);
-                              this.lastSoundCommand.changeGainTo(command.volume).from('percent');
-                              this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
-                            }
-                          } else {
-                            this.lastSoundCommand = this.audio.getSound(command.name);
-                            this.lastSoundCommand.changeGainTo(command.volume).from('percent');
-                            this.lastSoundCommand.playFor(this.lastSoundCommand.duration.raw);
-                          }*/
+                          this.audio.playSound(command);
                         }
                         break;
                       }

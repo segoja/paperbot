@@ -13,7 +13,7 @@ export default class AudioService extends Service {
   @service globalConfig;
   /**
    * This acts as a register for Sound instances. Sound instances are placed in
-   * the register by name, and can be called via audioService.getSound('name')
+   * the register by id, and can be called via audioService.getSound('id')
    *
    * @private
    * @property sounds
@@ -35,10 +35,7 @@ export default class AudioService extends Service {
     return this.preview;
   }
   
-  
-  
-  
-  
+   
   async loadPreview(src){
     await invoke('binary_loader', { filepath: src }).then(async (response)=>{    
       // converted the arraybuffer to a arraybufferview
@@ -73,11 +70,11 @@ export default class AudioService extends Service {
     });
   }
   
-  async loadSound(command){    
+  async loadSound(item){    
     //if(this.sounds.get(command.name)){    
-      await invoke('binary_loader', { filepath: command.soundfile }).then(async (response)=>{    
+      await invoke('binary_loader', { filepath: item.soundfile }).then(async (response)=>{    
         // converted the arraybuffer to a arraybufferview
-        let extension = command.soundfile.split(/[#?]/)[0].split('.').pop().trim();
+        let extension = item.soundfile.split(/[#?]/)[0].split('.').pop().trim();
         var arrayBufferView = new Uint8Array(await response);
         // create a blob from this
         var blob = new Blob( [ arrayBufferView ], { type: 'data:audio/'+extension } );
@@ -85,51 +82,51 @@ export default class AudioService extends Service {
         var howlSource = URL.createObjectURL(blob);
         //console.log(howlSource);
         
-        let itExist = this.sounds.has(command.name);
+        let itExist = this.sounds.has(item.get('id'));
         if(itExist){
-          let oldsound = this.sounds.get(command.name);
+          let oldsound = this.sounds.get(item.get('id'));
           oldsound.unload();
-          this.sounds.delete(command.name);
-          console.log('Sound '+command.name+' already exist, replacing...');
+          this.sounds.delete(item.get('id'));
+          console.log('Sound '+item.name+' already exist, replacing...');
         }
         
         // then inatialized the new howl as
         this.sounds.set(
-          command.name, 
+          item.get('id'), 
           new Howl({
             src: [howlSource], 
             html5: true,
-            volume: command.volume ? command.volume / 100 : 100,
+            volume: item.volume ? item.volume / 100 : 1,
             format: [extension],
             onload: function(){
-              console.log(command.soundfile+' loaded in the soundboard');
+              console.log(item.soundfile+' loaded in the soundboard');
             },
             onloaderror: function() {
-              console.log('error loading '+command.soundfile+' in the soundboard!');
+              console.log('error loading '+item.soundfile+' in the soundboard!');
             }       
           })
         ); 
       }).catch((binErr)=>{
-        console.debug(command.soundfile);
+        console.debug(item.soundfile);
         console.debug(binErr);
       });
     //}
   } 
 
   /**
-   * Loads a list of sound commands to the sounds register
+   * Loads a list of sound commands and/or timers to the sounds register
    *
    * @public
    * @method loadSounds
    *
-   * @param {array} soundCommands The array of sound commands that should be added
+   * @param {array} soundElements The array of sound commands and/or timers that should be added
    * to the sounds register.
    */
   
-  async loadSounds(soundCommands){
-    soundCommands.map(async(command)=>{
-      if(command.soundfile){
-        let src = command.soundfile;
+  async loadSounds(soundElements){
+    await soundElements.map(async(item)=>{
+      if(item.soundfile){
+        let src = item.soundfile;
         await invoke('binary_loader', { filepath: src }).then(async (response)=>{
           // We get the file extension to use it for the type
           let extension = src.split(/[#?]/)[0].split('.').pop().trim();
@@ -143,21 +140,21 @@ export default class AudioService extends Service {
           let howlSource = URL.createObjectURL(blob);
           // console.log(howlSource);
           
-          let itExist = this.sounds.has(command.name);
+          let itExist = this.sounds.has(await item.get('id'));
           if(itExist){
-            let oldsound = this.sounds.get(command.name);
+            let oldsound = this.sounds.get(await item.get('id'));
             oldsound.unload();
-            this.sounds.delete(command.name);
-            console.log('Sound '+command.name+' already exist, replacing...');
+            this.sounds.delete(item.get('id'));
+            console.log('Sound '+item.name+' already exist, replacing...');
           }
           
           // then inatialize the new howl in the sound library
           this.sounds.set(
-            command.name, 
+            await item.get('id'), 
             new Howl({
               src: [howlSource], 
               html5: true,
-              volume: command.volume ? command.volume / 100 : 100,
+              volume: item.volume ? item.volume / 100 : 1,
               format: [extension],
               onload: function(){
                 console.log(src+' loaded in the soundboard');
@@ -186,25 +183,12 @@ export default class AudioService extends Service {
    * to the sounds register.
    */ 
   
-  async playSound(id){
-    if(this.globalConfig.config.soundOverlap){
-      console.log('Sound overlapping');
-      let hasSound = this.sounds.has(id);
-      if(hasSound){
-        let sound = this.sounds.get(id);
-        let duration = sound.duration() * 1000;
-        sound.play();
-        
-        this.isPlaying = true;
-        this.lastPlayed = id;
-        
-        later(this, function() {
-          this.isPlaying = false;
-        }, duration);
-      } 
-    } else {
-      console.log('No overlapping');
-      if(!this.isPlaying){
+  async playSound(item){
+    let id = await item.get('id');
+    console.log(id);
+    if(id){
+      if(this.globalConfig.config.soundOverlap){
+        console.log('Sound overlapping');
         let hasSound = this.sounds.has(id);
         if(hasSound){
           let sound = this.sounds.get(id);
@@ -217,8 +201,27 @@ export default class AudioService extends Service {
           later(this, function() {
             this.isPlaying = false;
           }, duration);
-        }          
+        } 
+      } else {
+        console.log('No overlapping');
+        if(!this.isPlaying){
+          let hasSound = this.sounds.has(id);
+          if(hasSound){
+            let sound = this.sounds.get(id);
+            let duration = sound.duration() * 1000;
+            sound.play();
+            
+            this.isPlaying = true;
+            this.lastPlayed = id;
+            
+            later(this, function() {
+              this.isPlaying = false;
+            }, duration);
+          }          
+        }
       }
+    } else {
+      console.log('Empty audio id provided...');
     }
   }  
 
@@ -276,19 +279,19 @@ export default class AudioService extends Service {
   }
 
   /**
-   * Removes a list of sound commands to the sounds register
+   * Removes a list of sound commands and/or timers to the sounds register
    *
    * @public
    * @method unloadSounds
    *
-   * @param {array} soundCommands The array of sound commands that should be removed
+   * @param {array} soundElements The array of sound commands and/or timers that should be removed
    * from the sounds register.
    */
 
-  async unloadSounds(soundCommands) {
-    if(soundCommands.length > 0){
-      soundCommands.forEach((command)=>{
-        this.removeFromRegister(command.name);
+  async unloadSounds(soundElements) {
+    if(soundElements.length > 0){
+      soundElements.forEach((item)=>{
+        this.removeFromRegister(item.name);
       });
       Howler.stop();
       Howler.unload();

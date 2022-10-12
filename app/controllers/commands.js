@@ -60,7 +60,7 @@ export default class CommandsController extends Controller {
       if (command.active){     
         this.audio.loadSound(command);          
       } else {
-        this.audio.removeFromRegister(command.name);
+        this.audio.removeFromRegister(command.id);
       }
     }
   } 
@@ -68,7 +68,7 @@ export default class CommandsController extends Controller {
   @action gridDeleteCommand(command) {
     if(command.type === 'audio'){
       if (command.active){
-        this.audio.removeFromRegister(command.name);
+        this.audio.removeFromRegister(command.id);
       }
     }   
     

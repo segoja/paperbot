@@ -71,10 +71,10 @@ export default class PbCommandComponent extends Component {
       newRecord.save().then(()=>{
         // We should not do this
         /*if(newRecord.active){
-          this.audio.removeFromRegister(newRecord.name);        
+          this.audio.removeFromRegister(newRecord.id);        
           this.audio.loadSound(newRecord);
         } else {
-          this.audio.removeFromRegister(newRecord.name);
+          this.audio.removeFromRegister(newRecord.id);
         }*/       
       });
       command.selected = false;

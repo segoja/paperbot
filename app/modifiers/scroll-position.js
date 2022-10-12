@@ -1,29 +1,12 @@
 import Modifier from 'ember-modifier';
 
 export default class ScrollPositionModifier extends Modifier {
-  get scrollPosition() {
-    // get the first positional argument passed to the modifier
-    //
-    // {{scoll-position @someNumber relative=@someBoolean}}
-    //                  ~~~~~~~~~~~
-    //
-    return this.args.named.position;
-  }
-
-  get isRelative() {
-    // get the named argument "relative" passed to the modifier
-    //
-    // {{scoll-position @someNumber relative=@someBoolean}}
-    //                                       ~~~~~~~~~~~~
-    //
-    return this.args.named.relative;
-  }
-
-  didReceiveArguments() {
-    if(this.isRelative) {
-      this.element.scrollTop = this.args.named.position
+  modify(element, [scrollPosition], { position, relative }) {
+    
+    if(relative) {
+      element.scrollTop = position;
     } else {
-      this.element.scrollTop = this.element.scrollHeight;
+      element.scrollTop = element.scrollHeight;
     }
   }
 }

@@ -52,7 +52,7 @@
       <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
         <div class="input-group">
           <div class="input-group-prepend">
-            <BsButton @type="secondary" @onClick={{fn (if this.isPlaying this.stopSound this.playSound)}}><FaIcon @icon="{{if this.loadPreview (if this.isPlaying "stop" "play") "volume-mute"}}" /></BsButton>
+            <BsButton @type="secondary" @onClick={{fn this.playSound}}><FaIcon @icon="{{if this.isPreviewLoaded (if this.isPreviewPlaying "stop" "play") "volume-mute"}}" /></BsButton>
           </div>
           <el.control disabled class="border-form-control" @placeholder="Select the sound file..." />
           <div class="input-group-append">

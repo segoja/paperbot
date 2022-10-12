@@ -8,6 +8,7 @@ export default class CurrentUserService extends Service {
   @service globalConfig;
   @service router;
   @tracked isViewing = false;
+  @tracked isEditing = false;
   @tracked expandMenu = false;
   @tracked expandSubmenu = false;
   @tracked songqueue = [];
