@@ -23,11 +23,13 @@ export default class ApplicationController extends Controller {
   @service eventsExternal;
   
   @tracked collapsed = true;
+  @tracked minimized = false;
+  
   // We load the existing config or create a new one.  
   constructor() {
     super(...arguments);
     let currentWindow = getCurrent();
-
+    this.minimized = false;
     // We wipe requests on every app start;
 
     this.store.findAll('config').then(()=>{
@@ -44,10 +46,10 @@ export default class ApplicationController extends Controller {
         }
         if(currentWindow.label === 'Main'){
           //if(!this.globalConfig.config.mainMax){
-            if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
-              let position = new PhysicalPosition (this.globalConfig.config.mainPosX, this.globalConfig.config.mainPosY);
-              currentWindow.setPosition(position);
-            }
+            //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
+            let position = new PhysicalPosition (this.globalConfig.config.mainPosX, this.globalConfig.config.mainPosY);
+            currentWindow.setPosition(position);
+            //}
             let size = new PhysicalSize (this.globalConfig.config.mainWidth, this.globalConfig.config.mainHeight);          
             currentWindow.setSize(size);
           //}
@@ -75,7 +77,7 @@ export default class ApplicationController extends Controller {
         }.bind(this));
         
         currentWindow.listen('tauri://resize', async function (response) {
-          if(!this.globalConfig.config.mainMax){
+          if(!this.globalConfig.config.mainMax && !this.minimized){
             this.globalConfig.config.mainWidth = response.payload.width; 
             this.globalConfig.config.mainHeight = response.payload.height;
             console.debug('Resizing Main');
@@ -83,7 +85,7 @@ export default class ApplicationController extends Controller {
         }.bind(this));
         
         currentWindow.listen('tauri://move', async function (response) { 
-          if(!this.globalConfig.config.mainMax){
+          if(!this.globalConfig.config.mainMax && !this.minimized){
             this.globalConfig.config.mainPosX = response.payload.x;
             this.globalConfig.config.mainPosY = response.payload.y;
             console.debug('Moving Main');
@@ -97,7 +99,7 @@ export default class ApplicationController extends Controller {
       
       if(currentWindow.label === 'reader'){
         currentWindow.listen('tauri://resize', async function (response) {
-          if(!this.globalConfig.config.readerMax){        
+          if(!this.globalConfig.config.readerMax && !this.minimized){        
             this.globalConfig.config.readerWidth = response.payload.width; 
             this.globalConfig.config.readerHeight = response.payload.height;
             console.debug('Resizing reader');
@@ -105,7 +107,7 @@ export default class ApplicationController extends Controller {
         }.bind(this));
         
         currentWindow.listen('tauri://move', async function (response) { 
-          if(!this.globalConfig.config.readerMax){
+          if(!this.globalConfig.config.readerMax && !this.minimized){
             this.globalConfig.config.readerPosX = response.payload.x;
             this.globalConfig.config.readerPosY = response.payload.y;
             console.debug('Moving reader');
@@ -119,36 +121,50 @@ export default class ApplicationController extends Controller {
 
       if(currentWindow.label === 'overlay'){            
         currentWindow.listen('tauri://resize', async function (response) {
-          this.globalConfig.config.overlayWidth = response.payload.width; 
-          this.globalConfig.config.overlayHeight = response.payload.height;
+          if(!this.minimized){      
+            this.globalConfig.config.overlayWidth = response.payload.width; 
+            this.globalConfig.config.overlayHeight = response.payload.height;
             console.debug('Resizing overlay');
+          }
         }.bind(this));
         
-        currentWindow.listen('tauri://move', async function (response) { 
-          this.globalConfig.config.overlayPosX = response.payload.x;
-          this.globalConfig.config.overlayPosY = response.payload.y;
+        currentWindow.listen('tauri://move', async function (response) {
+          if(!this.minimized){      
+            this.globalConfig.config.overlayPosX = response.payload.x;
+            this.globalConfig.config.overlayPosY = response.payload.y;
             console.debug('Moving overlay');
+          }
         }.bind(this));
       }      
     });
     
     currentWindow.listen('tauri://destroyed', function () {
-      console.log('destroyed?');
+      console.debug('destroyed?');
     }.bind(this));
     
     currentWindow.listen('tauri://close-requested', function () {
-      console.log('Close requested with Alt-F4');
+      console.debug('Close requested with Alt-F4');
       this.closeWindow();
     }.bind(this));
+   
+    currentWindow.listen('tauri://focus', function () {
+      if(this.minimized){
+        this.minimized = false;
+        console.debug('Unminimizing...');
+      }
+    }.bind(this));   
+    
     
     currentWindow.once('tauri://error', function (e) {
      // an error happened creating the webview window
      console.debug(e);
     });
     
-    //appWindow.listen('tauri://blur', ({ event, payload }) => {
-    //  console.debug(payload);
-    //});
+    appWindow.listen('tauri://blur', ({ event, payload }) => {
+      //console.debug(payload);
+      //console.debug(event);
+      console.debug('Blurring window...');
+    });
   }
 
   get serverStatus(){
@@ -289,17 +305,31 @@ export default class ApplicationController extends Controller {
 
   @action async minimizeWindow(){
     let currentWindow = getCurrent();
+    this.minimized = true;
+    
     if(currentWindow.label === 'Main'){
-      this.globalConfig.config.mainMax = false;
-      currentWindow.unmaximize();
-      currentWindow.minimize();
-      console.debug('Minimized Main.');
+      if(!this.globalConfig.config.mainMax){
+        this.globalConfig.config.save().then(()=>{
+          console.debug("Saved Main size before minimize when wasn't maximized");
+          currentWindow.minimize();
+          console.debug('Main Minimized.');
+        });        
+      } else {
+        currentWindow.minimize();
+        console.debug('Main Minimized.');        
+      }
     }
     if(currentWindow.label === 'reader'){
-      this.globalConfig.config.readerMax = false; 
-      currentWindow.unmaximize();
-      currentWindow.minimize();
-      console.debug('Minimized Reader.');
+      if(!this.globalConfig.config.readerMax){
+        this.globalConfig.config.save().then(()=>{
+          console.debug("Saved Reader size before minimize when wasn't maximized");
+          currentWindow.minimize();
+          console.debug('Reader Minimized.');
+        });
+      } else {
+        currentWindow.minimize();
+        console.debug('Reader Minimized.');
+      }
     }   
   }
   
@@ -313,13 +343,13 @@ export default class ApplicationController extends Controller {
       } else {
         this.globalConfig.config.mainMax = true;
         currentWindow.maximize();
-        if(this.globalConfig.config.hasDirtyAttributes){
-          // We save to preserve last unmaximized size;
-          this.globalConfig.config.save().then(()=>{
-            console.debug('Saved Main size after maximize');
-          });
-        }
         console.debug('Maximized Main.');
+      }
+      if(this.globalConfig.config.hasDirtyAttributes){
+        // We save to preserve last unmaximized size;
+        this.globalConfig.config.save().then(()=>{
+          console.debug('Saved Main size after maximize');
+        });
       }
     }
     if(currentWindow.label === 'reader'){
@@ -330,13 +360,13 @@ export default class ApplicationController extends Controller {
       } else {
         this.globalConfig.config.readerMax = true;
         currentWindow.maximize();
-        if(this.globalConfig.config.hasDirtyAttributes){
-          // We save to preserve last unmaximized size;
-          this.globalConfig.config.save().then(()=>{
-            console.debug('Saved Reader size after maximize');
-          });
-        }
         console.debug('Maximized Reader.');
+      }
+      if(this.globalConfig.config.hasDirtyAttributes){
+        // We save to preserve last unmaximized size;
+        this.globalConfig.config.save().then(()=>{
+          console.debug('Saved Reader size after maximize');
+        });
       }   
     }
   }
@@ -347,67 +377,90 @@ export default class ApplicationController extends Controller {
     // This also implies that the changes on position and size only get updated and saved for the
     // window that is getting closed as changes are only shared between WebView windows when saved
     // in the local storage.
-    
-    let currentWindow = getCurrent();
-    if(currentWindow.label === 'Main'){      
-      let main = await WebviewWindow.getByLabel('Main');
-      if(main){
-        let maximized = await main.isMaximized();
-        let position  = await main.outerPosition();
-        let size      = await main.outerSize();        
-        this.globalConfig.config.mainMax    = maximized;
-        if(!maximized){   // We do this to preserve unmaximized size and position;
-          this.globalConfig.config.mainPosX   = position.x;
-          this.globalConfig.config.mainPosY   = position.y;
-          this.globalConfig.config.mainWidth  = size.width;
-          this.globalConfig.config.mainHeight = size.height;
-        }
-        console.debug('Updated Main position and size in config.');
-      }
+    this.store.findAll('config').then(async()=>{      
+      let currentconfig = this.store.peekRecord('config','myconfig');
       
-      let reader = await WebviewWindow.getByLabel('reader');
-      if(reader){
-        let maximized = await reader.isMaximized();
-        let position  = await reader.outerPosition();
-        let size      = await reader.outerSize();        
-        this.globalConfig.config.readerMax    = maximized;
-        if(!maximized){   // We do this to preserve unmaximized size and position;
-          this.globalConfig.config.readerPosX   = position.x;
-          this.globalConfig.config.readerPosY   = position.y;
-          this.globalConfig.config.readerWidth  = size.width;
-          this.globalConfig.config.readerHeight = size.height;
-        }
-        console.debug('Updated reader position and size in config.');
-      }
-
-      let overlay = await WebviewWindow.getByLabel('overlay');
-      if(overlay){
-        // let maximized = await overlay.isMaximized();
-        let position  = await overlay.outerPosition();
-        let size      = await overlay.outerSize();        
-        // this.globalConfig.config.overlayMax    = maximized;
-        this.globalConfig.config.overlayPosX   = position.x;
-        this.globalConfig.config.overlayPosY   = position.y;
-        this.globalConfig.config.overlayWidth  = size.width;
-        this.globalConfig.config.overlayHeight = size.height;
-        console.debug('Updated overlay position and size in config.');
-      } 
-    }
-    await this.globalConfig.config.save().then(async (config)=>{
-      console.debug('Saved config. Closing windows');
-      later (async function() {
-        if(currentWindow.label === 'reader'){
-           currentWindow.close();
-        } else {
-          if(currentWindow.label === 'overlay'){
-            currentWindow.close();
-          } else {          
-            await getAll().forEach(async (item)=>{
-                await item.close();
-            });
+      if (currentconfig){
+        let currentWindow = getCurrent();
+        if(currentWindow.label === 'Main'){      
+          let main = await WebviewWindow.getByLabel('Main');
+          console.log(main);
+          if(main){
+            let maximized = await main.isMaximized();
+            let minimized = await !main.isVisible();
+            let position  = await main.outerPosition();
+            let size      = await main.outerSize();
+            // currentconfig.mainMax = currentconfig.mainMax ? currentconfig.mainMax : maximized;
+            //if(!maximized && !this.minimized){   // We do this to preserve unmaximized size and position;
+              // We do this to prevent saving positions off the screen when minimized
+              if(!minimized || !currentconfig.mainMax){
+                currentconfig.mainPosX   = position.x;
+                currentconfig.mainPosY   = position.y;
+                currentconfig.mainWidth  = size.width;
+                currentconfig.mainHeight = size.height;
+              }
+              console.debug('Updated Main position and size in config.');
+            //}            
+          }          
+        }  
+        
+        if(currentWindow.label === 'Main' || currentWindow.label === 'reader'){   
+          let reader = await WebviewWindow.getByLabel('reader');
+          if(reader){
+            let maximized = await reader.isMaximized();
+            let minimized = await !reader.isVisible();
+            let position  = await reader.outerPosition();
+            let size      = await reader.outerSize();
+            // currentconfig.readerMax = currentconfig.readerMax ? currentconfig.readerMax : maximized;
+            // if(!maximized && !this.minimized && !minimized){   // We do this to preserve unmaximized size and position;
+              // We do this to prevent saving positions off the screen when minimized
+              if(!minimized || !currentconfig.readerMax){
+                currentconfig.readerPosX   = position.x;
+                currentconfig.readerPosY   = position.y;
+                currentconfig.readerWidth  = size.width;
+                currentconfig.readerHeight = size.height;
+              }
+              console.debug('Updated reader position and size in config.');
+            // }
           }
         }
-      });
+            
+        if(currentWindow.label === 'Main' || currentWindow.label === 'overlay'){ 
+          let overlay = await WebviewWindow.getByLabel('overlay');
+          if(overlay){
+            // let maximized = await overlay.isMaximized();
+            let minimized = await !overlay.isVisible();
+            let position  = await overlay.outerPosition();
+            let size      = await overlay.outerSize();
+            // currentconfig.overlayMax    = maximized;
+            if(!minimized){ // We do this to prevent saving positions off the screen when minimized
+              currentconfig.overlayPosX   = position.x;
+              currentconfig.overlayPosY   = position.y;
+              currentconfig.overlayWidth  = size.width;
+              currentconfig.overlayHeight = size.height;
+              console.debug('Updated overlay position and size in config.');
+            }
+            
+          } 
+        }
+      
+        later(this, async () => {
+          await currentconfig.save().then(async (config)=>{
+            console.debug('Saved config. Closing windows');
+            if(currentWindow.label === 'reader'){
+               await currentWindow.close();
+            } else {
+              if(currentWindow.label === 'overlay'){
+                await currentWindow.close();
+              } else {          
+                await getAll().forEach(async (item)=>{
+                    await item.close();
+                });
+              }
+            }
+          });
+        }, 250);
+      }
     });
   }
   

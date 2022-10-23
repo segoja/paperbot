@@ -22,6 +22,8 @@ export default class ConfigModel extends Model {
   @attr('boolean', {defaultValue: false}) showOverlay;
   @attr('string', {defaultValue: "#006600ff"}) chromaColor;
   @attr('number', {defaultValue: 5}) overlayLength;
+  @attr('boolean', {defaultValue: false}) overlayMax;  
+  @attr('boolean', {defaultValue: false}) overlayMin;  
   @attr('number', {defaultValue: 550}) overlayWidth;
   @attr('number', {defaultValue: 175}) overlayHeight;
   @attr('number', {defaultValue: 0}) overlayPosX;
@@ -34,6 +36,7 @@ export default class ConfigModel extends Model {
 
   @attr('boolean', {defaultValue: false}) showLyrics;
   @attr('boolean', {defaultValue: false}) readerMax;  
+  @attr('boolean', {defaultValue: false}) readerMin;  
   @attr('number', {defaultValue: 450}) readerWidth;
   @attr('number', {defaultValue: 600}) readerHeight;
   @attr('number', {defaultValue: 0}) readerPosX;
@@ -42,6 +45,7 @@ export default class ConfigModel extends Model {
   @attr('number', {defaultValue: 1}) readerZoom;
 
   @attr('boolean', {defaultValue: false}) mainMax;
+  @attr('boolean', {defaultValue: false}) mainMin;
   @attr('number', {defaultValue: 1080}) mainWidth;
   @attr('number', {defaultValue: 800}) mainHeight;
   @attr('number', {defaultValue: 0}) mainPosX;

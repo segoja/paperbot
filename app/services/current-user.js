@@ -30,16 +30,16 @@ export default class CurrentUserService extends Service {
   }
   
   @action showLyrics(){
-    let lyricsWindow = '';
+    let readerWindow = '';
     let currentWindow = getCurrent();
 
     getAll().forEach((windowItem)=>{  
       if(windowItem.label === 'reader'){
-        lyricsWindow = windowItem;
+        readerWindow = windowItem;
       }
     });
     
-    if(lyricsWindow === '' && currentWindow.label != 'overlay' && currentWindow.label != 'reader'){
+    if(readerWindow === '' && currentWindow.label != 'overlay' && currentWindow.label != 'reader'){
       let options = { 
         url: 'reader',
         label: 'reader', 
@@ -54,15 +54,15 @@ export default class CurrentUserService extends Service {
         x: Number(this.globalConfig.config.readerPosX),
         y: Number(this.globalConfig.config.readerPosY)
       };
-      lyricsWindow = new WebviewWindow('reader', options);
+      readerWindow = new WebviewWindow('reader', options);
 
-      lyricsWindow.once('tauri://created', function () {
+      readerWindow.once('tauri://window-created', function () {
        // webview window successfully created
        console.debug('Reader ready!')
       })
     
     } else {
-      // lyricsWindow.close();
+      // readerWindow.close();
     }
   }
   
@@ -91,7 +91,7 @@ export default class CurrentUserService extends Service {
       };
       overlayWindow = new WebviewWindow('overlay', options);
 
-      overlayWindow.once('tauri://created', function () {
+      overlayWindow.once('tauri://window-created', function () {
        // webview window successfully created
        console.debug('Overlay ready!')
       });

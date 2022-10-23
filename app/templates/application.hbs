@@ -25,6 +25,11 @@
             <div role="button" class="nav-link pt-3 pb-2 w-100" {{on "mousedown" this.dragWindow}}></div>
           </div>
           <div class="btn-group btn-group-sm col-auto d-md-none">
+            {{#unless (and this.isOverlay this.isLyrics)}}
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.currentUser.showLyrics}}>
+                <FaIcon @icon="align-center" />
+              </button>
+            {{/unless}}
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
@@ -68,6 +73,11 @@
         </navbar.content>
         <div class="row g-0 d-md-flex col col-md-auto d-none">
           <div class="btn-group btn-group-sm col-auto">
+            {{#unless (and this.isOverlay this.isLyrics)}}
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.currentUser.showLyrics}}>
+                <FaIcon @icon="align-center" />
+              </button>
+            {{/unless}}
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
