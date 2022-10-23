@@ -384,63 +384,74 @@ export default class ApplicationController extends Controller {
         let currentWindow = getCurrent();
         if(currentWindow.label === 'Main'){      
           let main = await WebviewWindow.getByLabel('Main');
-          console.log(main);
+          
           if(main){
+            // We do this to prevent saving a minimized window position and size.
+            await main.unminimize();
+            console.log(main);
+            
             let maximized = await main.isMaximized();
-            let minimized = await !main.isVisible();
             let position  = await main.outerPosition();
             let size      = await main.outerSize();
             // currentconfig.mainMax = currentconfig.mainMax ? currentconfig.mainMax : maximized;
-            //if(!maximized && !this.minimized){   // We do this to preserve unmaximized size and position;
-              // We do this to prevent saving positions off the screen when minimized
-              if(!minimized || !currentconfig.mainMax){
-                currentconfig.mainPosX   = position.x;
-                currentconfig.mainPosY   = position.y;
-                currentconfig.mainWidth  = size.width;
-                currentconfig.mainHeight = size.height;
-              }
+            if(!maximized && !currentconfig.mainMax){   // We do this to preserve unmaximized size and position;
+              console.debug('Main is not maximized');
+              currentconfig.mainPosX   = position.x;
+              currentconfig.mainPosY   = position.y;
+              currentconfig.mainWidth  = size.width;
+              currentconfig.mainHeight = size.height;
               console.debug('Updated Main position and size in config.');
+            } else {
+              console.debug('Main is maximized');
+            }
             //}            
           }          
         }  
         
         if(currentWindow.label === 'Main' || currentWindow.label === 'reader'){   
           let reader = await WebviewWindow.getByLabel('reader');
+          
           if(reader){
+            // We do this to prevent saving a minimized window position and size.
+            await reader.unminimize();
             let maximized = await reader.isMaximized();
-            let minimized = await !reader.isVisible();
             let position  = await reader.outerPosition();
             let size      = await reader.outerSize();
             // currentconfig.readerMax = currentconfig.readerMax ? currentconfig.readerMax : maximized;
-            // if(!maximized && !this.minimized && !minimized){   // We do this to preserve unmaximized size and position;
-              // We do this to prevent saving positions off the screen when minimized
-              if(!minimized || !currentconfig.readerMax){
-                currentconfig.readerPosX   = position.x;
-                currentconfig.readerPosY   = position.y;
-                currentconfig.readerWidth  = size.width;
-                currentconfig.readerHeight = size.height;
-              }
+            if(!maximized || !currentconfig.readerMax){   // We do this to preserve unmaximized size and position;
+              console.debug('Reader is not maximized');
+              currentconfig.readerPosX   = position.x;
+              currentconfig.readerPosY   = position.y;
+              currentconfig.readerWidth  = size.width;
+              currentconfig.readerHeight = size.height;
               console.debug('Updated reader position and size in config.');
+            } else {
+              console.debug('Reader is maximized');
+            }
             // }
           }
         }
             
         if(currentWindow.label === 'Main' || currentWindow.label === 'overlay'){ 
           let overlay = await WebviewWindow.getByLabel('overlay');
+          
           if(overlay){
-            // let maximized = await overlay.isMaximized();
-            let minimized = await !overlay.isVisible();
+            // We do this to prevent saving a minimized window position and size.
+            await overlay.unminimize();
+            let maximized = await overlay.isMaximized();
             let position  = await overlay.outerPosition();
             let size      = await overlay.outerSize();
             // currentconfig.overlayMax    = maximized;
-            if(!minimized){ // We do this to prevent saving positions off the screen when minimized
+            if(!maximized || !currentconfig.overlayMax){   // We do this to preserve unmaximized size and position;
+              console.debug('Overlay is not maximized');
               currentconfig.overlayPosX   = position.x;
               currentconfig.overlayPosY   = position.y;
               currentconfig.overlayWidth  = size.width;
               currentconfig.overlayHeight = size.height;
               console.debug('Updated overlay position and size in config.');
+            } else {
+              console.debug('Overlay is maximized');              
             }
-            
           } 
         }
       
@@ -454,12 +465,12 @@ export default class ApplicationController extends Controller {
                 await currentWindow.close();
               } else {          
                 await getAll().forEach(async (item)=>{
-                    await item.close();
+                  await item.close();
                 });
               }
             }
           });
-        }, 250);
+        }, 0);
       }
     });
   }
