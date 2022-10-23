@@ -19,7 +19,7 @@ export default class PbReaderComponent extends Component {
   @tracked zoomLevel = 0.85;
   
   @service globalConfig;
-  
+    
   constructor() {
     super(...arguments);
   }
@@ -122,5 +122,5 @@ export default class PbReaderComponent extends Component {
         this.lightControl.toggleMode(this.globalConfig.config.darkmode); 
       });
     }
-  }  
+  }
 }

@@ -67,7 +67,7 @@ export default class ClientController extends Controller {
       console.log('Children unlinked?');
       this.model.destroyRecord().then(() => {
         this.currentUser.isViewing = false;
-        var prevchildId = null;
+        var prevchildId = '';
         children.map(async (child)=>{
           // We check for duplicated in the child list.
           // Makes no sense to save same model twice without changes (if you do you will get error).

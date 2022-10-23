@@ -43,7 +43,7 @@
           {{#if this.disableBotButton}}
             <BsButton class="btn-sm col-12 col-sm border rounded-0" @type={{if this.twitchChat.botConnected "primary" "secondary"}} disabled={{this.disableBotButton}}><FaIcon @icon="play" /> Bot</BsButton>
           {{else}}      
-            <BsButton class="btn-sm col-12 col-sm border rounded-0"  @type={{if this.twitchChat.botConnected "primary" "secondary"}} @onClick={{fn (if this.twitchChat.botConnected this.disconnectBot this.connectBot)}}>
+            <BsButton class="btn-sm col-12 col-sm border rounded-0" disabled={{unless (or this.optsbot this.twitchChat.botConnected) true}} @type={{if this.twitchChat.botConnected "primary" "secondary"}} @onClick={{fn (if this.twitchChat.botConnected this.disconnectBot this.connectBot)}}>
               <FaIcon @icon={{if this.twitchChat.botConnected "stop" "play"}} /> Bot
             </BsButton>
           {{/if}}

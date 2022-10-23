@@ -9,43 +9,6 @@ export default class PbReaderComponent extends Component {
   
   constructor() {
     super(...arguments);
-    
-    let currentWindow = getCurrent();
-    if(currentWindow.label === 'overlay'){            
-      currentWindow.listen('tauri://resize', async function (response) {
-        this.globalConfig.config.overlayWidth = response.payload.width; 
-        this.globalConfig.config.overlayHeight = response.payload.height;
-        await later(async() => {
-          if(this.globalConfig.config.overlayWidth === response.payload.width && this.globalConfig.config.overlayHeight === response.payload.height){
-            await this.globalConfig.config.save();
-            console.debug('Size saved!');
-          }          
-        }, 500);
-      }.bind(this));
-      
-      currentWindow.listen('tauri://move', async function (response) { 
-        this.globalConfig.config.overlayPosX = response.payload.x;
-        this.globalConfig.config.overlayPosY = response.payload.y;
-        await later(async() => {
-          if(this.globalConfig.config.overlayPosX === response.payload.x && this.globalConfig.config.overlayPosY === response.payload.y){
-            await this.globalConfig.config.save();
-            console.debug('Position saved!.');
-          }          
-        }, 250);
-      }.bind(this));
-      
-      currentWindow.once('tauri://error', function (e) {
-       // an error happened creating the webview window
-       console.debug(e);
-      });
-      
-      currentWindow.once('tauri://destroyed', async function () {
-        //this.queueToFile = false;
-        //this.globalConfig.config.showOverlay = false;
-        await this.globalConfig.config.save();
-        console.debug('overlay closed!');
-      }.bind(this));      
-    }
   }
   
   requestSorting = Object.freeze(['position:asc','timestamp:desc']);  

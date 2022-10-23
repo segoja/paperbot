@@ -60,15 +60,7 @@ export default class CurrentUserService extends Service {
        // webview window successfully created
        console.debug('Reader ready!')
       })
-      lyricsWindow.once('tauri://error', function (e) {
-       // an error happened creating the webview window
-       console.debug(e);
-      });
-      lyricsWindow.listen('tauri://close-requested', function () {
-       // an error happened creating the webview window
-        this.globalConfig.config.save();
-        console.debug('reader closed!');
-      }.bind(this));
+    
     } else {
       // lyricsWindow.close();
     }
@@ -102,19 +94,7 @@ export default class CurrentUserService extends Service {
       overlayWindow.once('tauri://created', function () {
        // webview window successfully created
        console.debug('Overlay ready!')
-      }); 
-      
-      overlayWindow.once('tauri://error', function (e) {
-       // an error happened creating the webview window
-       console.debug(e);
       });
-      
-      overlayWindow.once('tauri://destroyed', function () {
-        //this.queueToFile = false;
-        //this.globalConfig.config.showOverlay = false;
-        this.globalConfig.config.save();
-        console.debug('overlay closed!');
-      }.bind(this));
     } else {
       // overlayWindow.close();
     }

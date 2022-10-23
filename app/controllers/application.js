@@ -7,7 +7,7 @@ import {
   writeFile,
   readTextFile
 } from '@tauri-apps/api/fs';
-import { appWindow, getCurrent, getAll, PhysicalPosition, PhysicalSize  } from '@tauri-apps/api/window';
+import { appWindow, getCurrent, getAll, PhysicalPosition, PhysicalSize, WebviewWindow  } from '@tauri-apps/api/window';
 import { emit } from '@tauri-apps/api/event';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
@@ -27,6 +27,7 @@ export default class ApplicationController extends Controller {
   constructor() {
     super(...arguments);
     let currentWindow = getCurrent();
+
     // We wipe requests on every app start;
 
     this.store.findAll('config').then(()=>{
@@ -42,16 +43,14 @@ export default class ApplicationController extends Controller {
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
         if(currentWindow.label === 'Main'){
-          if(this.globalConfig.config.mainMax){
-            currentWindow.maximize();
-          } else {
+          //if(!this.globalConfig.config.mainMax){
             if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
               let position = new PhysicalPosition (this.globalConfig.config.mainPosX, this.globalConfig.config.mainPosY);
               currentWindow.setPosition(position);
             }
             let size = new PhysicalSize (this.globalConfig.config.mainWidth, this.globalConfig.config.mainHeight);          
             currentWindow.setSize(size);
-          }
+          //}
           if(this.globalConfig.config.showOverlay && this.globalConfig.config.overlayType === 'window'){
             this.currentUser.toggleOverlay();
           }
@@ -72,22 +71,14 @@ export default class ApplicationController extends Controller {
       if(currentWindow.label === 'Main'){
 
         currentWindow.listen('tauri://focus', function (response) {
-          if(this.globalConfig.config.mainMax){
-            currentWindow.unmaximize();
-            currentWindow.maximize();
-          }
+
         }.bind(this));
         
         currentWindow.listen('tauri://resize', async function (response) {
           if(!this.globalConfig.config.mainMax){
             this.globalConfig.config.mainWidth = response.payload.width; 
             this.globalConfig.config.mainHeight = response.payload.height;
-            await later(async() => {
-              if(this.globalConfig.config.mainWidth === response.payload.width && this.globalConfig.config.mainHeight === response.payload.height){
-                await this.globalConfig.config.save();
-                console.debug('Size saved!');
-              }          
-            }, 500);
+            console.debug('Resizing Main');
           }
         }.bind(this));
         
@@ -95,30 +86,21 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.mainMax){
             this.globalConfig.config.mainPosX = response.payload.x;
             this.globalConfig.config.mainPosY = response.payload.y;
-            await later(async() => {
-              if(this.globalConfig.config.mainPosX === response.payload.x && this.globalConfig.config.mainPosY === response.payload.y){
-                await this.globalConfig.config.save();
-                console.debug('Position saved!.');
-              }          
-            }, 250);
+            console.debug('Moving Main');
           }
         }.bind(this));
+        
+        if(this.globalConfig.config.mainMax){
+            currentWindow.maximize();
+        }
       }
       
       if(currentWindow.label === 'reader'){
-        if(this.globalConfig.config.readerMax){
-          currentWindow.maximize();
-        }
         currentWindow.listen('tauri://resize', async function (response) {
           if(!this.globalConfig.config.readerMax){        
             this.globalConfig.config.readerWidth = response.payload.width; 
             this.globalConfig.config.readerHeight = response.payload.height;
-            await later(async() => {            
-              if(this.globalConfig.config.readerWidth === response.payload.width && this.globalConfig.config.readerHeight === response.payload.height){
-                await this.globalConfig.config.save();
-                console.debug('Size saved!');
-              }
-            }, 500); 
+            console.debug('Resizing reader');
           }
         }.bind(this));
         
@@ -126,23 +108,44 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.readerMax){
             this.globalConfig.config.readerPosX = response.payload.x;
             this.globalConfig.config.readerPosY = response.payload.y;
-            await later(async () => {
-              if(this.globalConfig.config.readerPosX === response.payload.x && this.globalConfig.config.readerPosY === response.payload.y){
-                await this.globalConfig.config.save();
-                console.debug('Position saved!.');
-              }          
-            }, 250);
+            console.debug('Moving reader');
           }
         }.bind(this));
         
-        currentWindow.listen('tauri://focus', function (response) {
-          if(this.globalConfig.config.readerMax){
-            currentWindow.unmaximize();
-            currentWindow.maximize();
-          }
+        if(this.globalConfig.config.readerMax){
+          currentWindow.maximize();
+        }
+      } 
+
+      if(currentWindow.label === 'overlay'){            
+        currentWindow.listen('tauri://resize', async function (response) {
+          this.globalConfig.config.overlayWidth = response.payload.width; 
+          this.globalConfig.config.overlayHeight = response.payload.height;
+            console.debug('Resizing overlay');
         }.bind(this));
-      }
+        
+        currentWindow.listen('tauri://move', async function (response) { 
+          this.globalConfig.config.overlayPosX = response.payload.x;
+          this.globalConfig.config.overlayPosY = response.payload.y;
+            console.debug('Moving overlay');
+        }.bind(this));
+      }      
     });
+    
+    currentWindow.listen('tauri://destroyed', function () {
+      console.log('destroyed?');
+    }.bind(this));
+    
+    currentWindow.listen('tauri://close-requested', function () {
+      console.log('Close requested with Alt-F4');
+      this.closeWindow();
+    }.bind(this));
+    
+    currentWindow.once('tauri://error', function (e) {
+     // an error happened creating the webview window
+     console.debug(e);
+    });
+    
     //appWindow.listen('tauri://blur', ({ event, payload }) => {
     //  console.debug(payload);
     //});
@@ -284,70 +287,128 @@ export default class ApplicationController extends Controller {
   }
   
 
-  @action minimizeWindow(){
+  @action async minimizeWindow(){
     let currentWindow = getCurrent();
     if(currentWindow.label === 'Main'){
-      //console.debug('Minimize is buggy. Waiting for tauri fix.');
-      if(this.globalConfig.config.mainMax){
-        currentWindow.unmaximize();
-      }
+      this.globalConfig.config.mainMax = false;
+      currentWindow.unmaximize();
       currentWindow.minimize();
+      console.debug('Minimized Main.');
     }
-    if(currentWindow.label === 'reader'){      
-      if(this.globalConfig.config.readerMax){
-        currentWindow.unmaximize();
-      }
+    if(currentWindow.label === 'reader'){
+      this.globalConfig.config.readerMax = false; 
+      currentWindow.unmaximize();
       currentWindow.minimize();
-    }    
+      console.debug('Minimized Reader.');
+    }   
   }
   
   @action maximizeWindow(){
     let currentWindow = getCurrent();
     if(currentWindow.label === 'Main'){
       if(this.globalConfig.config.mainMax){
-        currentWindow.unmaximize();        
-        this.globalConfig.config.mainMax = false;        
+        this.globalConfig.config.mainMax = false; 
+        currentWindow.unmaximize();
+        console.debug('Unmaximized Main.');      
       } else {
-        currentWindow.maximize();
         this.globalConfig.config.mainMax = true;
-        later(() => {
-          this.globalConfig.config.save();
-          console.debug('Main maximized saved!');
-        }, 500);
-      }      
+        currentWindow.maximize();
+        if(this.globalConfig.config.hasDirtyAttributes){
+          // We save to preserve last unmaximized size;
+          this.globalConfig.config.save().then(()=>{
+            console.debug('Saved Main size after maximize');
+          });
+        }
+        console.debug('Maximized Main.');
+      }
     }
     if(currentWindow.label === 'reader'){
       if(this.globalConfig.config.readerMax){
-        currentWindow.unmaximize();        
-        this.globalConfig.config.readerMax = false;        
+        this.globalConfig.config.readerMax = false;  
+        currentWindow.unmaximize();
+        console.debug('Unmaximized Reader.');
       } else {
-        currentWindow.maximize();
         this.globalConfig.config.readerMax = true;
-        later(() => {
-          this.globalConfig.config.save();
-          console.debug('Reader maximized saved!');
-        }, 500);
+        currentWindow.maximize();
+        if(this.globalConfig.config.hasDirtyAttributes){
+          // We save to preserve last unmaximized size;
+          this.globalConfig.config.save().then(()=>{
+            console.debug('Saved Reader size after maximize');
+          });
+        }
+        console.debug('Maximized Reader.');
       }   
     }
   }
   
-  @action closeWindow(){
+  @action async closeWindow(){
+    // Never forget: when you are developing if you reload ember server the relationship between
+    // all WebView windows disappears and only the main window gets closed, as it has no children.
+    // This also implies that the changes on position and size only get updated and saved for the
+    // window that is getting closed as changes are only shared between WebView windows when saved
+    // in the local storage.
+    
     let currentWindow = getCurrent();
-    if(currentWindow.label === 'reader'){
-      this.globalConfig.config.save().then(()=>{
-        currentWindow.close();
-      });
-    } else {
-      if(currentWindow.label === 'overlay'){
-        this.globalConfig.config.save().then(()=>{
-          currentWindow.close();
-        });
-      } else {
-        this.globalConfig.config.save().then(()=>{
-          getAll().forEach((item)=>{ item.close(); });        
-        });
+    if(currentWindow.label === 'Main'){      
+      let main = await WebviewWindow.getByLabel('Main');
+      if(main){
+        let maximized = await main.isMaximized();
+        let position  = await main.outerPosition();
+        let size      = await main.outerSize();        
+        this.globalConfig.config.mainMax    = maximized;
+        if(!maximized){   // We do this to preserve unmaximized size and position;
+          this.globalConfig.config.mainPosX   = position.x;
+          this.globalConfig.config.mainPosY   = position.y;
+          this.globalConfig.config.mainWidth  = size.width;
+          this.globalConfig.config.mainHeight = size.height;
+        }
+        console.debug('Updated Main position and size in config.');
       }
+      
+      let reader = await WebviewWindow.getByLabel('reader');
+      if(reader){
+        let maximized = await reader.isMaximized();
+        let position  = await reader.outerPosition();
+        let size      = await reader.outerSize();        
+        this.globalConfig.config.readerMax    = maximized;
+        if(!maximized){   // We do this to preserve unmaximized size and position;
+          this.globalConfig.config.readerPosX   = position.x;
+          this.globalConfig.config.readerPosY   = position.y;
+          this.globalConfig.config.readerWidth  = size.width;
+          this.globalConfig.config.readerHeight = size.height;
+        }
+        console.debug('Updated reader position and size in config.');
+      }
+
+      let overlay = await WebviewWindow.getByLabel('overlay');
+      if(overlay){
+        // let maximized = await overlay.isMaximized();
+        let position  = await overlay.outerPosition();
+        let size      = await overlay.outerSize();        
+        // this.globalConfig.config.overlayMax    = maximized;
+        this.globalConfig.config.overlayPosX   = position.x;
+        this.globalConfig.config.overlayPosY   = position.y;
+        this.globalConfig.config.overlayWidth  = size.width;
+        this.globalConfig.config.overlayHeight = size.height;
+        console.debug('Updated overlay position and size in config.');
+      } 
     }
+    await this.globalConfig.config.save().then(async (config)=>{
+      console.debug('Saved config. Closing windows');
+      later (async function() {
+        if(currentWindow.label === 'reader'){
+           currentWindow.close();
+        } else {
+          if(currentWindow.label === 'overlay'){
+            currentWindow.close();
+          } else {          
+            await getAll().forEach(async (item)=>{
+                await item.close();
+            });
+          }
+        }
+      });
+    });
   }
   
   @action dragWindow(){

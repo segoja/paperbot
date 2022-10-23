@@ -17,21 +17,24 @@ export default class ClientModel extends Model {
   @hasMany('config', {inverse: 'defchatclient', save: true }) chatclientconfigs;
 
   get optsgetter(){
-    let opts = {
-      options: { 
-        debug: this.debug, 
-        skipUpdatingEmotesets: true
-      },
-      connection: {
-        reconnect: this.reconnect,
-        secure: this.secure
-      },
-      identity: {
-        username: this.username ? this.username : null,
-        password: this.oauth ? this.oauth : null
-      },
-      //channels: [this.channel ? this.channel : null]
-    };
+    let opts = '';
+    if(this.username && this.oauth){    
+      opts = {
+        options: { 
+          debug: this.debug, 
+          skipUpdatingEmotesets: true
+        },
+        connection: {
+          reconnect: this.reconnect,
+          secure: this.secure
+        },
+        identity: {
+          username: this.username ? this.username : null,
+          password: this.oauth ? this.oauth : null
+        },
+        //channels: [this.channel ? this.channel : null]
+      };
+    }
     return opts;
   }
 }
