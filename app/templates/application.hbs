@@ -25,14 +25,20 @@
             <div role="button" class="nav-link pt-3 pb-2 w-100" {{on "mousedown" this.dragWindow}}></div>
           </div>
           <div class="btn-group btn-group-sm col-auto d-md-none">
-            {{#unless (and this.isOverlay this.isLyrics)}}
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.currentUser.showLyrics}}>
+            {{#unless (or this.isOverlay this.isLyrics)}}
+              {{#if this.isWinOverlayAllowed}}
+                <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                  <FaIcon @icon="list-alt" />
+                </button>
+              {{/if}}
+              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.toggleLyrics}}>
                 <FaIcon @icon="align-center" />
               </button>
             {{/unless}}
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+            <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
+            <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
             <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
@@ -66,21 +72,26 @@
             {{!-- <nav.item>
               <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
             </nav.item> --}}
-            <nav.item>
-              <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
-            </nav.item>
           </navbar.nav>
         </navbar.content>
         <div class="row g-0 d-md-flex col col-md-auto d-none">
           <div class="btn-group btn-group-sm col-auto">
-            {{#unless (and this.isOverlay this.isLyrics)}}
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.currentUser.showLyrics}}>
+            {{#unless (or this.isOverlay this.isLyrics)}}
+              {{#if this.isWinOverlayAllowed}}
+                <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                  <FaIcon @icon="list-alt" />
+                </button>
+              {{/if}}
+              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.toggleLyrics}}>
                 <FaIcon @icon="align-center" />
               </button>
             {{/unless}}
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+            <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
+            {{#unless (or this.isOverlay this.isLyrics)}}
+              <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+            {{/unless}}
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
             <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
@@ -115,9 +126,20 @@
               <div role="button" class="nav-link pt-3 pb-2 w-100" {{on "mousedown" this.dragWindow}}></div>
             </div>
             <div class="btn-group btn-group-sm col-auto d-md-none">
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+              {{#unless (and this.isOverlay this.isLyrics)}}
+                {{#if this.isWinOverlayAllowed}}
+                  <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                    <FaIcon @icon="list-alt" />
+                  </button>
+                {{/if}}
+                <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.toggleLyrics}}>
+                  <FaIcon @icon="align-center" />
+                </button>
+              {{/unless}}            
+              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
+              <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
               <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
@@ -132,9 +154,22 @@
           </navbar.content>
           <div class="row g-0 d-md-flex col col-md-auto d-none">
             <div class="btn-group btn-group-sm col-auto">
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+              {{#unless (or this.isOverlay this.isLyrics)}}
+                {{#if this.isWinOverlayAllowed}}
+                  <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                    <FaIcon @icon="list-alt" />
+                  </button>
+                {{/if}}
+                <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.toggleLyrics}}>
+                  <FaIcon @icon="align-center" />
+                </button>
+              {{/unless}}
+              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
+              {{#unless (or this.isOverlay this.isLyrics)}}
+                <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              {{/unless}}
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
               <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    

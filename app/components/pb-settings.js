@@ -6,10 +6,12 @@ import { dialog } from "@tauri-apps/api";
 import { inject as service } from '@ember/service';
 
 export default class PbSettingsComponent extends Component {
+  @service cloudState;
   @service queueHandler;
   @service lightControl;
   @service globalConfig;
   @service currentUser;
+  @service session;
   @service store;
     
   constructor() {
@@ -117,8 +119,24 @@ export default class PbSettingsComponent extends Component {
   @action doneEditing() {
     this.globalConfig.config.save().then(()=>{
       this.lightControl.toggleMode(this.globalConfig.config.darkmode);
-    });
+      this.session.invalidate();
+      if(!this.cloudState.online){
+        console.log('Setting remote backup...');
+        if(this.globalConfig.config.canConnect){
+          this.store.adapterFor('application').configRemote();
+          this.store.adapterFor('application').connectRemote();
+        }
+      }
+      later(this, function () {
+        if(this.cloudState.online){
+          this.cloudState.couchError = false;
+        }
+        this.isSaving = false;
+        this.isViewing = false;        
+      }, 500);
+      
     this.saving = true;
     later(() => { this.saving = false; this.isViewing = false; }, 500);
+    });
   }
 }

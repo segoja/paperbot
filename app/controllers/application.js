@@ -17,6 +17,7 @@ export default class ApplicationController extends Controller {
   @service currentUser;
   @service audio;
   @service store;
+  @service session;
   @service router;
   @service globalConfig;
   @service lightControl; 
@@ -136,6 +137,11 @@ export default class ApplicationController extends Controller {
           }
         }.bind(this));
       }      
+    }).then(()=>{
+      if(this.globalConfig.config.canConnect){
+        this.store.adapterFor('application').configRemote();
+        this.store.adapterFor('application').connectRemote();
+      }
     });
     
     currentWindow.listen('tauri://destroyed', function () {
@@ -194,7 +200,17 @@ export default class ApplicationController extends Controller {
       return true;
     }
     return false;
-  }  
+  } 
+
+  get isWinOverlayAllowed(){
+    if(this.globalConfig.config.overlayType === 'window' || 
+        this.globalConfig.config.overlayType === 'disabled' ||
+        !this.globalConfig.config.overlayType)
+    {
+      return true;
+    }
+    return false;
+  }   
   
   get updateLight(){
     if(this.globalConfig.config.darkmode){
@@ -281,6 +297,26 @@ export default class ApplicationController extends Controller {
     });
   }
   
+  @action rollBackSettings () {
+    this.globalConfig.config.rollbackAttributes();
+  }
+
+  @action saveSettings () {
+    return this.globalConfig.config.save().then((config)=>{      
+      if(!this.cloudState.online){
+        if(config.remoteUrl && config.username && config.password){
+          console.log('Setting remote backup...');
+          this.store.adapterFor('application').configRemote();
+          if(!this.session.isAuthenticated){
+            this.store.adapterFor('application').connectRemote();
+          }
+        }
+      }
+    });
+  }
+  
+  
+  
   @action toggleMode(){
     if(this.globalConfig.config.isLoaded && !this.globalConfig.config.isSaving){
       this.globalConfig.config.darkmode = !this.globalConfig.config.darkmode;
@@ -300,6 +336,109 @@ export default class ApplicationController extends Controller {
   
   @action closeMenu(){
     this.currentUser.expandMenu = false;
+  }
+  
+  @action toggleLyrics(){
+    if(!this.isOverlay && !this.isLyrics){
+      // Never forget: when you are developing if you reload ember server the relationship between
+      // all WebView windows disappears and only the main window gets closed, as it has no children.
+      // This also implies that the changes on position and size only get updated and saved for the
+      // window that is getting closed as changes are only shared between WebView windows when saved
+      // in the local storage.
+      this.store.findAll('config').then(async()=>{      
+        let currentconfig = this.store.peekRecord('config','myconfig');        
+        if (currentconfig){
+          let currentWindow = getCurrent();          
+          if(currentWindow.label === 'Main'){   
+            let reader = await WebviewWindow.getByLabel('reader');
+            
+            if(reader){
+              // We do this to prevent saving a minimized window position and size.
+              await reader.unminimize();
+              let maximized = await reader.isMaximized();
+              let position  = await reader.outerPosition();
+              let size      = await reader.outerSize();
+              
+              if(!maximized || !currentconfig.readerMax){   // We do this to preserve unmaximized size and position;
+                console.debug('Reader is not maximized');
+                currentconfig.readerPosX   = position.x;
+                currentconfig.readerPosY   = position.y;
+                currentconfig.readerWidth  = size.width;
+                currentconfig.readerHeight = size.height;
+                console.debug('Updated reader position and size in config.');
+              } else {
+                console.debug('Reader is maximized');
+              }
+              later(this, async () => {
+                currentconfig.showLyrics = false;
+                await currentconfig.save().then(async (config)=>{
+                  console.debug('Saved config. Closing reader window');
+                  reader.close();  
+                });
+              }, 0);
+            } else {
+              currentconfig.showLyrics = true;
+              await currentconfig.save().then(async (config)=>{
+                this.currentUser.showLyrics();
+              });
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  @action toggleOverlay(){
+    if(!this.isOverlay){
+      // Never forget: when you are developing if you reload ember server the relationship between
+      // all WebView windows disappears and only the main window gets closed, as it has no children.
+      // This also implies that the changes on position and size only get updated and saved for the
+      // window that is getting closed as changes are only shared between WebView windows when saved
+      // in the local storage.
+      this.store.findAll('config').then(async()=>{      
+        let currentconfig = this.store.peekRecord('config','myconfig');        
+        if (currentconfig){
+          let currentWindow = getCurrent();          
+          if(currentWindow.label === 'Main' || currentWindow.label === 'reader'){   
+            let overlay = await WebviewWindow.getByLabel('overlay');
+            
+            if(overlay){
+              // We do this to prevent saving a minimized window position and size.
+              await overlay.unminimize();
+              let maximized = await overlay.isMaximized();
+              let position  = await overlay.outerPosition();
+              let size      = await overlay.outerSize();
+              // currentconfig.overlayMax    = maximized;
+              if(!maximized || !currentconfig.overlayMax){   // We do this to preserve unmaximized size and position;
+                console.debug('Overlay is not maximized');
+                currentconfig.overlayPosX   = position.x;
+                currentconfig.overlayPosY   = position.y;
+                currentconfig.overlayWidth  = size.width;
+                currentconfig.overlayHeight = size.height;
+                console.debug('Updated overlay position and size in config.');
+              } else {
+                console.debug('Overlay is maximized');              
+              }
+              later(this, async () => {
+                currentconfig.showOverlay = false;
+                await currentconfig.save().then(async (config)=>{
+                  console.debug('Saved config. Closing overlay window');
+                  overlay.close();  
+                });
+              }, 0);
+            } else {
+              if(this.isWinOverlayAllowed){
+                currentconfig.overlayType = 'window';
+              }
+              currentconfig.showOverlay = true;
+              await currentconfig.save().then(async (config)=>{
+                this.currentUser.toggleOverlay();
+              });
+            }
+          }
+        }
+      });
+    }
   }
   
 
@@ -479,4 +618,8 @@ export default class ApplicationController extends Controller {
     let currentWindow = getCurrent();    
     currentWindow.startDragging();
   }  
+  @action dragWindowEnd(){
+    let currentWindow = getCurrent();    
+    currentWindow.endDragging();
+  }
 }

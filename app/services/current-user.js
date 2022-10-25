@@ -2,11 +2,18 @@ import Service, { inject as service } from '@ember/service';
 import { action } from "@ember/object";
 import { tracked } from '@glimmer/tracking';
 import { WebviewWindow, getCurrent, getAll } from "@tauri-apps/api/window"
+import { alias } from '@ember/object/computed';
 import { fs } from "@tauri-apps/api";
 
 export default class CurrentUserService extends Service {
   @service globalConfig;
+  @service session;
   @service router;
+  
+	@alias ('session.isAuthenticated') isAuthenticated;
+	@alias ('session.data.authenticated.name') username;
+	@alias ('session.data.authenticated.roles') roles;
+  
   @tracked isViewing = false;
   @tracked isEditing = false;
   @tracked expandMenu = false;
@@ -14,6 +21,11 @@ export default class CurrentUserService extends Service {
   @tracked songqueue = [];
   @tracked showSetlist = false;
   @tracked lastStream = '';
+  
+  @tracked currentConfig = '';
+
+  @tracked online = false;
+  @tracked allowed = false;
     
   // Buttons
   @tracked queueToFile = false;
@@ -21,7 +33,7 @@ export default class CurrentUserService extends Service {
   @tracked soundBoardEnabled = false;  
 
   @tracked lyricsWindow = '';
-  @tracked overlayWindow = '';  
+  @tracked overlayWindow = '';
   get hideMenu(){
     if(this.router.currentURL === '/reader' || this.router.currentURL === '/overlay' ){
       return true;

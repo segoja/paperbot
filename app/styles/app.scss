@@ -61,6 +61,28 @@ $height-sizes: (
   bottom: 0px;
 }
 
+.connected {
+  path{
+    stroke: $success;
+    stroke-width: 3em;
+    stroke-linejoin: round;
+  }
+}
+.blinkcolor {
+  -webkit-animation: warnblink 1s infinite;
+  animation: warnblink 2s infinite;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+
+}
+
+@keyframes warnblink {
+  33%   { color: inherit; }
+  66%   { color: $orange;  }
+  99%   { color: inherit; }
+}
+
+
 .h-33{
   height: 33%!important;
 }

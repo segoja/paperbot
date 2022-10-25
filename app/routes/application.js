@@ -1,12 +1,20 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { hash } from 'rsvp';
-import { getCurrent } from "@tauri-apps/api/window"
+import { getCurrent } from "@tauri-apps/api/window";
+import { action } from '@ember/object';
 
 export default class ApplicationRoute extends Route  {
+  @service session;
+  @service currentUser;
   @service headData;
   @service store;
   @service globalConfig;
+  
+  beforeModel() {
+    super.init(...arguments);
+    this.session.setup();
+  }  
   
   model () {
     var store = this.store;

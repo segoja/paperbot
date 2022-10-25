@@ -4,9 +4,6 @@ import { attr, belongsTo } from '@ember-data/model';
 export default class ConfigModel extends Model {
   @attr('string', {defaultValue: ""}) name;
   @attr('string', {defaultValue: ""}) overlayfolder;
-  @attr('string', {defaultValue: ""}) couchdbuser;
-  @attr('string', {defaultValue: ""}) couchdbpassword;
-  @attr('string', {defaultValue: ""}) couchdburl;
 
   @attr('string', {defaultValue: ""}) externalevents;  
   @attr('string', {defaultValue: ""}) externaleventskey;
@@ -78,4 +75,15 @@ export default class ConfigModel extends Model {
   get switcher(){
     return this.darkmode;
   }
+  
+  @attr('string', {defaultValue: ""}) remoteUrl;
+  @attr('string', {defaultValue: ""}) username;
+  @attr('string', {defaultValue: ""}) password;
+  
+  get canConnect(){
+    if(this.remoteUrl && this.username && this.password){
+      return true;
+    }
+    return false;
+  }  
 }
