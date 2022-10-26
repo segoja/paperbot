@@ -33,7 +33,7 @@ export default class ApplicationController extends Controller {
     this.minimized = false;
     // We wipe requests on every app start;
 
-    this.store.findAll('config').then(()=>{
+    this.store.findAll('config').then(async ()=>{
       let currentconfig = this.store.peekRecord('config','myconfig');
       if (currentconfig){
         this.globalConfig.showFirstRun = false;
@@ -45,20 +45,45 @@ export default class ApplicationController extends Controller {
           this.eventsExternal.token = this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
-        if(currentWindow.label === 'Main'){
-          //if(!this.globalConfig.config.mainMax){
-            //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
-            let position = new PhysicalPosition (this.globalConfig.config.mainPosX, this.globalConfig.config.mainPosY);
-            currentWindow.setPosition(position);
+
+        if(this.globalConfig.config.canConnect){
+          await this.store.adapterFor('application').configRemote().then(async()=>{
+            await this.store.adapterFor('application').connectRemote().then(async()=>{
+              if(currentWindow.label === 'Main'){
+                //if(!this.globalConfig.config.mainMax){
+                  //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
+                  let position = new PhysicalPosition (this.globalConfig.config.mainPosX, this.globalConfig.config.mainPosY);
+                  currentWindow.setPosition(position);
+                  //}
+                  let size = new PhysicalSize (this.globalConfig.config.mainWidth, this.globalConfig.config.mainHeight);          
+                  currentWindow.setSize(size);
+                //}
+                if(this.globalConfig.config.showOverlay && this.globalConfig.config.overlayType === 'window'){
+                  this.currentUser.toggleOverlay();
+                }
+                if(this.globalConfig.config.showLyrics){
+                  this.currentUser.showLyrics();
+                }
+              }
+            });
+          });
+        } else {
+        
+          if(currentWindow.label === 'Main'){
+            //if(!this.globalConfig.config.mainMax){
+              //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
+              let position = new PhysicalPosition (this.globalConfig.config.mainPosX, this.globalConfig.config.mainPosY);
+              currentWindow.setPosition(position);
+              //}
+              let size = new PhysicalSize (this.globalConfig.config.mainWidth, this.globalConfig.config.mainHeight);          
+              currentWindow.setSize(size);
             //}
-            let size = new PhysicalSize (this.globalConfig.config.mainWidth, this.globalConfig.config.mainHeight);          
-            currentWindow.setSize(size);
-          //}
-          if(this.globalConfig.config.showOverlay && this.globalConfig.config.overlayType === 'window'){
-            this.currentUser.toggleOverlay();
-          }
-          if(this.globalConfig.config.showLyrics){
-            this.currentUser.showLyrics();
+            if(this.globalConfig.config.showOverlay && this.globalConfig.config.overlayType === 'window'){
+              this.currentUser.toggleOverlay();
+            }
+            if(this.globalConfig.config.showLyrics){
+              this.currentUser.showLyrics();
+            }
           }
         }
       } else{
@@ -137,11 +162,6 @@ export default class ApplicationController extends Controller {
           }
         }.bind(this));
       }      
-    }).then(()=>{
-      if(this.globalConfig.config.canConnect){
-        this.store.adapterFor('application').configRemote();
-        this.store.adapterFor('application').connectRemote();
-      }
     });
     
     currentWindow.listen('tauri://destroyed', function () {
@@ -617,9 +637,9 @@ export default class ApplicationController extends Controller {
   @action dragWindow(){
     let currentWindow = getCurrent();    
     currentWindow.startDragging();
-  }  
-  @action dragWindowEnd(){
-    let currentWindow = getCurrent();    
-    currentWindow.endDragging();
+  }
+  
+  @action logout() {
+    this.session.invalidate();
   }
 }

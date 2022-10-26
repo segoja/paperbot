@@ -6,18 +6,16 @@ import { isEmpty } from '@ember/utils';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import auth from 'pouchdb-authentication';
+import { getCurrent } from '@tauri-apps/api/window';
 
 PouchDB.plugin(auth);
 
 export default class ApplicationAdapter extends Adapter {
   @service cloudState;
-  @service refreshIndicator;
-  @service store;  
-  
-  @service cloudState;
   @service session;
   @service refreshIndicator;
   @service store;
+  @service router;
   
   @service globalConfig;
   
@@ -42,11 +40,11 @@ export default class ApplicationAdapter extends Adapter {
     return this;
   }
   
-  configRemote(){
-    console.log('Trying to set remote couch replication...');
+  async configRemote(){
+    console.debug('Trying to set remote couch replication...');
     // If we have specified a remote CouchDB instance, then replicate our local database to it
     if (this.globalConfig.config.canConnect) {
-      console.log('Setting remote couch replication...');
+      console.debug('Setting remote couch replication...');
       this.remoteDb = new PouchDB(this.globalConfig.config.remoteUrl, {
         fetch: function (url, opts) {
           opts.credentials = 'include';
@@ -64,15 +62,15 @@ export default class ApplicationAdapter extends Adapter {
       this.replicationFromHandler = null;
       this.replicationToHandler = null;
 
-      this.remoteDb.on('loggedin', () => {
-        console.log('Connected to the cloud.');
+      this.remoteDb.on('loggedin', () => {     
+        console.debug('Connected to the cloud.');
         this.replicationFromHandler = this.db.replicate.from(this.remoteDb, replicationOptions);
         this.replicationFromHandler.on('paused', (err) => {
           this.cloudState.setPull(!err);
         }).on('active',() => {
           this.cloudState.setPull(true);
         }).on('error',(err) => {
-          console.log(err);
+          console.debug(err);
           this.cloudState.online = false;
           this.cloudState.couchError = true;
           // this.session.invalidate();//mark error by loggin out
@@ -84,13 +82,13 @@ export default class ApplicationAdapter extends Adapter {
         }).on('active',() => {
           this.cloudState.setPush(true);
         }).on('error',(err) => {
-          console.log(err);
+          console.debug(err);
           this.cloudState.online = false;
           this.cloudState.couchError = true;
         });
       });
 
-      this.remoteDb.on('loggedout', () => {
+      this.remoteDb.on('loggedout', () => { 
         if (this.replicationFromHandler){
           this.replicationFromHandler.cancel();
           this.replicationFromHandler = null;
@@ -101,7 +99,7 @@ export default class ApplicationAdapter extends Adapter {
         }
         this.cloudState.setPull(false);
         this.cloudState.online = false;
-        console.log('Disconnected from the cloud.');
+        console.debug('Disconnected from the cloud.');       
       });
      
       const { target } = event;
@@ -112,17 +110,26 @@ export default class ApplicationAdapter extends Adapter {
     }
   }
   
-  connectRemote(){
+  async connectRemote(){
     this.session.authenticate('authenticator:pouch', this.globalConfig.config.username, this.globalConfig.config.password).then(() => {
-      console.log("Connection success!");
+      console.debug("Connection success!");
       this.cloudState.online = true;
       this.cloudState.connectionError = false;
     }).catch((reason) => {
-      console.log("Connection failed!");
-      // console.log(reason);
+      console.debug("Connection failed!");
+      console.debug(reason);
       this.cloudState.connectionError = true;
       this.cloudState.online = false;
       this.errorMessage = reason.message || reason;
+    }).then(()=>{     
+      let currentWindow = getCurrent();
+      
+      if(currentWindow.label === 'reader'){
+        this.router.transitionTo('reader');
+      }
+      if(currentWindow.label === 'overlay'){
+        this.router.transitionTo('overlay');
+      } 
     });
   }
 
@@ -149,8 +156,12 @@ export default class ApplicationAdapter extends Adapter {
 
     let store = this.store;
     let recordTypeName = this.getRecordTypeName(store.modelFor(obj.type));
-    this.db.rel.find(recordTypeName, obj.id).then(function(doc) {
-      store.pushPayload(recordTypeName, doc);
-    });
+
+    if(recordTypeName != 'config'){
+      this.db.rel.find(recordTypeName, obj.id).then(function(doc) {
+        store.pushPayload(recordTypeName, doc);
+      });
+    }
   }
+  
 }

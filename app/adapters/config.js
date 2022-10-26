@@ -9,7 +9,7 @@ export default class ConfigAdapter extends Adapter {
   constructor() {
     super(...arguments);
 
-    const localDb = 'timetracker-config';
+    const localDb = 'paperbot-config';
 
     assert('local_couch must be set', !isEmpty(localDb));
 
