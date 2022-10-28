@@ -121,15 +121,6 @@ export default class ApplicationAdapter extends Adapter {
       this.cloudState.connectionError = true;
       this.cloudState.online = false;
       this.errorMessage = reason.message || reason;
-    }).then(()=>{     
-      let currentWindow = getCurrent();
-      
-      if(currentWindow.label === 'reader'){
-        this.router.transitionTo('reader');
-      }
-      if(currentWindow.label === 'overlay'){
-        this.router.transitionTo('overlay');
-      } 
     });
   }
 

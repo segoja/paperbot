@@ -22,15 +22,15 @@ export default class ReaderRoute extends Route {
   }
     
   afterModel(){
-    this.currentUser.isViewing = false;
-    this.globalConfig.config.showLyrics = true;
-    this.globalConfig.config.save();
+    // this.currentUser.isViewing = false;
+    // this.globalConfig.config.showLyrics = true;
+    // this.globalConfig.config.save();
   }
   
   @action willTransition (transition) {
-    if (transition.targetName != 'reader') {
-      this.globalConfig.config.showLyrics = false;
-      this.globalConfig.config.save();
-    }
+    //if (transition.targetName != 'reader') {
+      // this.globalConfig.config.showLyrics = false;
+      // this.globalConfig.config.save();
+    //}
   }
 }

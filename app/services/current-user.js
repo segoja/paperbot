@@ -41,10 +41,11 @@ export default class CurrentUserService extends Service {
     return false;
   }
   
-  @action showLyrics(){
+  @action async showLyrics(){
     let readerWindow = '';
     let currentWindow = getCurrent();
-
+    let parentWindow =  await WebviewWindow.getByLabel('Main');
+    
     getAll().forEach((windowItem)=>{  
       if(windowItem.label === 'reader'){
         readerWindow = windowItem;
@@ -56,7 +57,7 @@ export default class CurrentUserService extends Service {
         url: 'reader',
         label: 'reader', 
         title: 'Paperbot - Lyrics',
-        // parent: currentWindow,
+        /* parent: currentWindow, */
         decorations: false,
         minWidth: 450,
         minHeight: 600,
@@ -78,10 +79,10 @@ export default class CurrentUserService extends Service {
     }
   }
   
-  @action toggleOverlay(){
+  @action async toggleOverlay(){
     let overlayWindow = '';
     let currentWindow = getCurrent();
-
+    let parentWindow =  await WebviewWindow.getByLabel('Main');
     getAll().forEach((windowItem)=>{  
       if(windowItem.label === 'overlay'){
         overlayWindow = windowItem;
@@ -92,7 +93,7 @@ export default class CurrentUserService extends Service {
         url: 'overlay', 
         label: 'overlay',  
         title: 'Paperbot - Overlay', 
-        // parent: currentWindow, 
+        /* parent:  currentWindow, */
         decorations: false, 
         minWidth: 312, 
         minHeight: 103, 

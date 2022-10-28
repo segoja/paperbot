@@ -202,11 +202,10 @@ export default class ApplicationController extends Controller {
       console.debug("Server is not connected.");
       isOnline = false;
     });
-    return isOnline;   
+    return isOnline;
   }
   
   get isLyrics(){
-    console.debug(this.router.currentURL);
     if(this.router.currentURL === '/reader'){
     //if(this.router.location === 'reader'){
       return true;
@@ -216,7 +215,6 @@ export default class ApplicationController extends Controller {
   
   get isOverlay(){
     if(this.router.currentURL === '/overlay'){
-    //if(this.router.location === 'reader'){
       return true;
     }
     return false;

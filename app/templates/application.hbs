@@ -39,6 +39,8 @@
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
             <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+            <CloudState />
+            <RefreshIndicator />
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
             <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
@@ -92,6 +94,8 @@
             {{#unless (or this.isOverlay this.isLyrics)}}
               <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
             {{/unless}}
+            <CloudState />
+            <RefreshIndicator />
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
             <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
             <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
@@ -140,6 +144,8 @@
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
               <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              <CloudState />
+              <RefreshIndicator />
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
               <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
@@ -170,6 +176,8 @@
               {{#unless (or this.isOverlay this.isLyrics)}}
                 <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
               {{/unless}}
+              <CloudState />
+              <RefreshIndicator />
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
               <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
