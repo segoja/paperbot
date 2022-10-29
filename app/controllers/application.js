@@ -106,7 +106,7 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.mainMax && !this.minimized){
             this.globalConfig.config.mainWidth = response.payload.width; 
             this.globalConfig.config.mainHeight = response.payload.height;
-            console.debug('Resizing Main');
+            // console.debug('Resizing Main');
           }
         }.bind(this));
         
@@ -114,7 +114,7 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.mainMax && !this.minimized){
             this.globalConfig.config.mainPosX = response.payload.x;
             this.globalConfig.config.mainPosY = response.payload.y;
-            console.debug('Moving Main');
+            // console.debug('Moving Main');
           }
         }.bind(this));
         
@@ -128,7 +128,7 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.readerMax && !this.minimized){        
             this.globalConfig.config.readerWidth = response.payload.width; 
             this.globalConfig.config.readerHeight = response.payload.height;
-            console.debug('Resizing reader');
+            // console.debug('Resizing reader');
           }
         }.bind(this));
         
@@ -136,7 +136,7 @@ export default class ApplicationController extends Controller {
           if(!this.globalConfig.config.readerMax && !this.minimized){
             this.globalConfig.config.readerPosX = response.payload.x;
             this.globalConfig.config.readerPosY = response.payload.y;
-            console.debug('Moving reader');
+            // console.debug('Moving reader');
           }
         }.bind(this));
         
@@ -150,7 +150,7 @@ export default class ApplicationController extends Controller {
           if(!this.minimized){      
             this.globalConfig.config.overlayWidth = response.payload.width; 
             this.globalConfig.config.overlayHeight = response.payload.height;
-            console.debug('Resizing overlay');
+            // console.debug('Resizing overlay');
           }
         }.bind(this));
         
@@ -158,7 +158,7 @@ export default class ApplicationController extends Controller {
           if(!this.minimized){      
             this.globalConfig.config.overlayPosX = response.payload.x;
             this.globalConfig.config.overlayPosY = response.payload.y;
-            console.debug('Moving overlay');
+            // console.debug('Moving overlay');
           }
         }.bind(this));
       }      

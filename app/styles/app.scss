@@ -61,6 +61,29 @@ $height-sizes: (
   bottom: 0px;
 }
 
+.sync-activity{
+  display: block;
+  width: inherit;
+  position: absolute;
+  top: 5px;
+  z-index: 999;
+  margin-left: 3px;
+  
+  span:first-child { margin-right: -5px; }
+  .blinkcolor {
+    -webkit-animation: warnblink 2s infinite;
+    animation: warnblink 2s infinite;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+  }
+}
+
+@keyframes warnblink {
+  0%   { color: black; }
+  50%  { color: white; }
+  100% { color: black; }
+}
+
 .connected {
   path{
     stroke: $success;
@@ -68,19 +91,10 @@ $height-sizes: (
     stroke-linejoin: round;
   }
 }
-.blinkcolor {
-  -webkit-animation: warnblink 1s infinite;
-  animation: warnblink 2s infinite;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
 
-}
 
-@keyframes warnblink {
-  33%   { color: inherit; }
-  66%   { color: $orange;  }
-  99%   { color: inherit; }
-}
+
+
 
 
 .h-33{

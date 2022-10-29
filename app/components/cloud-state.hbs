@@ -1,3 +1,9 @@
-<FaIcon @icon="cloud-upload-alt" class={{if this.isCloudSynced "text-success"}} />
-<FaIcon @icon="cloud-download-alt" class={{if this.isLocalSynced "text-success"}} />
-<FaIcon @icon="circle" class={{if this.isOnline "text-success"}} />
+<button type="button" class="btn btn-outline-info px-2 border-0 rounded-0" disabled title={{this.cloudText}} >
+  <span class={{this.cloudColor}}><FaIcon @icon="cloud"  @size="lg" /></span>
+  <div class="sync-activity">
+    {{#unless this.showArrows}}
+      <span class={{unless this.isCloudSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-up" @size="sm" /></span>
+      <span class={{unless this.isLocalSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-down" @size="sm" /></span>
+    {{/unless}}
+  </div>
+</button>

@@ -67,8 +67,10 @@ export default class ApplicationAdapter extends Adapter {
         this.replicationFromHandler = this.db.replicate.from(this.remoteDb, replicationOptions);
         this.replicationFromHandler.on('paused', (err) => {
           this.cloudState.setPull(!err);
+          this.cloudState.couchError = true;
         }).on('active',() => {
           this.cloudState.setPull(true);
+          this.cloudState.couchError = false;
         }).on('error',(err) => {
           console.debug(err);
           this.cloudState.online = false;
@@ -79,8 +81,10 @@ export default class ApplicationAdapter extends Adapter {
         this.replicationToHandler = this.db.replicate.to(this.remoteDb, replicationOptions);
         this.replicationToHandler.on('paused',(err) => {
           this.cloudState.setPush(!err);
+          this.cloudState.couchError = true;
         }).on('active',() => {
           this.cloudState.setPush(true);
+          this.cloudState.couchError = false;
         }).on('error',(err) => {
           console.debug(err);
           this.cloudState.online = false;
