@@ -65,32 +65,74 @@ export default class ApplicationAdapter extends Adapter {
       this.remoteDb.on('loggedin', () => {     
         console.debug('Connected to the cloud.');
         this.replicationFromHandler = this.db.replicate.from(this.remoteDb, replicationOptions);
-        this.replicationFromHandler.on('paused', (err) => {
-          this.cloudState.setPull(!err);
+        this.replicationFromHandler.on('change', (change) => {
+          // yo, something changed!
+          // console.debug(change);
+          this.cloudState.setPull(change);
+          console.debug('Getting changes from the cloud...');
+        }).on('paused', (info) => {
+          // replication was paused, usually because of a lost connection
+          this.cloudState.setPull(!info);
           this.cloudState.couchError = true;
-        }).on('active',() => {
+        }).on('active', (info) => {
+          // replication was resumed
           this.cloudState.setPull(true);
           this.cloudState.couchError = false;
-        }).on('error',(err) => {
-          console.debug(err);
+        }).on('complete', (info) => {
+          // replication was canceled!
+          console.debug('Replication from cloud is over');
+        }).on('error', (err) => {
+          // totally unhandled error (shouldn't happen)
+          // console.debug(err);
           this.cloudState.online = false;
           this.cloudState.couchError = true;
           // this.session.invalidate();//mark error by loggin out
-        });;
+        });
 
         this.replicationToHandler = this.db.replicate.to(this.remoteDb, replicationOptions);
-        this.replicationToHandler.on('paused',(err) => {
-          this.cloudState.setPush(!err);
+        this.replicationToHandler.on('change', (change) => {
+          // yo, something changed!
+          // console.debug(change);
+          this.cloudState.setPush(change);
+          console.debug('Pushing changes to the cloud...');
+        }).on('paused',(info) => {
+          this.cloudState.setPush(!info);
           this.cloudState.couchError = true;
         }).on('active',() => {
           this.cloudState.setPush(true);
           this.cloudState.couchError = false;
+        }).on('complete', (info) => {
+          // replication was canceled!
+          console.debug('Replication to the cloud is over');
         }).on('error',(err) => {
-          console.debug(err);
+          // console.debug(err);
           this.cloudState.online = false;
           this.cloudState.couchError = true;
         });
       });
+      
+      /*
+      
+var rep = PouchDB.replicate('mydb', 'http://localhost:5984/mydb', {
+  live: true,
+  retry: true
+}).on('change', function (info) {
+  // handle change
+}).on('paused', function (err) {
+  // replication paused (e.g. replication up to date, user went offline)
+}).on('active', function () {
+  // replicate resumed (e.g. new changes replicating, user went back online)
+}).on('denied', function (err) {
+  // a document failed to replicate (e.g. due to permissions)
+}).on('complete', function (info) {
+  // handle complete
+}).on('error', function (err) {
+  // handle error
+});      
+      
+      */
+      
+      
 
       this.remoteDb.on('loggedout', () => { 
         if (this.replicationFromHandler){
@@ -104,7 +146,7 @@ export default class ApplicationAdapter extends Adapter {
         this.cloudState.setPull(false);
         this.cloudState.online = false;
         console.debug('Disconnected from the cloud.');       
-      });
+      });     
      
       const { target } = event;
       event.preventDefault();
@@ -121,7 +163,7 @@ export default class ApplicationAdapter extends Adapter {
       this.cloudState.connectionError = false;
     }).catch((reason) => {
       console.debug("Connection failed!");
-      console.debug(reason);
+      // console.debug(reason);
       this.cloudState.connectionError = true;
       this.cloudState.online = false;
       this.errorMessage = reason.message || reason;
