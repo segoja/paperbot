@@ -7,6 +7,7 @@ import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import auth from 'pouchdb-authentication';
 import { getCurrent } from '@tauri-apps/api/window';
+import { later } from '@ember/runloop';
 
 PouchDB.plugin(auth);
 
@@ -25,7 +26,9 @@ export default class ApplicationAdapter extends Adapter {
   @tracked errorMessage = '';
   @tracked replicationFromHandler = '';
   @tracked replicationToHandler = '';
-  
+  @tracked isRetrying = false;
+  @tracked retryDelay = 0;
+
   constructor() {
     super(...arguments);
 
@@ -34,8 +37,24 @@ export default class ApplicationAdapter extends Adapter {
     assert('local_couch must be set', !isEmpty(this.localDb));
         
     this.db = new PouchDB(this.localDb, { attachments: true });
+    this.isRetrying = false;
+    this.retryDelay = 0;
     
     this.configRemote();
+    
+    
+    this.replicationOptions = {
+      live: true,
+      retry: true,  
+      back_off_function: (delay) => {
+        console.log('We are retrying... ');
+        if (delay === 0) {
+          return 1000;
+        }
+        return delay * 3;
+      },
+      attachments: true
+    };
     
     return this;
   }
@@ -53,18 +72,12 @@ export default class ApplicationAdapter extends Adapter {
         attachments: true
       });
 
-      const replicationOptions = {
-        live: true,
-        retry: true,
-        attachments: true
-      };
-
       this.replicationFromHandler = null;
       this.replicationToHandler = null;
 
       this.remoteDb.on('loggedin', () => {     
         console.debug('Connected to the cloud.');
-        this.replicationFromHandler = this.db.replicate.from(this.remoteDb, replicationOptions);
+        this.replicationFromHandler = this.db.replicate.from(this.remoteDb, this.replicationOptions);
         this.replicationFromHandler.on('change', (change) => {
           // yo, something changed!
           // console.debug(change);
@@ -76,20 +89,45 @@ export default class ApplicationAdapter extends Adapter {
           this.cloudState.couchError = true;
         }).on('active', (info) => {
           // replication was resumed
+          this.retryDelay = 0;
           this.cloudState.setPull(true);
           this.cloudState.couchError = false;
+        }).on('denied', (err) => {
+          console.debug('a document failed to replicate from the cloud to local(e.g. due to permissions) ');
         }).on('complete', (info) => {
           // replication was canceled!
           console.debug('Replication from cloud is over');
-        }).on('error', (err) => {
+        }).on('error', async (err) => {
           // totally unhandled error (shouldn't happen)
-          // console.debug(err);
           this.cloudState.online = false;
           this.cloudState.couchError = true;
+          if(err){
+            console.debug(err.error);
+            if(await err.error === 'unauthorized' && !this.isRetrying){
+              this.isRetrying = true;
+              later(() => { 
+                if (this.replicationFromHandler){
+                  this.replicationFromHandler.cancel();
+                }
+                if (this.replicationToHandler) {
+                  this.replicationToHandler.cancel();
+                }
+                console.debug('Retrying... A');
+                this.configRemote();
+                this.connectRemote();
+                this.isRetrying = false;
+              }, this.retryDelay);
+            }
+            if (this.retryDelay === 0) {
+              this.retryDelay = 1000;
+            } else {
+              this.retryDelay = this.retryDelay * 3;
+            }
+          }
           // this.session.invalidate();//mark error by loggin out
         });
 
-        this.replicationToHandler = this.db.replicate.to(this.remoteDb, replicationOptions);
+        this.replicationToHandler = this.db.replicate.to(this.remoteDb, this.replicationOptions);
         this.replicationToHandler.on('change', (change) => {
           // yo, something changed!
           // console.debug(change);
@@ -99,40 +137,42 @@ export default class ApplicationAdapter extends Adapter {
           this.cloudState.setPush(!info);
           this.cloudState.couchError = true;
         }).on('active',() => {
+          this.retryDelay = 0;
           this.cloudState.setPush(true);
           this.cloudState.couchError = false;
+        }).on('denied', (err) => {
+          console.debug('a document failed to replicate to the cloud (e.g. due to permissions)');
         }).on('complete', (info) => {
           // replication was canceled!
           console.debug('Replication to the cloud is over');
-        }).on('error',(err) => {
-          // console.debug(err);
+        }).on('error',async (err) => {
           this.cloudState.online = false;
           this.cloudState.couchError = true;
+          if(err){
+            console.debug(err.error);
+            if(await err.error === 'unauthorized' && !this.isRetrying){
+              this.isRetrying = true;
+              later(() => { 
+                if (this.replicationFromHandler){
+                  this.replicationFromHandler.cancel();
+                }
+                if (this.replicationToHandler) {
+                  this.replicationToHandler.cancel();
+                }
+                console.debug('Retrying... B');
+                this.configRemote();
+                this.connectRemote();
+                this.isRetrying = false;
+              }, this.retryDelay);
+            }
+            if (this.retryDelay === 0) {
+              this.retryDelay = 1000;
+            } else {
+              this.retryDelay = this.retryDelay * 3;
+            }
+          }
         });
       });
-      
-      /*
-      
-var rep = PouchDB.replicate('mydb', 'http://localhost:5984/mydb', {
-  live: true,
-  retry: true
-}).on('change', function (info) {
-  // handle change
-}).on('paused', function (err) {
-  // replication paused (e.g. replication up to date, user went offline)
-}).on('active', function () {
-  // replicate resumed (e.g. new changes replicating, user went back online)
-}).on('denied', function (err) {
-  // a document failed to replicate (e.g. due to permissions)
-}).on('complete', function (info) {
-  // handle complete
-}).on('error', function (err) {
-  // handle error
-});      
-      
-      */
-      
-      
 
       this.remoteDb.on('loggedout', () => { 
         if (this.replicationFromHandler){
@@ -148,8 +188,8 @@ var rep = PouchDB.replicate('mydb', 'http://localhost:5984/mydb', {
         console.debug('Disconnected from the cloud.');       
       });     
      
-      const { target } = event;
-      event.preventDefault();
+      // const { target } = event;
+      // event.preventDefault();
       return true;
     } else {
       return false;
