@@ -34,7 +34,6 @@ $height-sizes: (
   min-height: auto!important;
 }
 
-
 .dragpanel{
   min-height: 33%!important;
   max-height: 100%!important;  
@@ -93,7 +92,7 @@ $height-sizes: (
 }
 
 
-
+svg.add-to-top, svg.add-to-bottom { color: inherit; min-width: 1em;}
 
 
 

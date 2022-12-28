@@ -29,7 +29,7 @@
                 <BsButton @type="info" @onClick={{this.toggleSetlist}} title="Setlist/queue manager"><FaIcon @icon="th-list" /> Setlist</BsButton>
                 <BsButton @type="primary" @onClick={{@createSong}} title="Add new song">Add New</BsButton>
               </div>
-            </div>
+            </div> 
           </div>
         </div>
         <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
@@ -76,7 +76,8 @@
                     <td class="col-auto py-0 pe-0">
                       <div class="row g-0">
                         <div class="col-auto ms-auto btn-group my-0">
-                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue"><FaIcon @icon="plus" /></button>
+                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue">{{svg-jar "add-to-top" class="svg-inline--fa fa-plus add-to-top" }}</button>
+                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue">{{svg-jar "add-to-bottom" class="svg-inline--fa fa-plus add-to-bottom" }}</button>
                           <button type="button" class="btn btn-outline-secondary alert alert-secondary py-2 px-3 rounded-0 m-0" {{on "click" (fn @gridEditSong song)}} title="Edit song" ><FaIcon @icon="edit"/></button>
                           <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger py-2 px-3 rounded-0 m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @buttonTitle="Delete song" @targetAction={{fn @gridDeleteSong song}} />
                         </div>

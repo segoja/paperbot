@@ -46,7 +46,7 @@ module.exports = function (defaults) {
         plugins: [
           { removeTitle: false },
           { removeDesc: { removeAny: false } },
-          { removeViewBox: true }
+          { removeViewBox: false }
         ]
       },
     },

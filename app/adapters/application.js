@@ -1,16 +1,32 @@
 import config from '../config/environment';
-import PouchDB from 'ember-pouch/pouchdb';
 import { Adapter } from 'ember-pouch';
 import { assert } from '@ember/debug';
 import { isEmpty } from '@ember/utils';
-import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
+
+import PouchDB from 'pouchdb-core';
+import PouchDBFind from 'pouchdb-find';
+import PouchDBRelational from 'relational-pouch';
+import indexeddb from 'pouchdb-adapter-indexeddb';
+import idb from 'pouchdb-adapter-idb';
+import HttpPouch from 'pouchdb-adapter-http';
+import mapreduce from 'pouchdb-mapreduce';
+import replication from 'pouchdb-replication';
 import auth from 'pouchdb-authentication';
+
 import { getCurrent } from '@tauri-apps/api/window';
 import { later } from '@ember/runloop';
+import { tracked } from '@glimmer/tracking';
 
-PouchDB.plugin(auth);
-
+PouchDB.plugin(PouchDBFind)
+  .plugin(PouchDBRelational)
+  .plugin(idb)
+  .plugin(indexeddb)
+  .plugin(HttpPouch)
+  .plugin(mapreduce)
+  .plugin(replication)
+  .plugin(auth);
+  
 export default class ApplicationAdapter extends Adapter {
   @service cloudState;
   @service session;
@@ -42,6 +58,8 @@ export default class ApplicationAdapter extends Adapter {
     
     this.configRemote();
     
+    
+    console.log(this.db.adapter);
     
     this.replicationOptions = {
       live: true,
