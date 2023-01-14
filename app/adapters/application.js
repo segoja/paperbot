@@ -7,6 +7,7 @@ import { inject as service } from '@ember/service';
 import PouchDB from 'pouchdb-core';
 import PouchDBFind from 'pouchdb-find';
 import PouchDBRelational from 'relational-pouch';
+import idb from 'pouchdb-adapter-idb';
 import indexeddb from 'pouchdb-adapter-indexeddb';
 import HttpPouch from 'pouchdb-adapter-http';
 import mapreduce from 'pouchdb-mapreduce';
@@ -16,15 +17,19 @@ import auth from 'pouchdb-authentication';
 import { getCurrent } from '@tauri-apps/api/window';
 import { later } from '@ember/runloop';
 import { tracked } from '@glimmer/tracking';
+/*
+  // Modules and plugins loaded are shared in the app, so we only need to load plugins once.
+  // In this app config adapter loads before application adapter, so we can comment the following lines to prevent plugin redefinition errors.
 
-PouchDB.plugin(PouchDBFind)
-  .plugin(PouchDBRelational)
-  .plugin(indexeddb)
-  .plugin(HttpPouch)
-  .plugin(mapreduce)
-  .plugin(replication)
-  .plugin(auth);
-  
+  PouchDB.plugin(PouchDBFind)
+    .plugin(PouchDBRelational)
+    .plugin(indexeddb)
+    .plugin(idb)
+    .plugin(HttpPouch)
+    .plugin(mapreduce)
+    .plugin(replication)
+    .plugin(auth);
+*/  
 export default class ApplicationAdapter extends Adapter {
   @service cloudState;
   @service session;
@@ -49,15 +54,29 @@ export default class ApplicationAdapter extends Adapter {
     this.localDb = config.local_couch || 'paperbot';
 
     assert('local_couch must be set', !isEmpty(this.localDb));
+
         
-    this.db = new PouchDB(this.localDb, { attachments: true });
+    this.olddb = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
+    
+    this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true });
     this.isRetrying = false;
     this.retryDelay = 0;
-    
+
+    this.olddb.replicate.to(this.db, { live: false, retry: false, attachments: true }).on('error', async (err) => {
+      console.log('Something exploded while copying');
+      console.debug(await err.error); 
+    }).on('complete', async (info) => { 
+      if(info.ok){
+        console.debug('Replication from old idb is complete, now deleting...');
+        this.olddb.destroy().then(function (response) {
+          console.log('Deleted old idb database.');
+        }).catch(function (err) {
+          console.log(err);
+        });
+      }
+    });
+
     this.configRemote();
-    
-    
-    console.log(this.db.adapter);
     
     this.replicationOptions = {
       live: true,
@@ -81,6 +100,7 @@ export default class ApplicationAdapter extends Adapter {
     if (this.globalConfig.config.canConnect) {
       console.debug('Setting remote couch replication...');
       this.remoteDb = new PouchDB(this.globalConfig.config.remoteUrl, {
+        adapter: 'indexeddb',
         fetch: function (url, opts) {
           opts.credentials = 'include';
           return PouchDB.fetch(url, opts);

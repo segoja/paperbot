@@ -1,35 +1,48 @@
-import config from '../config/environment';
 import { Adapter } from 'ember-pouch';
-import { assert } from '@ember/debug';
-import { isEmpty } from '@ember/utils';
 
 import PouchDB from 'pouchdb-core';
 import PouchDBFind from 'pouchdb-find';
 import PouchDBRelational from 'relational-pouch';
-import indexeddb from 'pouchdb-adapter-indexeddb';
 import idb from 'pouchdb-adapter-idb';
+import indexeddb from 'pouchdb-adapter-indexeddb';
 import HttpPouch from 'pouchdb-adapter-http';
 import mapreduce from 'pouchdb-mapreduce';
+import replication from 'pouchdb-replication';
+import auth from 'pouchdb-authentication';
+
+import { tracked } from '@glimmer/tracking';
 
 PouchDB.plugin(PouchDBFind)
   .plugin(PouchDBRelational)
-  .plugin(idb)
   .plugin(indexeddb)
+  .plugin(idb)
   .plugin(HttpPouch)
-  .plugin(mapreduce);
-
+  .plugin(mapreduce)
+  .plugin(replication);
+  
 export default class ConfigAdapter extends Adapter {
 
   constructor() {
     super(...arguments);
+        
+    this.olddb = new PouchDB('paperbot-config', { adapter: 'idb' });
+    
+    this.db = new PouchDB('i-paperbot-config', { adapter: 'indexeddb' });
 
-    const localDb = 'paperbot-config';
-
-    assert('local_couch must be set', !isEmpty(localDb));
-
-    const db = new PouchDB(localDb);
-    this.set('db', db);
-
+    this.olddb.replicate.to(this.db, { live: false, retry: false, attachments: true }).on('error', async (err) => {
+      console.log('Config: Something exploded while copying');
+      console.debug(await err.error); 
+    }).on('complete', async (info) => { 
+      if(info.ok){
+        console.debug('Config: Replication from old idb is complete, now deleting...');
+        this.olddb.destroy().then(function (response) {
+          console.log('Config: Deleted old idb database.');
+        }).catch(function (err) {
+          console.log(err);
+        });
+      }
+    });
+   
     return this;
   }
 }
