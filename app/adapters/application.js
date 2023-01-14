@@ -8,7 +8,6 @@ import PouchDB from 'pouchdb-core';
 import PouchDBFind from 'pouchdb-find';
 import PouchDBRelational from 'relational-pouch';
 import indexeddb from 'pouchdb-adapter-indexeddb';
-import idb from 'pouchdb-adapter-idb';
 import HttpPouch from 'pouchdb-adapter-http';
 import mapreduce from 'pouchdb-mapreduce';
 import replication from 'pouchdb-replication';
@@ -20,7 +19,6 @@ import { tracked } from '@glimmer/tracking';
 
 PouchDB.plugin(PouchDBFind)
   .plugin(PouchDBRelational)
-  .plugin(idb)
   .plugin(indexeddb)
   .plugin(HttpPouch)
   .plugin(mapreduce)

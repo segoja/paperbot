@@ -68,7 +68,7 @@
     "ember-qunit": "^5.1.5",
     "ember-resolver": "^8.0.3",
     "ember-simple-auth": "^4.2.2",
-    "ember-simple-auth-pouch": "^0.3.0-beta.2",
+    "ember-simple-auth-pouch": "^0.3.0-beta.3",
     "ember-sortable": "^4.0.2",
     "ember-source": "~4.6.0",
     "ember-svg-jar": "^2.3.4",
