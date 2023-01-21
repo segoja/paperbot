@@ -70,7 +70,9 @@ export default class ConfigModel extends Model {
   @attr('boolean', {defaultValue: false}) darkmode;
   @attr('boolean', {defaultValue: false}) soundOverlap;
   @attr('boolean', {defaultValue: false}) clearRequests;
+  @attr('boolean', {defaultValue: false}) allowDuplicated;  
   @attr('boolean', {defaultValue: false}) isdefault;
+  
     
   get switcher(){
     return this.darkmode;

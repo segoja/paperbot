@@ -309,7 +309,7 @@ export default class TwitchChatService extends Service {
           if (await this.filteredSongs.get('length') > 0 ) { 
             var bestmatch = await this.filteredSongs.shift();          
             let hasBeenRequested = this.queueHandler.songqueue.find(item => item.fullText === bestmatch.fullText);
-            if(await hasBeenRequested){
+            if(await hasBeenRequested && !this.globalConfig.config.allowDuplicated){
               this.botclient.say(target, "/me The song "+bestmatch.fullText+" has already been requested!");
             } else {
               if(bestmatch.active){
@@ -399,7 +399,7 @@ export default class TwitchChatService extends Service {
               var bestmatch = await this.filteredSongs.shift();
             
               let hasBeenRequested = this.queueHandler.songqueue.find(item => item.fullText === bestmatch.fullText);
-              if(await hasBeenRequested){
+              if(await hasBeenRequested && !this.globalConfig.config.allowDuplicated){
                 this.botclient.say(target, "/me The song "+bestmatch.fullText+" has already been requested!");
               } else {
                 if(bestmatch.active){
@@ -551,6 +551,7 @@ export default class TwitchChatService extends Service {
         } else if(String(commandName).startsWith('!queue') || String(commandName).startsWith('!sq')){
           if(await this.queueHandler.pendingSongs.get('length') > 0){
             let count = 0;
+            /*
             this.botclient.say(target, "/me Songs in queue:");
             this.queueHandler.pendingSongs.forEach(async (item)=>{
               if(count < 6){
@@ -558,6 +559,15 @@ export default class TwitchChatService extends Service {
                 await this.botclient.say(target, '/me '+count+'. '+item.title);
               }
             });
+            */
+            let message = 'Songs in queue: ';
+            this.queueHandler.pendingSongs.forEach(async (item)=>{
+              if(count < 6){
+                count = Number(count) + 1;
+                message += '#'+count+'. '+item.title+' ';
+              }
+            });
+            this.botclient.say(target, '/me '+message);
           } else {
             this.botclient.say(target, "/me There are no songs in the queue.")
           }
