@@ -65,8 +65,13 @@ export default class SongsController extends Controller {
     song.save();
   } 
 
-  @action gridDeleteSong(song) {    
+  @action gridDeleteSong(song) {
+    let requestList = [];
+    song.requests.forEach((request)=> requestList.push(request));    
     song.destroyRecord().then(() => {
+      if(requestList.length > 0){  
+        requestList.map((request) => request.destroyRecord());
+      }
       this.currentUser.isViewing = false;
     });
   }

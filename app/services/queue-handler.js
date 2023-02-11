@@ -1,7 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { action, set } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { uniqBy } from '@ember/object/computed';
+import { uniqBy, empty, sort, filter } from '@ember/object/computed';
 import { dialog } from "@tauri-apps/api";
 import { WebviewWindow, getCurrent } from "@tauri-apps/api/window"
 import {
@@ -11,9 +11,7 @@ import {
   readBinaryFile
 } from '@tauri-apps/api/fs';
 import moment from 'moment';
-import { empty, sort } from '@ember/object/computed';
 import { htmlSafe } from '@ember/template';
-import { filter } from '@ember/object/computed';
 
 export default class QueueHandlerService extends Service {
   @service globalConfig;

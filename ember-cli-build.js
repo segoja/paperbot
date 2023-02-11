@@ -69,14 +69,6 @@ module.exports = function (defaults) {
       { transformation: 'amd', as: 'moment' }
     ]
   });
-  /*
-  const { Webpack } = require('@embroider/webpack');
-  return require('@embroider/compat').compatBuild(app, Webpack, {
-    skipBabel: [
-      {
-        package: 'qunit',
-      },
-    ],
-  });*/
+  
   return app.toTree();
 };

@@ -7,13 +7,23 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import { inject as service } from '@ember/service';
+import { FileState } from 'ember-file-upload';
 
 export default class PbSongComponent extends Component {
   @tracked page = 1;
   @tracked perPage = 10;
   
   @service store;
+  @service currentUser;
+  @service fileQueue;
   
+  @tracked queueLenght = 0;
+ 
+  get queue() {
+    let queue = this.fileQueue.find('massSongs');
+    return queue;
+  } 
+ 
   get bootstrapWormhole() {
     return document.getElementById('ember-bootstrap-wormhole');
   }  
@@ -51,29 +61,54 @@ export default class PbSongComponent extends Component {
   }
   
   @tracked songsData = [];  
-  @action openSongsFolder(){
-    dialog.open({ directory: true }).then((directory) => {
-      // console.debug(directory);
-      if(directory != null && directory){
-        readDir(directory, { recursive: false } ).then((files)=>{
-          if(files.length > 0){
-            this.songsData = [];
-            let idnum = 0;
-            files.forEach(async (file)=>{
-              //console.debug(file);
-              let filename = file.name.slice(0, -4);
-              let extension = file.name.substr(file.name.length - 3);              
-              if(filename && extension.toLowerCase() === 'txt'){                
-                this.songsData.push({id: idnum, name: filename, path: file.path});
-                //console.debug(newSong);                
-              }
-            });
-            this.generateList();
-            //console.debug(this.songsData);
-          }
-        });
-      }
-    });
+  @action async openSongsFolder(file){
+    if(this.currentUser.isTauri){
+      dialog.open({ directory: true }).then((directory) => {
+        // console.debug(directory);
+        if(directory != null && directory){
+          readDir(directory, { recursive: false } ).then((files)=>{
+            if(files.length > 0){
+              this.songsData = [];
+              let idnum = 0;
+              files.forEach(async (file)=>{
+                //console.debug(file);
+                let filename = file.name.slice(0, -4);
+                let extension = file.name.substr(file.name.length - 3);              
+                if(filename && extension.toLowerCase() === 'txt'){                
+                  this.songsData.push({id: idnum, name: filename, path: file.path});
+                  //console.debug(newSong);                
+                }
+              });
+              this.generateList();
+              //console.debug(this.songsData);
+            }
+          });
+        }
+      });
+    } else {
+      if(file){
+        this.songsData = [];
+        //console.log(this.fileQueue.files.length);
+        let idnum = this.fileQueue.files.length;
+        if(this.queueLenght == 0){
+          this.queueLenght = idnum;
+        }
+        let filename  = await file.name.slice(0, -4);
+        let extension = await file.name.substr(file.name.length - 3);
+        let content = await file.readAsText();
+        // console.log(idnum + ' - ' + filename);
+        if(filename && extension.toLowerCase() === 'txt'){                
+          this.songsData.push({id: idnum, name: filename, path: file.path, content: content, extension: extension});
+        }
+        this.queue.remove(file);
+        
+        if(this.queue.files.length == 0){
+          this.generateList();
+        }
+        
+        //this.generateList();
+      }  
+    }
   }
 
   @tracked separator = '';
@@ -84,26 +119,34 @@ export default class PbSongComponent extends Component {
     let ansiDecoder = new TextDecoder('windows-1252');
     let utf8Decoder = new TextDecoder();
     this.songs = this.songsData.map((item)=>{      
-      let extension = item.path.split(/[#?]/)[0].split('.').pop().trim();
+      let extension = ''; 
+      if(this.currentUser.isTauri){
+        extension = item.path.split(/[#?]/)[0].split('.').pop().trim();
+      } else {
+        extension = item.extension;
+      }
       if(extension === 'txt'){
         let newSong = this.store.createRecord('textfile');
-        
-        invoke('binary_loader', { filepath: item.path }).then((fileBinarydata)=>{          
-          var arrayBufferView = new Uint8Array(fileBinarydata);
+        if(this.currentUser.isTauri){
+          invoke('binary_loader', { filepath: item.path }).then((fileBinarydata)=>{          
+            var arrayBufferView = new Uint8Array(fileBinarydata);
 
-          // create a blob from this
-          let lyrics = utf8Decoder.decode(arrayBufferView);            
-          
-          if(lyrics === ''){
-            console.log('Lyrics are ANSI encoded.');
-            lyrics = ansiDecoder.decode(arrayBufferView);
-          }
-          newSong.lyrics = lyrics;
-        }).catch((binErr)=>{
-          console.debug(item.path);
-          console.debug(binErr);
-        });
-       
+            // create a blob from this
+            let lyrics = utf8Decoder.decode(arrayBufferView);            
+            
+            if(lyrics === ''){
+              console.log('Lyrics are ANSI encoded.');
+              lyrics = ansiDecoder.decode(arrayBufferView);
+            }
+            newSong.lyrics = lyrics;
+          }).catch((binErr)=>{
+            console.debug(item.path);
+            console.debug(binErr);
+          });
+        } else {
+          newSong.lyrics = item.content;
+        }
+        
         if(this.separator != ''){
           let data = item.name.split(this.separator);
           newSong.title = data[1];     

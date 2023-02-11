@@ -14,7 +14,6 @@ import mapreduce from 'pouchdb-mapreduce';
 import replication from 'pouchdb-replication';
 import auth from 'pouchdb-authentication';
 
-import { getCurrent } from '@tauri-apps/api/window';
 import { later } from '@ember/runloop';
 import { tracked } from '@glimmer/tracking';
 /*
@@ -139,7 +138,7 @@ export default class ApplicationAdapter extends Adapter {
           this.cloudState.couchError = true;
           if(err){
             console.debug(err.error);
-            if(await err.error === 'unauthorized' && !this.isRetrying){
+            if((await err.error) === 'unauthorized' && !this.isRetrying){
               this.isRetrying = true;
               later(() => { 
                 if (this.replicationFromHandler){
@@ -186,7 +185,7 @@ export default class ApplicationAdapter extends Adapter {
           this.cloudState.couchError = true;
           if(err){
             console.debug(err.error);
-            if(await err.error === 'unauthorized' && !this.isRetrying){
+            if((await err.error) === 'unauthorized' && !this.isRetrying){
               this.isRetrying = true;
               later(() => { 
                 if (this.replicationFromHandler){

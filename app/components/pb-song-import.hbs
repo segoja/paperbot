@@ -12,7 +12,25 @@
     <Modal.body>
       <BsForm @model={{this}} @formLayout="inline" class="row g-0 pb-2"  as |form|>
         <div class="row g-0 pb-2">
-          <BsButton @type="warning col-auto me-1" @onClick={{this.openSongsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
+          {{#if this.currentUser.isTauri}}
+            <BsButton @type="warning col-auto me-1" @onClick={{this.openSongsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
+          {{else}}
+            {{#let (file-queue name="massSongs" onFileAdded=this.openSongsFolder) as |queue|}}
+              <button type="button" class="btn btn-warning col-auto me-1" title="Import songs by text files">
+                <label for="upload-txt" role="button">Select text files</label>
+              </button>  
+              <input
+                type="file"
+                id="upload-txt"
+                accept="text/plain"
+                class="p-0 m-0"
+                hidden
+                multiple
+                {{queue.selectFile}}
+              >
+            {{/let}}
+          {{/if}}
+          
           <form.element @controlType="text" class="col" @property="separator" {{on "keydown" this.generateList}} as |el|>
             <el.control
               placeholder="Enter the artist/song separator string to process filenames"

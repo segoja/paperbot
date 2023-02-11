@@ -48,8 +48,13 @@ export default class SongController extends Controller {
     });
   }
   
-  @action deleteSong() {    
+  @action deleteSong() {  
+    let requestList = [];
+    this.model.requests.forEach((request)=> requestList.push(request));    
     this.model.destroyRecord().then(() => {
+      if(requestList.length > 0){  
+        requestList.map((request) => request.destroyRecord());
+      }
       this.currentUser.isViewing = false;
       this.router.transitionTo('songs');
     });

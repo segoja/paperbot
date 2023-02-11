@@ -5,11 +5,6 @@ import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
-import { dialog, invoke } from "@tauri-apps/api";
-import {
-  writeFile,
-  readTextFile
-} from '@tauri-apps/api/fs';
 import moment from 'moment';
 import { inject as service } from '@ember/service';
 
@@ -65,35 +60,20 @@ export default class PbTimersComponent extends Component {
   }
   
   @tracked importcontent;
-  
-  @action timerImport(){
-    dialog.open({
-      directory: false,
-      filters: [{name: "csv file", extensions: ['csv']}]
-    }).then(async (path) => {
-      if(path != null){
-        await invoke('text_reader', { filepath: path }).then((text)=>{
-          let reference = '"name","type","active","time","message","soundfile","volume"';
 
-          let rows = PapaParse.parse(text,{ delimiter: ',', header: true, quotes: false, quoteChar: '"', skipEmptyLines: true }).data;
-          
-          let csvfields = text.split('\r\n').slice(0,1);
-          
-          // We check if the structure is the same.
-          if (csvfields.toString() === reference){
-            this.importcontent = rows;
-            
-            this.importcontent.forEach((timer)=>{
-              this.args.importTimers(timer);
-            });      
-          } else {
-            alert("Wrong column structure in the import csv file.");
-          }
-        });
-      }
-    });
-  }
-  
+  @action async timerImport(file){
+    let reference = '"name","type","active","time","message","soundfile","volume"';
+    let extension = 'csv';
+    let recordType = 'timer';
+    let response = '';
+    if(file){ 
+      response = await file.readAsText();
+      this.currentUser.importRecords(reference,extension,recordType,response);
+    } else {
+      this.currentUser.importRecords(reference,extension,recordType,response);
+    }
+  } 
+
   @action timerExportFiltered() {
     var csvdata = [];
     if (this.filteredContent.length > 0){
@@ -106,17 +86,8 @@ export default class PbTimersComponent extends Component {
       
       csvdata = PapaParse.unparse(csvdata, { delimiter: ',', header: true, quotes: true, quoteChar: '"' });        
       let filename = moment().format('YYYYMMDD-HHmmss')+'-timers.csv'; 
-
-      dialog.save({
-        defaultPath: filename, 
-        filters: [{name: '', extensions: ['csv']}]
-      }).then(async (path)=>{
-        if(path){
-          await invoke('file_writer', { filepath: path, filecontent: csvdata}).then(()=>{
-            console.debug('Timers export csv file saved!');
-          });
-        }
-      });
+      
+      this.currentUser.download(csvdata,filename,'text/csv');
     }
   }
 }

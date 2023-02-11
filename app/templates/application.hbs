@@ -59,7 +59,12 @@
             </nav.item> 
             <nav.item>
               <nav.link-to @route="songs.index" class="py-1">Songs</nav.link-to>
-            </nav.item> 
+            </nav.item>
+            {{#unless this.currentUser.isTauri}}
+              <nav.item>
+                <nav.link-to @route="reader" class="py-1">Lyrics</nav.link-to>
+              </nav.item>
+            {{/unless}}
             <nav.item>
               <nav.link-to @route="clients.index" class="py-1">Clients</nav.link-to>
             </nav.item>
@@ -78,27 +83,31 @@
         </navbar.content>
         <div class="row g-0 d-md-flex col col-md-auto d-none">
           <div class="btn-group btn-group-sm col-auto">
-            {{#unless (or this.isOverlay this.isLyrics)}}
-              {{#if this.isWinOverlayAllowed}}
-                <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show overlay" {{on "click" this.toggleOverlay}}>
-                  <FaIcon @icon="list-alt" />
+            {{#if this.currentUser.isTauri}}
+              {{#if this.isMain}}
+                {{#if this.isWinOverlayAllowed}}
+                  <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                    <FaIcon @icon="list-alt" />
+                  </button>
+                {{/if}}
+                <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.toggleLyrics}}>
+                  <FaIcon @icon="align-center" />
                 </button>
               {{/if}}
-              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.toggleLyrics}}>
-                <FaIcon @icon="align-center" />
-              </button>
-            {{/unless}}
+            {{/if}}
             <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
             {{#unless (or this.isOverlay this.isLyrics)}}
               <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
             {{/unless}}
-            <CloudState />
             
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
-            <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
-            <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
+            <CloudState />
+            {{#if this.currentUser.isTauri}}
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+              <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>
+            {{/if}}
           </div>
         </div>
     </BsNavbar>
@@ -130,7 +139,7 @@
               <div role="button" class="nav-link pt-3 pb-2 w-100" {{on "mousedown" this.dragWindow}}></div>
             </div>
             <div class="btn-group btn-group-sm col-auto d-md-none">
-              {{#unless (and this.isOverlay this.isLyrics)}}
+              {{#if this.isMain}}
                 {{#if this.isWinOverlayAllowed}}
                   <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show overlay" {{on "click" this.toggleOverlay}}>
                     <FaIcon @icon="list-alt" />
@@ -139,7 +148,7 @@
                 <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="Show lyrics" {{on "click" this.toggleLyrics}}>
                   <FaIcon @icon="align-center" />
                 </button>
-              {{/unless}}            
+              {{/if}}            
               <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>

@@ -20,17 +20,4 @@ export default class ReaderRoute extends Route {
     super.setupController(controller, models);
     controller.setProperties(models);
   }
-    
-  afterModel(){
-    // this.currentUser.isViewing = false;
-    // this.globalConfig.config.showLyrics = true;
-    // this.globalConfig.config.save();
-  }
-  
-  @action willTransition (transition) {
-    //if (transition.targetName != 'reader') {
-      // this.globalConfig.config.showLyrics = false;
-      // this.globalConfig.config.save();
-    //}
-  }
 }

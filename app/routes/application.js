@@ -37,16 +37,18 @@ export default class ApplicationRoute extends Route  {
 
   afterModel(model) {    
     this.headData.title = 'Paperbot, a Twitch.tv bot by Papercat84';
-    let currentWindow = getCurrent();
-    if(model.requests.length > 0 && currentWindow.label === 'Main' && this.globalConfig.config.clearRequests){
-      model.requests.map(async (request)=>{
-        await request.destroyRecord();
-      });
+    if(this.currentUser.isTauri){
+      let currentWindow = getCurrent();
+      if(model.requests.length > 0 && currentWindow.label === 'Main' && this.globalConfig.config.clearRequests){
+        model.requests.map(async (request)=>{
+          await request.destroyRecord();
+        });
+      }
+      if(model.events.length > 0 && currentWindow.label === 'Main'){
+        model.events.map(async (event)=>{
+          await event.destroyRecord();
+        });
+      }
     }
-    if(model.events.length > 0 && currentWindow.label === 'Main'){
-      model.events.map(async (event)=>{
-        await event.destroyRecord();
-      });
-    }    
   } 
 }

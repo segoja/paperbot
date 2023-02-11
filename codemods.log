@@ -1,0 +1,4 @@
+2023-02-11T12:20:16.350Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
+2023-02-11T12:20:16.351Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
+2023-02-11T12:20:16.352Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs
+2023-02-11T12:20:16.352Z [warn] WARNING: {{fn}} was not converted as it has positional parameters which can't be automatically converted. Source: app/templates/application.hbs

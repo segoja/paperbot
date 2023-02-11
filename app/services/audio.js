@@ -3,7 +3,7 @@ import { resolve } from 'rsvp';
 import { tracked } from '@glimmer/tracking';
 import { TrackedMap } from 'tracked-maps-and-sets';
 import Service, { inject as service } from '@ember/service';
-import {Howl, Howler} from 'howler';
+import { Howl, Howler } from 'howler';
 import { dialog, invoke } from "@tauri-apps/api";
 import { action } from '@ember/object';
 import { later } from '@ember/runloop';

@@ -202,8 +202,8 @@ export default class TwitchChatService extends Service {
     let count = 1;
     
     let audioTimersList = this.timersList.filterBy('type', 'audio');
-    if(await audioTimersList.length > 0){
-      if(await this.timersList.length > 0){
+    if((await audioTimersList.length) > 0){
+      if((await this.timersList.length) > 0){
         this.audio.loadSounds(audioTimersList);
       } else {
         console.debug("No sound timers to load in soundboard!");
@@ -252,7 +252,7 @@ export default class TwitchChatService extends Service {
 
   @action async soundboard(){
     console.debug("Loading the soundboard...");
-    if(await this.audiocommandslist.length > 0){
+    if((await this.audiocommandslist.length) > 0){
       this.audio.loadSounds(this.audiocommandslist);
     } else {
       console.debug("No sound commands to load in soundboard!");
@@ -261,7 +261,7 @@ export default class TwitchChatService extends Service {
 
   @action async unloadSoundboard(){
     console.debug("Unloading the soundboard...");
-    if(await this.audiocommandslist.length > 0){
+    if((await this.audiocommandslist.length) > 0){
       this.audio.unloadSounds(this.audiocommandslist);
     } else {
       console.debug("No sound commands to unload in soundboard!");
@@ -306,10 +306,10 @@ export default class TwitchChatService extends Service {
         if(song){
           this.requestpattern = song;
           
-          if (await this.filteredSongs.get('length') > 0 ) { 
+          if ((await this.filteredSongs.get('length')) > 0 ) { 
             var bestmatch = await this.filteredSongs.shift();          
             let hasBeenRequested = this.queueHandler.songqueue.find(item => item.fullText === bestmatch.fullText);
-            if(await hasBeenRequested && !this.globalConfig.config.allowDuplicated){
+            if((await hasBeenRequested) && !this.globalConfig.config.allowDuplicated){
               this.botclient.say(target, "/me The song "+bestmatch.fullText+" has already been requested!");
             } else {
               if(bestmatch.active){
@@ -399,7 +399,7 @@ export default class TwitchChatService extends Service {
               var bestmatch = await this.filteredSongs.shift();
             
               let hasBeenRequested = this.queueHandler.songqueue.find(item => item.fullText === bestmatch.fullText);
-              if(await hasBeenRequested && !this.globalConfig.config.allowDuplicated){
+              if((await hasBeenRequested) && !this.globalConfig.config.allowDuplicated){
                 this.botclient.say(target, "/me The song "+bestmatch.fullText+" has already been requested!");
               } else {
                 if(bestmatch.active){
@@ -474,7 +474,7 @@ export default class TwitchChatService extends Service {
           }
           // !random adds a random non played/requested song to the queue:
         } else if(this.takessongrequests && this.currentUser.updateQueueOverlay && String(commandName).startsWith('!random')){
-          if(await this.queueHandler.availableSongs.get('length') > 0){
+          if((await this.queueHandler.availableSongs.get('length')) > 0){
             let max = this.queueHandler.availableSongs.get('length');
             let position = Math.floor(Math.random() * max);
             let firstSong = this.queueHandler.availableSongs[position];
@@ -514,7 +514,7 @@ export default class TwitchChatService extends Service {
           }
           // !next or!nextsong  show the last song played:
         } else if(String(commandName).startsWith('!next') || String(commandName).startsWith('!nextsong')){
-          if(await this.queueHandler.pendingSongs.get('length') > 1){
+          if((await this.queueHandler.pendingSongs.get('length')) > 1){
             let firstSong = this.queueHandler.pendingSongs[1];
             if(firstSong){
               this.botclient.say(target, '/me Next song is: '+firstSong.fullText);
@@ -529,7 +529,7 @@ export default class TwitchChatService extends Service {
           || String(commandName).startsWith('!previous') 
           || String(commandName).startsWith('!previoussong') 
           || String(commandName).startsWith('!ps')){
-          if(await this.queueHandler.playedSongs.get('length') > 0){
+          if((await this.queueHandler.playedSongs.get('length')) > 0){
             let firstSong = this.queueHandler.playedSongs.get('firstObject');
             if(firstSong){
               this.botclient.say(target, '/me Last played song was: '+firstSong.fullText);
@@ -539,7 +539,7 @@ export default class TwitchChatService extends Service {
           }     
           // !current or !song show the song the streamer is playing:
         } else if(String(commandName).startsWith('!current') || String(commandName).startsWith('!song') || String(commandName).startsWith('!cs')){
-          if(await this.queueHandler.pendingSongs.get('length') > 0){
+          if((await this.queueHandler.pendingSongs.get('length')) > 0){
             let firstSong = this.queueHandler.pendingSongs.get('firstObject');
             if(firstSong){
               this.botclient.say(target, '/me Playing: '+firstSong.fullText);
@@ -549,7 +549,7 @@ export default class TwitchChatService extends Service {
           }
           // !queue lists the songs in queue:
         } else if(String(commandName).startsWith('!queue') || String(commandName).startsWith('!sq')){
-          if(await this.queueHandler.pendingSongs.get('length') > 0){
+          if((await this.queueHandler.pendingSongs.get('length')) > 0){
             let count = 0;
             /*
             this.botclient.say(target, "/me Songs in queue:");
@@ -608,7 +608,7 @@ export default class TwitchChatService extends Service {
           }          
 
         } else{
-          if(await this.commandlist.get('length') > 0){
+          if((await this.commandlist.get('length')) > 0){
             this.commandlist.forEach((command) => {
                 if(String(commandName).startsWith(command.name) && command.name != '' && command.active && 
                   (String(commandName).endsWith(command.name) || String(commandName).startsWith(command.name+' '))                

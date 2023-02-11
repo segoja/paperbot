@@ -23,7 +23,20 @@
             <div class="col-md-auto col px-1">
               <div class="d-block float-end">
                 <PbSongImport @songTypes={{@songTypes}} />
-                <BsButton @type="secondary" @onClick={{this.songImport}} title="Import songs by CSV">Import</BsButton>
+                {{#let (file-queue name="uploadSongsCSV" onFileAdded=this.songImport) as |queue|}}
+                  <button type="button" class="btn btn-secondary" title="Import songs by CSV">
+                    <label for="upload-csv" role="button">Import</label>
+                  </button>  
+                  <input
+                    type="file"
+                    id="upload-csv"
+                    accept="text/csv"
+                    class="p-0 m-0"
+                    hidden
+                    {{queue.selectFile}}
+                  >
+                {{/let}}
+                
                 <BsButton @type="secondary" @onClick={{this.songExportFiltered}} title="Export songs to CSV">Export</BsButton>
                 <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered songs?" @targetAction={{this.wipeSongs}} @buttonTitle="Delete all listed songs" />
                 <BsButton @type="info" @onClick={{this.toggleSetlist}} title="Setlist/queue manager"><FaIcon @icon="th-list" /> Setlist</BsButton>
@@ -76,8 +89,10 @@
                     <td class="col-auto py-0 pe-0">
                       <div class="row g-0">
                         <div class="col-auto ms-auto btn-group my-0">
-                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue">{{svg-jar "add-to-top" class="svg-inline--fa fa-plus add-to-top" }}</button>
-                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue">{{svg-jar "add-to-bottom" class="svg-inline--fa fa-plus add-to-bottom" }}</button>
+                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue">{{svg-jar "add-to-top" width="16" height="16" class="svg-inline--fa fa-plus add-to-top" }}</button>
+                          
+                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue">{{svg-jar "add-to-bottom"  width="16" height="16" class="svg-inline--fa fa-plus add-to-bottom" }}</button>
+                          
                           <button type="button" class="btn btn-outline-secondary alert alert-secondary py-2 px-3 rounded-0 m-0" {{on "click" (fn @gridEditSong song)}} title="Edit song" ><FaIcon @icon="edit"/></button>
                           <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger py-2 px-3 rounded-0 m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @buttonTitle="Delete song" @targetAction={{fn @gridDeleteSong song}} />
                         </div>

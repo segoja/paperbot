@@ -22,7 +22,21 @@
             </BsForm>
             <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">
               <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered timers?" @targetAction={{this.wipeTimers}} />
-              <BsButton @type="secondary" @onClick={{this.timerImport}}>Import</BsButton>
+              
+              {{#let (file-queue name="uploadTimersCSV" onFileAdded=this.timerImport) as |queue|}}
+                <button type="button" class="btn btn-secondary" title="Import timers by CSV">
+                  <label for="upload-csv" role="button">Import</label>
+                </button>  
+                <input
+                  type="file"
+                  id="upload-csv"
+                  accept="text/csv"
+                  class="p-0 m-0"
+                  hidden
+                  {{queue.selectFile}}
+                >
+              {{/let}}
+              
               <BsButton @type="secondary" @onClick={{this.timerExportFiltered}}>Export</BsButton>
               <BsButton @type="primary" @onClick={{@createTimer}}>Add New</BsButton>
             </div>

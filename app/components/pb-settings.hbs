@@ -240,9 +240,22 @@
       </Modal.body>
       <Modal.footer class="py-2 row g-0" as |footer|>
         <div class="col">
-          <span role="button" class="btn btn-sm btn-secondary" {{on "click" @handleExport}}>Export Database</span>
-          <span role="button" class="btn btn-sm btn-secondary" {{on "click" @handleImport}}>Import Database</span>
-          <span role="button" class="btn btn-sm btn-danger" {{on "click" @wipeDatabase}}>Wipe DB</span>
+          <button role="button" class="btn btn-sm btn-secondary" {{on "click" @handleExport}}>Export Database</button>
+          {{#let (file-queue name="uploadfile" onFileAdded=@handleImport) as |queue|}}
+            <button type="button" class="btn btn-sm btn-secondary">
+              <label for="upload-backup" role="button">Import Database</label>
+            </button>  
+            <input
+              type="file"
+              id="upload-backup"
+              accept="file/json"
+              class="p-0 m-0"
+              hidden
+              multiple
+              {{queue.selectFile}}
+            >
+          {{/let}}
+          <button role="button" class="btn btn-sm btn-danger" {{on "click" @wipeDatabase}}>Wipe DB</button>
         </div>
         <div class="col-auto">
           <BsButton @type="success" @onClick={{this.doneEditing}}> 

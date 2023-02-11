@@ -72,32 +72,17 @@ export default class PbCommandsComponent extends Component {
   
   @tracked importcontent;
   
-  @action commandImport(){
-    dialog.open({
-      directory: false,
-      filters: [{name: "csv file", extensions: ['csv']}]
-    }).then(async (path) => {
-      if(path != null){
-        await invoke('text_reader', { filepath: path }).then((text)=>{
-          let reference = '"name","type","active","admin","mod","vip","sub","cooldown","timer","response","soundfile","volume"';
-
-          let rows = PapaParse.parse(text,{ delimiter: ',', header: true, quotes: false, quoteChar: '"', skipEmptyLines: true }).data;
-          
-          let csvfields = text.split('\r\n').slice(0,1);
-          
-          // We check if the structure is the same.
-          if (csvfields.toString() === reference){
-            this.importcontent = rows;
-            
-            this.importcontent.forEach((command)=>{
-              this.args.importCommands(command);
-            });      
-          } else {
-            alert("Wrong column structure in the import csv file.");
-          }
-        });
-      }
-    });
+  @action async commandImport(file){
+    let reference = '"name","type","active","admin","mod","vip","sub","cooldown","timer","response","soundfile","volume"';
+    let extension = 'csv';
+    let recordType = 'command';
+    let response = '';
+    if(file){ 
+      response = await file.readAsText();
+      this.currentUser.importRecords(reference,extension,recordType,response);
+    } else {
+      this.currentUser.importRecords(reference,extension,recordType,response);
+    }
   }
   
   @action commandExportFiltered() {
@@ -111,18 +96,9 @@ export default class PbCommandsComponent extends Component {
       });
       
       csvdata = PapaParse.unparse(csvdata, { delimiter: ',', header: true, quotes: true, quoteChar: '"' });        
-      let filename = moment().format('YYYYMMDD-HHmmss')+'-commands.csv'; 
-
-      dialog.save({
-        defaultPath: filename, 
-        filters: [{name: '', extensions: ['csv']}]
-      }).then(async (path)=>{
-        if(path){
-          await invoke('file_writer', { filepath: path, filecontent: csvdata}).then(()=>{
-            console.debug('Commands export csv file saved!');
-          });
-        }
-      });
+      let filename = moment().format('YYYYMMDD-HHmmss')+'-paperbot-commands.csv'; 
+      
+      this.currentUser.download(csvdata,filename,'text/csv');
     }
   }
 }
