@@ -17,6 +17,7 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
+      "identifier": "com.tauri.dev.paperbot",
       "copyright": "",
       "deb": {
         "depends": []
