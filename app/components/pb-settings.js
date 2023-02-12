@@ -22,6 +22,10 @@ export default class PbSettingsComponent extends Component {
   willDestroy() {
     super.willDestroy(...arguments);
   }
+
+  get bootstrapWormhole() {
+    return document.getElementById('ember-bootstrap-wormhole');
+  }
   
   externalEventServices = ['StreamLabs','StreamElements'];
   overlayTypes = Object.freeze(['disabled','file','window']);

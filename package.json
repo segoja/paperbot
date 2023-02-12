@@ -43,7 +43,7 @@
     "concurrently": "^7.6.0",
     "darkreader": "^4.9.55",
     "ember-auto-import": "^2.5.0",
-    "ember-bootstrap": "^5.1.1",
+    "ember-bootstrap": "^6.0.0-1",
     "ember-bootstrap-power-select": "^4.1.0",
     "ember-cli": "~4.10.0",
     "ember-cli-app-version": "^5.0.0",

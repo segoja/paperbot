@@ -2,19 +2,17 @@
 <svg
    viewBox="0 0 512 512"
    version="1.1"
-   id="svg135"
+   id="svg4"
    sodipodi:docname="add-to-bottom.svg"
-   width="512"
-   height="512"
    inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs139" />
+     id="defs8" />
   <sodipodi:namedview
-     id="namedview137"
+     id="namedview6"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
@@ -22,25 +20,23 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     showgrid="false"
-     inkscape:zoom="1.0029297"
-     inkscape:cx="-155.04576"
-     inkscape:cy="351.4703"
+     showgrid="true"
+     inkscape:zoom="0.1772946"
+     inkscape:cx="-3198.0669"
+     inkscape:cy="250.99467"
      inkscape:window-width="2560"
      inkscape:window-height="1377"
      inkscape:window-x="1072"
-     inkscape:window-y="476"
+     inkscape:window-y="461"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg135" />
-  <!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. -->
-  <path
-     d="m 161.9262,373.64385 c 0,11.83123 -9.55856,21.38979 -21.38979,21.38979 -11.83123,0 -21.38979,-9.55856 -21.38979,-21.38979 V 277.38979 H 22.892555 c -11.831229,0 -21.3897917,-9.55856 -21.3897917,-21.38979 0,-11.83123 9.5585627,-21.38979 21.3897917,-21.38979 h 96.254065 v -96.25406 c 0,-11.83123 9.55856,-21.38979 21.38979,-21.38979 11.83123,0 21.38979,9.55856 21.38979,21.38979 v 96.25406 h 96.25406 c 11.83123,0 21.38979,9.55856 21.38979,21.38979 0,11.83123 -9.55856,21.38979 -21.38979,21.38979 H 161.9262 Z"
-     id="path133"
-     style="fill:#000000;fill-opacity:1;stroke-width:0.999999" />
-  <path
-     fill="currentColor"
-     d="m 507.13379,384.00374 -78.7385,78.73848 c -3.83705,3.83787 -10.05931,3.83705 -13.89552,0 l -78.73523,-78.73521 c -6.17067,-6.17068 -1.79976,-16.77286 6.94777,-16.77368 l 55.81214,-0.002 V 92.23404 H 316.64166 A 9.8226602,9.8226602 0 0 1 309.6939,89.355872 L 283.4914,63.153381 c -6.19033,-6.189518 -1.80633,-16.773696 6.94776,-16.773696 h 134.28778 c 10.85357,0 19.65186,8.798317 19.65186,19.651863 V 367.23085 l 55.80639,-7.9e-4 c 8.70087,-8.2e-4 13.1553,10.56695 6.9486,16.77368 z"
-     class=""
-     id="path2"
-     style="fill:#000000;fill-opacity:1;stroke-width:0.999998" />
+     inkscape:current-layer="g592-3" />
+  <!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+  <g
+     id="g592-3"
+     transform="matrix(1,0,0,-1,0,512.11914)">
+    <path
+       id="path2-9"
+       d="m 441.15625,32.119141 c -13.29999,0 -16,10.700013 -16,24 V 72 H 410 c -13.29999,0 -24,2.700013 -24,16 v 16 c 0,13.29999 10.70001,16 24,16 h 15.15625 v 14.11914 c 0,13.29999 2.70001,24 16,24 h 16 c 13.29999,0 16,-10.70001 16,-24 V 120 H 488 c 13.29999,0 24,-2.70001 24,-16 V 88 C 512,74.700013 501.29999,72 488,72 H 473.15625 V 56.119141 c 0,-13.299987 -2.70001,-24 -16,-24 z M 40,48 C 26.700013,48 16,58.700013 16,72 v 48 c 0,13.29999 10.700013,24 24,24 h 48 c 13.29999,0 24,-10.70001 24,-24 V 72 C 112,58.700013 101.29999,48 88,48 Z m 152,16 c -17.69998,0 -32,14.300018 -32,32 0,17.69998 14.30002,32 32,32 h 128 c 17.69998,0 32,-14.30002 32,-32 0,-17.699982 -14.30002,-32 -32,-32 z M 40,208 c -13.299987,0 -24,10.70001 -24,24 v 48 c 0,13.29999 10.700013,24 24,24 h 48 c 13.29999,0 24,-10.70001 24,-24 v -48 c 0,-13.29999 -10.70001,-24 -24,-24 z m 152,16 c -17.69998,0 -32,14.30002 -32,32 0,17.69998 14.30002,32 32,32 h 288 c 17.69998,0 32,-14.30002 32,-32 0,-17.69998 -14.30002,-32 -32,-32 z M 40,368 c -13.299987,0 -24,10.70001 -24,24 v 48 c 0,13.29999 10.700013,24 24,24 h 48 c 13.29999,0 24,-10.70001 24,-24 v -48 c 0,-13.29999 -10.70001,-24 -24,-24 z m 152,16 c -17.69998,0 -32,14.30002 -32,32 0,17.69998 14.30002,32 32,32 h 288 c 17.69998,0 32,-14.30002 32,-32 0,-17.69998 -14.30002,-32 -32,-32 z"
+       sodipodi:nodetypes="sscsssscsssscsssscsssssssssssssssssssssssssssssssssssssssssssssssssss" />
+  </g>
 </svg>

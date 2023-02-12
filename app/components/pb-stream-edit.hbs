@@ -27,10 +27,12 @@
 {{else}}
   <div class="card-body p-0 bg-dark">
     <div class="row g-0 bg-dark border border-dark">
-      <BsButton class="btn-sm col-auto col-sm-auto border rounded-0" @type={{if this.audio.SBstatus "info" "secondary"}} @onClick={{this.audio.toggle}} title="Enable/disable soundboard">
-        {{on-key "ctrl+KeyM" this.audio.toggle}}  
-        <FaIcon @icon={{if this.audio.SBstatus "volume-up" "volume-mute"}} /> Soundboard
-      </BsButton>     
+      {{#if this.currentUser.isTauri}}
+        <BsButton class="btn-sm col-auto col-sm-auto border rounded-0" @type={{if this.audio.SBstatus "info" "secondary"}} @onClick={{this.audio.toggle}} title="Enable/disable soundboard">
+          {{on-key "ctrl+KeyM" this.audio.toggle}}  
+          <FaIcon @icon={{if this.audio.SBstatus "volume-up" "volume-mute"}} /> Soundboard
+        </BsButton>
+      {{/if}}
       <div class="col">
         <div class="row g-0">  
           <BsButton class="btn-sm col-12 col-sm border rounded-0" @type={{if @stream.requests (if this.currentUser.updateQueueOverlay "warning" "secondary") "secondary"}} @onClick={{this.queueWriter}} title="Enable/disable queue overlay">
@@ -56,7 +58,11 @@
         </div>
       </div>
     </div>
-    {{#unless @stream.finished}}<SoundboardLoading />{{/unless}}
+    {{#unless @stream.finished}}
+      {{#if this.currentUser.isTauri}}
+        <SoundboardLoading />
+      {{/if}}
+    {{/unless}}
   </div>
   {{#unless @stream.finished}}  
     {{#if this.twitchChat.botConnected}}

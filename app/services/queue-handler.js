@@ -183,16 +183,8 @@ export default class QueueHandlerService extends Service {
             
       let filename = moment().format('YYYYMMDD-HHmmss')+'-setlist.txt'; 
       
-      dialog.save({
-        defaultPath: filename,
-        filters: [{name: '', extensions: ['txt']}]
-      }).then((path)=>{
-        if(path){
-          writeFile({'path': path, 'contents': setlist}).then(()=>{
-            console.debug('Setlist file saved!');
-          });
-        }
-      });
+      
+      this.currentUser.download(setlist,filename,'text/plain');
     }
   }
   
@@ -257,9 +249,19 @@ export default class QueueHandlerService extends Service {
     }
   }
   
-  @action songToQueue(selected){
+  @action songToQueue(selected, toTop = false){
     let nextPosition = this.nextPosition;
-
+    
+    if(toTop){
+      this.pendingSongs.forEach((request)=>{
+        request.position = request.position +1;
+        request.save().then(()=>{
+          console.log(request.fullText+' moved to position '+request.position+' in queue.');
+        });
+      });
+      nextPosition = 0;
+    }
+    
     let newRequest = this.store.createRecord('request'); 
     newRequest.chatid = 'songsys';
     newRequest.timestamp = new Date();
@@ -272,7 +274,7 @@ export default class QueueHandlerService extends Service {
       newRequest.displayname = 'setlist';
     }
     newRequest.processed = false;
-    newRequest.position = nextPosition;                  
+    newRequest.position = nextPosition;
     
     newRequest.save().then(async()=>{
       // Song statistics:
@@ -350,7 +352,7 @@ export default class QueueHandlerService extends Service {
   }
   
   @action fileContent(pendingSongs, firstRun = false){
-    if (this.globalConfig.config.overlayfolder != ''){
+    if (this.globalConfig.config.overlayfolder != '' && this.currentUser.isTauri){
       if((this.currentUser.updateQueueOverlay 
         && this.globalConfig.config.overlayfolder != ''
         && this.globalConfig.config.overlayType ==='file'

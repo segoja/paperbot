@@ -23,7 +23,7 @@ export default class TimerController extends Controller {
   
   @action saveTimer () {
     this.model.save().then(()=>{
-      if(this.model.type === 'audio'){
+      if(this.model.type === 'audio' && this.currentUser.isTauri){
        if (this.model.active){
           this.audio.removeFromRegister(this.model.id);
           this.audio.loadSound(this.model);        
@@ -35,7 +35,7 @@ export default class TimerController extends Controller {
   }
   
   @action deleteTimer() {
-   if(this.model.type === 'audio'){
+   if(this.model.type === 'audio' && this.currentUser.isTauri){
       if (this.model.active){
         this.audio.removeFromRegister(this.model.id);
       }

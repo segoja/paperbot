@@ -201,15 +201,16 @@ export default class TwitchChatService extends Service {
   @action async timersLauncher(){
     let count = 1;
     
-    let audioTimersList = this.timersList.filterBy('type', 'audio');
-    if((await audioTimersList.length) > 0){
-      if((await this.timersList.length) > 0){
-        this.audio.loadSounds(audioTimersList);
-      } else {
-        console.debug("No sound timers to load in soundboard!");
-      }      
+    if(this.currentUser.isTauri){
+      let audioTimersList = this.timersList.filterBy('type', 'audio');
+      if((await audioTimersList.length) > 0){
+        if((await this.timersList.length) > 0){
+          this.audio.loadSounds(audioTimersList);
+        } else {
+          console.debug("No sound timers to load in soundboard!");
+        }      
+      }
     }
-    
     this.timersList.map((timer)=>{
       this.timerScheduler(timer, count);
       count = count +1;
@@ -237,7 +238,7 @@ export default class TwitchChatService extends Service {
                 this.lastTimerOrder = order;                
               }
               this.botclient.say(this.channel, timer.message);
-              if(timer.type === 'audio'){
+              if(timer.type === 'audio' && this.currentUser.isTauri){
                 this.audio.playSound(timer);
               }
               this.lastTimerPos = this.msglist.get('length');
@@ -251,20 +252,24 @@ export default class TwitchChatService extends Service {
   }
 
   @action async soundboard(){
-    console.debug("Loading the soundboard...");
-    if((await this.audiocommandslist.length) > 0){
-      this.audio.loadSounds(this.audiocommandslist);
-    } else {
-      console.debug("No sound commands to load in soundboard!");
+    if(this.currentUser.isTauri){
+      console.debug("Loading the soundboard...");
+      if((await this.audiocommandslist.length) > 0){
+        this.audio.loadSounds(this.audiocommandslist);
+      } else {
+        console.debug("No sound commands to load in soundboard!");
+      }
     }
   }  
 
   @action async unloadSoundboard(){
-    console.debug("Unloading the soundboard...");
-    if((await this.audiocommandslist.length) > 0){
-      this.audio.unloadSounds(this.audiocommandslist);
-    } else {
-      console.debug("No sound commands to unload in soundboard!");
+    if(this.currentUser.isTauri){
+      console.debug("Unloading the soundboard...");
+      if((await this.audiocommandslist.length) > 0){
+        this.audio.unloadSounds(this.audiocommandslist);
+      } else {
+        console.debug("No sound commands to unload in soundboard!");
+      }
     }
   }
 
@@ -448,7 +453,7 @@ export default class TwitchChatService extends Service {
           this.botclient.say(target, "/me Requests are disabled.");
         }
       } else {
-        if(String(commandName).startsWith('!ykq')){
+        if(String(commandName).startsWith('!ykq') && this.currentUser.isTauri){
           let internalCommand = {'admin': true, 'mod': true, 'vip': false, 'sub':false };      
           if(this.commandPermissionHandler(internalCommand, tags) === true && this.audio.SBstatus){
             let quietTime = Number(commandName.toLowerCase().replace(/!ykq/g, "").trim());
@@ -526,7 +531,8 @@ export default class TwitchChatService extends Service {
         } else if(String(commandName).startsWith('!last') 
           || String(commandName).startsWith('!lastplayed') 
           || String(commandName).startsWith('!lastsong') 
-          || String(commandName).startsWith('!previous') 
+          || String(commandName).startsWith('!previous')  
+          || String(commandName).startsWith('!prev') 
           || String(commandName).startsWith('!previoussong') 
           || String(commandName).startsWith('!ps')){
           if((await this.queueHandler.playedSongs.get('length')) > 0){
@@ -639,9 +645,10 @@ export default class TwitchChatService extends Service {
                         break;
                       }
                       case 'audio':{
-                        
-                        if (this.audio.SBstatus){
-                          this.audio.playSound(command);
+                        if(this.currentUser.isTauri){
+                          if (this.audio.SBstatus){
+                            this.audio.playSound(command);
+                          }
                         }
                         break;
                       }

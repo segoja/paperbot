@@ -7,6 +7,7 @@ import { dialog } from "@tauri-apps/api";
 
 export default class PbTimerComponent extends Component {
   @service audio;
+  @service currentUser;
   @tracked saving = false;
   @tracked isPlaying =  false; 
   @tracked isLoaded =  false; 
@@ -14,14 +15,14 @@ export default class PbTimerComponent extends Component {
   constructor() {
     super(...arguments);
     
-    if(this.audio.previewSound){
+    if(this.audio.previewSound && this.currentUser.isTauri){
       if(this.audio.previewSound.playing()){
         this.audio.previewSound.stop();
       }
       // this.audio.previewSound.unload();
     }
     
-    if(this.args.timer.soundfile){  
+    if(this.args.timer.soundfile && this.currentUser.isTauri){  
       this.audio.loadPreview(this.args.timer.soundfile).then(()=>{
         this.audio.previewSound.once('load', ()=>{ this.isLoaded = true; });
       });
@@ -30,7 +31,7 @@ export default class PbTimerComponent extends Component {
   
   willDestroy() {
     super.willDestroy(...arguments);
-    if(this.soundClip){
+    if(this.soundClip && this.currentUser.isTauri){
       if(this.soundClip.isPlaying){
         this.soundClip.stop();
       }
@@ -46,29 +47,33 @@ export default class PbTimerComponent extends Component {
   }
   
   @action getAudioPath(timer){
-    dialog.open({
-      directory: false,
-      filters: [{name: "Select audio file...", extensions: ['mp3','wav','ogg']}]
-    }).then((path) => {
-      if(path != null){ 
-        //console.debug(path);
-        if(path){
-          timer.soundfile = path;
-          // timer.save();
-          //this.audio.removeFromRegister('preview');
-          this.audio.loadPreview(path).then(()=>{
-            this.audio.previewSound.once('load', ()=>{ this.isLoaded = true; });
-          });
+    if(this.currentUser.isTauri){
+      dialog.open({
+        directory: false,
+        filters: [{name: "Select audio file...", extensions: ['mp3','wav','ogg']}]
+      }).then((path) => {
+        if(path != null){ 
+          //console.debug(path);
+          if(path){
+            timer.soundfile = path;
+            // timer.save();
+            //this.audio.removeFromRegister('preview');
+            this.audio.loadPreview(path).then(()=>{
+              this.audio.previewSound.once('load', ()=>{ this.isLoaded = true; });
+            });
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   get previewLoaded(){
     let status = false;
-    if(this.audio.previewSound){
-      if(this.audio.previewSound.state() == 'loaded'){
-        status = true;
+    if(this.currentUser.isTauri){
+      if(this.audio.previewSound){
+        if(this.audio.previewSound.state() == 'loaded'){
+          status = true;
+        }
       }
     }
     console.log('Loaded: '+status);
@@ -77,8 +82,10 @@ export default class PbTimerComponent extends Component {
 
   get previewPlaying (){
     let status = false;
-    if(this.audio.previewSound){
-      status = this.audio.previewSound.playing();
+    if(this.currentUser.isTauri){
+      if(this.audio.previewSound){
+        status = this.audio.previewSound.playing();
+      }
     }
     console.log('Playing: '+status);
     return status;
@@ -106,7 +113,7 @@ export default class PbTimerComponent extends Component {
         volume = 100;
         this.args.timer.volume = 100;
       }
-      if(this.previewLoaded){
+      if(this.previewLoaded && this.currentUser.isTauri){
         let finalVol = volume / 100;
         console.log('Setting volume to: '+finalVol);
         this.audio.previewSound.volume(finalVol);
@@ -115,7 +122,7 @@ export default class PbTimerComponent extends Component {
   }
   
   @action playSound(){
-    if(this.args.timer.soundfile){
+    if(this.args.timer.soundfile && this.currentUser.isTauri){
       if(this.previewLoaded){
         this.isLoaded = true;
         if(this.previewPlaying){

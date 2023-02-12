@@ -88,14 +88,12 @@ export default class StreamController extends Controller {
    
   @tracked oldHtml = '';
   @action overlayGenerator(newHtml, pathString){
-    // console.debug('Test tested!');
-    // console.debug(newHtml);
-    //if(this.oldHtml != newHtml){
+    if(this.currentUser.isTauri){
       this.oldHtml = newHtml;
       fs.writeFile({'contents': newHtml, 'path': pathString}).then(()=>{
         console.debug("done!")
-      });          
-    //}
+      });
+    }
   }
 
   async deleteClientLinks(){

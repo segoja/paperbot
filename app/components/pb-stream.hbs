@@ -5,24 +5,26 @@
       <div class="col-auto float-end">
         <BsButtonGroup class="px-0 rounded float-end" as |bg|>
           {{#unless @isEditing}}
-            <bg.button @type="dark" class="rounded-0 border-0 {{if @stream.finished "d-none"}}">
-              <BsTooltip title="Keyboard shortcuts" @placement="left" class="helptooltip" @triggerEvents="click">
-                <h6 class="text-start">Keyboard Shortcuts</h6>
-                <p class="text-start">
-                  Toggle Soundboard: "Ctrl"+"M"<br>
-                  Toggle Overlay Queue File: "Ctrl"+"N"<br>
-                  Next. Song: "Ctrl"+"."<br>
-                  Prev. Song: "Ctrl"+","<br>
-                  Send most recently played song back to last position<br> in pending queue: "Ctrl"+"Q"+","<br>
-                  Send played song back to last position in pending<br> queue: "Ctrl"+"Q"+Click on the song
-                </p>
-              </BsTooltip>
-              <FaIcon @icon="question-circle" class="text-white" />        
-            </bg.button>
+            <PbModal @btnClass="btn btn-dark text-white rounded-0 border-0 {{if @stream.finished "d-none"}}" @buttonTitle="Keyboard Shortcuts" @btnIcon="question-circle" @btnText="">
+              <div class="row">
+                <div class="col">
+                  <p class="text-start">
+                    Toggle Soundboard: "Ctrl"+"M"<br>
+                    Toggle Overlay Queue File: "Ctrl"+"N"<br>
+                    Next. Song: "Ctrl"+"."<br>
+                    Prev. Song: "Ctrl"+","<br>
+                    Send most recently played song back to last position<br> in pending queue: "Ctrl"+"Q"+","<br>
+                    Send played song back to last position in pending<br> queue: "Ctrl"+"Q"+Click on the song
+                  </p>                
+                </div>
+              </div>
+            </PbModal>
             <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
           {{/unless}}
           <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.queueHandler.exportQueue}} ><FaIcon @icon="file-download" /></bg.button>
-          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.currentUser.showLyrics}} ><FaIcon @icon="align-center" /></bg.button>
+          {{#if this.currentUser.isTauri}}
+            <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.currentUser.showLyrics}} ><FaIcon @icon="align-center" /></bg.button>
+          {{/if}}
           <bg.button @type="dark" class="rounded-0 rounded-top-right border-0" @onClick={{@closeStream}}><FaIcon @icon="times" /></bg.button>
         </BsButtonGroup>
       </div>

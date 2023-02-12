@@ -21,7 +21,7 @@
             @placeholder="Select the command type"
             @triggerClass="w-100 m-0" as |element|
           >
-            <span class="w-100">{{element}}</span>                
+            <span class="w-100">{{element}}</span>
           </PowerSelect>
         </div>
       </div>
@@ -51,11 +51,11 @@
       <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
         <div class="input-group">
           <div class="input-group-prepend">
-            <BsButton @type="secondary" @onClick={{fn this.playSound}}><FaIcon @icon="{{if this.isPreviewLoaded (if this.isPreviewPlaying "stop" "play") "volume-mute"}}" /></BsButton>
+            <BsButton @type="secondary" @onClick={{fn this.playSound}}  disabled={{not this.currentUser.isTauri}}><FaIcon @icon="{{if this.isPreviewLoaded (if this.isPreviewPlaying "stop" "play") "volume-mute"}}" /></BsButton>
           </div>
           <el.control disabled class="border-form-control" @placeholder="Select the sound file..." />
           <div class="input-group-append">
-            <BsButton @type="secondary" @onClick={{fn this.getAudioPath @command}}>Select file</BsButton>        
+            <BsButton @type="secondary" @onClick={{fn this.getAudioPath @command}} disabled={{not this.currentUser.isTauri}}>Select file</BsButton>        
           </div>
         </div>
       </form.element>
@@ -63,7 +63,7 @@
         <label class="col-md-4">Volume %:</label>    
         <div class="col-sm">
           <div class="input-group bg-light border rounded">
-            <Input @type="range" min="1" max="100" @value={{@command.volume}}  {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control slider w-75 border-0" />
+            <Input @type="range" min="1" max="100" @value={{@command.volume}} {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control slider w-75 border-0" />
             <div class="input-group-append w-25">
               <Input @type="text" @value={{@command.volume}} {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control border-0" />
             </div>

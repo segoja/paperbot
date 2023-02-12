@@ -91,10 +91,18 @@ $height-sizes: (
   }
 }
 
+.popover-wormhole { position: absolute; z-index: 9999; }
 
 svg.add-to-top, svg.add-to-bottom { color: inherit; min-width: 1em;}
 
-
+svg.svg-queue {
+  fill: black;
+  width: 24px; 
+  height: 24px;
+  &.svg-dark  { filter: invert(30%); }
+  &.svg-light { filter: invert(0); }
+  margin: 0px 0.75rem;
+}
 
 .h-33{
   height: 33%!important;
@@ -199,6 +207,7 @@ div.system{
 #ember-basic-dropdown-wormhole{
   z-index: 1100;
 }
+
 .ember-power-select-trigger{
   height: calc(1.5em + 0.75rem + 2px)!important;
   line-height: 2.25em!important;

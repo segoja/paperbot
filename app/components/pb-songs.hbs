@@ -89,12 +89,17 @@
                     <td class="col-auto py-0 pe-0">
                       <div class="row g-0">
                         <div class="col-auto ms-auto btn-group my-0">
-                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue">{{svg-jar "add-to-top" width="16" height="16" class="svg-inline--fa fa-plus add-to-top" }}</button>
+                          <button type="button" class="btn btn-outline-info alert alert-info p-0 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song true)}} title="Add to top setlist/queue">
+                            {{svg-jar "add-to-top" class=(if this.globalConfig.config.darkmode "svg-queue svg-dark" "svg-queue svg-light")}}
+                          </button>
                           
-                          <button type="button" class="btn btn-outline-info alert alert-info py-2 px-3 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song)}} title="Add to setlist/queue">{{svg-jar "add-to-bottom"  width="16" height="16" class="svg-inline--fa fa-plus add-to-bottom" }}</button>
+                          <button type="button" class="btn btn-outline-info alert alert-info p-0 rounded-0 m-0" {{on "click" (fn this.queueHandler.songToQueue song false)}} title="Add to bottom setlist/queue">
+                            {{svg-jar "add-to-bottom" class=(if this.globalConfig.config.darkmode "svg-queue svg-dark" "svg-queue svg-light")}}
+                          </button>
                           
                           <button type="button" class="btn btn-outline-secondary alert alert-secondary py-2 px-3 rounded-0 m-0" {{on "click" (fn @gridEditSong song)}} title="Edit song" ><FaIcon @icon="edit"/></button>
-                          <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger py-2 px-3 rounded-0 m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @buttonTitle="Delete song" @targetAction={{fn @gridDeleteSong song}} />
+                          
+                          <ButtonConfirm @btnClass="btn-outline-danger alert alert-danger py-2 px-3 rounded-0 m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @buttonTitle="Delete song" @targetAction={{fn @gridDeleteSong song}} />
                         </div>
                       </div>
                     </td>

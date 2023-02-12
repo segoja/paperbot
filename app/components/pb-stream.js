@@ -12,6 +12,15 @@ export default class PbStreamComponent extends Component {
   @service globalConfig;
 
   @tracked restore = true;
+  @tracked shortcuts = false;
+
+  get bootstrapWormhole() {
+    return document.getElementById('ember-bootstrap-wormhole');
+  }
+  
+  @action toggleShortcuts(){
+    this.shortcuts = !this.shortcuts;
+  }
   
   @action reloadStream(){
     this.restore = false;

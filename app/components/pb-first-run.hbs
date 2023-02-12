@@ -3,7 +3,7 @@
   <BsModal @size="md border rounded bg-dark" @open={{this.globalConfig.showFirstRun}} as |Modal|>
     <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">
       <div class="row g-0 w-100 bg-dark bg-gradient border-0 rounded-top">
-        <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i>Hello new user!</span></div>
+        <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i>Quick start!</span></div>
         <div class="col-auto">
           <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal)}}><FaIcon @icon="times" /></button>
         </div>
@@ -12,7 +12,6 @@
     <Modal.body>
       <div class="row">
         <div class="col">
-          <p>This is the first time you run Paperbot.</p>
           <p>For the bot to work properly the first thing you need to do is to add a client with your Twitch username and oauth key. You can do this from the <LinkTo @route="clients.index" {{on "click" (fn this.toggleModal Modal.close)}}>Clients menu</LinkTo>. Once this is done you can set your client as the default for all streams you start.</p>
           <p>You can use different clients for the bot and for the chat.</p>
           <p>Explore the application and click on the question mark icons <FaIcon @icon="question-circle" class="text-info" /> to get contextual help.</p>
