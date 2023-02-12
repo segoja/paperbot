@@ -107,7 +107,10 @@ export default class QueueHandlerService extends Service {
   @action async removePending(request){
     await request.get('song').then(async(song)=>{
       await request.destroyRecord().then(async()=>{
-        let times = Number(song.times_requested) + Number(-1);  
+        let times = Number(song.times_requested || 0)
+        if(song.times_requested){
+          times = times + Number(-1); 
+        }
         song.times_requested = times;          
         await song.save().then(()=>{
           let count = 0;
@@ -256,7 +259,7 @@ export default class QueueHandlerService extends Service {
       this.pendingSongs.forEach((request)=>{
         request.position = request.position +1;
         request.save().then(()=>{
-          console.log(request.fullText+' moved to position '+request.position+' in queue.');
+          // console.debug(request.fullText+' moved to position '+request.position+' in queue.');
         });
       });
       nextPosition = 0;
@@ -281,7 +284,7 @@ export default class QueueHandlerService extends Service {
       selected.times_requested = Number(selected.times_requested) + 1;
       await selected.save();
       
-      console.log(selected.fullText+' added at position '+nextPosition);
+      // console.log(selected.fullText+' added at position '+nextPosition);
       this.lastsongrequest = newRequest;
       this.scrollPendingPosition = 0;
       this.scrollPlayedPosition = 0;               

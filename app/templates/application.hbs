@@ -40,7 +40,9 @@
             <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
-            <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+            {{#if this.showSettings}}
+              <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+            {{/if}}
             <CloudState />
           
             {{#if this.currentUser.isTauri}}
@@ -69,7 +71,7 @@
             </nav.item>
             {{#unless this.currentUser.isTauri}}
               <nav.item>
-                <nav.link-to @route="reader" class="py-1"><FaIcon @icon="list-alt" /> Lyrics</nav.link-to>
+                <nav.link-to @route="reader" class="py-1"><FaIcon @icon="align-center" /> Lyrics</nav.link-to>
               </nav.item>
             {{/unless}}
             <nav.item>
@@ -78,11 +80,6 @@
             <nav.item class="col-md d-md-flex d-none dragger">
               <div role="button" class="nav-link w-100 pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
             </nav.item> 
-          </navbar.nav>
-          <navbar.nav class="col-auto" as |nav|>
-            {{!-- <nav.item>
-              <span class="nav-link {{if this.isOnline "text-success" "text-danger"}}"><FaIcon @icon="cloud" /> Server {{if this.isOnline "Online" "Offline"}}</span>
-            </nav.item> --}}
           </navbar.nav>
         </navbar.content>
         <div class="row g-0 d-md-flex col col-md-auto d-none">
@@ -102,9 +99,9 @@
             <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
-            {{#unless (or this.isOverlay this.isLyrics)}}
+            {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
-            {{/unless}}
+            {{/if}}
             
             <CloudState />
             {{#if this.currentUser.isTauri}}
@@ -186,9 +183,9 @@
               <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
-              {{#unless (or this.isOverlay this.isLyrics)}}
+              {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
-              {{/unless}}
+              {{/if}}
               <CloudState />
               
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>

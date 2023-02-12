@@ -55,13 +55,14 @@ export default class ApplicationAdapter extends Adapter {
     assert('local_couch must be set', !isEmpty(this.localDb));
 
         
-    this.olddb = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
+    // this.olddb = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
     
-    this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true });
+    // this.db = new PouchDB('paperbot', { adapter: 'indexeddb', attachments: true });
+    this.db = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
     this.isRetrying = false;
     this.retryDelay = 0;
 
-    this.olddb.replicate.to(this.db, { live: false, retry: false, attachments: true }).on('error', async (err) => {
+    /* this.olddb.replicate.to(this.db, { live: false, retry: false, attachments: true }).on('error', async (err) => {
       console.log('Something exploded while copying');
       console.debug(await err.error); 
     }).on('complete', async (info) => { 
@@ -74,7 +75,7 @@ export default class ApplicationAdapter extends Adapter {
         });
       }
     });
-
+    */
     this.configRemote();
     
     this.replicationOptions = {

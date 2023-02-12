@@ -254,6 +254,18 @@ export default class ApplicationController extends Controller {
     return false;
   }
 
+  get showSettings(){
+    if(this.currentUser.isTauri){
+      console.log("We are in tauri");
+      if(this.isOverlay){ return false; }
+      if(this.isLyrics) { return false; }
+      return true;
+    } else {
+      console.log("We are in browser");
+      return true;
+    }
+  }
+
   get isWinOverlayAllowed(){
     if(this.globalConfig.config.overlayType === 'window' || 
         this.globalConfig.config.overlayType === 'disabled' ||
