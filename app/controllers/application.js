@@ -51,12 +51,12 @@ export default class ApplicationController extends Controller {
     // We wipe requests on every app start;
 
     this.store.findAll('config').then(async ()=>{
-      let currentconfig = this.store.peekRecord('config','myconfig');
+      let currentconfig = this.store.peekRecord('config','ppbconfig');
       if (currentconfig){
         this.globalConfig.showFirstRun = false;
         console.debug("Config found! Loading...");
-        this.lightControl.toggleMode(currentconfig.darkmode);
         this.globalConfig.config = currentconfig;
+        // this.lightControl.toggleMode(this.globalConfig.config);
         
         if(this.globalConfig.config.externalevents &&  this.globalConfig.config.externaleventskey){
           this.eventsExternal.token = this.globalConfig.config.externaleventskey;
@@ -109,7 +109,7 @@ export default class ApplicationController extends Controller {
           }
         }
       } else{
-        this.store.createRecord('config',{id: 'myconfig'}).save().then((newconfig)=>{
+        this.store.createRecord('config',{id: 'ppbconfig'}).save().then((newconfig)=>{
           console.debug("Config not found! New config created...");
           this.globalConfig.config = newconfig;
           this.globalConfig.showFirstRun = true;
@@ -275,17 +275,7 @@ export default class ApplicationController extends Controller {
     }
     return false;
   }   
-  
-  get updateLight(){
-    if(this.globalConfig.config.darkmode){
-      this.lightControl.toggleMode(true);
-      return true;
-    } else {
-      this.lightControl.toggleMode(false);
-      return false;
-    }
-  }
-  
+
   @action handleExport () {
     let filename = moment().format('YYYYMMDD-HHmmss')+'-paperbot-backup.json'; 
     let type = 'application/json';
@@ -352,14 +342,11 @@ export default class ApplicationController extends Controller {
     });
   }
   
-  
-  
+
   @action toggleMode(){
-    if(this.globalConfig.config.isLoaded && !this.globalConfig.config.isSaving){
-      this.globalConfig.config.darkmode = !this.globalConfig.config.darkmode;
-      this.globalConfig.config.save().then(()=>{
-        this.lightControl.toggleMode(this.globalConfig.config.darkmode); 
-      });
+    let config = this.globalConfig.config;
+    if(config.isLoaded){
+      this.lightControl.toggleMode(config);
     }
   }
   
@@ -383,7 +370,7 @@ export default class ApplicationController extends Controller {
       // window that is getting closed as changes are only shared between WebView windows when saved
       // in the local storage.
       this.store.findAll('config').then(async()=>{      
-        let currentconfig = this.store.peekRecord('config','myconfig');        
+        let currentconfig = this.store.peekRecord('config','ppbconfig');        
         if (currentconfig){
           let currentWindow = getCurrent();          
           if(currentWindow.label === 'Main'){   
@@ -433,7 +420,7 @@ export default class ApplicationController extends Controller {
       // window that is getting closed as changes are only shared between WebView windows when saved
       // in the local storage.
       this.store.findAll('config').then(async()=>{      
-        let currentconfig = this.store.peekRecord('config','myconfig');        
+        let currentconfig = this.store.peekRecord('config','ppbconfig');        
         if (currentconfig){
           let currentWindow = getCurrent();          
           if(currentWindow.label === 'Main' || currentWindow.label === 'reader'){   
@@ -559,7 +546,7 @@ export default class ApplicationController extends Controller {
       // window that is getting closed as changes are only shared between WebView windows when saved
       // in the local storage.
       this.store.findAll('config').then(async()=>{      
-        let currentconfig = this.store.peekRecord('config','myconfig');
+        let currentconfig = this.store.peekRecord('config','ppbconfig');
         
         if (currentconfig){
           let currentWindow = getCurrent();
