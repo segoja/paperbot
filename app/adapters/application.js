@@ -57,25 +57,25 @@ export default class ApplicationAdapter extends Adapter {
         
     // this.olddb = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
     
-    // this.db = new PouchDB('paperbot', { adapter: 'indexeddb', attachments: true });
+    //this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true });
     this.db = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
     this.isRetrying = false;
     this.retryDelay = 0;
-
-    /* this.olddb.replicate.to(this.db, { live: false, retry: false, attachments: true }).on('error', async (err) => {
-      console.log('Something exploded while copying');
+    /*
+    this.olddb.replicate.to(this.db, { live: false, retry: false, attachments: true }).on('error', async (err) => {
+      console.log('Application: Something exploded while copying');
       console.debug(await err.error); 
     }).on('complete', async (info) => { 
       if(info.ok){
-        console.debug('Replication from old idb is complete, now deleting...');
+        console.debug('Application: Replication from old idb is complete, now deleting...');
         this.olddb.destroy().then(function (response) {
-          console.log('Deleted old idb database.');
+          console.log('Application: Deleted old idb database.');
         }).catch(function (err) {
           console.log(err);
         });
       }
-    });
-    */
+    }); */
+    
     this.configRemote();
     
     this.replicationOptions = {

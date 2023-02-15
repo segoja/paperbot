@@ -1,20 +1,37 @@
 import Service from '@ember/service';
+import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 import DarkReader from 'darkreader';
 
-export default class LightControlService extends Service {  
+export default class LightControlService extends Service {
+  @service globalConfig;
+  @service store;
   
   get isDark(){
-    console.debug(DarkReader.isEnabled());
-    return DarkReader.isEnabled();
-  }
-
-  // To turn on/of DarkReader:
-  async toggleMode(status){    
-    if(status){
-      await DarkReader.enable({brightness: 100, contrast: 100, sepia: 0}, {disableStyleSheetsProxy: false});
-    } else {
-      await DarkReader.disable(); 
+    let config = this.globalConfig.config;
+    let status = false;
+    if(config){
+      status = config.darkmode;      
+      if(status){
+        DarkReader.enable({brightness: 100, contrast: 100, sepia: 0}, {disableStyleSheetsProxy: false});
+      } else {
+        DarkReader.disable(); 
+      }
     }
+    return status;
   }
-
+  
+  // To turn on/of DarkReader:
+  @action toggleMode(){
+    this.store.findRecord('config', 'ppbconfig').then(async(config)=>{
+      if(await config){
+        config.darkmode = !config.darkmode;
+        config.save().then((savedConfig)=>{
+          this.globalConfig.config = savedConfig;
+          console.debug("Config saved...");          
+        });
+      }
+    });
+  }
 }

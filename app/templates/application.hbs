@@ -37,7 +37,7 @@
                 </button>
               {{/unless}}
             {{/if}}
-            <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+            <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
@@ -96,7 +96,7 @@
                 </button>
               {{/if}}
             {{/if}}
-            <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+            <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
@@ -150,7 +150,7 @@
                   <FaIcon @icon="align-center" />
                 </button>
               {{/if}}            
-              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
               <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
@@ -180,7 +180,7 @@
                   <FaIcon @icon="align-center" />
                 </button>
               {{/unless}}
-              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.updateLight "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.toggleMode}}>
+              <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
               {{#if this.showSettings}}

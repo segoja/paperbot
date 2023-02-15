@@ -122,11 +122,10 @@ export default class PbSettingsComponent extends Component {
   
   @action doneEditing() {
     this.globalConfig.config.save().then(()=>{
-      this.lightControl.toggleMode(this.globalConfig.config.darkmode);
       this.session.invalidate();
       if(!this.cloudState.online){
-        console.log('Setting remote backup...');
         if(this.globalConfig.config.canConnect){
+          console.log('Setting remote backup...');
           this.store.adapterFor('application').configRemote();
           this.store.adapterFor('application').connectRemote();
         }
