@@ -74,7 +74,7 @@
                 <nav.link-to @route="reader" class="py-1"><FaIcon @icon="align-center" /> Lyrics</nav.link-to>
               </nav.item>
               <nav.item>
-                <nav.link-to @route="overlay" class="py-1"><FaIcon @icon="list-alt" /> Overlay</nav.link-to>
+                <nav.link-to @route="overlay" target="_blank" class="py-1"><FaIcon @icon="list-alt" /> Overlay</nav.link-to>
               </nav.item>              
             {{/unless}}
             <nav.item>
@@ -156,7 +156,9 @@
               <button type="button" class="btn btn-outline-info px-3 border-0 rounded-0" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
-              <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              {{#if this.showSettings}}
+                <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              {{/if}}
               <CloudState />
               
               <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
