@@ -97,30 +97,10 @@ export default class PbReaderComponent extends Component {
   @action addZoom(){
     this.globalConfig.config.readerZoom = Number(this.globalConfig.config.readerZoom) + Number(0.025);
     this.globalConfig.config.save();
-    
   }
   
   @action subZoom(){
     this.globalConfig.config.readerZoom = Number(this.globalConfig.config.readerZoom) - Number(0.025);
     this.globalConfig.config.save();
-  }
-  
-  get updateLight(){
-    if(this.globalConfig.config.darkmode){
-      this.lightControl.toggleMode(true);
-      return true;
-    } else {
-      this.lightControl.toggleMode(false);
-      return false;
-    }
-  }
-  
-  @action toggleMode(){
-    if(this.globalConfig.config.isLoaded && !this.globalConfig.config.isSaving){
-      this.globalConfig.config.darkmode = !this.globalConfig.config.darkmode;
-      this.globalConfig.config.save().then(()=>{
-        this.lightControl.toggleMode(this.globalConfig.config.darkmode); 
-      });
-    }
   }
 }

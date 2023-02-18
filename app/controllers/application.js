@@ -212,10 +212,13 @@ export default class ApplicationController extends Controller {
        console.debug(e);
       });
       
-      appWindow.listen('tauri://blur', ({ event, payload }) => {
-        //console.debug(payload);
-        //console.debug(event);
+      appWindow.listen('tauri://blur', (event) => {
         console.debug('Blurring window...');
+        //if(this.globalConfig.config.hasDirtyAttributes){
+          this.globalConfig.config.save().then(()=>{
+            console.debug('Saved config on window blurring');
+          });
+        //}
       });
     }
   }
@@ -256,12 +259,10 @@ export default class ApplicationController extends Controller {
 
   get showSettings(){
     if(this.currentUser.isTauri){
-      console.log("We are in tauri");
       if(this.isOverlay){ return false; }
       if(this.isLyrics) { return false; }
       return true;
     } else {
-      console.log("We are in browser");
       return true;
     }
   }

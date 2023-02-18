@@ -42,6 +42,10 @@ export default class CurrentUserService extends Service {
       if(this.router.currentURL === '/reader' || this.router.currentURL === '/overlay' ){
         return true;
       }
+    } else {
+      if(this.router.currentURL === '/overlay'){
+        return true;
+      }
     }
     return false;
   }  
