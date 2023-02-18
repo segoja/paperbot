@@ -91,6 +91,11 @@ $height-sizes: (
   }
 }
 
+#ember-bootstrap-wormhole .colorpicker{
+  z-index: 99999;
+  position: absolute;
+}
+
 .popover-wormhole { position: absolute; z-index: 9999; }
 
 svg.add-to-top, svg.add-to-bottom { color: inherit; min-width: 1em;}
