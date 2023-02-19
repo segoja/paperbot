@@ -13,10 +13,15 @@
       
       <div class="form-group row pb-2">
         <label class="col-md-4 col-form-label">
-          Oauth 
-          <PbPopover @btnClass="btn text-info" @buttonTitle="About Client Oauth" @btnIcon="question-circle" @btnText="" @popClass="alert alert-info">
-            Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer">Here</a>
-          </PbPopover>
+          Oauth
+          <span role="button">
+            <FaIcon @icon="question-circle" class="text-info" />
+            <BsPopover @triggerEvents="click" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+              <div role="button" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}} {{on "click" po.close}}>
+                <p class="my-0">Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer">Here</a></p>
+              </div>
+            </BsPopover>
+          </span>
         </label>
         <div class="col-md-8">
           <div class="input-group">

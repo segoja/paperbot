@@ -16,9 +16,14 @@
           <div class="row pb-2">
             <label class="control-label col-form-label col-md-4">
               External event tracking
-              <PbPopover @btnClass="btn text-info" @buttonTitle="External event tracking" @btnIcon="question-circle" @btnText="" @popClass="alert alert-info">
-                Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer">Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer">StreamElements</a>
-              </PbPopover>
+              <span role="button">
+                <FaIcon @icon="question-circle" class="text-info" />
+                <BsPopover @triggerEvents="click" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+                  <div role="button" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}} {{on "click" po.close}}>
+                    <p class="my-0">Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer">Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer">StreamElements</a></p>
+                  </div>
+                </BsPopover>
+              </span>
             </label>
             <div class="col-md-8 border-light">
               <div class="row input-group g-0">
@@ -33,9 +38,14 @@
           <div class="row pb-2">
             <label class="control-label col-form-label col-md-4">
               Default Bot client 
-              <PbPopover @btnClass="btn text-info" @buttonTitle="About clients" @btnIcon="question-circle" @btnText="" @popClass="alert alert-info">
-                To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo>
-              </PbPopover>
+              <span role="button">
+                <FaIcon @icon="question-circle" class="text-info" />
+                <BsPopover @triggerEvents="click" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+                  <div role="button" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}} {{on "click" po.close}}>
+                    <p class="my-0">To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></p>
+                  </div>
+                </BsPopover>
+              </span>
             </label>
               <form.element @controlType="power-select" @property="defbotclient" @onChange={{this.setdefBot}} @formLayout="inline" class="col-md-8 border-light" @invisibleLabel={{true}} @options={{@clients}} required as |client|>
                 <client.control @allowClear={{true}} @placeholder="Select the default Bot Client for new streams" as |option|>

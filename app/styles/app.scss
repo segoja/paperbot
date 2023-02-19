@@ -91,9 +91,11 @@ $height-sizes: (
   }
 }
 
-#ember-bootstrap-wormhole .colorpicker{
-  z-index: 99999;
-  position: absolute;
+.ppover .popover-body{
+  margin: 0px;
+  padding: 0px;
+  min-width: 0px;
+  width: auto;
 }
 
 .popover-wormhole { position: absolute; z-index: 9999; }
