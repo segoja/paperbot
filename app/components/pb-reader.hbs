@@ -38,7 +38,7 @@
               {{#if this.restore}}
                 {{#if this.currentSong}}
                   <h5>{{this.currentSong.title}}</h5>
-                  <div class="fancy-colums">{{this.currentSong.lyrics}}</div>
+                  <div class="fancy-colums">{{chord-parser this.currentSong.lyrics}}</div>
                 {{/if}}
               {{else}}
                 Reloading...
