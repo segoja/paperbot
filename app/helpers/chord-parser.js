@@ -4,7 +4,7 @@ import ChordSheetJS from 'chordsheetjs';
 
 export default helper(function([element]) {
   if (!element) { return; } // return nothing when params is empty
-  const parser = new ChordSheetJS.ChordSheetParser();
+  /*const parser = new ChordSheetJS.ChordSheetParser();
   let content = element.replace(/\n\s\n/g, '<hr>\n');
   let song = parser.parse(String(content).substring(1));
   if(song.lines.length > 0){
@@ -45,6 +45,21 @@ export default helper(function([element]) {
       let disp = formatter.format(song);
       return htmlSafe(disp); 
     }   
-  }
-  return htmlSafe(element);
+  }*/
+  let content = element.replace(/\r\n?/g, '\n');
+  content = content.replace(/\n\s\n/g, '\n\n');
+  content = content.replace(/\n/g, '<br>\n');
+  let lines = content.split('<br>\n');
+  console.log(lines);
+  
+  let processed = '';
+  lines.forEach((line)=>{
+    if(line.replace(/\s/g, '')){
+      processed += '<div>'+line.replace(/\s/g, '&nbsp')+'</div>';
+    } else {
+      processed += '<div><br></div>';
+    }
+  });
+   
+  return htmlSafe(processed);
 });
