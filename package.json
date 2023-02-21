@@ -117,6 +117,7 @@
   },
   "dependencies": {
     "chord-transposer": "^3.0.1",
-    "chordsheetjs": "^7.16.0"
+    "chordsheetjs": "^7.16.0",
+    "xregexp": "^5.1.1"
   }
 }

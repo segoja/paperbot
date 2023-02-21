@@ -17,6 +17,7 @@ export default class PbReaderComponent extends Component {
   @tracked songQuery = "";
   @tracked restore = true;
   @tracked zoomLevel = 0.85;
+  @tracked transKey = 0;
   
   @service globalConfig;
     
@@ -93,7 +94,19 @@ export default class PbReaderComponent extends Component {
       this.globalConfig.config.save();
     }
   }
+
+  @action upKey(){
+    if(this.transKey < 12){
+      this.transKey++
+    }
+  }
   
+  @action downKey(){
+    if(this.transKey > -12){
+      this.transKey--
+    }
+  }  
+
   @action addZoom(){
     this.globalConfig.config.readerZoom = Number(this.globalConfig.config.readerZoom) + Number(0.025);
     this.globalConfig.config.save();

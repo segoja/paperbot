@@ -2,6 +2,7 @@
     .fancy-colums {
       font-size: {{this.globalConfig.config.readerZoom}}em!important; 
       column-count: {{this.globalConfig.config.readerColumns}}!important;
+      column-rule-width: auto;
     }   
   </style>
 <div class="row h-100 flex-fill m-0 p-0">
@@ -16,6 +17,11 @@
               </PowerSelect>
             </div>
             <div class="col-auto">
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} alt="transpose up"><FaIcon @icon="search-minus" /></button>
+                <span class="btn btn-secondary disabled text-white">{{this.transKey}}</span>
+                <button type="button" class="btn btn-secondary" {{on "click" this.upKey}} alt="transpose down"><FaIcon @icon="search-plus" /></button>
+              </div>
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary" {{on "click" this.resetZoom}} alt="Reset zoom"><FaIcon @icon="undo" /></button>
                 <button type="button" class="btn btn-secondary" {{on "click" this.subZoom}} alt="Zoom out"><FaIcon @icon="search-minus" /></button>
@@ -38,7 +44,7 @@
               {{#if this.restore}}
                 {{#if this.currentSong}}
                   <h5>{{this.currentSong.title}}</h5>
-                  <div class="fancy-colums">{{chord-parser this.currentSong.lyrics}}</div>
+                  <div class="fancy-colums">{{chord-parser this.currentSong.lyrics this.transKey}}</div>
                 {{/if}}
               {{else}}
                 Reloading...
