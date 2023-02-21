@@ -116,6 +116,7 @@
     "edition": "octane"
   },
   "dependencies": {
+    "chord-transposer": "^3.0.1",
     "chordsheetjs": "^7.16.0"
   }
 }
