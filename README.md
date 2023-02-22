@@ -1,56 +1,19 @@
-# paperbot
+# Paperbot
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+A chat bot for music streamers made with [Ember](https://emberjs.com/), [Pouchdb](https://pouchdb.com/), [Tmijs](https://tmijs.com/) and [Tauri](https://tauri.app/).
 
-## Prerequisites
+## Features
 
-You will need the following things properly installed on your computer.
+* Request system: Allows audience to request songs from the chat.
+* Song management system: Allows the musician to store and manage its songs, save the lyrics and arrange setlists.
+* Custom chat commands: You can create and manage your own chat commands and control their access. 
+* Custom chat timers: You can set automatic messages to be sent to the chat.
+* Soundboard (only on desktop version): You can assign sounds to your custom chat commands and timers.
+* Lyrics viewer/reader: you can view the lyrics of each song as you play through the song queue. 
+* Overlay window: you can include the songs in the queue in the overlay of your stream.
 
-* [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with npm)
-* [Ember CLI](https://cli.emberjs.com/release/)
-* [Google Chrome](https://google.com/chrome/)
+## Requirements
 
-## Installation
-
-* `git clone <repository-url>` this repository
-* `cd paperbot`
-* `npm install`
-
-## Running / Development
-
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
-* Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
-
-### Code Generators
-
-Make use of the many generators for code, try `ember help generate` for more details
-
-### Running Tests
-
-* `ember test`
-* `ember test --server`
-
-### Linting
-
-* `npm run lint`
-* `npm run lint:fix`
-
-### Building
-
-* `ember build` (development)
-* `ember build --environment production` (production)
-
-### Deploying
-
-Specify what it takes to deploy your app.
-
-## Further Reading / Useful Links
-
-* [ember.js](https://emberjs.com/)
-* [ember-cli](https://cli.emberjs.com/release/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+* Windows 10/11
+* A twitch account
+* A [Cloudstation](https://www.cloudstation.com) account (optional)
