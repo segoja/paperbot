@@ -1,6 +1,6 @@
 # Paperbot
 
-A chat bot for music streamers made with [Ember](https://emberjs.com/), [Pouchdb](https://pouchdb.com/), [Tmijs](https://tmijs.com/) and [Tauri](https://tauri.app/).
+A chat bot for music streamers made with [Ember](https://emberjs.com/), [PouchDB](https://pouchdb.com/), [Tmi.js](https://tmijs.com/) and [Tauri](https://tauri.app/).
 
 ## Features
 
@@ -11,9 +11,10 @@ A chat bot for music streamers made with [Ember](https://emberjs.com/), [Pouchdb
 * Soundboard (only on desktop version): You can assign sounds to your custom chat commands and timers.
 * Lyrics viewer/reader: you can view the lyrics of each song as you play through the song queue. 
 * Overlay window: you can include the songs in the queue in the overlay of your stream.
+* Device syncing: if you have a [Cloudstation](https://www.cloudstation.com) account you'll be able sync your entire song catalog, commands, timers and request on different devices.
 
 ## Requirements
 
-* Windows 10/11
+* Windows 10/11 (desktop version) or any browser.
 * A twitch account
-* A [Cloudstation](https://www.cloudstation.com) account (optional)
+* A [Cloudstation](https://www.cloudstation.com) account (optional).
