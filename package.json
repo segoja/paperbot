@@ -7,7 +7,8 @@
   "license": "MIT",
   "author": "segoja",
   "directories": {
-    "doc": "doc"
+    "doc": "doc",
+    "test": "tests"
   },
   "scripts": {
     "build": "ember build --environment=production",
@@ -40,6 +41,7 @@
     "babel-eslint": "^10.1.0",
     "bootstrap": "^5.2.0",
     "broccoli-asset-rev": "^3.0.0",
+    "chord-transposer": "^3.0.1",
     "concurrently": "^7.6.0",
     "darkreader": "^4.9.55",
     "ember-auto-import": "2.5.0",
@@ -77,8 +79,8 @@
     "ember-sortable": "^5.0.0",
     "ember-source": "~4.10.0",
     "ember-svg-jar": "^2.3.4",
-    "ember-template-lint": "^5.3.1",
-    "eslint": "^8.34.0",
+    "ember-template-lint": "^5.3.1",    
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-ember": "^11.4.3",
     "eslint-plugin-n": "^15.6.1",
@@ -113,10 +115,5 @@
   },
   "ember": {
     "edition": "octane"
-  },
-  "dependencies": {
-    "chord-transposer": "^3.0.1",
-    "chordsheetjs": "^7.16.0",
-    "xregexp": "^5.1.1"
   }
 }

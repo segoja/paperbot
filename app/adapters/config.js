@@ -19,14 +19,13 @@ PouchDB.plugin(PouchDBFind)
   .plugin(HttpPouch)
   .plugin(mapreduce)
   .plugin(replication);
-  
-export default class ConfigAdapter extends Adapter {
 
+export default class ConfigAdapter extends Adapter {
   constructor() {
     super(...arguments);
-        
+
     // this.olddb = new PouchDB('paperbot-config', { adapter: 'idb' });
-    
+
     //this.db = new PouchDB('i-paperbot-config', { adapter: 'indexeddb', live: true, retry: true });
     this.db = new PouchDB('paperbot-config', { adapter: 'idb' });
 
@@ -43,7 +42,7 @@ export default class ConfigAdapter extends Adapter {
         });
       }
     });*/
-   
+
     return this;
   }
 }

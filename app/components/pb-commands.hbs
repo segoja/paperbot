@@ -16,7 +16,7 @@
             <div class="col-md-auto col-sm-6 col-12 px-1">
               <PowerSelect
                 @options={{@commandTypes}}
-                @onChange={{fn this.selectType}}
+                @onChange={{this.selectType}}
                 @selected={{@queryParamsObj.type}}
                 @allowClear={{true}}
                 @placeholder="Filter by type"

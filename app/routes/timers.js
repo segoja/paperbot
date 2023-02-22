@@ -5,10 +5,10 @@ export default class TimersRoute extends Route {
   @service store;
   @service currentUser;
 
-  model () {
+  model() {
     return this.store.findAll('timer');
   }
-  afterModel(){
+  afterModel() {
     this.currentUser.isViewing = false;
   }
 }

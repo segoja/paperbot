@@ -52,7 +52,7 @@
       <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
         <div class="input-group">
           <div class="input-group-prepend">
-            <BsButton @type="secondary" @onClick={{fn this.playSound}} disabled={{not this.currentUser.isTauri}}><FaIcon @icon="{{if this.isPreviewLoaded (if this.isPreviewPlaying "stop" "play") "volume-mute"}}" /></BsButton>
+            <BsButton @type="secondary" @onClick={{this.playSound}} disabled={{not this.currentUser.isTauri}}><FaIcon @icon="{{if this.isPreviewLoaded (if this.isPreviewPlaying "stop" "play") "volume-mute"}}" /></BsButton>
           </div>
           <el.control disabled class="border-form-control" @placeholder="Select the sound file..." />
           <div class="input-group-append">
@@ -75,7 +75,7 @@
       <BsButton @type="success" @onClick={{@saveAndReturnTimer}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Timer saved!</span></div>
-      <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this timer?" @targetAction={{fn @deleteTimer}} />
+      <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this timer?" @targetAction={{@deleteTimer}} />
     </BsForm>
   </div>
 </div>

@@ -1,5 +1,5 @@
-import Controller, { inject }  from '@ember/controller';
-import { action } from "@ember/object";
+import Controller, { inject } from '@ember/controller';
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default class TimerController extends Controller {
@@ -7,40 +7,39 @@ export default class TimerController extends Controller {
   @service router;
   @service audio;
   @service currentUser;
-    
+
   @action closeTimer() {
     this.currentUser.isViewing = false;
-    this.router.transitionTo('timers');      
+    this.router.transitionTo('timers');
   }
-  
-  @action editTimer(){
-  }
-  
-  @action saveAndReturnTimer(){
+
+  @action editTimer() {}
+
+  @action saveAndReturnTimer() {
     this.saveTimer();
-    this.router.transitionTo('timers');    
+    this.router.transitionTo('timers');
   }
-  
-  @action saveTimer () {
-    this.model.save().then(()=>{
-      if(this.model.type === 'audio' && this.currentUser.isTauri){
-       if (this.model.active){
+
+  @action saveTimer() {
+    this.model.save().then(() => {
+      if (this.model.type === 'audio' && this.currentUser.isTauri) {
+        if (this.model.active) {
           this.audio.removeFromRegister(this.model.id);
-          this.audio.loadSound(this.model);        
+          this.audio.loadSound(this.model);
         } else {
           this.audio.removeFromRegister(this.model.id);
         }
-      }      
+      }
     });
   }
-  
+
   @action deleteTimer() {
-   if(this.model.type === 'audio' && this.currentUser.isTauri){
-      if (this.model.active){
+    if (this.model.type === 'audio' && this.currentUser.isTauri) {
+      if (this.model.active) {
         this.audio.removeFromRegister(this.model.id);
       }
     }
-    
+
     this.model.destroyRecord().then(() => {
       this.currentUser.isViewing = false;
       this.router.transitionTo('timers');

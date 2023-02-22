@@ -7,17 +7,17 @@ export default class OverlayRoute extends Route {
   @service currentUser;
   @service globalConfig;
 
-  model () {
+  model() {
     return this.store.findAll('request');
   }
-    
-  afterModel(){
+
+  afterModel() {
     this.currentUser.isViewing = false;
     //this.globalConfig.config.showOverlay = true;
     //this.globalConfig.config.save();
   }
-  
-  @action willTransition (transition) {
+
+  @action willTransition(transition) {
     if (transition.targetName != 'overlay') {
       //this.globalConfig.config.showOverlay = false;
       //this.globalConfig.config.save();

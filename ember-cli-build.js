@@ -9,45 +9,45 @@ module.exports = function (defaults) {
     outputPaths: {
       app: {
         css: {
-          'app': 'assets/paperbot.css', // FOR LIGHT THEME => app.scss
-        }
-      }
+          app: 'assets/paperbot.css', // FOR LIGHT THEME => app.scss
+        },
+      },
     },
     SRI: {
       // crossorigin: 'anonymous',
       // This fix the tauri build blocking, but I have to check a better solution messing with cors.
-      enabled: true
+      enabled: true,
     },
-    
+
     // Exclude .png favicons from being fingerprinted
     //origin: 'https://tauri.localhost/',
     fingerprint: {
       //prepend: 'https://tauri.localhost/',
       exclude: [
-                 'android-chrome-192x192.png',
-                 'android-chrome-512x512.png',
-                 'apple-touch-icon.png',
-                 'favicon-16x16.png',
-                 'favicon-32x32.png',
-                 'mstile-150x150.png'
-               ]
+        'android-chrome-192x192.png',
+        'android-chrome-512x512.png',
+        'apple-touch-icon.png',
+        'favicon-16x16.png',
+        'favicon-32x32.png',
+        'mstile-150x150.png',
+      ],
     },
     'ember-bootstrap': {
-      'bootstrapVersion': 5,
-      'importBootstrapCSS': false,
-      'insertEmberWormholeElementToDom': true
+      bootstrapVersion: 5,
+      importBootstrapCSS: false,
+      insertEmberWormholeElementToDom: true,
     },
     'ember-power-select': {
-       theme: 'bootstrap'
+      theme: 'bootstrap',
     },
-    'svgJar': {
+    svgJar: {
       strategy: 'inline',
       optimizer: {
         plugins: [
           { removeTitle: false },
           { removeDesc: { removeAny: false } },
-          { removeViewBox: false }
-        ]
+          { removeViewBox: false },
+        ],
       },
     },
   });
@@ -65,10 +65,8 @@ module.exports = function (defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
   app.import('node_modules/moment/moment.js', {
-    using: [
-      { transformation: 'amd', as: 'moment' }
-    ]
+    using: [{ transformation: 'amd', as: 'moment' }],
   });
-  
+
   return app.toTree();
 };

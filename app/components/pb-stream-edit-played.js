@@ -6,13 +6,13 @@ import { inject as service } from '@ember/service';
 export default class PbStreamEditPlayedComponent extends Component {
   @service globalConfig;
   @service queueHandler;
-    
+
   constructor() {
     super(...arguments);
     this.queueHandler.scrollPlayedPosition = 0;
   }
-   
-  @action togglePan(){
+
+  @action togglePan() {
     this.globalConfig.config.cpanplayed = !this.globalConfig.config.cpanplayed;
     this.globalConfig.config.save();
   }

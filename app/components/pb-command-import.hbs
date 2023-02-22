@@ -27,10 +27,10 @@
               <tr>
                 <th class="col-6" scope="col">File name</th>
                 <th class="col" scope="col">Command</th>
-                <th class="col" scope="col" colspan=2>Volume</th>
+                <th class="col" scope="col" colspan="2">Volume</th>
               </tr>
               <tr>
-                <th class="col-6" scope="col" colspan=2><small class="float-end text-secondary">Bulk actions:</small></th>
+                <th class="col-6" scope="col" colspan="2"><small class="float-end text-secondary">Bulk actions:</small></th>
                 <td class="col p-0" scope="col">
                   <Input @type="range" min="1" max="100" @value={{this.bulkVolume}}  {{on "change" (fn this.bulkChangeVolume this.bulkVolume)}} class="form-control slider w-100 border-0 rounded-0 table-secondary" />
                 </td>
@@ -83,7 +83,7 @@
         <PageNumbers @content={{this.pagedCommands}} @fullBorder={{true}} class="col" />
       {{/if}}
       <div class="col-auto">
-        <BsButton @onClick={{fn this.toggleModal}} @type="danger">Cancel</BsButton>
+        <BsButton @onClick={{this.toggleModal}} @type="danger">Cancel</BsButton>
         <BsButton @onClick={{this.generateCommands}} @type="success">Import</BsButton>
       </div>
     </Modal.footer>

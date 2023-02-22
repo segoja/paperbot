@@ -4,7 +4,7 @@ import moment from 'moment';
 
 export default class NiceDateService extends Service {
   @service intl;
-  
+
   fancydate(date, format, lang) {
     if (!isEmpty(date)) {
       var dateFormat = 'DD-MM-YY HH:mm';
@@ -15,7 +15,7 @@ export default class NiceDateService extends Service {
       if (lang) {
         moment().locale(lang);
       } else {
-        if(this.intl.locale === 'en-us'){
+        if (this.intl.locale === 'en-us') {
           moment().locale('en');
         } else {
           moment().locale('nl');

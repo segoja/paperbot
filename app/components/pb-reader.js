@@ -14,106 +14,112 @@ export default class PbReaderComponent extends Component {
   @service headData;
   @service lightControl;
   @tracked selected = '';
-  @tracked songQuery = "";
+  @tracked songQuery = '';
   @tracked restore = true;
   @tracked zoomLevel = 0.85;
   @tracked transKey = 0;
-  
+
   @service globalConfig;
-    
+
   constructor() {
     super(...arguments);
   }
-  
-  requestSorting = Object.freeze(['position:asc', 'timestamp:desc']);  
-  @sort ('args.requests','requestSorting') arrangedRequests;
-  
-  get firstRequest(){
+
+  requestSorting = Object.freeze(['position:asc', 'timestamp:desc']);
+  @sort('args.requests', 'requestSorting') arrangedRequests;
+
+  get firstRequest() {
     let pending = this.arrangedRequests.filterBy('processed', false);
-    if(pending.length > 0){
+    if (pending.length > 0) {
       return pending.get('firstObject');
     }
     return '';
   }
-  
-  songsSorting = Object.freeze(['date_added:asc']);  
-  @sort ('args.songs','songsSorting') arrangedContent;
-  
-  @computedFilterByQuery(
-    'arrangedContent',
-    ['title','artist'],
-    'songQuery',
-    { conjunction: 'and', sort: false, limit: 20}
-  ) filteredSongs; 
-  
-  get currentSong(){
+
+  songsSorting = Object.freeze(['date_added:asc']);
+  @sort('args.songs', 'songsSorting') arrangedContent;
+
+  @computedFilterByQuery('arrangedContent', ['title', 'artist'], 'songQuery', {
+    conjunction: 'and',
+    sort: false,
+    limit: 20,
+  })
+  filteredSongs;
+
+  get currentSong() {
     let song = [];
-    if(this.selected){
+    if (this.selected) {
       song = this.selected;
     } else {
-      if(this.firstRequest){
+      if (this.firstRequest) {
         song = this.firstRequest.song;
       } else {
         console.debug('No songs active.');
-      }      
+      }
     }
     return song;
   }
 
-  @action searchSong(query){
+  @action searchSong(query) {
     this.songQuery = query;
     return this.filteredSongs;
-  }   
-  
-  @action selectSong(song){
+  }
+
+  @action selectSong(song) {
     this.selected = song;
     this.restore = false;
-    later(() => { this.restore = true; }, 10);   
+    later(() => {
+      this.restore = true;
+    }, 10);
   }
-  
-  @action resetZoom(){
+
+  @action resetZoom() {
     this.globalConfig.config.readerZoom = Number(0.85);
     this.globalConfig.config.save();
   }
-  
-  @action autoColumn(){
+
+  @action autoColumn() {
     this.globalConfig.config.readerColumns = 0;
     this.globalConfig.config.save();
-  }  
-
-  @action moreColumn(){
-    if(this.globalConfig.config.readerColumns < 5){
-      this.globalConfig.config.readerColumns = Number(this.globalConfig.config.readerColumns) + 1;
-      this.globalConfig.config.save();
-    }
   }
-  
-  @action lessColumn(){
-    if(this.globalConfig.config.readerColumns > 0){
-      this.globalConfig.config.readerColumns = Number(this.globalConfig.config.readerColumns) - 1;
+
+  @action moreColumn() {
+    if (this.globalConfig.config.readerColumns < 5) {
+      this.globalConfig.config.readerColumns =
+        Number(this.globalConfig.config.readerColumns) + 1;
       this.globalConfig.config.save();
     }
   }
 
-  @action upKey(){
-    if(this.transKey < 12){
-      this.transKey++
+  @action lessColumn() {
+    if (this.globalConfig.config.readerColumns > 0) {
+      this.globalConfig.config.readerColumns =
+        Number(this.globalConfig.config.readerColumns) - 1;
+      this.globalConfig.config.save();
     }
   }
-  
-  @action downKey(){
-    if(this.transKey > -12){
-      this.transKey--
-    }
-  }  
 
-  @action addZoom(){
-    this.globalConfig.config.readerZoom = Number(this.globalConfig.config.readerZoom) + Number(0.025);
+  @action upKey() {
+    if (this.transKey < 12) {
+      this.transKey++;
+    }
+  }
+
+  @action downKey() {
+    if (this.transKey > -12) {
+      this.transKey--;
+    }
+  }
+
+  @action addZoom() {
+    this.globalConfig.config.readerZoom =
+      Number(this.globalConfig.config.readerZoom) + Number(0.025);
     this.globalConfig.config.save();
   }
-  
-  @action subZoom(){
-    this.globalConfig.config.readerZoom = Number(this.globalConfig.config.readerZoom) - Number(0.025);
+
+  @action subZoom() {
+    this.globalConfig.config.readerZoom =
+      Number(this.globalConfig.config.readerZoom) - Number(0.025);
     this.globalConfig.config.save();
   }
 }

@@ -6,8 +6,8 @@ export default class StreamsRoute extends Route {
   @service router;
   @service store;
   @service currentUser;
-  
-  model () {
+
+  model() {
     var store = this.store;
     return hash({
       model: store.findAll('stream'),
@@ -20,20 +20,19 @@ export default class StreamsRoute extends Route {
   setupController(controller, models) {
     super.setupController(controller, models);
     controller.setProperties(models);
-    
+
     this.currentUser.isViewing = false;
   }
 
-  afterModel(){
+  afterModel() {
     this.currentUser.isViewing = false;
   }
 
-  redirect (model, transition) {
+  redirect(model, transition) {
     if (transition.targetName === 'streams.index') {
       if (this.currentUser.lastStream) {
         this.router.transitionTo('streams.stream', this.currentUser.lastStream);
-      } 
+      }
     }
   }
-  
 }

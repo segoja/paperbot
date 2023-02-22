@@ -3,10 +3,10 @@ import { action } from '@ember/object';
 import Util from 'ember-cli-pagination/util';
 
 export default class PageNumbersComponent extends PageNumbers {
-  get contentLength(){
+  get contentLength() {
     return this.args.content.content.length;
   }
-  
+
   @action pageClicked(number) {
     Util.log('PageNumbers#pageClicked number ' + number);
     this.currentPage = number;

@@ -6,7 +6,7 @@ import { tracked } from '@glimmer/tracking';
 export default class PbSongComponent extends Component {
   @service globalConfig;
   @tracked isViewing = false;
-  
+
   constructor() {
     super(...arguments);
     this.isViewing = false;
@@ -16,15 +16,15 @@ export default class PbSongComponent extends Component {
     super.willDestroy(...arguments);
     this.isViewing = false;
   }
-  
+
   @action toggleModal() {
-    this.isViewing = !this.isViewing; 
-  }  
-  
+    this.isViewing = !this.isViewing;
+  }
+
   @action confirmModal() {
-    this.isViewing = !this.isViewing;      
-    if(!this.isViewing && this.args.targetAction){
+    this.isViewing = !this.isViewing;
+    if (!this.isViewing && this.args.targetAction) {
       this.args.targetAction();
     }
-  }    
+  }
 }

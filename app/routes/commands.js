@@ -5,10 +5,10 @@ export default class CommandsRoute extends Route {
   @service store;
   @service currentUser;
 
-  model () {
+  model() {
     return this.store.findAll('command');
   }
-  afterModel(){
+  afterModel() {
     this.currentUser.isViewing = false;
-  }  
+  }
 }

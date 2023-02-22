@@ -17,7 +17,7 @@
     </div>
   </Modal.body>
   <Modal.footer class="py-2" as |footer|>
-    <BsButton @onClick={{fn this.confirmModal}} @type="danger">Yes</BsButton>
-    <BsButton @onClick={{fn this.toggleModal}} @type="secondary">No</BsButton>
+    <BsButton @onClick={{this.confirmModal}} @type="danger">Yes</BsButton>
+    <BsButton @onClick={{this.toggleModal}} @type="secondary">No</BsButton>
   </Modal.footer>
 </BsModal>

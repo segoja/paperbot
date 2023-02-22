@@ -108,7 +108,7 @@
         <PageNumbers @content={{this.pagedSongs}} @fullBorder={{true}} class="col" />
       {{/if}}
       <div class="col-auto">
-        <BsButton @onClick={{fn this.toggleModal}} @type="danger">Cancel</BsButton>
+        <BsButton @onClick={{this.toggleModal}} @type="danger">Cancel</BsButton>
         <BsButton @onClick={{this.generateSongs}} @type="success">Import</BsButton>
       </div>
     </Modal.footer>

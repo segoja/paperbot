@@ -1,6 +1,6 @@
 import Controller, { inject } from '@ember/controller';
 import { tracked } from '@glimmer/tracking';
-import { action } from "@ember/object";
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 class QueryParamsObj {
@@ -10,55 +10,59 @@ class QueryParamsObj {
 }
 
 export default class StreamsController extends Controller {
-  @inject ('streams.stream') stream;
+  @inject('streams.stream') stream;
   @service router;
   @service store;
   @service globalConfig;
   @service currentUser;
-  
-  queryParams= [
-    {'queryParamsObj.page': 'page'},
-    {'queryParamsObj.perPage': 'perPage'},
-    {'queryParamsObj.query': 'query'}
+
+  queryParams = [
+    { 'queryParamsObj.page': 'page' },
+    { 'queryParamsObj.perPage': 'perPage' },
+    { 'queryParamsObj.query': 'query' },
   ];
 
   queryParamsObj = new QueryParamsObj();
-  
-  async defaultSetter(stream){
-    
+
+  async defaultSetter(stream) {
     stream.set('date', new Date());
 
-    
-    if(this.globalConfig.defchannel != null){
+    if (this.globalConfig.defchannel != null) {
       console.debug(this.globalConfig.defchannel);
       stream.set('channel', this.globalConfig.defchannel);
     }
-    
-    if(this.globalConfig.defbotclient != null){
-      var botclient = await this.store.peekRecord('client', this.globalConfig.defbotclient);
-      if(botclient){
+
+    if (this.globalConfig.defbotclient != null) {
+      var botclient = await this.store.peekRecord(
+        'client',
+        this.globalConfig.defbotclient
+      );
+      if (botclient) {
         console.debug(this.globalConfig.defbotclient);
         stream.set('botclient', botclient);
-        await botclient.save().then(()=>stream.save());
-      } 
+        await botclient.save().then(() => stream.save());
+      }
     }
-    
-    if(this.globalConfig.defchatclient != null){
-      var chatclient = await this.store.peekRecord('client', this.globalConfig.defchatclient);
-      if(chatclient){
+
+    if (this.globalConfig.defchatclient != null) {
+      var chatclient = await this.store.peekRecord(
+        'client',
+        this.globalConfig.defchatclient
+      );
+      if (chatclient) {
         console.debug(this.globalConfig.defchatclient);
         stream.set('chatclient', chatclient);
-        await chatclient.save().then(()=>stream.save());
-      }   
+        await chatclient.save().then(() => stream.save());
+      }
     }
-    
+
     this.router.transitionTo('streams.stream', stream);
   }
 
   @action createStream() {
     var newStream = this.store.createRecord('stream');
 
-    newStream.save().then((stream)=>{
+    newStream.save().then((stream) => {
       this.stream.isEditing = true;
       return this.defaultSetter(stream);
     });
@@ -67,12 +71,12 @@ export default class StreamsController extends Controller {
   @action gridResumeStream(stream) {
     this.stream.isEditing = false;
     this.router.transitionTo('streams.stream', stream);
-  } 
+  }
 
   @action gridEditStream(stream) {
     this.stream.isEditing = true;
     this.router.transitionTo('streams.stream', stream);
-  } 
+  }
 
   @action gridDeleteStream(stream) {
     stream.destroyRecord().then(() => {
@@ -80,5 +84,5 @@ export default class StreamsController extends Controller {
       this.stream.isEditing = false;
       this.currentUser.lastStream = null;
     });
-  } 
+  }
 }

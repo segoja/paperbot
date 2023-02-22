@@ -5,10 +5,10 @@ export default class ClientsRoute extends Route {
   @service store;
   @service currentUser;
 
-  model () {
+  model() {
     return this.store.findAll('client');
   }
-  afterModel(){
+  afterModel() {
     this.currentUser.isViewing = false;
   }
 }

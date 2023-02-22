@@ -1,21 +1,21 @@
 import Route from '@ember/routing/route';
-import { action } from "@ember/object";
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default class SongRoute extends Route {
   @service store;
   @service currentUser;
-  
-  model (params) {
-    return this.store.findRecord('song', params.song_id);   
+
+  model(params) {
+    return this.store.findRecord('song', params.song_id);
   }
-    
-  beforeModel(){
+
+  beforeModel() {
     this.currentUser.isViewing = true;
-    // this.controllerFor('songs.song').slsong = null;    
+    // this.controllerFor('songs.song').slsong = null;
   }
- 
-  afterModel(model, transition){
+
+  afterModel(model, transition) {
     /* if(model.remoteid){
       this.store.findRecord('slsong', model.remoteid).then(async (data)=>{
         console.debug("Song found in the remote server!");
@@ -41,9 +41,9 @@ export default class SongRoute extends Route {
         console.debug("Can't reach the remote server! uh oh..");
       });
     } */
-  } 
-    
-  @action willTransition(){
+  }
+
+  @action willTransition() {
     this.currentUser.isViewing = false;
   }
 }

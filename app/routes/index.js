@@ -7,10 +7,10 @@ export default class IndexRoute extends Route {
   @service router;
   @service currentUser;
 
-  beforeModel() {   
-    if(this.currentUser.isTauri){
+  beforeModel() {
+    if (this.currentUser.isTauri) {
       let currentWindow = getCurrent();
-      switch(currentWindow.label) {
+      switch (currentWindow.label) {
         case 'reader':
           this.router.transitionTo('reader');
           break;
@@ -23,5 +23,5 @@ export default class IndexRoute extends Route {
     } else {
       this.router.transitionTo('streams.index');
     }
-  } 
+  }
 }

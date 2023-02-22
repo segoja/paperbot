@@ -6,10 +6,10 @@ export default class GlobalConfigService extends Service {
   @tracked showFirstRun = true;
   // Tooltip hide delay
   @tracked ttdelay = 1000;
-  
-  get defbotclient(){
-    if(this.config != ''){
-      if(this.config.get('defbotclient.id')){
+
+  get defbotclient() {
+    if (this.config != '') {
+      if (this.config.get('defbotclient.id')) {
         return this.config.get('defbotclient.id');
       } else {
         return null;
@@ -19,9 +19,9 @@ export default class GlobalConfigService extends Service {
     }
   }
 
-  get defchatclient(){
-    if(this.config != ''){
-      if(this.config.get('defchatclient.id')){
+  get defchatclient() {
+    if (this.config != '') {
+      if (this.config.get('defchatclient.id')) {
         return this.config.get('defchatclient.id');
       } else {
         return null;
@@ -30,18 +30,16 @@ export default class GlobalConfigService extends Service {
       return null;
     }
   }
-  
-  get defchannel(){
-    if(this.config != undefined){
-      if(this.config.defchannel != undefined){
-        return this.config.defchannel;        
+
+  get defchannel() {
+    if (this.config != undefined) {
+      if (this.config.defchannel != undefined) {
+        return this.config.defchannel;
       } else {
-        return null
+        return null;
       }
     } else {
       return null;
     }
   }
 }
-
-

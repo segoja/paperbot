@@ -36,10 +36,10 @@ module.exports = function (environment) {
       // when it is created
     },
   };
-  
+
   ENV.local_couch = 'paperbot';
   ENV.authAdapter = 'application';
-  
+
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
@@ -47,7 +47,7 @@ module.exports = function (environment) {
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
   }
-    
+
   if (environment === 'test') {
     // Testem prefers this...
     ENV.locationType = 'none';
@@ -64,12 +64,15 @@ module.exports = function (environment) {
     // ENV.rootURL = '/';
     // ENV.remote_couch = 'https://my.couchcluster.com/bloggr';
   }
-  
-  if ( ENV.remote_couch ) {
+
+  if (ENV.remote_couch) {
     // @TODO document why `contentSecurityPolicy` is needed, as it does not appear used anywhere else
-    var remote_couch_hostname = ENV.remote_couch.substring(0, ENV.remote_couch.indexOf('/', 9))
+    var remote_couch_hostname = ENV.remote_couch.substring(
+      0,
+      ENV.remote_couch.indexOf('/', 9)
+    );
     ENV.contentSecurityPolicy = {
-      'connect-src': "'self' " + remote_couch_hostname
+      'connect-src': "'self' " + remote_couch_hostname,
     };
   }
 

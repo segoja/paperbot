@@ -13,8 +13,9 @@
 # misc
 /coverage/
 !.*
+.*/
 .eslintcache
-.lint-todo/
+/src-tauri/
 
 # ember-try
 /.node_modules.ember-try/

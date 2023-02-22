@@ -5,11 +5,11 @@ export default class SongsRoute extends Route {
   @service store;
   @service currentUser;
 
-  model () {
+  model() {
     return this.store.findAll('song');
   }
-    
-  afterModel(){
+
+  afterModel() {
     this.currentUser.isViewing = false;
-  }  
+  }
 }

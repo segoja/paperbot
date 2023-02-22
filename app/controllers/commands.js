@@ -1,6 +1,6 @@
 import Controller, { inject } from '@ember/controller';
 import { tracked } from '@glimmer/tracking';
-import { action } from "@ember/object";
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 class QueryParamsObj {
@@ -11,31 +11,31 @@ class QueryParamsObj {
 }
 
 export default class CommandsController extends Controller {
-  @inject ('commands.command') command;
+  @inject('commands.command') command;
   @service router;
   @service audio;
   @service store;
   @service currentUser;
 
-  queryParams= [
-    {'queryParamsObj.page': 'page'},
-    {'queryParamsObj.perPage': 'perPage'},
-    {'queryParamsObj.query': 'query'},
-    {'queryParamsObj.type': 'type'}
+  queryParams = [
+    { 'queryParamsObj.page': 'page' },
+    { 'queryParamsObj.perPage': 'perPage' },
+    { 'queryParamsObj.query': 'query' },
+    { 'queryParamsObj.type': 'type' },
   ];
-  
+
   queryParamsObj = new QueryParamsObj();
 
-  @tracked commandTypes = ['simple','parameterized','audio'];
+  @tracked commandTypes = ['simple', 'parameterized', 'audio'];
 
   @action createCommand() {
     let newCommand = this.store.createRecord('command');
-    newCommand.save().then(()=>{
+    newCommand.save().then(() => {
       this.router.transitionTo('commands.command', newCommand);
     });
   }
-  
-  @action importCommands(command){
+
+  @action importCommands(command) {
     let newCommand = this.store.createRecord('command');
     newCommand.set('name', command.name);
     newCommand.set('type', command.type);
@@ -45,35 +45,35 @@ export default class CommandsController extends Controller {
     newCommand.set('response', command.response);
     newCommand.set('soundfile', command.soundfile);
     newCommand.set('volume', command.volume);
-    
+
     newCommand.save();
   }
-  
+
   @action gridEditCommand(command) {
     this.router.transitionTo('commands.command', command);
-  } 
+  }
 
   @action gridActiveCommand(command) {
     command.active = !command.active;
     command.save();
-    if(command.type === 'audio'){
-      if (command.active){     
-        this.audio.loadSound(command);          
+    if (command.type === 'audio') {
+      if (command.active) {
+        this.audio.loadSound(command);
       } else {
         this.audio.removeFromRegister(command.id);
       }
     }
-  } 
+  }
 
   @action gridDeleteCommand(command) {
-    if(command.type === 'audio'){
-      if (command.active){
+    if (command.type === 'audio') {
+      if (command.active) {
         this.audio.removeFromRegister(command.id);
       }
-    }   
-    
+    }
+
     command.destroyRecord().then(() => {
       this.currentUser.isViewing = false;
     });
-  }  
+  }
 }

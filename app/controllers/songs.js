@@ -1,49 +1,49 @@
 import Controller, { inject } from '@ember/controller';
 import { tracked } from '@glimmer/tracking';
-import { action } from "@ember/object";
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import moment from 'moment';
 
 class QueryParamsObj {
   @tracked page = 1;
-  @tracked perPage = 15;  
+  @tracked perPage = 15;
   @tracked query = '';
   @tracked type = '';
 }
 
 export default class SongsController extends Controller {
-  @inject ('songs.song') song;
+  @inject('songs.song') song;
   @service audio;
   @service store;
   @service router;
   @service currentUser;
-  
-  queryParams= [
-    {'queryParamsObj.page': 'page'},
-    {'queryParamsObj.perPage': 'perPage'},
-    {'queryParamsObj.query': 'query'},
-    {'queryParamsObj.type': 'type'}
+
+  queryParams = [
+    { 'queryParamsObj.page': 'page' },
+    { 'queryParamsObj.perPage': 'perPage' },
+    { 'queryParamsObj.query': 'query' },
+    { 'queryParamsObj.type': 'type' },
   ];
-  
+
   queryParamsObj = new QueryParamsObj();
 
-  @tracked songTypes = ['original','cover'];
+  @tracked songTypes = ['original', 'cover'];
 
   @action createSong() {
     let newSong = this.store.createRecord('song');
     newSong.set('date_added', moment().format());
-    newSong.save().then(()=>{
-      this.router.transitionTo('songs.song', newSong);      
+    newSong.save().then(() => {
+      this.router.transitionTo('songs.song', newSong);
     });
   }
-  
-  @action importSongs(song){
-    let newSong = this.store.createRecord('song');    
+
+  @action importSongs(song) {
+    let newSong = this.store.createRecord('song');
     newSong.set('title', song.title);
     newSong.set('artist', song.artist);
     newSong.set('lyrics', song.lyrics);
     newSong.set('type', song.type);
-    newSong.set('account', song.account);    
+    newSong.set('account', song.account);
     newSong.set('active', song.active);
     newSong.set('admin', song.admin);
     newSong.set('mod', song.mod);
@@ -55,28 +55,28 @@ export default class SongsController extends Controller {
     newSong.set('times_played', song.times_played);
     newSong.save();
   }
-  
+
   @action gridEditSong(song) {
     this.router.transitionTo('songs.song', song);
-  } 
+  }
 
   @action gridActiveSong(song) {
     song.active = !song.active;
     song.save();
-  } 
+  }
 
   @action gridDeleteSong(song) {
     let requestList = [];
-    song.requests.forEach((request)=> requestList.push(request));    
+    song.requests.forEach((request) => requestList.push(request));
     song.destroyRecord().then(() => {
-      if(requestList.length > 0){  
+      if (requestList.length > 0) {
         requestList.map((request) => request.destroyRecord());
       }
       this.currentUser.isViewing = false;
     });
   }
-  
-  @action udpdateRest(){
+
+  @action udpdateRest() {
     /* fetch('http://paper.bot', {mode: 'no-cors', method: 'POST'}).then(async (response) => {
       console.debug("Server is online");
       if(this.model.get('leght') != 0){

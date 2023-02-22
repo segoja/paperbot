@@ -7,8 +7,5 @@ export default class lightSwitchComponent extends Component {
   @service globalConfig;
   @service lightControl;
 
-  
-  @action toggleLight(){
-    
-  }
+  @action toggleLight() {}
 }
