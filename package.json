@@ -7,8 +7,7 @@
   "license": "MIT",
   "author": "segoja",
   "directories": {
-    "doc": "doc",
-    "test": "tests"
+    "doc": "doc"
   },
   "scripts": {
     "build": "ember build --environment=production",
