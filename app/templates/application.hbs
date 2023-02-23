@@ -1,7 +1,7 @@
 ﻿<HeadLayout />
 {{#if this.currentUser.hideMenu}}
   {{#unless this.isOverlay}}
-    <header role="button" class="m-0 p-0">
+    <header class="m-0 p-0" id="headerA" aria-label="overlay only header">
       <BsNavbar
         @type="dark"
         class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
@@ -17,13 +17,13 @@
           <div class="navbar-header row col-md-auto col g-0">
             <div class="col-auto">
               <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 m-0 d-none" />
-              <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 ps-2 dragger" {{on "mousedown" this.dragWindow}}>
+              <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 ps-2 dragger" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
                 {{svg-jar "papercat-gray-icon" class="logo" }}
                 <span class="d-none d-sm-inline-block pe-3">Paperbot Reader</span> 
               </button>{{this.loadConfig}}
             </div>
             <div class="col d-md-none d-flex dragger">
-              <div role="button" class="nav-link pt-3 pb-2 w-100" {{on "mousedown" this.dragWindow}}></div>
+              <button type="button" class="nav-link pt-3 pb-2 w-100 bg-transparent border-0" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}></button>
             </div>
             <div class="btn-group btn-group-sm col-auto d-md-none">
               {{#if this.isMain}}
@@ -52,7 +52,7 @@
           <navbar.content class="px-md-0 px-3">
             <navbar.nav class="col" as |nav|>
               <nav.item class="col-md d-md-flex d-none dragger">
-                <div role="button" class="nav-link w-100 pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
+                <button type="button" class="nav-link w-100 pt-3 pb-2 bg-dark border-0" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}></button>
               </nav.item> 
             </navbar.nav>
           </navbar.content>
@@ -85,7 +85,7 @@
     </header>
   {{/unless}}
 {{else}}
-  <header role="button" class="m-0 p-0 ">
+  <header class="m-0 p-0" id="headerB" aria-label="regular header">
     <BsNavbar
       @type="dark"
       class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
@@ -101,13 +101,13 @@
         <div class="navbar-header row col-md-auto col g-0">
           <div class="col-auto">
             <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 m-0 ps-2" />
-            <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 dragger" {{on "mousedown" this.dragWindow}}>
+            <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 dragger" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
               {{svg-jar "papercat-gray-icon" class="logo" }}
               <span class="d-none d-sm-inline-block pe-3">Paperbot</span> 
             </button>{{this.loadConfig}}
           </div>
           <div class="col d-md-none d-flex dragger">
-            <div role="button" class="nav-link pt-3 pb-2 w-100" {{on "mousedown" this.dragWindow}}></div>
+            <button type="button" class="nav-link pt-3 pb-2 w-100 bg-transparent border-0" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}></button>
           </div>
           <div class="btn-group btn-group-sm col-auto d-md-none">          
             {{#if this.currentUser.isTauri}}
@@ -166,7 +166,7 @@
               <PbFirstRun />
             </nav.item>
             <nav.item class="col-md d-md-flex d-none dragger">
-              <div role="button" class="nav-link w-100 pt-3 pb-2" {{on "mousedown" this.dragWindow}}></div>
+              <button type="button" class="nav-link w-100 pt-3 pb-2 bg-transparent border-0" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}></button>
             </nav.item> 
           </navbar.nav>
         </navbar.content>
@@ -206,14 +206,14 @@
   <style>
     .chroma { background-color: {{this.globalConfig.config.chromaColor}}!important; }
   </style>
-  <main role="button" class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" {{on "mousedown" this.dragWindow}} title="Press alt+F4 if you want to close this window." >
-    <BsTooltip @delayHide="0">
+  <main class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} title="Press alt+F4 if you want to close this window." id="mainA" role="button">
+    <BsTooltip @delayHide="0" role="presentation">
       Press alt+F4 if you want to close this window.
     </BsTooltip>
     {{outlet}}
   </main>
 {{else}}
-  <main class="container-fluid pt-custom px-0 alert-secondary border border-secondary border-1">
+  <main class="container-fluid pt-custom px-0 alert-secondary border border-secondary border-1" id="mainB">
     {{outlet}}
   </main>
 {{/if}}

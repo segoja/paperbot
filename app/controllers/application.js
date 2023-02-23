@@ -741,11 +741,17 @@ export default class ApplicationController extends Controller {
     }
   }
 
-  @action dragWindow() {
+  @action dragWindow(event) {
+    event.preventDefault();
+    // console.log(event);
     if (this.currentUser.isTauri) {
       let currentWindow = getCurrent();
-      currentWindow.startDragging();
+      appWindow.startDragging();
     }
+  }
+
+  @action dropWindow(event) {
+    event.preventDefault();
   }
 
   @action logout() {
