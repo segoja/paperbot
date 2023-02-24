@@ -92,21 +92,21 @@
         </div>
       </div>
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
-        <EmberDragula class="row flex-fill d-flex h-100 mx-0 px-0 overflow-hidden" @options={{hash moves=this.moves}} as |d|>
-          <div role="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanLeft}}>
+        <Dragula class="row flex-fill d-flex h-100 mx-0 px-0 overflow-hidden" @options={{hash moves=this.moves}} as |Container|>
+          <button type="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanLeft}}>
             <span class="d-block align-self-center"><FaIcon @icon={{if this.globalConfig.config.extraPanLeft "grip-lines-vertical" "ellipsis-v"}} /></span>
-          </div>
+          </button>
          <div class="{{if this.globalConfig.config.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
           <div class="{{if this.globalConfig.config.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
               <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.extraPanLeftTop (if this.globalConfig.config.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
-                <d.Container class="col h-100 border m-0 p-0">
+                <Container class="col h-100 border m-0 p-0">
                    <PbStreamEditEvents @stream={{@stream}} />
-                </d.Container>
+                </Container>
               </div>          
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanLeftBottom (if this.globalConfig.config.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
-              <d.Container class="col h-100 border m-0 p-0">
+              <Container class="col h-100 border m-0 p-0">
                 <PbStreamEditChat @stream={{@stream}} />
-              </d.Container>
+              </Container>
             </div>
           </div>
           {{#if this.requests}}
@@ -117,21 +117,20 @@
           {{/if}}
           <div class="{{if this.requests (if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightTop (if this.globalConfig.config.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
-              <d.Container class="col h-100 m-0 p-0"> 
+              <Container class="col h-100 m-0 p-0"> 
                 <PbStreamEditPending @requests={{this.requests}} />
-              </d.Container>
+              </Container>
             </div>
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightBottom (if this.globalConfig.config.extraPanRightTop "h-50" "h-100") "d-none"}} border">
-              <d.Container class="col h-100 m-0 p-0"> 
+              <Container class="col h-100 m-0 p-0"> 
                 <PbStreamEditPlayed @requests={{this.requests}} />
-              </d.Container>        
+              </Container>        
             </div>
           </div>
-        </EmberDragula>
-        <div role="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanRight}}>
+        </Dragula>
+        <button type="button" class="h-100 d-flex border alert-secondary col-auto px-0" {{on "click" this.toggleExtraPanRight}}>
           <span class="d-block align-self-center"><FaIcon @icon={{if this.globalConfig.config.extraPanRight "grip-lines-vertical" "ellipsis-v"}} /></span>
-        </div>
-
+        </button>
       </div>
       <div class="card-body p-0 m-0 pan-buttons-row">
         <div class="row p-0 m-0">

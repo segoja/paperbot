@@ -1,7 +1,7 @@
 ﻿<HeadLayout />
 {{#if this.currentUser.hideMenu}}
   {{#unless this.isOverlay}}
-    <header class="m-0 p-0" id="headerA" aria-label="overlay only header">
+    <header class="m-0 p-0" id="headerA" aria-label="overlay only header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
       <BsNavbar
         @type="dark"
         class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
@@ -13,17 +13,16 @@
         @onCollapse={{fn (mut this.collapsed) true}}
         @container="none container-fluid px-0 ps-2"
         @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
-
           <div class="navbar-header row col-md-auto col g-0">
             <div class="col-auto">
               <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 m-0 d-none" />
-              <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 ps-2 dragger" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
+              <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 ps-2">
                 {{svg-jar "papercat-gray-icon" class="logo" }}
                 <span class="d-none d-sm-inline-block pe-3">Paperbot Reader</span> 
               </button>{{this.loadConfig}}
             </div>
-            <div class="col d-md-none d-flex dragger">
-              <button type="button" class="nav-link pt-3 pb-2 w-100 bg-transparent border-0" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}></button>
+            <div class="col d-md-none d-flex">
+              <button type="button" class="nav-link pt-3 pb-2 w-100 bg-transparent border-0"></button>
             </div>
             <div class="btn-group btn-group-sm col-auto d-md-none">
               {{#if this.isMain}}
@@ -51,8 +50,8 @@
           </div>
           <navbar.content class="px-md-0 px-3">
             <navbar.nav class="col" as |nav|>
-              <nav.item class="col-md d-md-flex d-none dragger">
-                <button type="button" class="nav-link w-100 pt-3 pb-2 bg-dark border-0" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}></button>
+              <nav.item class="col-md d-md-flex d-none">
+                <button type="button" class="nav-link w-100 pt-3 pb-2 bg-dark border-0"></button>
               </nav.item> 
             </navbar.nav>
           </navbar.content>
@@ -85,7 +84,7 @@
     </header>
   {{/unless}}
 {{else}}
-  <header class="m-0 p-0" id="headerB" aria-label="regular header">
+  <header class="m-0 p-0" id="headerB" aria-label="regular header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
     <BsNavbar
       @type="dark"
       class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
@@ -101,13 +100,13 @@
         <div class="navbar-header row col-md-auto col g-0">
           <div class="col-auto">
             <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 m-0 ps-2" />
-            <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2 dragger" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
+            <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0 ps-md-2">
               {{svg-jar "papercat-gray-icon" class="logo" }}
               <span class="d-none d-sm-inline-block pe-3">Paperbot</span> 
             </button>{{this.loadConfig}}
           </div>
-          <div class="col d-md-none d-flex dragger">
-            <button type="button" class="nav-link pt-3 pb-2 w-100 bg-transparent border-0" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}></button>
+          <div class="col d-md-none d-flex">
+            <button type="button" class="nav-link pt-3 pb-2 w-100 bg-transparent border-0"></button>
           </div>
           <div class="btn-group btn-group-sm col-auto d-md-none">          
             {{#if this.currentUser.isTauri}}
@@ -165,8 +164,8 @@
             <nav.item>
               <PbFirstRun />
             </nav.item>
-            <nav.item class="col-md d-md-flex d-none dragger">
-              <button type="button" class="nav-link w-100 pt-3 pb-2 bg-transparent border-0" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}></button>
+            <nav.item class="col-md d-md-flex d-none">
+              <button type="button" class="nav-link w-100 pt-3 pb-2 bg-transparent border-0"></button>
             </nav.item> 
           </navbar.nav>
         </navbar.content>

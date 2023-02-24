@@ -21,25 +21,27 @@
                 <div class="col-auto align-middle px-3 pt-2 rounded-0 handle" {{sortable-handle}}>
                   <FaIcon @icon="grip-vertical" @size="1x" class="d-block" />
                   <FaIcon @icon="grip-vertical" @size="1x" class="d-block" />
-                </div>              
-                <div class="col ps-2" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}} role="button">
-                  <div class="row g-0">
-                    <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
-                    <div class="col-auto">
-                      <small class="pe-1">{{pendingsong.user}}</small>
-                    </div>                    
-                    <div class="col-auto">
-                      <button type="button" class="btn btn-sm handle" {{on "click" (fn this.queueHandler.removePending pendingsong)}}>
-                        <FaIcon @icon="times" @size="1x" class="d-block" />
-                      </button>              
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.fullText}}</div>
-                    </div>
-                  </div>
                 </div>
+                <button type="button" class="col border-0 text-start text-reset bg-transparent text-decoration-none" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}}>
+                  <div class="col ps-2">
+                    <div class="row g-0">
+                      <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
+                      <div class="col-auto">
+                        <small class="pe-1">{{pendingsong.user}}</small>
+                      </div>                    
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <div class="alert-heading h6 {{if pendingsong.processed "processed"}}">{{pendingsong.fullText}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+                <div class="col-auto">
+                  <button type="button" class="btn btn-sm handle" {{on "click" (fn this.queueHandler.removePending pendingsong)}}>
+                    <FaIcon @icon="times" @size="1x" class="d-block" />
+                  </button>              
+                </div>                
               </div> 
             {{/each}}
           </div>

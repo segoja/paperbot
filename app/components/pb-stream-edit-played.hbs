@@ -12,18 +12,20 @@
         {{#unless this.globalConfig.config.cpanplayed}}
           <div class="col-md queueframe" {{scroll-position position=this.queueHandler.scrollPlayedPosition relative=true}}>
             {{#each this.queueHandler.playedSongs as |playedsong|}}
-              <div id={{playedsong.id}} role="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} class="alert alert-secondary w-100 text-decoration-none py-0 ps-2 pe-0 my-1">
-                <div class="row g-0">
-                  <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
-                  <div class="col-auto"><small class="pe-2">{{playedsong.user}}</small></div>
-                  <div class="col-auto">
-                    <button type="button" class="btn btn-sm handle" {{on "click" (fn this.queueHandler.removePlayed playedsong)}}>
-                      <FaIcon @icon="times" @size="1x" class="d-block" />
-                    </button>              
+              <div id={{playedsong.id}} class="alert alert-secondary w-100 text-decoration-none py-0 ps-2 pe-0 my-1 text-start row g-0">
+                <button class="col border-0 text-start text-reset bg-transparent text-decoration-none" type="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} >
+                  <div class="row g-0" role="presentation">
+                    <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
+                    <div class="col-auto"><small class="pe-2">{{playedsong.user}}</small></div>
                   </div>
-                </div>
-                <div class="row g-0">
-                  <div class="col alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.fullText}}</div>
+                  <div class="row g-0">
+                    <div class="col alert-heading h6 {{if playedsong.processed "processed"}}">{{playedsong.fullText}}</div>
+                  </div>
+                </button>
+                <div class="col-auto">
+                  <button type="button" class="btn btn-sm handle" {{on "click" (fn this.queueHandler.removePlayed playedsong)}}>
+                    <FaIcon @icon="times" @size="1x" class="d-block" />
+                  </button>                  
                 </div>
               </div>
             {{/each}}
