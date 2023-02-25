@@ -49,7 +49,11 @@ export default class ApplicationAdapter extends Adapter {
     // this.olddb = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
 
     //this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true });
-    this.db = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
+    this.db = new PouchDB('paperbot', {
+      adapter: 'idb',
+      attachments: true,
+      live: true,
+    });
     this.isRetrying = false;
     this.retryDelay = 0;
     /*

@@ -3,7 +3,7 @@
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
-  let config = process.env.EMBER_ENV || 'development';
+  // let config = process.env.EMBER_ENV || 'development';
   let app = new EmberApp(defaults, {
     // Add options here
     outputPaths: {

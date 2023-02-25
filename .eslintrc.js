@@ -19,7 +19,9 @@ module.exports = {
   env: {
     browser: true,
   },
-  rules: {},
+  rules: {
+    'ember/no-computed-properties-in-native-classes': 0,
+  },
   overrides: [
     // node files
     {

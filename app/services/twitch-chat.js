@@ -3,7 +3,6 @@ import { tracked } from '@glimmer/tracking';
 import { htmlSafe } from '@ember/template';
 import { action } from '@ember/object';
 import { assign } from '@ember/polyfills';
-import { sort } from '@ember/object/computed';
 import moment from 'moment';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import tmi from 'tmi.js';
@@ -422,8 +421,9 @@ export default class TwitchChatService extends Service {
     }
   }
 
-  songsSorting = Object.freeze(['date_added:asc']);
-  @sort('songs', 'songsSorting') arrangedSongs;
+  get arrangedSongs() {
+    return this.songs.sortBy('date_added');
+  }
 
   @tracked requestpattern = '';
   @computedFilterByQuery(
