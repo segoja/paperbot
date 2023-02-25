@@ -33,9 +33,7 @@
               {{/if}}
               <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered commands?" @targetAction={{this.wipeCommands}} />
               {{#let (file-queue name="uploadfile" onFileAdded=this.commandImport) as |queue|}}
-                <button type="button" class="btn btn-secondary" title="Import commands by CSV">
-                  <label for="upload-csv" role="button">Import</label>
-                </button>  
+                <label role="button" for="upload-csv" class="btn btn-secondary" title="Import commands by CSV">Import</label>  
                 <input
                   type="file"
                   id="upload-csv"
@@ -77,8 +75,8 @@
                         </small>
                          <label>
                           <span role="button">
-                            <FaIcon @icon="eye" class="text-info" />
-                            <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>{{command.response}}</BsTooltip>
+                            <FaIcon @icon="eye" class="text-info" role="presentation" />
+                            <BsTooltip @delayHide={{this.globalConfig.ttdelay}} role="presentation">{{command.response}}</BsTooltip>
                           </span>
                         </label>
                       {{/if}}

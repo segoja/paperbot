@@ -24,9 +24,7 @@
               <div class="d-block float-end">
                 <PbSongImport @songTypes={{@songTypes}} />
                 {{#let (file-queue name="uploadSongsCSV" onFileAdded=this.songImport) as |queue|}}
-                  <button type="button" class="btn btn-secondary" title="Import songs by CSV">
-                    <label for="upload-csv" role="button">Import</label>
-                  </button>  
+                  <label role="button" for="upload-csv" class="btn btn-secondary" title="Import songs by CSV">Import</label>
                   <input
                     type="file"
                     id="upload-csv"

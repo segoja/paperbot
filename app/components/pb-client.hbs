@@ -12,20 +12,20 @@
       <form.element @controlType="text" @label="Username" placeholder="Username" class="pb-2" @property="username" required />  
       
       <div class="form-group row pb-2">
-        <label class="col-md-4 col-form-label">
-          Oauth
-          <span role="button">
-            <FaIcon @icon="question-circle" class="text-info" />
-            <BsPopover @triggerEvents="click" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-              <div role="button" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}} {{on "click" po.close}}>
-                <p class="my-0">Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer">Here</a></p>
-              </div>
-            </BsPopover>
+        <div class="col-md-4 col-form-label">
+          <label class="control-label">Oauth</label>
+          <span role="button" id="twitch-oauth-info">
+            <FaIcon @icon="question-circle" class="text-info" role="presentation" />
           </span>
-        </label>
+          <BsPopover @triggerEvents="click" @triggerElement="#twitch-oauth-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+            <div role="dialog" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+              <p class="my-0">Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Here</a></p>
+            </div>
+          </BsPopover>
+        </div>
         <div class="col-md-8">
           <div class="input-group">
-            <Input @type={{if this.isMasked "password" "text"}} @value={{@client.oauth}} class="form-control" placeholder="Paste your Oauth here including Oauth: "/>          
+            <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{@client.oauth}} class="form-control" placeholder="Paste your Oauth here including Oauth: "/>          
             <div class="input-group-append">
               <button type="button" class="btn btn-outline-secondary border-form-control" {{on "click" this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></button>        
             </div>

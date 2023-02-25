@@ -14,17 +14,17 @@
           <form.element @controlType="text" @label="Default channel (name)" class="pb-2" placeholder="Default channel name" @property="defchannel" required />
           
           <div class="row pb-2">
-            <label class="control-label col-form-label col-md-4">
-              External event tracking
-              <span role="button">
-                <FaIcon @icon="question-circle" class="text-info" />
-                <BsPopover @triggerEvents="click" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-                  <div role="button" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}} {{on "click" po.close}}>
-                    <p class="my-0">Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer">Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer">StreamElements</a></p>
-                  </div>
-                </BsPopover>
+            <div class="col-form-label col-md-4">
+              <label class="control-label" >External event tracking</label>
+              <span role="button" id="external-api-info">
+                <FaIcon @icon="question-circle" class="text-info" role="presentation" />
               </span>
-            </label>
+              <BsPopover @triggerEvents="click" @triggerElement="#external-api-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+                <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+                  <p class="my-0">Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>StreamElements</a></p>
+                </div>
+              </BsPopover>
+            </div>
             <div class="col-md-8 border-light">
               <div class="row input-group g-0">
                 <form.element @controlType="password" @label="" placeholder="Default channel name" @formLayout="inline" @property="externaleventskey" class="col rounded-0 rounded-start" />
@@ -36,17 +36,17 @@
           </div>
 
           <div class="row pb-2">
-            <label class="control-label col-form-label col-md-4">
-              Default Bot client 
-              <span role="button">
-                <FaIcon @icon="question-circle" class="text-info" />
-                <BsPopover @triggerEvents="click" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-                  <div role="button" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}} {{on "click" po.close}}>
-                    <p class="my-0">To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></p>
-                  </div>
-                </BsPopover>
+            <div class="col-form-label col-md-4">
+              <label class="control-label">Default Bot client</label>
+              <span role="button" id="clients-info">
+                <FaIcon @icon="question-circle" class="text-info" role="presentation" />
               </span>
-            </label>
+              <BsPopover @triggerEvents="click" @triggerElement="#clients-info"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+                <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+                  <p class="my-0">To set a client you need to add clients <LinkTo @route="clients.index" {{on "click" po.close}}>here</LinkTo></p>
+                </div>
+              </BsPopover>
+            </div>
               <form.element @controlType="power-select" @property="defbotclient" @onChange={{this.setdefBot}} @formLayout="inline" class="col-md-8 border-light" @invisibleLabel={{true}} @options={{@clients}} required as |client|>
                 <client.control @allowClear={{true}} @placeholder="Select the default Bot Client for new streams" as |option|>
                   {{option.username}}
@@ -87,9 +87,10 @@
                 <div class="form-group row pb-2">
                   <div class="col"> 
                     <div class="input-group form-row">
-                      <div role="button" class="input-group-text rounded rounded-0 rounded-start  col-auto btn btn-secondary">Pick Chroma Color
-                        <BsTooltip class="d-inline colorpicker" @triggerEvents="click" as |tt|>
+                      <div role="button" class="input-group-text rounded rounded-0 rounded-start col-auto btn btn-secondary">Pick Chroma Color
+                        <BsTooltip class="d-inline colorpicker" @triggerEvents="click" role="presentation" as |tt|>
                           <Picker
+                            role="presentation"
                             @color={{this.globalConfig.config.chromaColor}}
                             @onDone={{fn this.changeColor tt.close}}
                             @onClose={{fn this.changeColor tt.close}}
@@ -112,9 +113,10 @@
                 <div class="form-group row pb-2">
                   <div class="col"> 
                     <div class="input-group form-row">
-                      <div role="button" class="input-group-text rounded rounded-0 rounded-start  col-auto btn btn-secondary">Pick Chroma Color
-                        <BsTooltip class="d-inline colorpicker" @triggerEvents="click" as |tt|>
+                      <div role="button" class="input-group-text rounded rounded-0 rounded-start col-auto btn btn-secondary">Pick Chroma Color
+                        <BsTooltip class="d-inline colorpicker" @triggerEvents="click" role="presentation" as |tt|>
                           <Picker
+                            role="presentation"
                             @color={{this.globalConfig.config.chromaColor}}
                             @onDone={{fn this.changeColor tt.close}}
                             @onClose={{fn this.changeColor tt.close}}
@@ -246,13 +248,11 @@
           
         </BsForm>
       </Modal.body>
-      <Modal.footer class="py-2 row g-0" as |footer|>
+      <Modal.footer class="py-2 row g-0">
         <div class="col">
           <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}}>Export Database</button>
           {{#let (file-queue name="uploadfile" onFileAdded=@handleImport) as |queue|}}
-            <button type="button" class="btn btn-sm btn-secondary">
-              <label for="upload-backup" role="button">Import Database</label>
-            </button>  
+            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary">Import Database</label>  
             <input
               type="file"
               id="upload-backup"

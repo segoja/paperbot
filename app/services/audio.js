@@ -10,6 +10,7 @@ import { later } from '@ember/runloop';
 
 export default class AudioService extends Service {
   @service globalConfig;
+  @service currentUser;
   /**
    * This acts as a register for Sound instances. Sound instances are placed in
    * the register by id, and can be called via audioService.getSound('id')
@@ -35,90 +36,98 @@ export default class AudioService extends Service {
   }
 
   async loadPreview(src) {
-    await invoke('binary_loader', { filepath: src })
-      .then(async (response) => {
-        // converted the arraybuffer to a arraybufferview
-        let extension = src.split(/[#?]/)[0].split('.').pop().trim();
-        var arrayBufferView = new Uint8Array(await response);
-        // create a blob from this
-        var blob = new Blob([arrayBufferView], {
-          type: 'data:audio/' + extension,
-        });
-        // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
-        var howlSource = URL.createObjectURL(blob);
-        //console.log(howlSource);
+    if (this.currentUser.isTauri) {
+      await invoke('binary_loader', { filepath: src })
+        .then(async (response) => {
+          // converted the arraybuffer to a arraybufferview
+          let extension = src.split(/[#?]/)[0].split('.').pop().trim();
+          var arrayBufferView = new Uint8Array(await response);
+          // create a blob from this
+          var blob = new Blob([arrayBufferView], {
+            type: 'data:audio/' + extension,
+          });
+          // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
+          var howlSource = URL.createObjectURL(blob);
+          //console.log(howlSource);
 
-        if (this.preview) {
-          this.preview.unload();
-          console.log('Unloading previous preview, replacing...');
-        }
+          if (this.preview) {
+            this.preview.unload();
+            console.log('Unloading previous preview, replacing...');
+          }
 
-        // then inatialized the new howl as
-        this.preview = new Howl({
-          src: [howlSource],
-          html5: true,
-          format: [extension],
-          onload: function () {
-            console.log(src + ' loaded in the soundboard');
-          },
-          onloaderror: function () {
-            console.log('error loading ' + src + ' in the soundboard!');
-          },
+          // then inatialized the new howl as
+          this.preview = new Howl({
+            src: [howlSource],
+            html5: true,
+            format: [extension],
+            onload: function () {
+              console.log(src + ' loaded in the soundboard');
+            },
+            onloaderror: function () {
+              console.log('error loading ' + src + ' in the soundboard!');
+            },
+          });
+        })
+        .catch((binErr) => {
+          console.debug(src);
+          console.debug(binErr);
         });
-      })
-      .catch((binErr) => {
-        console.debug(src);
-        console.debug(binErr);
-      });
+    }
   }
 
   async loadSound(item) {
-    //if(this.sounds.get(command.name)){
-    await invoke('binary_loader', { filepath: item.soundfile })
-      .then(async (response) => {
-        // converted the arraybuffer to a arraybufferview
-        let extension = item.soundfile.split(/[#?]/)[0].split('.').pop().trim();
-        var arrayBufferView = new Uint8Array(await response);
-        // create a blob from this
-        var blob = new Blob([arrayBufferView], {
-          type: 'data:audio/' + extension,
+    if (this.currentUser.isTauri) {
+      //if(this.sounds.get(command.name)){
+      await invoke('binary_loader', { filepath: item.soundfile })
+        .then(async (response) => {
+          // converted the arraybuffer to a arraybufferview
+          let extension = item.soundfile
+            .split(/[#?]/)[0]
+            .split('.')
+            .pop()
+            .trim();
+          var arrayBufferView = new Uint8Array(await response);
+          // create a blob from this
+          var blob = new Blob([arrayBufferView], {
+            type: 'data:audio/' + extension,
+          });
+          // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
+          var howlSource = URL.createObjectURL(blob);
+          //console.log(howlSource);
+
+          let itExist = this.sounds.has(item.get('id'));
+          if (itExist) {
+            let oldsound = this.sounds.get(item.get('id'));
+            oldsound.unload();
+            this.sounds.delete(item.get('id'));
+            console.log('Sound ' + item.name + ' already exist, replacing...');
+          }
+
+          // then inatialized the new howl as
+          this.sounds.set(
+            item.get('id'),
+            new Howl({
+              src: [howlSource],
+              html5: true,
+              volume: item.volume ? item.volume / 100 : 1,
+              format: [extension],
+              onload: function () {
+                console.log(item.soundfile + ' loaded in the soundboard');
+              },
+              onloaderror: function () {
+                console.log(
+                  'error loading ' + item.soundfile + ' in the soundboard!'
+                );
+              },
+            })
+          );
+        })
+        .catch((binErr) => {
+          console.debug(item.soundfile);
+          console.debug(binErr);
         });
-        // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
-        var howlSource = URL.createObjectURL(blob);
-        //console.log(howlSource);
-
-        let itExist = this.sounds.has(item.get('id'));
-        if (itExist) {
-          let oldsound = this.sounds.get(item.get('id'));
-          oldsound.unload();
-          this.sounds.delete(item.get('id'));
-          console.log('Sound ' + item.name + ' already exist, replacing...');
-        }
-
-        // then inatialized the new howl as
-        this.sounds.set(
-          item.get('id'),
-          new Howl({
-            src: [howlSource],
-            html5: true,
-            volume: item.volume ? item.volume / 100 : 1,
-            format: [extension],
-            onload: function () {
-              console.log(item.soundfile + ' loaded in the soundboard');
-            },
-            onloaderror: function () {
-              console.log(
-                'error loading ' + item.soundfile + ' in the soundboard!'
-              );
-            },
-          })
-        );
-      })
-      .catch((binErr) => {
-        console.debug(item.soundfile);
-        console.debug(binErr);
-      });
-    //}
+      //}
+    }
   }
 
   /**
@@ -132,59 +141,61 @@ export default class AudioService extends Service {
    */
 
   async loadSounds(soundElements) {
-    await soundElements.map(async (item) => {
-      if (item.soundfile) {
-        let src = item.soundfile;
-        await invoke('binary_loader', { filepath: src })
-          .then(async (response) => {
-            // We get the file extension to use it for the type
-            let extension = src.split(/[#?]/)[0].split('.').pop().trim();
-            // converted the arraybuffer to a arraybufferview
-            let arrayBufferView = new Uint8Array(await response);
+    if (this.currentUser.isTauri) {
+      await soundElements.map(async (item) => {
+        if (item.soundfile) {
+          let src = item.soundfile;
+          await invoke('binary_loader', { filepath: src })
+            .then(async (response) => {
+              // We get the file extension to use it for the type
+              let extension = src.split(/[#?]/)[0].split('.').pop().trim();
+              // converted the arraybuffer to a arraybufferview
+              let arrayBufferView = new Uint8Array(await response);
 
-            // console.log(arrayBufferView);
-            // create a blob from this
-            let blob = new Blob([arrayBufferView], {
-              type: 'data:audio/' + extension,
-            });
-            // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
-            let howlSource = URL.createObjectURL(blob);
-            // console.log(howlSource);
+              // console.log(arrayBufferView);
+              // create a blob from this
+              let blob = new Blob([arrayBufferView], {
+                type: 'data:audio/' + extension,
+              });
+              // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
+              let howlSource = URL.createObjectURL(blob);
+              // console.log(howlSource);
 
-            let itExist = this.sounds.has(await item.get('id'));
-            if (itExist) {
-              let oldsound = this.sounds.get(await item.get('id'));
-              oldsound.unload();
-              this.sounds.delete(item.get('id'));
-              console.log(
-                'Sound ' + item.name + ' already exist, replacing...'
+              let itExist = this.sounds.has(await item.get('id'));
+              if (itExist) {
+                let oldsound = this.sounds.get(await item.get('id'));
+                oldsound.unload();
+                this.sounds.delete(item.get('id'));
+                console.log(
+                  'Sound ' + item.name + ' already exist, replacing...'
+                );
+              }
+
+              // then inatialize the new howl in the sound library
+              this.sounds.set(
+                await item.get('id'),
+                new Howl({
+                  src: [howlSource],
+                  html5: true,
+                  volume: item.volume ? item.volume / 100 : 1,
+                  format: [extension],
+                  onload: function () {
+                    console.log(src + ' loaded in the soundboard');
+                  },
+                  onloaderror: function () {
+                    console.log('error loading ' + src + ' in the soundboard!');
+                  },
+                })
               );
-            }
-
-            // then inatialize the new howl in the sound library
-            this.sounds.set(
-              await item.get('id'),
-              new Howl({
-                src: [howlSource],
-                html5: true,
-                volume: item.volume ? item.volume / 100 : 1,
-                format: [extension],
-                onload: function () {
-                  console.log(src + ' loaded in the soundboard');
-                },
-                onloaderror: function () {
-                  console.log('error loading ' + src + ' in the soundboard!');
-                },
-              })
-            );
-          })
-          .catch((binErr) => {
-            console.debug(src);
-            console.debug(binErr);
-          });
-      }
-    });
-    console.log(this.sounds);
+            })
+            .catch((binErr) => {
+              console.debug(src);
+              console.debug(binErr);
+            });
+        }
+      });
+      console.log(this.sounds);
+    }
   }
 
   /**
@@ -198,31 +209,12 @@ export default class AudioService extends Service {
    */
 
   async playSound(item) {
-    let id = await item.get('id');
-    console.log(id);
-    if (id) {
-      if (this.globalConfig.config.soundOverlap) {
-        console.log('Sound overlapping');
-        let hasSound = this.sounds.has(id);
-        if (hasSound) {
-          let sound = this.sounds.get(id);
-          let duration = sound.duration() * 1000;
-          sound.play();
-
-          this.isPlaying = true;
-          this.lastPlayed = id;
-
-          later(
-            this,
-            function () {
-              this.isPlaying = false;
-            },
-            duration
-          );
-        }
-      } else {
-        console.log('No overlapping');
-        if (!this.isPlaying) {
+    if (this.currentUser.isTauri) {
+      let id = await item.get('id');
+      console.log(id);
+      if (id) {
+        if (this.globalConfig.config.soundOverlap) {
+          console.log('Sound overlapping');
           let hasSound = this.sounds.has(id);
           if (hasSound) {
             let sound = this.sounds.get(id);
@@ -240,10 +232,31 @@ export default class AudioService extends Service {
               duration
             );
           }
+        } else {
+          console.log('No overlapping');
+          if (!this.isPlaying) {
+            let hasSound = this.sounds.has(id);
+            if (hasSound) {
+              let sound = this.sounds.get(id);
+              let duration = sound.duration() * 1000;
+              sound.play();
+
+              this.isPlaying = true;
+              this.lastPlayed = id;
+
+              later(
+                this,
+                function () {
+                  this.isPlaying = false;
+                },
+                duration
+              );
+            }
+          }
         }
+      } else {
+        console.log('Empty audio id provided...');
       }
-    } else {
-      console.log('Empty audio id provided...');
     }
   }
 

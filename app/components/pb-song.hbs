@@ -26,7 +26,7 @@
         <div class="form-group row pb-2">
           <label class="col-md-4">Keywords:</label>    
           <div class="col-sm">
-            <Textarea @value={{@song.keywords}} placeholder="Type words or phrases related to the song" class="form-control"/>
+            <Textarea @value={{@song.keywords}} aria-label="Keywords" placeholder="Type words or phrases related to the song" class="form-control"/>
           </div>
         </div>
         <div class="form-group row pb-2">
@@ -44,7 +44,7 @@
         <div class="row"><label class="col-md-4">Lyrics/tab:</label></div>
         <div class="form-group row py-2">            
           <div class="col-sm">   
-            <Textarea @value={{@song.lyrics}} class="form-control" placeholder="Write/paste your lyrics/tab here." rows="15" />
+            <Textarea @value={{@song.lyrics}} aria-label="Lyrics/tab" class="form-control" placeholder="Write/paste your lyrics/tab here." rows="15" />
           </div>
         </div>
       </div>

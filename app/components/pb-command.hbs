@@ -45,7 +45,7 @@
       <div class="form-group row pb-2">
         <label class="col-md-4">Response:</label>    
         <div class="col-sm">
-          <Textarea @value={{@command.response}} placeholder="Type the command response..." class="form-control"/>
+          <Textarea @value={{@command.response}} aria-label="Response" placeholder="Type the command response..." class="form-control"/>
         </div>
       </div>
       <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
@@ -63,9 +63,9 @@
         <label class="col-md-4">Volume %:</label>    
         <div class="col-sm">
           <div class="input-group bg-light border rounded">
-            <Input @type="range" min="1" max="100" @value={{@command.volume}} {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control slider w-75 border-0" />
+            <Input @type="range" min="1" max="100" aria-label="Volume" @value={{@command.volume}} {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control slider w-75 border-0" />
             <div class="input-group-append w-25">
-              <Input @type="text" @value={{@command.volume}} {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control border-0" />
+              <Input @type="text" @value={{@command.volume}} aria-label="Volume" {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control border-0" />
             </div>
           </div>
         </div>

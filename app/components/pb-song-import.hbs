@@ -16,9 +16,7 @@
             <BsButton @type="warning col-auto me-1" @onClick={{this.openSongsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
           {{else}}
             {{#let (file-queue name="massSongs" onFileAdded=this.openSongsFolder) as |queue|}}
-              <button type="button" class="btn btn-warning col-auto me-1" title="Import songs by text files">
-                <label for="upload-txt" role="button">Select text files</label>
-              </button>  
+              <button type="button" class="btn btn-warning col-auto me-1" title="Import songs by text files" for="upload-txt">Select text files</button>  
               <input
                 type="file"
                 id="upload-txt"
@@ -103,7 +101,7 @@
           </table>
         {{/if}}
     </Modal.body>
-    <Modal.footer class="py-2 row g-0" as |footer|>
+    <Modal.footer class="py-2 row g-0">
       {{#if this.songs}}
         <PageNumbers @content={{this.pagedSongs}} @fullBorder={{true}} class="col" />
       {{/if}}

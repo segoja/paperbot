@@ -12,11 +12,11 @@
   <Modal.body>
     <div class="row">
       <div class="col">
-        {{@confirmDescription}}       
+        {{@confirmDescription}}
       </div>
     </div>
   </Modal.body>
-  <Modal.footer class="py-2" as |footer|>
+  <Modal.footer class="py-2">
     <BsButton @onClick={{this.confirmModal}} @type="danger">Yes</BsButton>
     <BsButton @onClick={{this.toggleModal}} @type="secondary">No</BsButton>
   </Modal.footer>

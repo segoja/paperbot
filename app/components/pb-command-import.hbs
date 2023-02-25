@@ -31,12 +31,12 @@
               </tr>
               <tr>
                 <th class="col-6" scope="col" colspan="2"><small class="float-end text-secondary">Bulk actions:</small></th>
-                <td class="col p-0" scope="col">
-                  <Input @type="range" min="1" max="100" @value={{this.bulkVolume}}  {{on "change" (fn this.bulkChangeVolume this.bulkVolume)}} class="form-control slider w-100 border-0 rounded-0 table-secondary" />
+                <td class="col p-0">
+                  <Input @type="range" min="1" max="100" aria-label="Volume" @value={{this.bulkVolume}}  {{on "change" (fn this.bulkChangeVolume this.bulkVolume)}} class="form-control slider w-100 border-0 rounded-0 table-secondary" />
                 </td>
-                <td class="col-auto p-0" scope="col">
+                <td class="col-auto p-0">
                   <div class="d-inline-block float-end">
-                    <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0" as |form|>
+                    <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0">
                       <BsButton 
                         @type="outline-secondary alert-secondary"
                         class="rounded-0 col-auto border"  
@@ -54,10 +54,10 @@
                 <tr class={{if command.selected "table-success"}}>
                   <td class="col-6">{{command.name}}</td>             
                   <td class="col p-0 m-0">
-                    <Input @type="text" @value={{command.command}} class="form-control m-0 rounded-0 border-0 bg-transparent outline-transparent" placeholder="Enter command." />
+                    <Input @type="text" @value={{command.command}} aria-label="Command" class="form-control m-0 rounded-0 border-0 bg-transparent outline-transparent" placeholder="Enter command." />
                   </td>
                   <td class="col p-0 m-0">
-                    <Input @type="text" @value={{command.volume}} class="form-control m-0 rounded-0 border-0 bg-transparent outline-transparent" placeholder="Enter volume." />
+                    <Input @type="text" @value={{command.volume}} aria-label="Volume" class="form-control m-0 rounded-0 border-0 bg-transparent outline-transparent" placeholder="Enter volume." />
                   </td>
                   <td class="col-auto p-0">
                     <div class="d-inline-block float-end">
@@ -78,7 +78,7 @@
           </table>
         {{/if}}
     </Modal.body>
-    <Modal.footer class="py-2 row g-0" as |footer|>
+    <Modal.footer class="py-2 row g-0">
       {{#if this.commands}}
         <PageNumbers @content={{this.pagedCommands}} @fullBorder={{true}} class="col" />
       {{/if}}

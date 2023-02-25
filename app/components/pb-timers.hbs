@@ -24,9 +24,7 @@
               <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered timers?" @targetAction={{this.wipeTimers}} />
               
               {{#let (file-queue name="uploadTimersCSV" onFileAdded=this.timerImport) as |queue|}}
-                <button type="button" for="upload-csv" class="btn btn-secondary" title="Import timers by CSV">
-                  Import
-                </button>  
+                <label role="button" for="upload-csv" class="btn btn-secondary" title="Import timers by CSV">Import</label>  
                 <input
                   type="file"
                   id="upload-csv"
