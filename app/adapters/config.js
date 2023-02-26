@@ -8,9 +8,6 @@ import indexeddb from 'pouchdb-adapter-indexeddb';
 import HttpPouch from 'pouchdb-adapter-http';
 import mapreduce from 'pouchdb-mapreduce';
 import replication from 'pouchdb-replication';
-import auth from 'pouchdb-authentication';
-
-import { tracked } from '@glimmer/tracking';
 
 PouchDB.plugin(PouchDBFind)
   .plugin(PouchDBRelational)

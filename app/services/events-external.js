@@ -2,7 +2,6 @@ import Service, { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import io from 'socket.io-client';
-import moment from 'moment';
 import { htmlSafe } from '@ember/template';
 import { sort } from '@ember/object/computed';
 
@@ -552,7 +551,7 @@ export default class EventsExternalService extends Service {
   @sort('events', 'eventsSorting') arrangedEvents;
 
   get lastevent() {
-    if (arrangedEvents.get('length') > 0) {
+    if (this.arrangedEvents.get('length') > 0) {
       return this.arrangedEvents.get('firstObject');
     }
     return [];

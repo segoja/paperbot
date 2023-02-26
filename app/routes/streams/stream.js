@@ -5,6 +5,7 @@ import { inject as service } from '@ember/service';
 export default class StreamRoute extends Route {
   @service store;
   @service currentUser;
+  @service twitchChat;
 
   async model(params) {
     return this.store.findRecord('stream', params.stream_id);
@@ -18,6 +19,7 @@ export default class StreamRoute extends Route {
   }
   afterModel(model) {
     this.currentUser.lastStream = model;
+    this.twitchChat.takessongrequests = model.requests;
   }
 
   @action willTransition(transition) {

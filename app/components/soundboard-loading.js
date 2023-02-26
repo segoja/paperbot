@@ -1,9 +1,6 @@
 import Component from '@glimmer/component';
-import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { tracked } from '@glimmer/tracking';
 import { uniqBy } from '@ember/object/computed';
-import { later } from '@ember/runloop';
 
 export default class SoundboardLoadingComponent extends Component {
   @service twitchChat;

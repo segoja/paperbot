@@ -7,7 +7,6 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import { inject as service } from '@ember/service';
-import { FileState } from 'ember-file-upload';
 
 export default class PbSongComponent extends Component {
   @tracked page = 1;

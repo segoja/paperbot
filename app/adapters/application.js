@@ -192,12 +192,12 @@ export default class ApplicationAdapter extends Adapter {
             this.cloudState.setPush(true);
             this.cloudState.couchError = false;
           })
-          .on('denied', (err) => {
+          .on('denied', () => {
             console.debug(
               'a document failed to replicate to the cloud (e.g. due to permissions)'
             );
           })
-          .on('complete', (info) => {
+          .on('complete', () => {
             // replication was canceled!
             console.debug('Replication to the cloud is over');
           })

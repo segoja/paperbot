@@ -2,8 +2,6 @@ import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import moment from 'moment';
-import { dialog, invoke } from '@tauri-apps/api';
-import { writeFile, readTextFile } from '@tauri-apps/api/fs';
 import {
   appWindow,
   getCurrent,
@@ -12,7 +10,6 @@ import {
   PhysicalSize,
   WebviewWindow,
 } from '@tauri-apps/api/window';
-import { emit } from '@tauri-apps/api/event';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 
@@ -149,10 +146,7 @@ export default class ApplicationController extends Controller {
       if (this.currentUser.isTauri) {
         let currentWindow = getCurrent();
         if (currentWindow.label === 'Main') {
-          currentWindow.listen(
-            'tauri://focus',
-            function (response) {}.bind(this)
-          );
+          currentWindow.listen('tauri://focus', function () {}.bind(this));
 
           currentWindow.listen(
             'tauri://resize',
@@ -268,7 +262,7 @@ export default class ApplicationController extends Controller {
         console.debug(e);
       });
 
-      appWindow.listen('tauri://blur', (event) => {
+      appWindow.listen('tauri://blur', () => {
         console.debug('Blurring window...');
         //if(this.globalConfig.config.hasDirtyAttributes){
         this.globalConfig.config.save().then(() => {
@@ -367,8 +361,8 @@ export default class ApplicationController extends Controller {
       const response = await file.readAsText();
       let adapter = this.store.adapterFor('application');
       let importable = Object.assign([], JSON.parse(response));
-      importable.shift();
-      // console.log(importable);
+      console.log(importable);
+      // importable.shift();
       /*adapter.db.bulkDocs(importable, {new_edits: false}, (...args) => {
         console.debug('DONE', args);
         //window.location.reload(true);
@@ -376,10 +370,11 @@ export default class ApplicationController extends Controller {
 
       adapter.db
         .bulkDocs(importable, { new_edits: false })
-        .then(function (result) {
+        .then(function () {
           console.debug('Success!');
+          window.location.reload(true);
         })
-        .catch(function (err) {
+        .catch(function () {
           console.debug('FAIL!');
         });
     }
@@ -466,7 +461,7 @@ export default class ApplicationController extends Controller {
                 this,
                 async () => {
                   currentconfig.showLyrics = false;
-                  await currentconfig.save().then(async (config) => {
+                  await currentconfig.save().then(async () => {
                     console.debug('Saved config. Closing reader window');
                     reader.close();
                   });
@@ -475,7 +470,7 @@ export default class ApplicationController extends Controller {
               );
             } else {
               currentconfig.showLyrics = true;
-              await currentconfig.save().then(async (config) => {
+              await currentconfig.save().then(async () => {
                 this.currentUser.showLyrics();
               });
             }
@@ -524,7 +519,7 @@ export default class ApplicationController extends Controller {
                 this,
                 async () => {
                   currentconfig.showOverlay = false;
-                  await currentconfig.save().then(async (config) => {
+                  await currentconfig.save().then(async () => {
                     console.debug('Saved config. Closing overlay window');
                     overlay.close();
                   });
@@ -536,7 +531,7 @@ export default class ApplicationController extends Controller {
                 currentconfig.overlayType = 'window';
               }
               currentconfig.showOverlay = true;
-              await currentconfig.save().then(async (config) => {
+              await currentconfig.save().then(async () => {
                 this.currentUser.toggleOverlay();
               });
             }
@@ -719,7 +714,7 @@ export default class ApplicationController extends Controller {
           later(
             this,
             async () => {
-              await currentconfig.save().then(async (config) => {
+              await currentconfig.save().then(async () => {
                 console.debug('Saved config. Closing windows');
                 if (currentWindow.label === 'reader') {
                   await currentWindow.close();
@@ -745,7 +740,6 @@ export default class ApplicationController extends Controller {
     event.preventDefault();
     // console.log(event);
     if (this.currentUser.isTauri) {
-      let currentWindow = getCurrent();
       appWindow.startDragging();
     }
   }

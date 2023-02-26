@@ -1,7 +1,6 @@
 import Service from '@ember/service';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { tracked } from '@glimmer/tracking';
 import DarkReader from 'darkreader';
 
 export default class LightControlService extends Service {

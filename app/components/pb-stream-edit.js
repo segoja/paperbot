@@ -73,12 +73,6 @@ export default class PbStreamEditComponent extends Component {
     return result;
   }
 
-  // Whith this getter we control the queue display while keeping the service updated with the settings.
-  get requests() {
-    this.twitchChat.takessongrequests = this.args.stream.requests;
-    return this.args.stream.requests;
-  }
-
   get embedChatUrl() {
     let hostname = window.location.hostname;
     let channel = this.args.stream.channel;
@@ -108,9 +102,9 @@ export default class PbStreamEditComponent extends Component {
     this.msglist = this.twitchChat.messages;
     // this.queueHandler.songqueue = this.queueHandler.songqueue.toArray();
     this.queueHandler.scrollPlayedPosition =
-      this.queueHandler.pendingSongs.get('length');
+      this.queueHandler.pendingSongs.length;
     this.queueHandler.scrollPendingPosition =
-      this.queueHandler.playedSongs.get('length');
+      this.queueHandler.playedSongs.length;
 
     if (this.twitchChat.botConnected === true) {
       this.twitchChat.botclient.on('message', this.msgGetter);

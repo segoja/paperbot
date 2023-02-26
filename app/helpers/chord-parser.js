@@ -32,10 +32,6 @@ export default helper(function ([element, key]) {
       });
     }
     content = content.toString();
-  } catch (exceptionVar) {
-    console.debug('No chords detected, using basic parsing.');
-    content = element;
-  } finally {
     content = content.replace(/\r\n?/g, '\n');
     content = content.replace(/\n\s\n/g, '\n\n');
     content = content.replace(/\n/g, '<br>\n');
@@ -53,6 +49,28 @@ export default helper(function ([element, key]) {
       }
     });
 
+    return htmlSafe(processed);
+  } catch (exceptionVar) {
+    console.debug('No chords detected, using basic parsing.');
+    content = element;
+
+    content = content.toString();
+    content = content.replace(/\r\n?/g, '\n');
+    content = content.replace(/\n\s\n/g, '\n\n');
+    content = content.replace(/\n/g, '<br>\n');
+    let lines = content.split('<br>\n');
+    // console.log(lines);
+
+    // console.log(content);
+    //content = content.replace(regex, `<strong>$1</strong>`);*/
+    let processed = '';
+    lines.forEach((line) => {
+      if (line.replace(/\s/g, '')) {
+        processed += '<div>' + line.replace(/\s/g, '&nbsp') + '</div>';
+      } else {
+        processed += '<div><br></div>';
+      }
+    });
     return htmlSafe(processed);
   }
 });

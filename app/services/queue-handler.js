@@ -1,17 +1,9 @@
 import Service, { inject as service } from '@ember/service';
-import { action, set } from '@ember/object';
+import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { uniqBy, empty, sort, filter } from '@ember/object/computed';
-import { dialog } from '@tauri-apps/api';
-import { WebviewWindow, getCurrent } from '@tauri-apps/api/window';
-import {
-  writeBinaryFile,
-  writeFile,
-  readTextFile,
-  readBinaryFile,
-} from '@tauri-apps/api/fs';
+import { sort } from '@ember/object/computed';
+import { writeFile } from '@tauri-apps/api/fs';
 import moment from 'moment';
-import { htmlSafe } from '@ember/template';
 
 export default class QueueHandlerService extends Service {
   @service globalConfig;
@@ -42,7 +34,6 @@ export default class QueueHandlerService extends Service {
   }
 
   get pendingSongsRecords() {
-    let songs = [];
     return this.pendingSongs.map((request) => {
       return request.song.then(async (song) => {
         return await song;
@@ -50,11 +41,18 @@ export default class QueueHandlerService extends Service {
     });
   }
 
-  get nextPosition() {
-    let positioned = this.pendingSongs.filter((item) => !isNaN(item.position));
+  @action async nextPosition() {
+    let positioned = this.pendingSongs.filter(
+      (request) => !isNaN(request.position)
+    );
     let nextPos = 0;
+
     if (positioned.length > 0) {
-      nextPos = Number(positioned.get('lastObject').position) + 1;
+      let lastRequest = await positioned.pop();
+      console.log(lastRequest);
+      if (await lastRequest) {
+        nextPos = Number(await lastRequest.position) + 1;
+      }
     }
     return nextPos;
   }
@@ -64,7 +62,6 @@ export default class QueueHandlerService extends Service {
   }
 
   get playedSongsRecords() {
-    let songs = [];
     return this.playedSongs.map((request) => {
       return request.song.then(async (song) => {
         return await song;
@@ -144,7 +141,7 @@ export default class QueueHandlerService extends Service {
       this.pendingSongs.uniqBy('songId').forEach((item) => {
         item.song.then((song) => {
           let requests = this.pendingSongs.filterBy('song.id', song.get('id'));
-          let times = requests.get('length');
+          let times = requests.length;
           song.times_requested = Number(song.times_requested) - Number(times);
           requests.forEach((request) => {
             request.destroyRecord();
@@ -206,7 +203,9 @@ export default class QueueHandlerService extends Service {
       request.position = 0;
       if (request.processed === true) {
         // Next line makes the element to get back in the pending list but in the last position:
-        let oldPending = this.pendingSongs.removeObject(request);
+        let oldPending = this.pendingSongs.filter(
+          (item) => item.id != request.id
+        );
         let count = 0;
         oldPending.forEach((pending) => {
           count = Number(count) + 1;
@@ -253,8 +252,8 @@ export default class QueueHandlerService extends Service {
     }
   }
 
-  @action songToQueue(selected, toTop = false) {
-    let nextPosition = this.nextPosition;
+  @action async songToQueue(selected, toTop = false) {
+    let nextPosition = await this.nextPosition();
 
     if (toTop) {
       this.pendingSongs.forEach((request) => {
@@ -293,9 +292,9 @@ export default class QueueHandlerService extends Service {
   }
 
   @action async nextSong() {
-    if (this.pendingSongs.get('length') > 0) {
+    if (this.pendingSongs.length > 0) {
       // For selecting the last element of the array:
-      let firstRequest = this.pendingSongs.get('firstObject');
+      let firstRequest = this.pendingSongs.firstObject;
 
       let oldPlayed = this.playedSongs;
       let count = 0;
@@ -333,7 +332,7 @@ export default class QueueHandlerService extends Service {
   }
 
   @action async prevSong() {
-    if (this.playedSongs.get('length') > 0) {
+    if (this.playedSongs.length > 0) {
       // For selecting the first element of the array:
 
       let oldPending = this.pendingSongs;
@@ -345,7 +344,7 @@ export default class QueueHandlerService extends Service {
         //console.debug(pending.position+'. '+pending.title);
       });
 
-      let firstRequest = this.playedSongs.get('firstObject');
+      let firstRequest = this.playedSongs.firstObject;
       firstRequest.position = 0;
       firstRequest.processed = false;
 
@@ -465,7 +464,7 @@ export default class QueueHandlerService extends Service {
     } catch (exception_var) {
       //console.debug('Too slow...');
     } finally {
-      let text = unescape(encodeURIComponent(thisHtml));
+      //let text = unescape(encodeURIComponent(thisHtml));
       //let arrayBuff = new TextEncoder().encode(text);
       writeFile({ path: pathString, contents: thisHtml }).then(() => {
         console.debug('done!');

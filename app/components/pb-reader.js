@@ -1,10 +1,9 @@
 import Component from '@glimmer/component';
-import { action, computed } from '@ember/object';
+import { action } from '@ember/object';
 import { sort } from '@ember/object/computed';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
-import { getCurrent } from '@tauri-apps/api/window';
 import { later } from '@ember/runloop';
 
 export default class PbReaderComponent extends Component {
@@ -31,7 +30,7 @@ export default class PbReaderComponent extends Component {
   get firstRequest() {
     let pending = this.arrangedRequests.filterBy('processed', false);
     if (pending.length > 0) {
-      return pending.get('firstObject');
+      return pending[0];
     }
     return '';
   }

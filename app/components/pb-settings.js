@@ -33,10 +33,6 @@ export default class PbSettingsComponent extends Component {
   @tracked isViewing = true;
   @tracked saving = false;
 
-  get bootstrapWormhole() {
-    return document.getElementById('ember-bootstrap-wormhole');
-  }
-
   get showUp() {
     return this.isViewing;
   }

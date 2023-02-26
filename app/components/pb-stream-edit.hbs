@@ -79,7 +79,7 @@
               <div class="col border alert-secondary p-0 m-0"></div>
             {{/if}}
           {{/if}}
-          {{#if this.requests}}
+          {{#if @stream.requests}}
             {{#if this.globalConfig.config.extraPanRight}}          
               <button type="button" class="{{if this.globalConfig.config.extraPanLeft "col-5" "col"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightTop}}>
                 <FaIcon @icon={{if this.globalConfig.config.extraPanRightTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
@@ -109,21 +109,21 @@
               </Container>
             </div>
           </div>
-          {{#if this.requests}}
+          {{#if @stream.requests}}
             {{on-key "ctrl+Period" this.queueHandler.nextSong}}
             {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
             {{on-key "ctrl+KeyQ" this.queueHandler.modPressed event="keypress"}} 
             {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}
           {{/if}}
-          <div class="{{if this.requests (if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
+          <div class="{{if @stream.requests (if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightTop (if this.globalConfig.config.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
               <Container class="col h-100 m-0 p-0"> 
-                <PbStreamEditPending @requests={{this.requests}} />
+                <PbStreamEditPending @requests={{@stream.requests}} />
               </Container>
             </div>
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightBottom (if this.globalConfig.config.extraPanRightTop "h-50" "h-100") "d-none"}} border">
               <Container class="col h-100 m-0 p-0"> 
-                <PbStreamEditPlayed @requests={{this.requests}} />
+                <PbStreamEditPlayed @requests={{@stream.requests}} />
               </Container>        
             </div>
           </div>
@@ -145,7 +145,7 @@
               <div class="col border alert-secondary p-0 m-0"></div>
             {{/if}}
           {{/if}}
-          {{#if this.requests}}
+          {{#if @stream.requests}}
             {{#if this.globalConfig.config.extraPanRight}}
               <button type="button" class="{{if this.globalConfig.config.extraPanLeft "col-5" "col"}} border alert-secondary p-0 m-0" {{on "click" this.toggleExtraPanRightBottom}}>
                 <FaIcon @icon={{if this.globalConfig.config.extraPanRightBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />

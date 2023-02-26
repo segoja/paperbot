@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { WebviewWindow, getCurrent, getAll } from '@tauri-apps/api/window';
 import { alias } from '@ember/object/computed';
-import { fs, dialog, invoke } from '@tauri-apps/api';
+import { dialog, invoke } from '@tauri-apps/api';
 import PapaParse from 'papaparse';
 
 export default class CurrentUserService extends Service {
@@ -58,35 +58,6 @@ export default class CurrentUserService extends Service {
     let properties = reference.replace(/"/g, '');
     properties = properties.split(',');
 
-    /*if(this.isTauri){
-      dialog.open({
-        directory: false,
-        filters: [{name: extension+" file", extensions: [extension]}]
-      }).then(async (path) => {
-        if(path != null){
-          await invoke('text_reader', { filepath: path }).then((textData)=>{
-            let rows = PapaParse.parse(textData,{ delimiter: ',', header: true, quotes: false, quoteChar: '"', skipEmptyLines: true }).data;
-            let csvfields = textData.split('\r\n').slice(0,1);
-            
-            // We check if the structure is the same.
-            if (csvfields.toString() === reference){
-              let importcontent = rows;              
-              importcontent.forEach((item)=>{
-                let newRecord = this.store.createRecord(recordType);
-                
-                // We iterate through properties to set them in the new record.
-                properties.forEach((property)=>{
-                  newRecord.set(property, item[property]);                  
-                });                
-                newRecord.save();
-              });      
-            } else {
-              alert("Wrong column structure in the import csv file.");
-            }
-          });
-        }
-      });
-    } else {*/
     if (response) {
       let rows = PapaParse.parse(response, {
         delimiter: ',',
@@ -166,7 +137,6 @@ export default class CurrentUserService extends Service {
     if (this.isTauri) {
       let readerWindow = '';
       let currentWindow = getCurrent();
-      let parentWindow = await WebviewWindow.getByLabel('Main');
 
       getAll().forEach((windowItem) => {
         if (windowItem.label === 'reader') {
@@ -209,7 +179,7 @@ export default class CurrentUserService extends Service {
     if (this.isTauri) {
       let overlayWindow = '';
       let currentWindow = getCurrent();
-      let parentWindow = await WebviewWindow.getByLabel('Main');
+
       getAll().forEach((windowItem) => {
         if (windowItem.label === 'overlay') {
           overlayWindow = windowItem;

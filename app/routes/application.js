@@ -2,7 +2,6 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { hash } from 'rsvp';
 import { getCurrent } from '@tauri-apps/api/window';
-import { action } from '@ember/object';
 
 export default class ApplicationRoute extends Route {
   @service session;

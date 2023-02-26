@@ -1,6 +1,5 @@
 import { Model } from 'ember-pouch';
-import { attr, belongsTo } from '@ember-data/model';
-import { readOnly } from '@ember/object/computed';
+import { attr } from '@ember-data/model';
 
 export default class EventModel extends Model {
   @attr('string', { defaultValue: '' }) eventId;

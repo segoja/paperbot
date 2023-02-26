@@ -52,19 +52,19 @@ export default class ClientController extends Controller {
     // collect the children before deletion
     var childrenList = [];
 
-    await client.botclientstreams.forEach((stream) => {
+    await client.botclientstreams.toArray().forEach((stream) => {
       childrenList.push(stream);
     });
 
-    await client.chatclientstreams.forEach((stream) => {
+    await client.chatclientstreams.toArray().forEach((stream) => {
       childrenList.push(stream);
     });
 
-    await client.botclientconfigs.forEach((config) => {
+    await client.botclientconfigs.toArray().forEach((config) => {
       childrenList.push(config);
     });
 
-    await client.chatclientconfigs.forEach((config) => {
+    await client.chatclientconfigs.toArray().forEach((config) => {
       childrenList.push(config);
     });
 

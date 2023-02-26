@@ -1,7 +1,5 @@
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import { getCurrent } from '@tauri-apps/api/window';
-import { later } from '@ember/runloop';
 import { sort } from '@ember/object/computed';
 
 export default class PbReaderComponent extends Component {

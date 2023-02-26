@@ -2,7 +2,6 @@ import Controller, { inject } from '@ember/controller';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { cancel } from '@ember/runloop';
 
 class QueryParamsObj {
   @tracked page = 1;
