@@ -46,11 +46,11 @@ export default class AudioService extends Service {
           });
           // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
           var howlSource = URL.createObjectURL(blob);
-          //console.log(howlSource);
+          //console.debug(howlSource);
 
           if (this.preview) {
             this.preview.unload();
-            console.log('Unloading previous preview, replacing...');
+            console.debug('Unloading previous preview, replacing...');
           }
 
           // then inatialized the new howl as
@@ -59,10 +59,10 @@ export default class AudioService extends Service {
             html5: true,
             format: [extension],
             onload: function () {
-              console.log(src + ' loaded in the soundboard');
+              console.debug(src + ' loaded in the soundboard');
             },
             onloaderror: function () {
-              console.log('error loading ' + src + ' in the soundboard!');
+              console.debug('error loading ' + src + ' in the soundboard!');
             },
           });
         })
@@ -91,14 +91,14 @@ export default class AudioService extends Service {
           });
           // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
           var howlSource = URL.createObjectURL(blob);
-          //console.log(howlSource);
+          //console.debug(howlSource);
 
           let itExist = this.sounds.has(item.get('id'));
           if (itExist) {
             let oldsound = this.sounds.get(item.get('id'));
             oldsound.unload();
             this.sounds.delete(item.get('id'));
-            console.log('Sound ' + item.name + ' already exist, replacing...');
+            console.debug('Sound ' + item.name + ' already exist, replacing...');
           }
 
           // then inatialized the new howl as
@@ -110,10 +110,10 @@ export default class AudioService extends Service {
               volume: item.volume ? item.volume / 100 : 1,
               format: [extension],
               onload: function () {
-                console.log(item.soundfile + ' loaded in the soundboard');
+                console.debug(item.soundfile + ' loaded in the soundboard');
               },
               onloaderror: function () {
-                console.log(
+                console.debug(
                   'error loading ' + item.soundfile + ' in the soundboard!'
                 );
               },
@@ -150,21 +150,21 @@ export default class AudioService extends Service {
               // converted the arraybuffer to a arraybufferview
               let arrayBufferView = new Uint8Array(await response);
 
-              // console.log(arrayBufferView);
+              // console.debug(arrayBufferView);
               // create a blob from this
               let blob = new Blob([arrayBufferView], {
                 type: 'data:audio/' + extension,
               });
               // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
               let howlSource = URL.createObjectURL(blob);
-              // console.log(howlSource);
+              // console.debug(howlSource);
 
               let itExist = this.sounds.has(await item.get('id'));
               if (itExist) {
                 let oldsound = this.sounds.get(await item.get('id'));
                 oldsound.unload();
                 this.sounds.delete(item.get('id'));
-                console.log(
+                console.debug(
                   'Sound ' + item.name + ' already exist, replacing...'
                 );
               }
@@ -178,10 +178,10 @@ export default class AudioService extends Service {
                   volume: item.volume ? item.volume / 100 : 1,
                   format: [extension],
                   onload: function () {
-                    console.log(src + ' loaded in the soundboard');
+                    console.debug(src + ' loaded in the soundboard');
                   },
                   onloaderror: function () {
-                    console.log('error loading ' + src + ' in the soundboard!');
+                    console.debug('error loading ' + src + ' in the soundboard!');
                   },
                 })
               );
@@ -192,7 +192,7 @@ export default class AudioService extends Service {
             });
         }
       });
-      console.log(this.sounds);
+      console.debug(this.sounds);
     }
   }
 
@@ -209,10 +209,10 @@ export default class AudioService extends Service {
   async playSound(item) {
     if (this.currentUser.isTauri) {
       let id = await item.get('id');
-      console.log(id);
+      console.debug(id);
       if (id) {
         if (this.globalConfig.config.soundOverlap) {
-          console.log('Sound overlapping');
+          console.debug('Sound overlapping');
           let hasSound = this.sounds.has(id);
           if (hasSound) {
             let sound = this.sounds.get(id);
@@ -231,7 +231,7 @@ export default class AudioService extends Service {
             );
           }
         } else {
-          console.log('No overlapping');
+          console.debug('No overlapping');
           if (!this.isPlaying) {
             let hasSound = this.sounds.has(id);
             if (hasSound) {
@@ -253,7 +253,7 @@ export default class AudioService extends Service {
           }
         }
       } else {
-        console.log('Empty audio id provided...');
+        console.debug('Empty audio id provided...');
       }
     }
   }
@@ -291,7 +291,7 @@ export default class AudioService extends Service {
       if (sound.state() == 'loaded') {
         sound.unload();
         this.sounds.delete(id);
-        console.log(id + ' removed from the sounds register.');
+        console.debug(id + ' removed from the sounds register.');
       }
     }
   }
@@ -328,7 +328,7 @@ export default class AudioService extends Service {
       });
       Howler.stop();
       Howler.unload();
-      console.log(this.sounds);
+      console.debug(this.sounds);
     }
   }
 }

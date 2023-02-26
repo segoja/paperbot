@@ -86,7 +86,7 @@ export default class PbCommandComponent extends Component {
         }
       }
     }
-    console.log('Loaded: ' + status);
+    console.debug('Loaded: ' + status);
     return status;
   }
 
@@ -97,7 +97,7 @@ export default class PbCommandComponent extends Component {
         status = this.audio.previewSound.playing();
       }
     }
-    console.log('Playing: ' + status);
+    console.debug('Playing: ' + status);
     return status;
   }
 
@@ -125,7 +125,7 @@ export default class PbCommandComponent extends Component {
       }
       if (this.previewLoaded && this.currentUser.isTauri) {
         let finalVol = volume / 100;
-        console.log('Setting volume to: ' + finalVol);
+        console.debug('Setting volume to: ' + finalVol);
         this.audio.previewSound.volume(finalVol);
       }
     }

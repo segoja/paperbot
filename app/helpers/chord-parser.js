@@ -36,9 +36,9 @@ export default helper(function ([element, key]) {
     content = content.replace(/\n\s\n/g, '\n\n');
     content = content.replace(/\n/g, '<br>\n');
     let lines = content.split('<br>\n');
-    // console.log(lines);
+    // console.debug(lines);
 
-    // console.log(content);
+    // console.debug(content);
     //content = content.replace(regex, `<strong>$1</strong>`);*/
     let processed = '';
     lines.forEach((line) => {
@@ -59,9 +59,9 @@ export default helper(function ([element, key]) {
     content = content.replace(/\n\s\n/g, '\n\n');
     content = content.replace(/\n/g, '<br>\n');
     let lines = content.split('<br>\n');
-    // console.log(lines);
+    // console.debug(lines);
 
-    // console.log(content);
+    // console.debug(content);
     //content = content.replace(regex, `<strong>$1</strong>`);*/
     let processed = '';
     lines.forEach((line) => {

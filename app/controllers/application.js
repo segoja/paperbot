@@ -146,7 +146,10 @@ export default class ApplicationController extends Controller {
       if (this.currentUser.isTauri) {
         let currentWindow = getCurrent();
         if (currentWindow.label === 'Main') {
-          currentWindow.listen('tauri://focus', function () {}.bind(this));
+          currentWindow.listen(
+            'tauri://focus',
+            function () {}.bind(this)
+          );
 
           currentWindow.listen(
             'tauri://resize',
@@ -361,7 +364,7 @@ export default class ApplicationController extends Controller {
       const response = await file.readAsText();
       let adapter = this.store.adapterFor('application');
       let importable = Object.assign([], JSON.parse(response));
-      console.log(importable);
+      console.debug(importable);
       // importable.shift();
       /*adapter.db.bulkDocs(importable, {new_edits: false}, (...args) => {
         console.debug('DONE', args);
@@ -403,7 +406,7 @@ export default class ApplicationController extends Controller {
     return this.globalConfig.config.save().then((config) => {
       if (!this.cloudState.online) {
         if (config.remoteUrl && config.username && config.password) {
-          console.log('Setting remote backup...');
+          console.debug('Setting remote backup...');
           this.store.adapterFor('application').configRemote();
           if (!this.session.isAuthenticated) {
             this.store.adapterFor('application').connectRemote();
@@ -635,7 +638,7 @@ export default class ApplicationController extends Controller {
             if (main) {
               // We do this to prevent saving a minimized window position and size.
               await main.unminimize();
-              console.log(main);
+              console.debug(main);
 
               let maximized = await main.isMaximized();
               let position = await main.outerPosition();
@@ -738,7 +741,7 @@ export default class ApplicationController extends Controller {
 
   @action dragWindow(event) {
     event.preventDefault();
-    // console.log(event);
+    // console.debug(event);
     if (this.currentUser.isTauri) {
       appWindow.startDragging();
     }

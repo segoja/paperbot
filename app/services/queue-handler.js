@@ -49,7 +49,7 @@ export default class QueueHandlerService extends Service {
 
     if (positioned.length > 0) {
       let lastRequest = await positioned.pop();
-      console.log(lastRequest);
+      console.debug(lastRequest);
       if (await lastRequest) {
         nextPos = Number(await lastRequest.position) + 1;
       }
@@ -87,7 +87,7 @@ export default class QueueHandlerService extends Service {
         let exclude = false;
         this.songqueue.forEach((request) => {
           if (song.id === request.songId) {
-            // console.log('Song '+song.title+' excluded');
+            // console.debug('Song '+song.title+' excluded');
             exclude = true;
           }
         });
@@ -284,7 +284,7 @@ export default class QueueHandlerService extends Service {
       selected.times_requested = Number(selected.times_requested) + 1;
       await selected.save();
 
-      // console.log(selected.fullText+' added at position '+nextPosition);
+      // console.debug(selected.fullText+' added at position '+nextPosition);
       this.lastsongrequest = newRequest;
       this.scrollPendingPosition = 0;
       this.scrollPlayedPosition = 0;

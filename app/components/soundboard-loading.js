@@ -17,7 +17,7 @@ export default class SoundboardLoadingComponent extends Component {
   }
 
   get progressValue() {
-    console.log('Loaded sounds: ' + this.audio.sounds.size);
+    console.debug('Loaded sounds: ' + this.audio.sounds.size);
     return this.audio.sounds.size;
   }
 

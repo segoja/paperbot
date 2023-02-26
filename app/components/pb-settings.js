@@ -130,7 +130,7 @@ export default class PbSettingsComponent extends Component {
       this.session.invalidate();
       if (!this.cloudState.online) {
         if (this.globalConfig.config.canConnect) {
-          console.log('Setting remote backup...');
+          console.debug('Setting remote backup...');
           this.store.adapterFor('application').configRemote();
           this.store.adapterFor('application').connectRemote();
         }

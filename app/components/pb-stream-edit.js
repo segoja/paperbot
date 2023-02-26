@@ -302,8 +302,8 @@ export default class PbStreamEditComponent extends Component {
     /*this.currentUser.soundBoardEnabled = !this.currentUser.soundBoardEnabled;
     if(!this.currentUser.soundBoardEnabled){
       if(this.twitchChat.lastSoundCommand != null && this.twitchChat.lastSoundCommand.isPlaying){
-        console.log(this.twitchChat.lastSoundCommand.isPlaying)
-        console.log(this.twitchChat.lastSoundCommand);
+        console.debug(this.twitchChat.lastSoundCommand.isPlaying)
+        console.debug(this.twitchChat.lastSoundCommand);
         this.twitchChat.lastSoundCommand.changeGainTo(0).from('percent');
         this.twitchChat.lastSoundCommand.stop(); 
       }

@@ -75,7 +75,7 @@ export default class ClientController extends Controller {
   @action gridDeleteClient(client) {
     //Wait for children to be destroyed then destroy the client
     this.unlinkChildren(client).then((children) => {
-      console.log('Children unlinked?');
+      console.debug('Children unlinked?');
       client.destroyRecord().then(() => {
         this.currentUser.isViewing = false;
         var prevchildId = null;

@@ -99,7 +99,7 @@ export default class PbSongComponent extends Component {
     } else {
       if (file) {
         this.songsData = [];
-        //console.log(this.fileQueue.files.length);
+        //console.debug(this.fileQueue.files.length);
         let idnum = this.fileQueue.files.length;
         if (this.queueLenght == 0) {
           this.queueLenght = idnum;
@@ -107,7 +107,7 @@ export default class PbSongComponent extends Component {
         let filename = await file.name.slice(0, -4);
         let extension = await file.name.substr(file.name.length - 3);
         let content = await file.readAsText();
-        // console.log(idnum + ' - ' + filename);
+        // console.debug(idnum + ' - ' + filename);
         if (filename && extension.toLowerCase() === 'txt') {
           this.songsData.push({
             id: idnum,
@@ -153,7 +153,7 @@ export default class PbSongComponent extends Component {
               let lyrics = utf8Decoder.decode(arrayBufferView);
 
               if (lyrics === '') {
-                console.log('Lyrics are ANSI encoded.');
+                console.debug('Lyrics are ANSI encoded.');
                 lyrics = ansiDecoder.decode(arrayBufferView);
               }
               newSong.lyrics = lyrics;

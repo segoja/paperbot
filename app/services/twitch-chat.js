@@ -85,8 +85,8 @@ export default class TwitchChatService extends Service {
   @tracked globalBadges = [];
   get allbadges() {
     let pack = [];
-    console.log(this.globalBadges);
-    console.log(this.channelBadges);
+    console.debug(this.globalBadges);
+    console.debug(this.channelBadges);
     if (this.channelBadges > 0) {
       pack = assign(this.globalBadges, this.channelBadges);
     }
@@ -215,11 +215,11 @@ export default class TwitchChatService extends Service {
   async timerScheduler(timer, order) {
     if (!timer.isDeleted && this.botConnected && this.channel) {
       if (this.activeTimers[timer.id] && !timer.active) {
-        //console.log('The timer was active, cancelling')
+        //console.debug('The timer was active, cancelling')
         cancel(this.activeTimers[timer.id]);
         this.activeTimers[timer.id] = '';
       } else {
-        //console.log('Scheduling the timer...')
+        //console.debug('Scheduling the timer...')
         let time = this.globalConfig.config.timerTime * 60 * 1000;
 
         this.activeTimers[timer.id] = await later(() => {
@@ -247,7 +247,7 @@ export default class TwitchChatService extends Service {
         }, time);
       }
     }
-    //console.log(this.activeTimers);
+    //console.debug(this.activeTimers);
   }
 
   @action async soundboard() {
@@ -369,7 +369,7 @@ export default class TwitchChatService extends Service {
                     bestmatch.last_requested = new Date();
                     await bestmatch.save();
 
-                    console.log(
+                    console.debug(
                       bestmatch.fullText + ' added at position ' + nextPosition
                     );
                     this.queueHandler.scrollPendingPosition = 0;
@@ -500,7 +500,7 @@ export default class TwitchChatService extends Service {
                       bestmatch.last_requested = new Date();
                       await bestmatch.save();
 
-                      console.log(
+                      console.debug(
                         bestmatch.fullText +
                           ' added at position ' +
                           nextPosition
@@ -568,7 +568,7 @@ export default class TwitchChatService extends Service {
               commandName.toLowerCase().replace(/!ykq/g, '').trim()
             );
             this.audio.isEnabled = false;
-            console.log(quietTime);
+            console.debug(quietTime);
             if (!isNaN(quietTime)) {
               if (quietTime > 0) {
                 later(() => {
@@ -632,7 +632,7 @@ export default class TwitchChatService extends Service {
                 firstSong.last_requested = new Date();
                 await firstSong.save();
 
-                console.log(
+                console.debug(
                   firstSong.fullText + ' added at position ' + nextPosition
                 );
 

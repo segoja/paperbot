@@ -58,15 +58,15 @@ export default class ApplicationAdapter extends Adapter {
     this.retryDelay = 0;
     /*
     this.olddb.replicate.to(this.db, { live: false, retry: false, attachments: true }).on('error', async (err) => {
-      console.log('Application: Something exploded while copying');
+      console.debug('Application: Something exploded while copying');
       console.debug(await err.error); 
     }).on('complete', async (info) => { 
       if(info.ok){
         console.debug('Application: Replication from old idb is complete, now deleting...');
         this.olddb.destroy().then(function (response) {
-          console.log('Application: Deleted old idb database.');
+          console.debug('Application: Deleted old idb database.');
         }).catch(function (err) {
-          console.log(err);
+          console.debug(err);
         });
       }
     }); */
@@ -77,7 +77,7 @@ export default class ApplicationAdapter extends Adapter {
       live: true,
       retry: true,
       back_off_function: (delay) => {
-        console.log('We are retrying... ');
+        console.debug('We are retrying... ');
         if (delay === 0) {
           return 1000;
         }
