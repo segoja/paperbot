@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches:
+      - main
       - master
   pull_request: {}
 
@@ -14,7 +15,6 @@ jobs:
   lint:
     name: "Lint"
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v3
@@ -22,16 +22,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
-          cache: yarn
+          cache: npm
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
       - name: Lint
-        run: yarn lint
+        run: npm run lint
 
   test:
     name: "Test"
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v3
@@ -39,8 +38,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
-          cache: yarn
+          cache: npm
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
       - name: Run Tests
-        run: yarn test
+        run: npm test
