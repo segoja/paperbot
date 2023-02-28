@@ -16,7 +16,7 @@
             {{scroll-position position=this.queueHandler.scrollPendingPosition relative=true}} 
             {{sortable-group onChange=(fn this.reorderItems this.queueHandler.pendingSongs)}}
           >
-            {{#each this.queueHandler.pendingSongs as |pendingsong|}}              
+            {{#each this.queueHandler.pendingSongs as |pendingsong|}}
               <div id={{pendingsong.id}} class="row g-0 alert alert-info w-100 text-decoration-none py-0 px-0 my-1" {{sortable-item model=pendingsong}}>
                 <div class="col-auto align-middle px-3 pt-2 rounded-0 handle" {{sortable-handle}}>
                   <FaIcon @icon="grip-vertical" @size="1x" class="d-block" />
@@ -42,7 +42,7 @@
                     <FaIcon @icon="times" @size="1x" class="d-block" />
                   </button>              
                 </div>                
-              </div> 
+              </div>
             {{/each}}
           </div>
         {{/unless}}

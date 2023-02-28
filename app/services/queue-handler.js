@@ -1,9 +1,10 @@
 import Service, { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { sort } from '@ember/object/computed';
+import { sort, uniqBy } from '@ember/object/computed';
 import { writeFile } from '@tauri-apps/api/fs';
 import moment from 'moment';
+import { TrackedArray } from 'tracked-built-ins';
 
 export default class QueueHandlerService extends Service {
   @service globalConfig;
@@ -11,6 +12,7 @@ export default class QueueHandlerService extends Service {
   @service twitchChat;
   @service store;
   @service router;
+  
   @tracked lastStream = '';
   @tracked scrollPlayedPosition = 0;
   @tracked scrollPendingPosition = 0;
@@ -18,9 +20,12 @@ export default class QueueHandlerService extends Service {
   @tracked lastsongrequest;
   // We use this property to track if a key is pressed or not using ember-keyboard helpers.
   @tracked modifierkey = false;
+  
+  @tracked songs = new TrackedArray();
+  @tracked requests = new TrackedArray();
 
   get songqueue() {
-    return this.store.peekAll('request');
+    return this.requests.filter((request) => !request.isDeleted);
   }
 
   queueAscSorting = Object.freeze(['position:asc', 'timestamp:desc']);
@@ -30,7 +35,7 @@ export default class QueueHandlerService extends Service {
   @sort('songqueue', 'queueDescSorting') arrangedDescQueue;
 
   get pendingSongs() {
-    return this.arrangedAscQueue.filterBy('processed', false);
+    return this.arrangedAscQueue.filter((request) => !request.processed);
   }
 
   get pendingSongsRecords() {
@@ -58,7 +63,7 @@ export default class QueueHandlerService extends Service {
   }
 
   get playedSongs() {
-    return this.arrangedDescQueue.filterBy('processed', true);
+    return this.arrangedAscQueue.filter((request) => request.processed);
   }
 
   get playedSongsRecords() {
@@ -77,12 +82,12 @@ export default class QueueHandlerService extends Service {
     });
   }
 
-  get songs() {
-    return this.store.peekAll('song');
+  get songList() {
+    return this.songs.filter((song) => song.active && !song.isDeleted);
   }
 
   get availableSongs() {
-    return this.songs
+    return this.songList
       .map((song) => {
         let exclude = false;
         this.songqueue.forEach((request) => {
@@ -136,11 +141,13 @@ export default class QueueHandlerService extends Service {
     });
   }
 
+  @uniqBy('pendingSongs', 'songId') uniquePending;
+
   @action clearPending() {
     if (this.pendingSongs.length > 0) {
-      this.pendingSongs.uniqBy('songId').forEach((item) => {
+      this.uniquePending.forEach((item) => {
         item.song.then((song) => {
-          let requests = this.pendingSongs.filterBy('song.id', song.get('id'));
+          let requests = this.pendingSongs.filter((request)=> request.songId == song.get('id'));
           let times = requests.length;
           song.times_requested = Number(song.times_requested) - Number(times);
           requests.forEach((request) => {

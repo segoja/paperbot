@@ -2,6 +2,7 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { hash } from 'rsvp';
 import { getCurrent } from '@tauri-apps/api/window';
+import { TrackedArray } from 'tracked-built-ins';
 
 export default class ApplicationRoute extends Route {
   @service session;
@@ -9,6 +10,8 @@ export default class ApplicationRoute extends Route {
   @service headData;
   @service store;
   @service globalConfig;
+  @service twitchChat;
+  @service queueHandler;
 
   async beforeModel() {
     super.init(...arguments);
@@ -36,6 +39,11 @@ export default class ApplicationRoute extends Route {
 
   afterModel(model) {
     this.headData.title = 'Paperbot, a Twitch.tv bot by Papercat84';
+    
+    //this.twitchChat.commands = new TrackedArray(model.commands);    
+    //this.queueHandler.songs = new TrackedArray(model.songs);    
+    //this.queueHandler.requests = new TrackedArray(model.requests);
+    
     if (this.currentUser.isTauri) {
       let currentWindow = getCurrent();
       if (

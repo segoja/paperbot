@@ -163,7 +163,7 @@
             <div class="col-sm">       
               <div class="input-group bg-light border rounded">
                 <form.element @controlType="range" @formLayout="inline" class="w-75" @property="timerTime"  as |el|>
-                  <el.control class="ember-text-field slider border-0" min="0" max="60" />
+                  <el.control class="ember-text-field slider border-0" min="1" max="60" />
                 </form.element>
                 <form.element @controlType="text" @formLayout="inline" class="w-25"@property="timerTime" as |el|>
                   <el.control class="form-control border-0 bg-white" disabled={{true}}  />

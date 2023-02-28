@@ -12,6 +12,8 @@ import {
 } from '@tauri-apps/api/window';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
+import { TrackedArray } from 'tracked-built-ins';
+import { resolve } from 'rsvp';
 
 export default class ApplicationController extends Controller {
   @service cloudState;
@@ -23,6 +25,8 @@ export default class ApplicationController extends Controller {
   @service globalConfig;
   @service lightControl;
   @service eventsExternal;
+  @service twitchChat;
+  @service queueHandler;
 
   @tracked collapsed = true;
   @tracked minimized = false;
@@ -336,6 +340,42 @@ export default class ApplicationController extends Controller {
       return true;
     }
     return false;
+  }
+
+
+  @action updateCommandList(){
+    if(this.commands.length > 0){
+      this.twitchChat.commands = new TrackedArray(this.commands);
+      console.debug('Commands array changed');
+      // console.log(this.twitchChat.commands);
+    }
+  }
+
+  @action updateTimerList(){
+    if(this.timers.length > 0){
+      this.twitchChat.timers = new TrackedArray(this.timers);
+      console.debug('Timers array changed');
+      if(this.twitchChat.botConnected){
+        console.debug('Updating active bot timers');
+        this.twitchChat.timersLauncher();
+      }
+      // console.log(this.twitchChat.commands);
+    }
+  }
+  
+  @action updateSongList(){
+    if(this.songs.length > 0){
+      this.queueHandler.songs = new TrackedArray(this.songs);
+      console.debug('Songs array changed');
+      // console.log(this.queueHandler.songs);
+    }
+  }
+  
+  @action updateRequestList(){
+    if(this.requests.length > 0){
+      this.queueHandler.requests = new TrackedArray(this.requests);
+      console.debug('Request array changed');
+    }
   }
 
   @action handleExport() {
