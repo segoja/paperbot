@@ -7,4 +7,6 @@ export default class WindowModel extends Model {
   @attr('number', { defaultValue: 800 }) height;
   @attr('number', { defaultValue: 0 }) posX;
   @attr('number', { defaultValue: 0 }) posY;
+
+  @attr('string') rev;
 }

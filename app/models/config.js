@@ -28,9 +28,9 @@ export default class ConfigModel extends Model {
   @attr('number', { defaultValue: 25 }) timerLines;
   @attr('number', { defaultValue: 0 }) timerTime;
 
-  @belongsTo('client', { inverse: 'botclientconfigs', save: true })
+  @belongsTo('client', { inverse: 'botclientconfigs', save: true, async: true })
   defbotclient;
-  @belongsTo('client', { inverse: 'chatclientconfigs', save: true })
+  @belongsTo('client', { inverse: 'chatclientconfigs', save: true, async: true })
   defchatclient;
 
   @attr('boolean', { defaultValue: false }) showLyrics;
@@ -89,4 +89,6 @@ export default class ConfigModel extends Model {
     }
     return false;
   }
+  
+  @attr('string') rev;
 }

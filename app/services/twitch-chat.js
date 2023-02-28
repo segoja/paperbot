@@ -7,6 +7,7 @@ import moment from 'moment';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import tmi from 'tmi.js';
 import { later, cancel } from '@ember/runloop';
+import { TrackedArray } from 'tracked-built-ins';
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -49,22 +50,53 @@ export default class TwitchChatService extends Service {
   @tracked chanId;
 
   get commandlist() {
-    return this.store.peekAll('command').filterBy('active', true);
+    let list = new TrackedArray();
+    this.store.findAll('command').then(async (commands)=>{
+      if(await commands.length > 0){
+        commands.map(async (command)=>{
+          if(command.active){
+            await list.push(command);
+          }
+        });
+      }
+    });
+    
+    return list
   }
 
   get audiocommandslist() {
-    return this.commandlist.filterBy('type', 'audio');
+    let list = new TrackedArray();
+    this.commandlist.map((command)=>{
+      if(command.type == 'audio'){
+        list.push(command);
+      }
+    });    
+    return list;
   }
+  
   @tracked lastTimerId = '';
   @tracked lastTimerPos = 0;
   @tracked lastTimerOrder = 0;
   @tracked activeTimers = {};
   get timersList() {
-    return this.store.peekAll('timer').filterBy('active', true);
+    let list = new TrackedArray();
+    this.store.findAll('timer').map((timer)=>{
+      if(timer.active){
+        list.push(timer);
+      }
+    });
+    
+    return list
   }
 
   get songs() {
-    return this.store.peekAll('song').filterBy('active', true);
+    let list = new TrackedArray();
+    this.store.findAll('song').map((song)=>{
+      if(song.active){
+        list.push(song);
+      }
+    });    
+    return list;
   }
 
   @tracked lastmessage = null;
@@ -314,6 +346,7 @@ export default class TwitchChatService extends Service {
         tags['custom-reward-id'] &&
         this.takessongrequests &&
         this.currentUser.updateQueueOverlay &&
+        this.currentUser.lastStream.requests &&
         String(msg).startsWith('!sr ')
       ) {
         var song = msg.replace(/!sr /g, '');
@@ -420,13 +453,9 @@ export default class TwitchChatService extends Service {
     }
   }
 
-  get arrangedSongs() {
-    return this.songs.sortBy('date_added');
-  }
-
   @tracked requestpattern = '';
   @computedFilterByQuery(
-    'arrangedSongs',
+    'songs',
     ['title', 'artist', 'keywords'],
     'requestpattern',
     { conjunction: 'and', sort: false }
@@ -444,7 +473,11 @@ export default class TwitchChatService extends Service {
     if (String(commandName).startsWith('!')) {
       // If the command is known, let's execute it
       if (String(commandName).startsWith('!sr ')) {
-        if (this.takessongrequests && this.currentUser.updateQueueOverlay) {
+        if (
+          this.takessongrequests && 
+          this.currentUser.updateQueueOverlay && 
+          this.currentUser.lastStream.requests
+        ) {
           var song = commandName.replace(/!sr /g, '');
           song = song.replace(/&/g, ' ');
           song = song.replace(/\//g, ' ');
@@ -597,6 +630,7 @@ export default class TwitchChatService extends Service {
         } else if (
           this.takessongrequests &&
           this.currentUser.updateQueueOverlay &&
+          this.currentUser.lastStream.requests &&
           String(commandName).startsWith('!random')
         ) {
           if ((await this.queueHandler.availableSongs.get('length')) > 0) {
@@ -807,7 +841,7 @@ export default class TwitchChatService extends Service {
             this.botclient.say(target, '/me There are no songs to be removed.');
           }
         } else {
-          if ((await this.commandlist.get('length')) > 0) {
+          if ((await this.commandlist.length) > 0) {
             this.commandlist.forEach((command) => {
               if (
                 String(commandName).startsWith(command.name) &&

@@ -19,7 +19,7 @@ export default class StreamRoute extends Route {
   }
   afterModel(model) {
     this.currentUser.lastStream = model;
-    this.twitchChat.takessongrequests = model.requests;
+    // this.twitchChat.takessongrequests = model.requests;
   }
 
   @action willTransition(transition) {

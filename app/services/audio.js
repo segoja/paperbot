@@ -1,5 +1,5 @@
 import { tracked } from '@glimmer/tracking';
-import { TrackedMap } from 'tracked-maps-and-sets';
+import { TrackedMap } from 'tracked-built-ins';
 import Service, { inject as service } from '@ember/service';
 import { Howl, Howler } from 'howler';
 import { invoke } from '@tauri-apps/api';

@@ -16,7 +16,7 @@ export default class RequestModel extends Model {
 
   @attr('boolean', { defaultValue: false }) processed;
 
-  @belongsTo('song') song;
+  @belongsTo('song', { async: true, inverse: 'requests' }) song;
   @readOnly('song.title') title;
   @readOnly('song.artist') artist;
   @readOnly('song.id') songId;
@@ -28,4 +28,6 @@ export default class RequestModel extends Model {
     }
     return text;
   }
+
+  @attr('string') rev;
 }

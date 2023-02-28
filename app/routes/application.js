@@ -10,9 +10,9 @@ export default class ApplicationRoute extends Route {
   @service store;
   @service globalConfig;
 
-  beforeModel() {
+  async beforeModel() {
     super.init(...arguments);
-    this.session.setup();
+    await this.session.setup();
   }
 
   model() {

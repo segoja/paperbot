@@ -11,4 +11,6 @@ export default class TimerModel extends Model {
   @attr('string', { defaultValue: '' }) soundfile;
   @attr('number', { defaultValue: 0 }) volume;
   @attr('date', { defaultValue: '' }) date_added;
+  
+  @attr('string') rev;
 }

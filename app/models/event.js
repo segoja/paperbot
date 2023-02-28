@@ -14,5 +14,7 @@ export default class EventModel extends Model {
   @attr('string', { defaultValue: '' }) type;
   @attr('string', { defaultValue: '' }) usertype;
   @attr('string', { defaultValue: '' }) reward;
-  @attr('string', { defaultValue: '' }) emotes;
+  @attr('string', { defaultValue: '' }) emotes;  
+  
+  @attr('string') rev;
 }

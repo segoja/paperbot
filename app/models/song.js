@@ -20,7 +20,7 @@ export default class SongModel extends Model {
   @attr('date', { defaultValue: '' }) last_requested;
   @attr('date', { defaultValue: '' }) last_played;
 
-  @hasMany('request') requests;
+  @hasMany('request', { async: true, inverse: 'song' }) requests;
 
   @attr('number', { defaultValue: 0 }) times_requested;
   @attr('number', { defaultValue: 0 }) times_played;
@@ -46,4 +46,6 @@ export default class SongModel extends Model {
     }
     return text;
   }
+  
+  @attr('string') rev;
 }

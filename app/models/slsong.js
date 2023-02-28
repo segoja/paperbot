@@ -22,4 +22,6 @@ export default class SlsongModel extends Model {
 
   @attr('string', { defaultValue: '' }) pouchrev;
   @attr('string', { defaultValue: '' }) pouchid;
+  
+  @attr('string') rev;
 }

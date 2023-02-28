@@ -100,7 +100,7 @@ export default class PbStreamEditComponent extends Component {
     }
 
     this.msglist = this.twitchChat.messages;
-    // this.queueHandler.songqueue = this.queueHandler.songqueue.toArray();
+    // this.queueHandler.songqueue = this.queueHandler.songqueue.slice();
     this.queueHandler.scrollPlayedPosition =
       this.queueHandler.pendingSongs.length;
     this.queueHandler.scrollPendingPosition =
@@ -299,15 +299,6 @@ export default class PbStreamEditComponent extends Component {
 
   // Soundboard toggle
   @action soundboardToggle() {
-    /*this.currentUser.soundBoardEnabled = !this.currentUser.soundBoardEnabled;
-    if(!this.currentUser.soundBoardEnabled){
-      if(this.twitchChat.lastSoundCommand != null && this.twitchChat.lastSoundCommand.isPlaying){
-        console.debug(this.twitchChat.lastSoundCommand.isPlaying)
-        console.debug(this.twitchChat.lastSoundCommand);
-        this.twitchChat.lastSoundCommand.changeGainTo(0).from('percent');
-        this.twitchChat.lastSoundCommand.stop(); 
-      }
-    } */
     this.audio.toggle();
   }
 
@@ -378,6 +369,9 @@ export default class PbStreamEditComponent extends Component {
   }
 
   @action queueWriter() {
+    if(this.args.stream.requests){
+      this.twitchChat.takessongrequests = !this.twitchChat.takessongrequests;
+    }
     if (this.globalConfig.config.overlayType === 'file') {
       if (
         this.args.stream.requests &&

@@ -6,6 +6,7 @@ export default class StreamsRoute extends Route {
   @service router;
   @service store;
   @service currentUser;
+  @service session;
 
   model() {
     var store = this.store;
