@@ -21,11 +21,11 @@ module.exports = function (environment) {
       //},
     },
     // This fix the huge deprecated warning.
-    emberKeyboard: {
+    /*emberKeyboard: {
       disableInputsInitializer: true,
       listeners: ['keyUp', 'keyDown', 'keyPress', 'click'], // use only `keyUp`, `keyDown`, and `click`,
       propagation: true,
-    },
+    },*/
     fontawesome: {
       warnIfNoIconsIncluded: false,
       defaultPrefix: 'fas', // fas for Solid, fab for brands, fal for light(pro)
@@ -35,6 +35,12 @@ module.exports = function (environment) {
       // Here you can pass flags/options to your application instance
       // when it is created
     },
+  };
+  
+  ENV['ember-cli-workbox'] = {
+    enabled: environment !== 'test',
+    debug: true,
+    autoRegister: true,
   };
 
   ENV.local_couch = 'paperbot';

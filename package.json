@@ -108,7 +108,6 @@
     "socket.io-client": "^2.4.0",
     "tmi.js": "^1.8.5",
     "tracked-built-ins": "^3.1.1",
-    "tracked-maps-and-sets": "^3.0.2",
     "webpack": "^5.75.0"
   },
   "engines": {

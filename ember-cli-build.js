@@ -18,7 +18,11 @@ module.exports = function (defaults) {
       // This fix the tauri build blocking, but I have to check a better solution messing with cors.
       enabled: true,
     },
-
+    /*'ember-cli-workbox': {
+      enabled: true,
+      debug: true,
+      autoRegister: true,
+    },*/
     // Exclude .png favicons from being fingerprinted
     //origin: 'https://tauri.localhost/',
     fingerprint: {

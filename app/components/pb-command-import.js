@@ -22,15 +22,15 @@ export default class PbCommandComponent extends Component {
   @tracked isViewing = false;
   @action toggleModal() {
     this.isViewing = !this.isViewing;
-    if (!this.isViewing) {
+    //if (!this.isViewing) {
       this.page = 1;
       this.isBulk = false;
-      this.bulkVolume = 0;
+      this.bulkVolume = 50;
       this.filterQuery = '';
       this.separator = '';
       this.commands = [];
       this.commandsData = [];
-    }
+    //}
   }
 
   @action generateCommands() {
@@ -79,7 +79,7 @@ export default class PbCommandComponent extends Component {
       });
     this.page = 1;
     this.isBulk = false;
-    this.bulkVolume = 0;
+    this.bulkVolume = 50;
     //this.filterQuery = '';
     //this.separator = '';
     //this.commands = [];
@@ -179,7 +179,7 @@ export default class PbCommandComponent extends Component {
     this.isBulk = !this.isBulk;
   }
 
-  @tracked bulkVolume = 0;
+  @tracked bulkVolume = 50;
   @action bulkChangeVolume(volume) {
     this.bulkVolume = volume;
     this.filteredCommands.forEach((command) => {

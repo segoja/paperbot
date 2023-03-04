@@ -202,8 +202,8 @@ export default class TwitchChatService extends Service {
     console.debug('Scheduling timers...');
     if (this.currentUser.isTauri) {
       let audioTimersList = this.timersList.filter((timer)=> timer.type == 'audio');
-      if ((await audioTimersList.length) > 0) {
-        if ((await this.timersList.length) > 0) {
+      if (await audioTimersList.length > 0) {
+        if (await this.timersList.length > 0) {
           this.audio.loadSounds(audioTimersList);
         } else {
           console.debug('No sound timers to load in soundboard!');
@@ -632,8 +632,8 @@ export default class TwitchChatService extends Service {
           this.currentUser.lastStream.requests &&
           String(commandName).startsWith('!random')
         ) {
-          if ((await this.queueHandler.availableSongs.get('length')) > 0) {
-            let max = this.queueHandler.availableSongs.get('length');
+          if (await this.queueHandler.availableSongs.length > 0) {
+            let max = this.queueHandler.availableSongs.length;
             let position = Math.floor(Math.random() * max);
             let firstSong = this.queueHandler.availableSongs[position];
 
@@ -694,7 +694,7 @@ export default class TwitchChatService extends Service {
           String(commandName).startsWith('!next') ||
           String(commandName).startsWith('!nextsong')
         ) {
-          if ((await this.queueHandler.pendingSongs.get('length')) > 1) {
+          if (await this.queueHandler.pendingSongs.length > 1) {
             let firstSong = this.queueHandler.pendingSongs[1];
             if (firstSong) {
               this.botclient.say(
@@ -715,7 +715,7 @@ export default class TwitchChatService extends Service {
           String(commandName).startsWith('!previoussong') ||
           String(commandName).startsWith('!ps')
         ) {
-          if ((await this.queueHandler.playedSongs.get('length')) > 0) {
+          if (await this.queueHandler.playedSongs.length > 0) {
             let firstSong = this.queueHandler.playedSongs.get('firstObject');
             if (firstSong) {
               this.botclient.say(
@@ -735,7 +735,7 @@ export default class TwitchChatService extends Service {
           String(commandName).startsWith('!song') ||
           String(commandName).startsWith('!cs')
         ) {
-          if ((await this.queueHandler.pendingSongs.get('length')) > 0) {
+          if (await this.queueHandler.pendingSongs.length > 0) {
             let firstSong = this.queueHandler.pendingSongs.get('firstObject');
             if (firstSong) {
               this.botclient.say(target, '/me Playing: ' + firstSong.fullText);
@@ -748,7 +748,7 @@ export default class TwitchChatService extends Service {
           String(commandName).startsWith('!queue') ||
           String(commandName).startsWith('!sq')
         ) {
-          if ((await this.queueHandler.pendingSongs.get('length')) > 0) {
+          if (await this.queueHandler.pendingSongs.length > 0) {
             let count = 0;
             /*
             this.botclient.say(target, "/me Songs in queue:");
@@ -772,7 +772,7 @@ export default class TwitchChatService extends Service {
           }
           // !ws removes the last song the user requested. Allows one param (mods only), to delete the last request from another user.
         } else if (String(commandName).startsWith('!ws')) {
-          if (this.queueHandler.pendingSongs.get('length') > 0) {
+          if (this.queueHandler.pendingSongs.length > 0) {
             let internalCommand = {
               admin: true,
               mod: true,
@@ -840,7 +840,7 @@ export default class TwitchChatService extends Service {
             this.botclient.say(target, '/me There are no songs to be removed.');
           }
         } else {
-          if ((await this.commandlist.length) > 0) {
+          if (await this.commandlist.length > 0) {
             this.commandlist.forEach((command) => {
               if (
                 String(commandName).startsWith(command.name) &&

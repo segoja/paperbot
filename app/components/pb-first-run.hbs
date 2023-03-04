@@ -1,8 +1,8 @@
 <span role="button" class="nav-link py-1" {{on "click" this.toggleModal}}><FaIcon @icon="question-circle" class="text-info" role="presentation" /></span>
 {{#in-element this.bootstrapWormhole insertBefore=null}}
-  <BsModal @size="md border rounded bg-dark" @open={{this.globalConfig.showFirstRun}} as |Modal|>
-    <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 rounded">
-      <div class="row g-0 w-100 bg-dark bg-gradient border-0 rounded-top">
+  <BsModal @size="md" @open={{this.globalConfig.showFirstRun}} as |Modal|>
+    <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
+      <div class="row g-0 w-100">
         <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i>Quick start!</span></div>
         <div class="col-auto">
           <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal)}}><FaIcon @icon="times" /></button>

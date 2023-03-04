@@ -551,7 +551,7 @@ export default class EventsExternalService extends Service {
   @sort('events', 'eventsSorting') arrangedEvents;
 
   get lastevent() {
-    if (this.arrangedEvents.get('length') > 0) {
+    if (this.arrangedEvents.length > 0) {
       return this.arrangedEvents.get('firstObject');
     }
     return [];
