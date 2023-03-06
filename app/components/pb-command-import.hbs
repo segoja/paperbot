@@ -34,36 +34,32 @@
                 <td class="col p-0">
                   <Input @type="range" min="1" max="100" aria-label="Volume" @value={{this.bulkVolume}}  {{on "change" (fn this.bulkChangeVolume this.bulkVolume)}} class="form-control slider w-100 border-0 rounded-0 btn-secondary" />
                 </td>
-                <td class="col-auto p-0 border-start border-end">
-                  <div class="d-inline-block float-end">
-                    <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0">
-                      <BsButton 
-                        @type="outline-secondary alert-secondary"
-                        class="rounded-0 col-auto border-0"  
-                        @onClick={{this.bulkSelectAll}}
-                      >
-                        <FaIcon @icon={{if this.isBulk "square" "check-square"}} />
-                      </BsButton>
-                    </BsForm>
-                  </div>
+                <td class="col-auto p-0 border-start border-end {{if this.isBulk "bg-success-subtle"  "bg-dark-subtle"}}">
+                  <BsButton 
+                    @type={{if this.isBulk "outline-success bg-success bg-opacity-10" "outline-secondary"}}
+                    class="rounded-0 col-auto border-0"
+                    {{on "click" this.bulkSelectAll}}
+                  >
+                    <FaIcon @icon={{if this.isBulk "check-square" "square"}} />
+                  </BsButton>
                 </td>
               </tr>
             </thead>
             <tbody>
               {{#each this.pagedCommands as |command|}}
-                <tr class={{if command.selected "bg-success-subtle bg-opacity-50"}}>
-                  <td class="col-6 pt-1">{{command.name}}</td>             
+                <tr class={{if command.selected "bg-success-subtle"}}>
+                  <td class="col-6 py-0 pt-2">{{command.name}}</td>             
                   <td class="col p-0 m-0 border-start">
-                    <Input @type="text" @value={{command.command}} aria-label="Command" class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent" placeholder="Enter command." />
+                    <Input @type="text" @value={{command.command}} aria-label="Command" class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent py-0 pt-2" placeholder="Enter command." />
                   </td>
                   <td class="col p-0 m-0 border-start">
-                    <Input @type="text" @value={{command.volume}} aria-label="Volume" class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent" placeholder="Enter volume." />
+                    <Input @type="text" @value={{command.volume}} aria-label="Volume" class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent py-0 pt-2" placeholder="Enter volume." />
                   </td>
-                  <td class="col-auto p-0 border-start border-end">
+                  <td class="col-auto p-0 border-start border-end {{if command.selected "bg-success bg-opacity-10" "bg-dark-subtle"}}">
                     <div class="d-inline-block float-end">
                       <div class="input-group row g-0">
                         <BsButton
-                          @type={{if command.selected "outline-success alert-success" "outline-secondary alert-secondary"}}
+                          @type={{if command.selected "outline-success" "outline-secondary"}}
                           class="rounded-0 col-auto border-0" 
                           @onClick={{fn this.addToImport command}}
                         >

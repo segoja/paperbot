@@ -218,15 +218,15 @@ export default class PbSongComponent extends Component {
 
   @action resetPage() {
     this.page = 1;
-    this.isBulk = false;
+    this.isBulk = true;
     this.bulkSelectAll();
   }
   @tracked isBulk = false;
   @action bulkSelectAll() {
+    this.isBulk = !this.isBulk;
     this.filteredSongs.forEach((song) => {
       song.selected = this.isBulk;
     });
-    this.isBulk = !this.isBulk;
   }
   @tracked bulkType = '';
   @action bulkChangeType(type) {

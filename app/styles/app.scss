@@ -229,12 +229,14 @@ div.system{
     .ember-power-select-clear-btn { background-color: var(--bs-form-control-bg); }
     &.selected {
       .ember-basic-dropdown-trigger,
-      .ember-power-select-selected-item,
-      .ember-power-select-clear-btn,
-      .ember-power-select-status-icon,
-      .ember-power-select-placeholder { 
+      .ember-power-select-selected-item{ 
         background-color: var(--bs-form-control-bg); 
         border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-border-color) var(--bs-border-color);
+      }
+      .ember-power-select-status-icon,
+      .ember-power-select-clear-btn,
+      .ember-power-select-selected-item{
+        background-color: transparent;
       }
     }
   }
@@ -474,6 +476,11 @@ span.deleted {
 
 .text-editstream{
   color: #000;
+}
+
+
+.table.table-condensed .formcol{
+  width: 0px!important;
 }
 
 html * {

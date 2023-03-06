@@ -23,13 +23,13 @@ export default class PbCommandComponent extends Component {
   @action toggleModal() {
     this.isViewing = !this.isViewing;
     //if (!this.isViewing) {
-      this.page = 1;
-      this.isBulk = false;
-      this.bulkVolume = 50;
-      this.filterQuery = '';
-      this.separator = '';
-      this.commands = [];
-      this.commandsData = [];
+    this.page = 1;
+    this.isBulk = false;
+    this.bulkVolume = 50;
+    this.filterQuery = '';
+    this.separator = '';
+    this.commands = [];
+    this.commandsData = [];
     //}
   }
 
@@ -132,7 +132,6 @@ export default class PbCommandComponent extends Component {
   @action generateList() {
     this.resetPage();
     this.commands = this.commandsData.map((item) => {
-      console.debug('Test!');
       let newCommand = this.store.createRecord('audiofile');
       newCommand.name = item.name;
       newCommand.command = '!' + item.command;
@@ -168,15 +167,16 @@ export default class PbCommandComponent extends Component {
 
   @action resetPage() {
     this.page = 1;
-    this.isBulk = false;
+    this.isBulk = true;
     this.bulkSelectAll();
   }
+  
   @tracked isBulk = false;
   @action bulkSelectAll() {
+    this.isBulk = !this.isBulk;
     this.filteredCommands.forEach((command) => {
       command.selected = this.isBulk;
     });
-    this.isBulk = !this.isBulk;
   }
 
   @tracked bulkVolume = 50;
