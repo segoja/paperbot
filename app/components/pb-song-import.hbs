@@ -15,11 +15,13 @@
           {{#if this.currentUser.isTauri}}
             <BsButton @type="warning col-auto me-1" @onClick={{this.openSongsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
           {{else}}
-            {{#let (file-queue name="massSongs" onFileAdded=this.openSongsFolder) as |queue|}}
-              <button type="button" class="btn btn-warning col-auto me-1" title="Import songs by text files" for="upload-txt">Select text files</button>  
+            {{#let (file-queue name="textqueue" onFileAdded=this.openSongsFolder) as |queue|}}
+              <label role="button" for="upload-songs" tabindex="0" class="btn btn-warning col-auto me-1" title="Import songs by text files">
+                  Select text files
+              </label>
               <input
                 type="file"
-                id="upload-txt"
+                id="upload-songs"
                 accept="text/plain"
                 class="p-0 m-0"
                 hidden

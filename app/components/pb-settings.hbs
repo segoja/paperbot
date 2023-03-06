@@ -27,7 +27,9 @@
             </div>
             <div class="col-md-8 border-light">
               <div class="row input-group g-0">
-                <form.element @controlType="password" @label="" placeholder="Default channel name" @formLayout="inline" @property="externaleventskey" class="col rounded-0 rounded-start" />
+                <form.element @controlType="password" @label="" placeholder="Oauth token" @formLayout="inline" @property="externaleventskey" class="col" as |el|>
+                  <el.control @inline={{true}} class="rounded-0 rounded-start" />
+                </form.element>
                 <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline" class="input-group-text col py-1 rounded-0 rounded-end" as |el|>
                   <el.control @inline={{true}}/>
                 </form.element>
@@ -146,31 +148,23 @@
           </div>
           <div class="d-block pb-2 h-5">Timers settings:</div>
           <div class="form-group row pb-2">
-            <label class="control-label col-form-label col-md-4">Chat lines between</label>    
+            <label class="col-md-4">Chat lines between:</label>    
             <div class="col-sm">
-              <div class="input-group bg-light border rounded">
-                <form.element @controlType="range" @formLayout="inline" class="w-75" @property="timerLines"  as |el|>
-                  <el.control class="ember-text-field slider border-0" min="1" max="100" />
-                </form.element>
-                <form.element @controlType="text" @formLayout="inline" class="w-25" @property="timerLines" as |el|>
-                  <el.control class="form-control border-0 bg-white" disabled={{true}} />
-                </form.element>
+              <div class="input-group border rounded">
+                <Input @type="range" min="1" max="100" aria-label="Time between" @value={{this.globalConfig.config.timerLines}} class="form-control btn-secondary slider w-75 border-0" />
+                <Input @type="text" @value={{this.globalConfig.config.timerLines}} aria-label="Chat lines between" class="form-control w-25 border-0" />
               </div>
             </div>
-          </div>  
+          </div>
           <div class="form-group row pb-2">
-            <label class="control-label col-form-label col-md-4">Time between (minutes)</label>    
-            <div class="col-sm">       
-              <div class="input-group bg-light border rounded">
-                <form.element @controlType="range" @formLayout="inline" class="w-75" @property="timerTime"  as |el|>
-                  <el.control class="ember-text-field slider border-0" min="1" max="60" />
-                </form.element>
-                <form.element @controlType="text" @formLayout="inline" class="w-25"@property="timerTime" as |el|>
-                  <el.control class="form-control border-0 bg-white" disabled={{true}}  />
-                </form.element>
+            <label class="col-md-4">Time between (minutes):</label>    
+            <div class="col-sm">
+              <div class="input-group border rounded">
+                <Input @type="range" min="1" max="100" aria-label="Time between" @value={{this.globalConfig.config.timerTime}} class="form-control btn-secondary slider w-75 border-0" />
+                <Input @type="text" @value={{this.globalConfig.config.timerTime}} aria-label="Time between" class="form-control w-25 border-0" />
               </div>
             </div>
-          </div>           
+          </div>          
           <div class="form-group row">
             <div class="col"><hr></div>
           </div>
@@ -210,7 +204,10 @@
               </div>
             </div>
           </div>
-            <p class="py-0 my-0">Online backup:</p>          
+          <div class="form-group row">
+            <div class="col"><hr></div>
+          </div>
+          <div class="d-block pb-2 h-5">Online backup:</div>
             <div class="row py-2">
               <div class="col">
                 <div class="input-group input-group-sm">

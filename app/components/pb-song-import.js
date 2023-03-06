@@ -19,7 +19,7 @@ export default class PbSongComponent extends Component {
   @tracked queueLenght = 0;
 
   get queue() {
-    let queue = this.fileQueue.find('massSongs');
+    let queue = this.fileQueue.find('textqueue');
     return queue;
   }
 
@@ -69,6 +69,7 @@ export default class PbSongComponent extends Component {
 
   @tracked songsData = [];
   @action async openSongsFolder(file) {
+    console.log('mec mec mec!');
     if (this.currentUser.isTauri) {
       dialog.open({ directory: true }).then((directory) => {
         // console.debug(directory);
@@ -97,7 +98,7 @@ export default class PbSongComponent extends Component {
         }
       });
     } else {
-      if (file) {
+      if (await file) {
         this.songsData = [];
         //console.debug(this.fileQueue.files.length);
         let idnum = this.fileQueue.files.length;

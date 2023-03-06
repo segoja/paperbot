@@ -12,7 +12,7 @@ export default class QueueHandlerService extends Service {
   @service twitchChat;
   @service store;
   @service router;
-  
+
   @tracked lastStream = '';
   @tracked scrollPlayedPosition = 0;
   @tracked scrollPendingPosition = 0;
@@ -20,7 +20,7 @@ export default class QueueHandlerService extends Service {
   @tracked lastsongrequest;
   // We use this property to track if a key is pressed or not using ember-keyboard helpers.
   @tracked modifierkey = false;
-  
+
   @tracked songs = new TrackedArray();
   @tracked requests = new TrackedArray();
 
@@ -147,7 +147,9 @@ export default class QueueHandlerService extends Service {
     if (this.pendingSongs.length > 0) {
       this.uniquePending.forEach((item) => {
         item.song.then((song) => {
-          let requests = this.pendingSongs.filter((request)=> request.songId == song.get('id'));
+          let requests = this.pendingSongs.filter(
+            (request) => request.songId == song.get('id')
+          );
           let times = requests.length;
           song.times_requested = Number(song.times_requested) - Number(times);
           requests.forEach((request) => {

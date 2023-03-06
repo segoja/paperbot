@@ -46,6 +46,6 @@ export default class SongModel extends Model {
     }
     return text;
   }
-  
+
   @attr('string') rev;
 }

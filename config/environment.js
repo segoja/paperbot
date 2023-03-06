@@ -36,7 +36,7 @@ module.exports = function (environment) {
       // when it is created
     },
   };
-  
+
   ENV['ember-cli-workbox'] = {
     enabled: environment !== 'test',
     debug: true,

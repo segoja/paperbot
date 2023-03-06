@@ -16,7 +16,6 @@ export default class AudiofileModel extends Model {
   @attr('string', { defaultValue: '' }) soundfile;
   @attr('number', { defaultValue: 0 }) volume;
   @attr('boolean', { defaultValue: false }) selected;
-  
-  
+
   @attr('string') rev;
 }

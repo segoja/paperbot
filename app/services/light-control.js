@@ -1,7 +1,6 @@
 import Service from '@ember/service';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import DarkReader from 'darkreader';
 
 export default class LightControlService extends Service {
   @service globalConfig;
@@ -12,8 +11,8 @@ export default class LightControlService extends Service {
     let status = false;
     if (config) {
       status = config.darkmode;
-      let htmlElement = document.getElementsByTagName('html')[0];      
-      if(status){        
+      let htmlElement = document.getElementsByTagName('html')[0];
+      if (status) {
         htmlElement.setAttribute('data-bs-theme', 'dark');
       } else {
         htmlElement.setAttribute('data-bs-theme', '');
@@ -27,9 +26,8 @@ export default class LightControlService extends Service {
     this.store.findRecord('config', 'ppbconfig').then(async (config) => {
       if (await config) {
         config.darkmode = !config.darkmode;
-        
+
         config.save().then((savedConfig) => {
-          
           this.globalConfig.config = savedConfig;
 
           console.debug('Config saved...');

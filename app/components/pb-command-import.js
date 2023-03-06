@@ -170,7 +170,7 @@ export default class PbCommandComponent extends Component {
     this.isBulk = true;
     this.bulkSelectAll();
   }
-  
+
   @tracked isBulk = false;
   @action bulkSelectAll() {
     this.isBulk = !this.isBulk;

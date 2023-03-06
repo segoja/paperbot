@@ -67,7 +67,9 @@ export default class SongsController extends Controller {
 
   @action gridDeleteSong(song) {
     let requestList = [];
-    song.requests.then((requests)=> requests.forEach((request) => requestList.push(request)));
+    song.requests.then((requests) =>
+      requests.forEach((request) => requestList.push(request))
+    );
     song.destroyRecord().then(() => {
       if (requestList.length > 0) {
         requestList.map((request) => request.destroyRecord());

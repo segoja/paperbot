@@ -1,8 +1,8 @@
-<div class="row h-100 flex-fill m-0 p-0">
-  <div class="col-12 h-100 flex-fill p-0 m-0"> 
+<div class="row h-100 flex-fill m-0 p-0 bg-body">
+  <div class="col-12 h-100 flex-fill p-0 m-0 bg-body"> 
       {{!-- Stream listing --}}
       {{#unless this.currentUser.isViewing}}
-        <div class="card h-100 flex-fill">
+        <div class="card h-100 flex-fill rounded-0">
           <div class="card-header">
             <div class="row">
               <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-12 col-sm px-1" as |form|>
@@ -30,13 +30,17 @@
                     <tr>
                       <td class="col-sm align-top">{{if stream.title stream.title "untitled"}}</td>
                       <td class="col-sm-auto align-top"><span class="text-nowrap">{{format-date stream.date }}</span></td>
-                      <td class="col-auto py-0 pe-0">
-                        <div class="row g-0">
-                          <div class="col-auto ms-auto btn-group my-0">
-                            <button type="button" class="btn {{if stream.finished "btn-outline-info alert alert-info" "btn-outline-warning alert alert-warning"}} rounded-0 py-2 px-3 m-0" {{on "click" (fn @gridResumeStream stream)}}><FaIcon @icon={{if stream.finished "eye" "play"}} /></button>
-                            <button type="button" class="btn btn-outline-secondary alert alert-secondary rounded-0 py-2 px-3 m-0" {{on "click" (fn @gridEditStream stream)}}><FaIcon @icon="edit" /></button>
-                            <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger rounded-0 py-2 px-3 m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this stream?" @targetAction={{fn @gridDeleteStream stream}} />
-                          </div>
+                      <td class="col-auto py-0 pe-0 formcol">
+                        <div class="btn-group text-nowrap float-end">
+                          <BsButton 
+                            @type={{if stream.finished "outline-info alert alert-info" "outline-primary alert alert-primary"}}
+                            class="rounded-0 col-auto border-top-0 border-bottom-0 border-end-0 py-2 my-0" 
+                            @onClick={{fn @gridResumeStream stream}}
+                          >
+                            <FaIcon @icon={{if stream.finished "eye" "play"}} class="stream-status" />
+                          </BsButton>
+                          <button type="button" class="col-auto btn btn-outline-warning alert alert-warning border-top-0 border-bottom-0 border-end-0 rounded-0 py-2 px-3 m-0" {{on "click" (fn @gridEditStream stream)}}><FaIcon @icon="edit" /></button>
+                          <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger border-top-0 border-bottom-0 rounded-0 py-2 px-3 col-auto m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this stream?" @targetAction={{fn @gridDeleteStream stream}} />
                         </div>
                       </td>                      
                     </tr>       

@@ -51,21 +51,23 @@ export default class TwitchChatService extends Service {
 
   @tracked commands = new TrackedArray();
   get commandlist() {
-    return this.commands.filter((command) => command.active && !command.isDeleted);
+    return this.commands.filter(
+      (command) => command.active && !command.isDeleted
+    );
   }
 
   get audiocommandslist() {
-    return this.commandlist.filter((command)=> command.type == 'audio');
+    return this.commandlist.filter((command) => command.type == 'audio');
   }
-  
+
   @tracked lastTimerId = '';
   @tracked lastTimerPos = 0;
   @tracked lastTimerOrder = 0;
   @tracked activeTimers = new TrackedArray();
-  
+
   @tracked timers = new TrackedArray();
   get timersList() {
-    return this.timers.filter((timer)=> timer.active && !timer.isDeleted);
+    return this.timers.filter((timer) => timer.active && !timer.isDeleted);
   }
 
   @tracked lastmessage = null;
@@ -194,16 +196,15 @@ export default class TwitchChatService extends Service {
     console.debug(`* Connected to ${addr}:${port}`);
   }
 
-  
-  
-  
   @action async timersLauncher() {
     let count = 1;
     console.debug('Scheduling timers...');
     if (this.currentUser.isTauri) {
-      let audioTimersList = this.timersList.filter((timer)=> timer.type == 'audio');
-      if (await audioTimersList.length > 0) {
-        if (await this.timersList.length > 0) {
+      let audioTimersList = this.timersList.filter(
+        (timer) => timer.type == 'audio'
+      );
+      if ((await audioTimersList.length) > 0) {
+        if ((await this.timersList.length) > 0) {
           this.audio.loadSounds(audioTimersList);
         } else {
           console.debug('No sound timers to load in soundboard!');
@@ -217,7 +218,7 @@ export default class TwitchChatService extends Service {
       count = count + 1;
     });
   }
-  
+
   /*
     The timer scheduler works the following way:
     Timers are fired when two criteria are met: 
@@ -230,7 +231,12 @@ export default class TwitchChatService extends Service {
     The scheduler also avoids to fire the same timer twice in a row.
   */
   @action async timerScheduler(timer, order) {
-    if (!timer.hasDirtyAttributes && !timer.isDeleted && this.botConnected && this.channel) {
+    if (
+      !timer.hasDirtyAttributes &&
+      !timer.isDeleted &&
+      this.botConnected &&
+      this.channel
+    ) {
       if (this.activeTimers[timer.id] && !timer.active) {
         //console.debug('The timer was active, cancelling')
         cancel(this.activeTimers[timer.id].action);
@@ -239,42 +245,45 @@ export default class TwitchChatService extends Service {
         // let canSchedule = false;
 
         //if(canSchedule){
-          let time = this.globalConfig.config.timerTime * 60 * 1000;
-          console.debug('Scheduling the timer '+timer.name+'...')
-          this.activeTimers[timer.id] = { 
-            action: await later(() => {
-              if (this.msglist.length > 0) {
-                let diff = this.msglist.length - this.lastTimerPos;
-                
-                let repeatable = this.activeTimers.length == 1 ? true : this.lastTimerId != timer.id;
-                
-                if (
-                  diff >= this.globalConfig.config.timerLines &&
-                  repeatable &&
-                  this.lastTimerOrder < order
-                ) {
-                  this.lastTimerId = timer.id;
-                  if (this.timersList.length === order) {
-                    this.lastTimerOrder = 0;
-                  } else {
-                    this.lastTimerOrder = order;
-                  }
-                  this.botclient.say(this.channel, timer.message);
-                  if (timer.type === 'audio' && this.currentUser.isTauri) {
-                    this.audio.playSound(timer);
-                  }
-                  this.lastTimerPos = this.msglist.length;
+        let time = this.globalConfig.config.timerTime * 60 * 1000;
+        console.debug('Scheduling the timer ' + timer.name + '...');
+        this.activeTimers[timer.id] = {
+          action: await later(() => {
+            if (this.msglist.length > 0) {
+              let diff = this.msglist.length - this.lastTimerPos;
+
+              let repeatable =
+                this.activeTimers.length == 1
+                  ? true
+                  : this.lastTimerId != timer.id;
+
+              if (
+                diff >= this.globalConfig.config.timerLines &&
+                repeatable &&
+                this.lastTimerOrder < order
+              ) {
+                this.lastTimerId = timer.id;
+                if (this.timersList.length === order) {
+                  this.lastTimerOrder = 0;
+                } else {
+                  this.lastTimerOrder = order;
                 }
+                this.botclient.say(this.channel, timer.message);
+                if (timer.type === 'audio' && this.currentUser.isTauri) {
+                  this.audio.playSound(timer);
+                }
+                this.lastTimerPos = this.msglist.length;
               }
-              // If there was an existing timer scheduled we cancel it so we can avoid duplicated timers:              
-              if(this.activeTimers[timer.id]){
-                cancel(this.activeTimers[timer.id].action);
-                this.activeTimers.splice(timer.id, 1);
-              }
-              this.timerScheduler(timer, order);
-            }, time), 
-            rev: timer.rev
-          };
+            }
+            // If there was an existing timer scheduled we cancel it so we can avoid duplicated timers:
+            if (this.activeTimers[timer.id]) {
+              cancel(this.activeTimers[timer.id].action);
+              this.activeTimers.splice(timer.id, 1);
+            }
+            this.timerScheduler(timer, order);
+          }, time),
+          rev: timer.rev,
+        };
         //}
       }
     }
@@ -473,8 +482,8 @@ export default class TwitchChatService extends Service {
       // If the command is known, let's execute it
       if (String(commandName).startsWith('!sr ')) {
         if (
-          this.takessongrequests && 
-          this.currentUser.updateQueueOverlay && 
+          this.takessongrequests &&
+          this.currentUser.updateQueueOverlay &&
           this.currentUser.lastStream.requests
         ) {
           var song = commandName.replace(/!sr /g, '');
@@ -632,7 +641,7 @@ export default class TwitchChatService extends Service {
           this.currentUser.lastStream.requests &&
           String(commandName).startsWith('!random')
         ) {
-          if (await this.queueHandler.availableSongs.length > 0) {
+          if ((await this.queueHandler.availableSongs.length) > 0) {
             let max = this.queueHandler.availableSongs.length;
             let position = Math.floor(Math.random() * max);
             let firstSong = this.queueHandler.availableSongs[position];
@@ -694,7 +703,7 @@ export default class TwitchChatService extends Service {
           String(commandName).startsWith('!next') ||
           String(commandName).startsWith('!nextsong')
         ) {
-          if (await this.queueHandler.pendingSongs.length > 1) {
+          if ((await this.queueHandler.pendingSongs.length) > 1) {
             let firstSong = this.queueHandler.pendingSongs[1];
             if (firstSong) {
               this.botclient.say(
@@ -715,7 +724,7 @@ export default class TwitchChatService extends Service {
           String(commandName).startsWith('!previoussong') ||
           String(commandName).startsWith('!ps')
         ) {
-          if (await this.queueHandler.playedSongs.length > 0) {
+          if ((await this.queueHandler.playedSongs.length) > 0) {
             let firstSong = this.queueHandler.playedSongs.get('firstObject');
             if (firstSong) {
               this.botclient.say(
@@ -735,7 +744,7 @@ export default class TwitchChatService extends Service {
           String(commandName).startsWith('!song') ||
           String(commandName).startsWith('!cs')
         ) {
-          if (await this.queueHandler.pendingSongs.length > 0) {
+          if ((await this.queueHandler.pendingSongs.length) > 0) {
             let firstSong = this.queueHandler.pendingSongs.get('firstObject');
             if (firstSong) {
               this.botclient.say(target, '/me Playing: ' + firstSong.fullText);
@@ -748,7 +757,7 @@ export default class TwitchChatService extends Service {
           String(commandName).startsWith('!queue') ||
           String(commandName).startsWith('!sq')
         ) {
-          if (await this.queueHandler.pendingSongs.length > 0) {
+          if ((await this.queueHandler.pendingSongs.length) > 0) {
             let count = 0;
             /*
             this.botclient.say(target, "/me Songs in queue:");
@@ -840,7 +849,7 @@ export default class TwitchChatService extends Service {
             this.botclient.say(target, '/me There are no songs to be removed.');
           }
         } else {
-          if (await this.commandlist.length > 0) {
+          if ((await this.commandlist.length) > 0) {
             this.commandlist.forEach((command) => {
               if (
                 String(commandName).startsWith(command.name) &&

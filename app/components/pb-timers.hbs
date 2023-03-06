@@ -1,7 +1,7 @@
-<div class="row h-100 flex-fill m-0 p-0">
-  <div class="col-12 h-100 flex-fill p-0 m-0"> 
+<div class="row h-100 flex-fill m-0 p-0 bg-body">
+  <div class="col-12 h-100 flex-fill p-0 m-0 bg-body"> 
       {{!-- timer listing --}}
-      <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill"}}">
+      <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill rounded-0"}}">
         <div class="card-header">
           <div class="row">
             <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-md col-sm-6 col-12 px-1" as |form|>
@@ -52,23 +52,31 @@
               </thead>
               <tbody>
                 {{#each this.pagedContent as |timer|}}
-                  <tr class={{if timer.active "table-success"}}>
+                  <tr class={{if timer.active "bg-success bg-opacity-10"}}>
                     <td class="col">{{if timer.name timer.name "unnamed"}}</td>
-                    <td class="d-none d-lg-table-cell col-lg overflow-hidden"> 
+                    <td class="d-none d-lg-table-cell col-lg overflow-hidden">                      
                       <small class="muted"> {{timer.message}}</small>
+                      {{#if timer.message}}
+                         <label>
+                          <span role="button">
+                            <FaIcon @icon="eye" class="text-info" role="presentation" />
+                            <BsTooltip @delayHide={{this.globalConfig.ttdelay}} role="presentation">{{timer.message}}</BsTooltip>
+                          </span>
+                        </label>
+                      {{/if}}
                     </td>
                     <td class="col-lg">{{timer.type}}</td>
-                    <td class="col-auto py-0 pe-0">
+                    <td class="col-auto py-0 pe-0 formcol">
                       <div class="btn-group text-nowrap float-end">
                         <BsButton 
-                          @type={{if timer.active "outline-success alert alert-success" "outline-secondary alert-secondary"}}
-                          class="rounded-0 col-auto border px-3 py-2 m-0" 
+                          @type={{if timer.active "outline-success alert alert-success" "outline-secondary alert alert-dark"}}
+                          class="rounded-0 col-auto border-top-0 border-bottom-0 border-end-0 px-3 py-2 m-0" 
                           @onClick={{fn @gridActiveTimer timer}}
                         >
                           <FaIcon @icon={{if timer.active "check-square" "square"}} />
                         </BsButton>
-                        <button type="button" class="col-auto btn btn-outline-secondary alert alert-secondary rounded-0 py-2 px-3 m-0" {{on "click" (fn @gridEditTimer timer)}}><FaIcon @icon="edit" /></button>
-                        <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger rounded-0 py-2 px-3 col-auto m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this timer?" @targetAction={{fn @gridDeleteTimer timer}} />
+                        <button type="button" class="col-auto btn btn-outline-warning alert alert-warning border-top-0 border-bottom-0 border-end-0 rounded-0 py-2 px-3 m-0" {{on "click" (fn @gridEditTimer timer)}}><FaIcon @icon="edit" /></button>
+                        <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger border-top-0 border-bottom-0 rounded-0 py-2 px-3 col-auto m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this timer?" @targetAction={{fn @gridDeleteTimer timer}} />
                       </div>
                     </td>
                   </tr>

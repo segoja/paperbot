@@ -98,7 +98,9 @@ export default class AudioService extends Service {
             let oldsound = this.sounds.get(item.get('id'));
             oldsound.unload();
             this.sounds.delete(item.get('id'));
-            console.debug('Sound ' + item.name + ' already exist, replacing...');
+            console.debug(
+              'Sound ' + item.name + ' already exist, replacing...'
+            );
           }
 
           // then inatialized the new howl as
@@ -181,7 +183,9 @@ export default class AudioService extends Service {
                     console.debug(src + ' loaded in the soundboard');
                   },
                   onloaderror: function () {
-                    console.debug('error loading ' + src + ' in the soundboard!');
+                    console.debug(
+                      'error loading ' + src + ' in the soundboard!'
+                    );
                   },
                 })
               );
