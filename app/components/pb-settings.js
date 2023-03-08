@@ -49,35 +49,38 @@ export default class PbSettingsComponent extends Component {
     }
   }
 
-  @action setdefOverlay(overlay) {
-    console.debug('Into the setdefBot function');
-    if (this.globalConfig.config.get('defOverlay.id') != undefined) {
-      console.debug('Changing defOverlay');
-      var oldclient = this.store.peekRecord(
-        'overlay',
-        this.globalConfig.config.get('defOverlay.id')
-      );
-      oldOverlay.configs
-        .removeObject(this.globalConfig.config)
-        .then(() => {
-          oldOverlay.save().then(() => {
-            this.globalConfig.config.defOverlay = overlay;
-            if (overlay) {
-              overlay.save().then(() => this.globalConfig.config.save());
-            } else {
-              this.globalConfig.config.save();
-            }
+  @action async setdefOverlay(overlay) {
+    let oldOverlay = await this.globalConfig.config.get('defOverlay');      
+    this.globalConfig.config.defOverlay = overlay;
+    
+    if (oldOverlay) {
+      if (overlay) {     
+        if(oldOverlay.id != overlay.id){
+          overlay.save().then(() => {
+            this.globalConfig.config.save().then(()=>{
+              console.debug('Updated defOverlay'); 
+              if(oldOverlay){
+                oldOverlay.save();
+              }            
+            });
           });
+        }
+      } else {
+        this.globalConfig.config.save().then(()=>{
+          console.debug('Cleared defOverlay'); 
+          if(oldOverlay){
+            oldOverlay.save();
+          } 
         });
-    } else {
-      console.debug('Setting defOverlay');
-      //Add the defOverlay to our config
-      this.globalConfig.config.defOverlay = overlay;
+      }
+    } else {      
       //Save the child then the parent
       if (overlay) {
-        overlay.save().then(() => this.globalConfig.config.save());
+        overlay.save().then(() => {
+          this.globalConfig.config.save().then(()=> console.debug('Updated defOverlay') );
+        });
       } else {
-        this.globalConfig.config.save();
+        this.globalConfig.config.save().then(()=> console.debug('Cleared defOverlay') );
       }
     }
   }
