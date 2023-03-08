@@ -25,6 +25,10 @@ export default class ConfigModel extends Model {
   @attr('number', { defaultValue: 175 }) overlayHeight;
   @attr('number', { defaultValue: 0 }) overlayPosX;
   @attr('number', { defaultValue: 0 }) overlayPosY;
+  
+  @belongsTo('overlay', { inverse: 'configs', save: true, async: true })
+  defOverlay;
+  
   @attr('number', { defaultValue: 25 }) timerLines;
   @attr('number', { defaultValue: 1 }) timerTime;
 

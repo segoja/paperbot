@@ -32,6 +32,36 @@ export default class StreamController extends Controller {
     this.model.save();
   }
 
+  @action setOverlay(overlay) {
+    if (this.model.get('overlay.id') != undefined) {
+      console.debug('Changing overlay');
+      var oldoverlay = this.store.peekRecord(
+        'overlay',
+        this.model.get('overlay.id')
+      );
+      oldoverlay.streams.removeObject(this.model).then(() => {
+        oldoverlay.save().then(() => {
+          this.model.overlay = overlay;
+          if (overlay) {
+            overlay.save().then(() => this.model.save());
+          } else {
+            this.model.save();
+          }
+        });
+      });
+    } else {
+      console.debug('Setting overlay');
+      //Add the overlay to our stream
+      this.model.overlay = overlay;
+      //Save the child then the parent
+      if (overlay) {
+        overlay.save().then(() => this.model.save());
+      } else {
+        this.model.save();
+      }
+    }
+  }
+
   @action setBotClient(client) {
     if (this.model.get('botclient.id') != undefined) {
       console.debug('Changing botclient');

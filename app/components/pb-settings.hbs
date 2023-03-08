@@ -55,7 +55,17 @@
                 </client.control>
               </form.element>
           </div>
-
+          
+          <div class="row pb-2">
+            <div class="col-form-label col-md-4">
+              <label class="control-label">Default overlay template</label>
+            </div>
+            <form.element @controlType="power-select" @property="defOverlay" @onChange={{this.setdefOverlay}} @formLayout="inline" class="col-md-8 border-light" @invisibleLabel={{true}} @options={{@overlays}} required as |overlay|>
+              <overlay.control @allowClear={{true}} @placeholder="Select the default overlay template" as |option|>
+                {{option.name}}
+              </overlay.control>
+            </form.element>
+          </div>
           <div class="row">
             <label class="control-label col-form-label col-md-4">
               Queue overlay

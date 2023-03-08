@@ -49,6 +49,39 @@ export default class PbSettingsComponent extends Component {
     }
   }
 
+  @action setdefOverlay(overlay) {
+    console.debug('Into the setdefBot function');
+    if (this.globalConfig.config.get('defOverlay.id') != undefined) {
+      console.debug('Changing defOverlay');
+      var oldclient = this.store.peekRecord(
+        'overlay',
+        this.globalConfig.config.get('defOverlay.id')
+      );
+      oldOverlay.configs
+        .removeObject(this.globalConfig.config)
+        .then(() => {
+          oldOverlay.save().then(() => {
+            this.globalConfig.config.defOverlay = overlay;
+            if (overlay) {
+              overlay.save().then(() => this.globalConfig.config.save());
+            } else {
+              this.globalConfig.config.save();
+            }
+          });
+        });
+    } else {
+      console.debug('Setting defOverlay');
+      //Add the defOverlay to our config
+      this.globalConfig.config.defOverlay = overlay;
+      //Save the child then the parent
+      if (overlay) {
+        overlay.save().then(() => this.globalConfig.config.save());
+      } else {
+        this.globalConfig.config.save();
+      }
+    }
+  }
+
   @action setdefBot(client) {
     console.debug('Into the setdefBot function');
     if (this.globalConfig.config.get('defbotclient.id') != undefined) {

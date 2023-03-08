@@ -13,6 +13,7 @@ export default class StreamsRoute extends Route {
     return hash({
       model: store.findAll('stream'),
       clients: store.findAll('client'),
+      overlays: store.findAll('overlay'),
       commands: store.findAll('command'),
       songs: store.findAll('song'),
     });

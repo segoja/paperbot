@@ -1,27 +1,19 @@
 import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { later } from '@ember/runloop';
 import { inject as service } from '@ember/service';
-import { sort } from '@ember/object/computed';
 
-export default class PbReaderComponent extends Component {
+export default class PbOverlayComponent extends Component {
   @service globalConfig;
 
-  constructor() {
-    super(...arguments);
-  }
+  @tracked saving = false;
 
-  requestSorting = Object.freeze(['position:asc', 'timestamp:desc']);
-  @sort('args.requests', 'requestSorting') arrangedContent;
-
-  get pendingRequests() {
-    let count = 0;
-    return this.arrangedContent.filter((request) => {
-      if (
-        !request.processed &&
-        count < this.globalConfig.config.overlayLength
-      ) {
-        count = Number(count) + 1;
-        return request;
-      }
-    });
+  @action doneEditing() {
+    this.args.saveOverlay();
+    this.saving = true;
+    later(() => {
+      this.saving = false;
+    }, 500);
   }
 }

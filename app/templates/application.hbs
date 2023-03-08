@@ -47,7 +47,7 @@
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
               {{#if this.showSettings}}
-                <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+                <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
               {{/if}}
               <CloudState />
               
@@ -79,7 +79,7 @@
                 <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
               </button>
               {{#if this.showSettings}}
-                <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+                <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
               {{/if}}
               <CloudState />
               
@@ -133,7 +133,7 @@
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
-              <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
             {{/if}}
             <CloudState />
           
@@ -161,6 +161,9 @@
             <nav.item>
               <nav.link-to @route="clients.index" class="py-1">Clients</nav.link-to>
             </nav.item>
+            <nav.item>
+              <nav.link-to @route="overlays.index" class="py-1">Overlays</nav.link-to>
+            </nav.item>            
             {{#unless this.currentUser.isTauri}}
               <nav.item>
                 <nav.link-to @route="reader" class="py-1"><FaIcon @icon="align-center" /></nav.link-to>
@@ -195,7 +198,7 @@
               <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
-              <PbSettings @clients={{this.clients}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
             {{/if}}
             
             <CloudState />

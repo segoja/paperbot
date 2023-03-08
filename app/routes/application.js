@@ -22,6 +22,7 @@ export default class ApplicationRoute extends Route {
     return hash({
       model: store.findAll('config'),
       clients: store.findAll('client'),
+      overlays: store.findAll('overlay'),
       songs: store.findAll('song'),
       streams: store.findAll('stream'),
       commands: store.findAll('command'),

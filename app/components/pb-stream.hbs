@@ -31,7 +31,7 @@
     </div>
   </div>
   {{#if this.restore}}
-    <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @commands={{@commands}} @songs={{@songs}} @isEditing={{@isEditing}} @editStream={{@editStream}} @saveStream={{@saveStream}} @setChatClient={{@setChatClient}} @setBotClient={{@setBotClient}} @overlayGenerator={{@overlayGenerator}} @saveAndReturnStream={{@saveAndReturnStream}} @deleteStream={{@deleteStream}} />
+    <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @overlays={{@overlays}} @commands={{@commands}} @songs={{@songs}} @isEditing={{@isEditing}} @editStream={{@editStream}} @saveStream={{@saveStream}} @setOverlay={{@setOverlay}} @setChatClient={{@setChatClient}} @setBotClient={{@setBotClient}} @overlayGenerator={{@overlayGenerator}} @saveAndReturnStream={{@saveAndReturnStream}} @deleteStream={{@deleteStream}} />
   {{/if}}
   {{#unless @isEditing}}
     {{#if @stream.finished}}
