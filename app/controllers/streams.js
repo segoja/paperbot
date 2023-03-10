@@ -78,8 +78,21 @@ export default class StreamsController extends Controller {
     this.router.transitionTo('streams.stream', stream);
   }
 
-  @action gridDeleteStream(stream) {
+  @action async gridDeleteStream(stream) {
+    let oldBotClient = await stream.get('botclient');
+    let oldChatClient = await stream.get('chatclient');
+    let oldOverlay = await stream.get('overlay');
+    
     stream.destroyRecord().then(() => {
+      if(oldBotClient){
+        oldBotClient.save();
+      }
+      if(oldChatClient){
+        oldChatClient.save();
+      }
+      if(oldOverlay){
+        oldOverlay.save();
+      }       
       this.currentUser.isViewing = false;
       this.stream.isEditing = false;
       this.currentUser.lastStream = null;

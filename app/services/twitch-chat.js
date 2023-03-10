@@ -403,6 +403,9 @@ export default class TwitchChatService extends Service {
                     : this.botUsername;
                   this.lastsongrequest.position = nextPosition;
 
+                  this.lastsongrequest.title = bestmatch.title || '';
+                  this.lastsongrequest.artist = bestmatch.artist || '';
+
                   this.lastsongrequest.save().then(async () => {
                     // Song statistics:
                     bestmatch.times_requested =
@@ -533,7 +536,10 @@ export default class TwitchChatService extends Service {
                       : this.botUsername;
                     this.lastsongrequest.processed = false;
                     this.lastsongrequest.position = nextPosition;
-
+                    
+                    this.lastsongrequest.title = bestmatch.title || '';
+                    this.lastsongrequest.artist = bestmatch.artist || '';
+                    
                     this.lastsongrequest.save().then(async () => {
                       // Song statistics:
                       bestmatch.times_requested =
@@ -666,6 +672,9 @@ export default class TwitchChatService extends Service {
                 : this.botUsername;
               this.lastsongrequest.processed = false;
               this.lastsongrequest.position = nextPosition;
+              
+              this.lastsongrequest.title = firstSong.title || '';
+              this.lastsongrequest.artist = firstSong.artist || '';
 
               this.lastsongrequest.save().then(async () => {
                 // Song statistics:

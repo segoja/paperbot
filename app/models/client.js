@@ -10,14 +10,14 @@ export default class ClientModel extends Model {
   @attr('boolean', { defaultValue: true }) reconnect;
   @attr('boolean', { defaultValue: true }) secure;
 
-  @hasMany('stream', { inverse: 'botclient', save: true, async: true })
+  @hasMany('stream', { inverse: 'botclient', async: true })
   botclientstreams;
-  @hasMany('stream', { inverse: 'chatclient', save: true, async: true })
+  @hasMany('stream', { inverse: 'chatclient', async: true })
   chatclientstreams;
 
-  @hasMany('config', { inverse: 'defbotclient', save: true, async: true })
+  @hasMany('config', { inverse: 'defbotclient', async: true })
   botclientconfigs;
-  @hasMany('config', { inverse: 'defchatclient', save: true, async: true })
+  @hasMany('config', { inverse: 'defchatclient', async: true })
   chatclientconfigs;
 
   get optsgetter() {

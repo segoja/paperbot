@@ -50,11 +50,12 @@
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
               {{/if}}
               <CloudState />
-              
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
-              <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
             </div>
+            <div class="col-auto d-md-none">
+              <button type="button" class="btn btn-outline-secondary border-0 px-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+              <button type="button" class="btn btn-outline-secondary border-0 px-0 rounded-0 btn-window" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+              <button type="button" class="btn btn-outline-danger border-0 px-0 rounded-0 btn-window" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>
+            </div>    
           </div>
           <navbar.content class="px-md-0 px-3">
             <navbar.nav class="col" as |nav|>
@@ -82,11 +83,10 @@
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
               {{/if}}
               <CloudState />
-              
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
-              <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>    
             </div>
+            <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+            <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+            <button type="button" class="btn btn-outline-danger border-0 p-0 rounded-0 btn-window" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>  
           </div>
       </BsNavbar>
     </header>
@@ -136,13 +136,15 @@
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
             {{/if}}
             <CloudState />
-          
-            {{#if this.currentUser.isTauri}}
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
-              <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>
-            {{/if}}
-          </div>
+
+          </div>          
+          {{#if this.currentUser.isTauri}}
+            <div class="col-auto d-md-none">
+              <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+              <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+              <button type="button" class="btn btn-outline-danger border-0 p-0 rounded-0 btn-window" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>
+            </div>
+          {{/if}}
         </div>
         <navbar.content class="px-md-0 px-3">
           <navbar.nav class="col" as |nav|>
@@ -202,12 +204,12 @@
             {{/if}}
             
             <CloudState />
-            {{#if this.currentUser.isTauri}}
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
-              <button type="button" class="btn btn-outline-secondary px-3 border-0 rounded-0" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
-              <button type="button" class="btn btn-outline-danger px-3 border-0 rounded-0" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>
-            {{/if}}
           </div>
+          {{#if this.currentUser.isTauri}}
+            <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
+            <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
+            <button type="button" class="btn btn-outline-danger border-0 p-0 rounded-0 btn-window" {{on "click" this.closeWindow}}><FaIcon @icon="times" /></button>
+          {{/if}}
         </div>
     </BsNavbar>
   </header>
@@ -215,6 +217,7 @@
 {{#if this.isOverlay}}
   <style>
     .chroma { background-color: {{this.globalConfig.config.chromaColor}}!important; }
+    html, body { overflow: hidden!important; }
   </style>
   <main class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} title="Press alt+F4 if you want to close this window." id="mainA" role="button">
     <BsTooltip @delayHide="0" role="presentation">

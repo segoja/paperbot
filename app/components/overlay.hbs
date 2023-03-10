@@ -1,5 +1,5 @@
 <div class="row h-100 flex-fill m-0 p-0">
-  <div class="col-12 h-100 flex-fill p-0 m-0 listframe">   
+  <div class="col-12 h-100 flex-fill p-0 m-0">   
     {{#if this.pendingRequests}}
       <table class="table table-dark">
         <thead>
@@ -13,11 +13,11 @@
               <tr>
                 <td class="bg-transparent text-white">
                   <div class="row g-0">
-                    <strong class="col">{{request.title}}</strong>
+                    <strong class="col">{{request.effectiveTitle}}</strong>
                     <div class="col-auto">{{request.user}}</div>
                   </div>
                   <div class="row g-0">
-                    <small class="col"><small>{{request.artist}}</small></small>
+                    <small class="col"><small>{{request.effectiveArtist}}</small></small>
                     <small class="col-auto"><small>{{nicer-date request.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></small>
                   </div>
                 </td>
@@ -26,11 +26,11 @@
               <tr>
                 <td class="bg-transparent text-white">
                   <div class="row g-0">
-                    <strong class="col">{{request.title}}</strong>
+                    <strong class="col">{{request.effectiveTitle}}</strong>
                     <div class="col-auto">{{request.user}}</div>
                   </div>
                   <div class="row g-0">
-                    <small class="col"><small>{{request.artist}}</small></small>
+                    <small class="col"><small>{{request.effectiveArtist}}</small></small>
                     <small class="col-auto"><small>{{nicer-date request.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></small>
                   </div>
                 </td>

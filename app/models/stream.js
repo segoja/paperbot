@@ -15,16 +15,15 @@ export default class StreamModel extends Model {
   @attr chatlog;
   @attr songqueue;
 
-  @belongsTo('client', { inverse: 'botclientstreams', save: true, async: true })
+  @belongsTo('client', { inverse: 'botclientstreams', async: true })
   botclient;
   @belongsTo('client', {
     inverse: 'chatclientstreams',
-    save: true,
     async: true,
   })
   chatclient;
 
-  @belongsTo('overlay', { inverse: 'streams', save: true, async: true })
+  @belongsTo('overlay', { inverse: 'streams', async: true })
   overlay;
 
   @readOnly('overlay.name') overlayName;

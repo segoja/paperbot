@@ -52,103 +52,40 @@ export default class PbSettingsComponent extends Component {
   @action async setdefOverlay(overlay) {
     let oldOverlay = await this.globalConfig.config.get('defOverlay');      
     this.globalConfig.config.defOverlay = overlay;
-    
-    if (oldOverlay) {
-      if (overlay) {     
-        if(oldOverlay.id != overlay.id){
-          overlay.save().then(() => {
-            this.globalConfig.config.save().then(()=>{
-              console.debug('Updated defOverlay'); 
-              if(oldOverlay){
-                oldOverlay.save();
-              }            
-            });
-          });
-        }
-      } else {
-        this.globalConfig.config.save().then(()=>{
-          console.debug('Cleared defOverlay'); 
-          if(oldOverlay){
-            oldOverlay.save();
-          } 
-        });
+    this.globalConfig.config.save().then(()=>{
+      if(overlay){
+        overlay.save();
+      }      
+      if(oldOverlay){
+          oldOverlay.save();
       }
-    } else {      
-      //Save the child then the parent
-      if (overlay) {
-        overlay.save().then(() => {
-          this.globalConfig.config.save().then(()=> console.debug('Updated defOverlay') );
-        });
-      } else {
-        this.globalConfig.config.save().then(()=> console.debug('Cleared defOverlay') );
-      }
-    }
+    });
   }
 
-  @action setdefBot(client) {
-    console.debug('Into the setdefBot function');
-    if (this.globalConfig.config.get('defbotclient.id') != undefined) {
-      console.debug('Changing defbotclient');
-      var oldclient = this.store.peekRecord(
-        'client',
-        this.globalConfig.config.get('defbotclient.id')
-      );
-      oldclient.botclientconfigs
-        .removeObject(this.globalConfig.config)
-        .then(() => {
-          oldclient.save().then(() => {
-            this.globalConfig.config.defbotclient = client;
-            if (client) {
-              client.save().then(() => this.globalConfig.config.save());
-            } else {
-              this.globalConfig.config.save();
-            }
-          });
-        });
-    } else {
-      console.debug('Setting defbotclient');
-      //Add the defbotclient to our config
-      this.globalConfig.config.defbotclient = client;
-      //Save the child then the parent
-      if (client) {
-        client.save().then(() => this.globalConfig.config.save());
-      } else {
-        this.globalConfig.config.save();
+  @action async setdefBot(client) {
+    let oldClient = await this.globalConfig.config.get('defbotclient');
+    this.globalConfig.config.defbotclient = client;
+    this.globalConfig.config.save().then(()=>{
+      if(client){
+        client.save();
+      }      
+      if(oldClient){
+          oldClient.save();
       }
-    }
+    });
   }
 
-  @action setdefChat(client) {
-    console.debug('Into the setdefChat function');
-    if (this.globalConfig.config.get('defchatclient.id') != undefined) {
-      console.debug('Changing defchatclient');
-      var oldclient = this.store.peekRecord(
-        'client',
-        this.globalConfig.config.get('defchatclient.id')
-      );
-      oldclient.chatclientconfigs
-        .removeObject(this.globalConfig.config)
-        .then(() => {
-          oldclient.save().then(() => {
-            this.globalConfig.config.defchatclient = client;
-            if (client) {
-              client.save().then(() => this.globalConfig.config.save());
-            } else {
-              this.globalConfig.config.save();
-            }
-          });
-        });
-    } else {
-      console.debug('Setting defchatclient');
-      //Add the defchatclient to our config
-      this.globalConfig.config.defchatclient = client;
-      //Save the child then the parent
-      if (client) {
-        client.save().then(() => this.globalConfig.config.save());
-      } else {
-        this.globalConfig.config.save();
+  @action async setdefChat(client) {
+    let oldClient = await this.globalConfig.config.get('defchatclient');
+    this.globalConfig.config.defchatclient = client;
+    this.globalConfig.config.save().then(()=>{
+      if(client){
+        client.save();
+      }      
+      if(oldClient){
+          oldClient.save();
       }
-    }
+    });
   }
 
   @action opendialogfiles(config) {

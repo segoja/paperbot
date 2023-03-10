@@ -17,7 +17,8 @@ export default class PbReaderComponent extends Component {
   @tracked restore = true;
   @tracked zoomLevel = 0.85;
   @tracked transKey = 0;
-
+  @tracked mode = true;
+  
   @service globalConfig;
 
   constructor() {
@@ -120,5 +121,9 @@ export default class PbReaderComponent extends Component {
     this.globalConfig.config.readerZoom =
       Number(this.globalConfig.config.readerZoom) - Number(0.025);
     this.globalConfig.config.save();
+  }
+  
+  @action modeSwitch(){
+    this.mode = !this.mode;
   }
 }

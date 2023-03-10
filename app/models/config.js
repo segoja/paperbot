@@ -26,18 +26,17 @@ export default class ConfigModel extends Model {
   @attr('number', { defaultValue: 0 }) overlayPosX;
   @attr('number', { defaultValue: 0 }) overlayPosY;
   
-  @belongsTo('overlay', { inverse: 'configs', save: true, async: true })
+  @belongsTo('overlay', { inverse: 'configs', async: true })
   defOverlay;
   
   @attr('number', { defaultValue: 25 }) timerLines;
   @attr('number', { defaultValue: 1 }) timerTime;
 
-  @belongsTo('client', { inverse: 'botclientconfigs', save: true, async: true })
+  @belongsTo('client', { inverse: 'botclientconfigs', async: true })
   defbotclient;
 
   @belongsTo('client', {
     inverse: 'chatclientconfigs',
-    save: true,
     async: true,
   })
   defchatclient;

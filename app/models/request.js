@@ -15,16 +15,28 @@ export default class RequestModel extends Model {
   @attr('number', { defaultValue: 0 }) position;
 
   @attr('boolean', { defaultValue: false }) processed;
+  
+  @attr('string', { defaultValue: '' }) title;
+  @attr('string', { defaultValue: '' }) artist;
 
   @belongsTo('song', { async: true, inverse: 'requests' }) song;
-  @readOnly('song.title') title;
-  @readOnly('song.artist') artist;
+  @readOnly('song.title') songTitle;
+  @readOnly('song.artist') songArtist;
   @readOnly('song.id') songId;
 
+  get effectiveTitle(){
+    return this.title || this.songTitle;
+  }
+  
+  get effectiveArtist(){
+    return this.artist || this.songArtist;
+  }
+
   get fullText() {
-    let text = '"' + this.title + '"';
-    if (this.artist) {
-      text = text + ' by ' + this.artist;
+    let text = '';
+    text = '"' + this.effectiveTitle + '"';
+    if (this.effectiveArtist) {
+      text = text + ' by ' + this.effectiveArtist;
     }
     return text;
   }

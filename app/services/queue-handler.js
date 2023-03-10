@@ -92,7 +92,7 @@ export default class QueueHandlerService extends Service {
         let exclude = false;
         this.songqueue.forEach((request) => {
           if (song.id === request.songId) {
-            // console.debug('Song '+song.title+' excluded');
+            // console.debug('Song '+song.effectiveTitle+' excluded');
             exclude = true;
           }
         });
@@ -118,7 +118,7 @@ export default class QueueHandlerService extends Service {
             if (!item.isDeleted) {
               item.position = count;
               item.save().then(() => {
-                console.debug(item.position + '. ' + item.title);
+                console.debug(item.position + '. ' + item.effectiveTitle);
               });
               count = Number(count) + 1;
             }
@@ -134,7 +134,7 @@ export default class QueueHandlerService extends Service {
       this.playedSongs.forEach((item) => {
         item.position = count;
         item.save().then(() => {
-          console.debug(item.position + '. ' + item.title);
+          console.debug(item.position + '. ' + item.effectiveTitle);
         });
         count = Number(count) + 1;
       });
@@ -181,10 +181,10 @@ export default class QueueHandlerService extends Service {
       let setlist = '';
 
       this.playedSongs.reverse().forEach(async (request) => {
-        setlist = setlist + '+ ' + request.title + '\n';
+        setlist = setlist + '+ ' + request.effectiveTitle + '\n';
       });
       this.pendingSongs.forEach(async (request) => {
-        setlist = setlist + '- ' + request.title + '\n';
+        setlist = setlist + '- ' + request.effectiveTitle + '\n';
       });
 
       let filename = moment().format('YYYYMMDD-HHmmss') + '-setlist.txt';
@@ -220,7 +220,7 @@ export default class QueueHandlerService extends Service {
           count = Number(count) + 1;
           pending.position = count;
           pending.save();
-          //console.debug(pending.position+'. '+pending.title);
+          //console.debug(pending.position+'. '+pending.effectiveTitle);
         });
       } else {
         let oldPlayed = this.playedSongs;
@@ -229,7 +229,7 @@ export default class QueueHandlerService extends Service {
           count = Number(count) - 1;
           played.position = count;
           played.save();
-          //console.debug(played.position+'. '+played.title);
+          //console.debug(played.position+'. '+played.effectiveTitle);
         });
       }
 
@@ -287,6 +287,8 @@ export default class QueueHandlerService extends Service {
     }
     newRequest.processed = false;
     newRequest.position = nextPosition;
+    newRequest.title = selected.title || '';
+    newRequest.artist = selected.artist || '';
 
     newRequest.save().then(async () => {
       // Song statistics:
@@ -311,7 +313,7 @@ export default class QueueHandlerService extends Service {
         count = Number(count) - 1;
         played.position = count;
         played.save();
-        //console.debug(played.position+'. '+played.title);
+        //console.debug(played.position+'. '+played.effectiveTitle);
       });
 
       firstRequest.position = 0;
@@ -350,7 +352,7 @@ export default class QueueHandlerService extends Service {
         count = Number(count) + 1;
         pending.position = count;
         pending.save();
-        //console.debug(pending.position+'. '+pending.title);
+        //console.debug(pending.position+'. '+pending.effectiveTitle);
       });
 
       let firstRequest = this.playedSongs.firstObject;
@@ -393,8 +395,8 @@ export default class QueueHandlerService extends Service {
         if (pendingSongs.length > 0) {
           let visible = pendingSongs.slice(0, 5);
           visible.forEach((pendingsong) => {
-            let title = pendingsong.title;
-            let artist = pendingsong.artist;
+            let title = pendingsong.effectiveTitle;
+            let artist = pendingsong.effectiveArtist;
             let time = moment(pendingsong.timestamp).format(
               'YYYY/MM/DD HH:mm:ss'
             );
