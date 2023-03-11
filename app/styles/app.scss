@@ -55,6 +55,7 @@ $height-sizes: (
 .alert-info .handle {
   color: var(--bs-info-text);
   background-color: var(--bs-info-border-subtle);
+  filter: opacity(0.5);
 }
 
 .handle:active {
@@ -243,9 +244,8 @@ div.system{
   background-color: var(--bs-form-control-bg);  
   &.intable {
     height: calc(1.5em + 0.75rem + 4px) !important;
-    border-top: 0px solid var(--bs-border-color);
-    border-bottom: 0px solid var(--bs-border-color);
-    background-color: var(--bs-form-control-bg);
+    border: 0px solid var(--bs-border-color);
+    background-color: var(--bs-form-control-bg);    
     .ember-power-select-clear-btn { background-color: var(--bs-form-control-bg); }
     &.selected {
       .ember-basic-dropdown-trigger,
@@ -266,6 +266,11 @@ div.system{
   border-color: #86b7fe;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  &.intable {  
+    box-shadow: none;
+    border: none;
+    outline: none;
+  }
 }
 
 .ember-power-select-trigger:focus,
@@ -413,6 +418,11 @@ div.pan-buttons-row{
   box-shadow: none!important;
 }
 
+.slider.intable{
+  height: 2.5em;
+}
+
+
 .fancy-columns {
   max-height: 75%!important;
   column-count: 3;
@@ -450,9 +460,9 @@ div.pan-buttons-row{
 .spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
 
 .btn-window {
-  max-width: 45px;
-  min-width: 45px;
-  width: 45px;
+  max-width: 32px;
+  min-width: 32px;
+  width: 32px;
   
   max-height: 32px;
   min-height: 32px;
@@ -526,9 +536,19 @@ span.deleted {
   color: #000;
 }
 
+.table thead {
+  border-width: 0px 0px 3px 0px;
+} 
 
 .table.table-condensed .formcol{
   width: 0px!important;
+
+  .btn svg {
+    max-width: 20px;
+    min-width: 20px;
+    width: 20px;
+    margin: 0px 0.75rem;
+  }
 }
 
 html *, body *, main * {

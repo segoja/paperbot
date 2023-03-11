@@ -70,21 +70,15 @@ export default class OverlaysController extends Controller {
   }
 
   @action gridDeleteOverlay(overlay) {
-    //Wait for children to be destroyed then destroy the overlay
     this.unlinkChildren(overlay).then((children) => {
-      console.debug('Children unlinked?');
       overlay.destroyRecord().then(() => {
         this.currentUser.isViewing = false;
-        var prevchildId = null;
-        children.map(async (child) => {
-          // We check for duplicated in the child list.
-          // Makes no sense to save same model twice without changes (if you do you will get error).
-          if (prevchildId != child.id) {
-            console.debug('The id of the child: ' + child.id);
-            prevchildId = child.id;
+        if (children.length > 0) {
+          console.debug('Unlinking chidren...');
+          children.map(async (child) => {
             return child.save();
-          }
-        });
+          });
+        }
         this.router.transitionTo('overlays');
       });
     });

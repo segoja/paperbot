@@ -52,7 +52,9 @@ export default class SongController extends Controller {
     this.model.requests.forEach((request) => requestList.push(request));
     this.model.destroyRecord().then(() => {
       if (requestList.length > 0) {
-        requestList.map((request) => request.destroyRecord());
+        requestList.map((request) => {
+          request.save();      
+        });
       }
       this.currentUser.isViewing = false;
       this.router.transitionTo('songs');

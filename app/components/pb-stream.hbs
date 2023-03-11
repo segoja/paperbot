@@ -1,5 +1,5 @@
 <div class="card {{unless @isEditing "h-100 flex-fill"}} mb-0 rounded-0 border-0">
-  <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-top">
+  <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-0">
     <div class="row g-0">
       <div class="col align-self-center pe-0 ps-3 text-truncate"><h5 class="my-0 text-white text-truncate">{{#if @stream.channel}} #{{@stream.channel}} - {{/if}}{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
       <div class="col-auto float-end">
@@ -25,7 +25,7 @@
           {{#if this.currentUser.isTauri}}
             <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.currentUser.showLyrics}} ><FaIcon @icon="align-center" /></bg.button>
           {{/if}}
-          <bg.button @type="dark" class="rounded-0 rounded-top-right border-0" @onClick={{@closeStream}}><FaIcon @icon="times" /></bg.button>
+          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{@closeStream}}><FaIcon @icon="times" /></bg.button>
         </BsButtonGroup>
       </div>
     </div>
@@ -87,7 +87,7 @@
                   <div class="row h-100 overflow-hidden">
                     <div class="col-md queueframe">
                       {{#each @stream.songqueue as |song|}}
-                        <div class="{{if song.processed "alert-info" "alert-light"}} bg-light d-flex flex-column w-100 py-0 px-2 my-1">
+                        <div class="alert {{if song.processed "alert-info" "alert-light"}} d-flex flex-column w-100 py-0 px-2 my-1">
                           <div class="row">
                             <div class="col"><small>{{nicer-date song.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                             <div class="col-auto"><small>{{song.user}}</small></div>

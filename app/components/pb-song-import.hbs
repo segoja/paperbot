@@ -59,7 +59,7 @@
                 {{#if this.separator}}<th class="col-lg-auto d-lg-table-cell d-none" scope="col"></th>{{/if}}
                 <th class="col" scope="col"><small class="float-end text-secondary unwrappable">Bulk actions:</small></th>
                 <th class="col-3 col-lg-2 p-0">
-                  <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0 {{if this.isBulk "bg-success-subtle"  "bg-dark-subtle"}}" as |form|>
+                  <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0 alert alert-secondary m-0 p-0 border-top-0 border-bottom-0 rounded-0" as |form|>
                     <form.element @controlType="power-select" @property="bulkType" class="rounded-0 col ms-auto" @options={{@songTypes}} @onChange={{this.bulkChangeType}} as |element| >
                       <element.control @triggerClass="intable rounded-0" @allowClear={{true}} @placeholder="Select type" as |option|>
                         <span class="w-100">{{option}}</span>
@@ -68,25 +68,23 @@
                   </BsForm>
                 </th>
                 <th class="col-auto p-0 formcol" scope="col">
-                  <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0 {{if this.isBulk "bg-success-subtle" "bg-dark-subtle"}}">
                     <BsButton 
-                      @type={{if this.isBulk "outline-success bg-success bg-opacity-10" "outline-secondary"}}
-                      class="rounded-0 col-auto border-0 py-2 px-3"
+                      @type={{if this.isBulk "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
+                      class="rounded-0 border-top-0 border-bottom-0 border-start-0 px-0 py-2 m-0"
                       {{on "click" this.bulkSelectAll}}
                     >
                       <FaIcon @icon={{if this.isBulk "check-square" "square"}} />
-                    </BsButton>                        
-                  </BsForm>
+                    </BsButton> 
                 </th>
               </tr>              
             </thead>
             <tbody>
               {{#each this.pagedSongs as |song|}}                
-                <tr class={{if song.selected "bg-success-subtle"}}>                    
+                <tr class={{if song.selected "bg-success bg-opacity-10"}}>                    
                   {{#if this.separator}}<td class="col-lg-auto d-lg-table-cell d-none"><div class="unwrappable">{{song.artist}}</div></td>{{/if}}
                   <td class="col"><div class="unwrappable">{{song.title}}</div></td>
-                  <td class="col-3 col-lg-2 p-0">  
-                    <BsForm @model={{song}} @formLayout="inline" class="input-group row g-0 {{if song.selected "bg-success bg-opacity-10" "bg-dark-subtle"}}" as |form|>
+                  <td class="col-3 col-lg-2 p-0 formcol border-start-0 border-end-0">  
+                    <BsForm @model={{song}} @formLayout="inline" class="input-group row g-0 alert {{if song.selected "alert-success" "alert-secondary"}} m-0 p-0 border-top-0 border-bottom-0 rounded-0" as |form|>
                       <form.element @controlType="power-select" @property="type" class="rounded-0 col ms-auto bg-opacity-10" @options={{@songTypes}} @onChange={{fn (mut song.type)}} as |element| >
                         <element.control @triggerClass={{if song.selected "intable selected rounded-0 bg-transparent" "intable rounded-0"}} @allowClear={{true}} @placeholder="Select type" as |option|>
                           <span class="w-100 bg-transparent">{{option}}</span>
@@ -94,16 +92,14 @@
                       </form.element>
                     </BsForm>
                   </td>
-                  <td class="col-auto p-0 formcol">                    
-                    <BsForm @model={{song}} @formLayout="inline" class="input-group row g-0 {{if song.selected "bg-success bg-opacity-10" "bg-dark-subtle"}}">
+                  <td class="col-auto p-0 formcol"> 
                       <BsButton
-                        @type={{if song.selected "outline-success" "outline-secondary"}}
-                        class="rounded-0 col-auto border-0 py-2 px-3" 
+                        @type={{if song.selected "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
+                        class="rounded-0 border-top-0 border-bottom-0 border-start-0 px-0 py-2 m-0" 
                         @onClick={{fn this.addToImport song}}
                       >
                         <FaIcon @icon={{if song.selected "check-square" "square"}} />
-                      </BsButton>                      
-                    </BsForm>
+                      </BsButton>
                   </td>
                 </tr>
               {{/each}}

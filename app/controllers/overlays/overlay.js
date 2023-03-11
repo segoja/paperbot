@@ -34,11 +34,11 @@ export default class OverlayController extends Controller {
     // collect the children before deletion
     var childrenList = [];
 
-    await overlay.streams.slice().forEach((stream) => {
+    await this.model.streams.slice().forEach((stream) => {
       childrenList.push(stream);
     });
 
-    await overlay.configs.slice().forEach((config) => {
+    await this.model.configs.slice().forEach((config) => {
       childrenList.push(config);
     });
     
@@ -49,19 +49,15 @@ export default class OverlayController extends Controller {
   @action deleteOverlay() {
     //Wait for children to be destroyed then destroy the overlay
     this.unlinkChildren().then((children) => {
-      console.debug('Children unlinked?');
       this.model.destroyRecord().then(() => {
+        console.debug('Unlinking children..');
         this.currentUser.isViewing = false;
-        var prevchildId = '';
-        children.map(async (child) => {
-          // We check for duplicated in the child list.
-          // Makes no sense to save same model twice without changes (if you do you will get error).
-          if (prevchildId != child.id) {
-            console.debug('The id of the child: ' + child.id);
-            prevchildId = child.id;
-            return await child.save();
-          }
-        });
+        if (children.length > 0) {
+          console.debug('Unlinking chidren...');
+          children.map(async (child) => {
+            return child.save();
+          });
+        }
         this.router.transitionTo('overlays');
       });
     });

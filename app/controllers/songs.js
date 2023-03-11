@@ -72,7 +72,9 @@ export default class SongsController extends Controller {
     );
     song.destroyRecord().then(() => {
       if (requestList.length > 0) {
-        requestList.map((request) => request.destroyRecord());
+        requestList.map((request) => {
+          request.save();      
+        });
       }
       this.currentUser.isViewing = false;
     });
