@@ -381,6 +381,40 @@ export default class QueueHandlerService extends Service {
   }
 
   @action fileContent(pendingSongs, firstRun = false) {
+    
+    let htmlEntries = '';
+    let title = '';
+    let user = '';
+    let artist = '';
+    let time = '';
+    
+    let defaultEntry = `
+          <tr>
+            <td class="bg-transparent text-white">
+              <div class="row g-0">
+                <strong class="col">$title</strong>
+                <div class="col-auto">$user</div>
+              </div>
+              <div class="row g-0">
+                <small class="col"><small>$artist</small></small>
+                <small class="col-auto"><small>$time</small></small>
+              </div>
+            </td>
+          </tr>
+            `;
+    
+    let defaultOverlay = `
+      <table class="table table-dark">
+        <thead>
+          <tr>
+            <th class="bg-transparent text-white"><span class="d-inline-block float-start">Title</span> <span class="d-inline-block float-end">Requested by</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          $htmlEntries
+        </tbody>
+      </table>`;
+    
     if (
       this.globalConfig.config.overlayfolder != '' &&
       this.currentUser.isTauri
@@ -398,48 +432,28 @@ export default class QueueHandlerService extends Service {
         } else {
           pathString = pathString + '\\queue.html';
         }
-        let htmlEntries = '';
         if (pendingSongs.length > 0) {
-          let visible = pendingSongs.slice(0, 5);
+          let visible = pendingSongs.slice(0, this.globalConfig.config.get('overlayLength') || 5);
           visible.forEach((pendingsong) => {
-            let title = pendingsong.effectiveTitle;
-            let artist = pendingsong.effectiveArtist;
-            let time = moment(pendingsong.timestamp).format(
+            title = pendingsong.effectiveTitle;
+            artist = pendingsong.effectiveArtist;
+            time = moment(pendingsong.timestamp).format(
               'YYYY/MM/DD HH:mm:ss'
             );
-            let user = pendingsong.user;
-            htmlEntries = htmlEntries.concat(`
-          <tr>
-            <td class="bg-transparent text-white">
-              <div class="row g-0">
-                <strong class="col">${title}</strong>
-                <div class="col-auto">${user}</div>
-              </div>
-              <div class="row g-0">
-                <small class="col"><small>${artist}</small></small>
-                <small class="col-auto"><small>${time}</small></small>
-              </div>
-            </td>
-          </tr>
-            `);
+            user = pendingsong.user;
+            let entry = this.globalConfig.config.get('defOverlay.qItems') || defaultEntry;
+            entry = entry.replace('\$title', title);
+            entry = entry.replace('\$artist', artist);
+            entry = entry.replace('\$time', time);
+            entry = entry.replace('\$user', user);
+            
+            htmlEntries = htmlEntries.concat(entry);
           });
-        } else {
-          htmlEntries = htmlEntries.concat(`
-          <tr>
-            <td class="bg-transparent text-white">
-              <div class="row g-0">
-                <strong class="col">The queue is empty.</strong>
-                <div class="col-auto"></div>
-              </div>
-              <div class="row g-0">
-                <small class="col"><small></small></small>
-                <small class="col-auto"><small></small></small>
-              </div>
-            </td>
-          </tr>
-          `);
         }
 
+        let htmlOverlay = this.globalConfig.config.get('defOverlay.qContainer') || defaultOverlay;        
+        htmlOverlay = htmlOverlay.replace('\$htmlEntries', htmlEntries);
+        
         let chroma = this.globalConfig.config.chromaColor;
         let htmlBase = `<!DOCTYPE html>
 <html lang="en">
@@ -455,16 +469,7 @@ export default class QueueHandlerService extends Service {
   </head>
   <body class="bg-transparent chroma" style="overflow-y: hidden;">
     <div class="container-fluid chroma" style="overflow-y: hidden;">
-      <table class="table table-dark">
-        <thead>
-          <tr>
-            <th class="bg-transparent text-white"><span class="d-inline-block float-start">Title</span> <span class="d-inline-block float-end">Requested by</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${htmlEntries}
-        </tbody>
-      </table>
+      ${htmlOverlay}
     </div>
   </body>
 </html>`;
