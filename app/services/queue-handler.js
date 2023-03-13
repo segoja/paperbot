@@ -124,7 +124,8 @@ export default class QueueHandlerService extends Service {
             });
             count = Number(count) + 1;
           }
-        });
+        });        
+        this.fileContent(this.pendingSongs);
       });
     });
   }
@@ -168,6 +169,7 @@ export default class QueueHandlerService extends Service {
     if(this.pendingSongs.length > 0){
       this.pendingSongs.forEach((request) => request.destroyRecord());      
     }
+    this.fileContent(this.pendingSongs);
   }
 
   @action clearPlayed() {
@@ -258,12 +260,7 @@ export default class QueueHandlerService extends Service {
         this.scrollPlayedPosition = 0;
         this.scrollPendingPosition = 0;
 
-        if (
-          this.currentUser.updateQueueOverlay &&
-          this.currentUser.lastStream.requests
-        ) {
-          this.fileContent(this.pendingSongs);
-        }
+        this.fileContent(this.pendingSongs);
       });
     }
   }
@@ -307,6 +304,7 @@ export default class QueueHandlerService extends Service {
       this.scrollPendingPosition = 0;
       this.scrollPlayedPosition = 0;
     });
+    this.fileContent(this.pendingSongs);
   }
 
   @action async nextSong() {
@@ -340,13 +338,7 @@ export default class QueueHandlerService extends Service {
         this.fileContent(this.pendingSongs);
       });
     }
-
-    if (
-      this.currentUser.updateQueueOverlay &&
-      this.currentUser.lastStream.requests
-    ) {
-      this.fileContent(this.pendingSongs);
-    }
+    this.fileContent(this.pendingSongs);
   }
 
   @action async prevSong() {
@@ -372,12 +364,7 @@ export default class QueueHandlerService extends Service {
       });
     }
 
-    if (
-      this.currentUser.updateQueueOverlay &&
-      this.currentUser.lastStream.requests
-    ) {
-      this.fileContent(this.pendingSongs);
-    }
+    this.fileContent(this.pendingSongs);
   }
 
   @action fileContent(pendingSongs, firstRun = false) {
@@ -411,7 +398,7 @@ export default class QueueHandlerService extends Service {
           </tr>
         </thead>
         <tbody>
-          $htmlEntries
+          $items
         </tbody>
       </table>`;
     
@@ -420,10 +407,8 @@ export default class QueueHandlerService extends Service {
       this.currentUser.isTauri
     ) {
       if (
-        (this.currentUser.updateQueueOverlay &&
-          this.globalConfig.config.overlayfolder != '' &&
-          this.globalConfig.config.overlayType === 'file' &&
-          this.currentUser.lastStream.requests) ||
+        (this.globalConfig.config.overlayfolder != '' &&
+         this.globalConfig.config.overlayType === 'file') ||
         firstRun
       ) {
         let pathString = this.globalConfig.config.overlayfolder;
@@ -452,19 +437,22 @@ export default class QueueHandlerService extends Service {
         }
 
         let htmlOverlay = this.globalConfig.config.get('defOverlay.qContainer') || defaultOverlay;        
-        htmlOverlay = htmlOverlay.replace('\$htmlEntries', htmlEntries);
+        htmlOverlay = htmlOverlay.replace('\$items', htmlEntries);
         
         let chroma = this.globalConfig.config.chromaColor;
+        let styles = this.globalConfig.config.get('defOverlay.qCss') || '';
+        
         let htmlBase = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
     <meta http-equiv="refresh" content="2">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Song queue</title>
     <style>
       .chroma { background-color: ${chroma}!important; }
+      ${styles}      
     </style>
   </head>
   <body class="bg-transparent chroma" style="overflow-y: hidden;">

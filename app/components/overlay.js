@@ -36,7 +36,7 @@ export default class PbReaderComponent extends Component {
     let time = '';
     
     let defaultEntry = `
-          <tr>
+          <tr class="item">
             <td class="bg-transparent text-white">
               <div class="row g-0">
                 <strong class="col">$title</strong>
@@ -58,7 +58,7 @@ export default class PbReaderComponent extends Component {
           </tr>
         </thead>
         <tbody>
-          $htmlEntries
+          $items
         </tbody>
       </table>`;
     
@@ -83,7 +83,7 @@ export default class PbReaderComponent extends Component {
       }
 
       let htmlOverlay = this.globalConfig.config.get('defOverlay.qContainer') || defaultOverlay;        
-      htmlOverlay = htmlOverlay.replace('\$htmlEntries', htmlEntries);
+      htmlOverlay = htmlOverlay.replace('\$items', htmlEntries);
       
       return htmlSafe(htmlOverlay);
   }

@@ -1,12 +1,16 @@
+
+  <style>
+    {{#if this.globalConfig.config.defOverlay.font}}
+      body * {
+        font-family: {{this.globalConfig.config.defOverlay.font}}!important;
+      }
+    {{/if}}
+    {{#if this.globalConfig.config.defOverlay.qCss}}
+      {{this.globalConfig.config.defOverlay.qCss}}
+    {{/if}}
+  </style>
 <div class="row h-100 flex-fill m-0 p-0">
   <div class="col-12 h-100 flex-fill p-0 m-0">
-    {{#if this.globalConfig.config.defOverlay.font}}
-      <style>
-        body * {
-          font-family: {{this.globalConfig.config.defOverlay.font}}!important;
-        }
-      </style>
-    {{/if}}
     {{this.overlayContent}}
   </div>
 </div>

@@ -9,87 +9,70 @@
   </div>
   <BsForm @formLayout="horizontal" @model={{@overlay}} @onSubmit={{@saveOverlay}} class="row h-100 mx-0 flex-fill overflow-hidden" as |form|>
     <div class="card-body mx-0 flex-fill h-100 listframe">
-        <form.element @controlType="text" @label="Name" placeholder="Type the name of the overlay" class="pb-2" @property="name" required />  
+        <form.element @controlType="text" @label="Name" placeholder="Type the name of the overlay" class="pb-2" @property="name" required /> 
+        
         <form.element @controlType="power-select" @label="Font" @property="font" @onChange={{this.setFont}} @formLayout="horizontal" class="pb-2 border-light"  @options={{this.fontList}} as |item|>
           <item.control @allowClear={{true}} @placeholder="Select the font to use in the overlay" as |option|>
             {{option}}
           </item.control>
         </form.element>
+        
         <div class="form-group row">
-          <label class="col-md-4 pb-2">Queue Overlay</label>
-        </div>
-        <div class="form-group row pb-2">
-          <div class="col-md-4 col-form-label">
-            <label class="control-label">Container: </label>
-            <span role="button" id="q-container-info">
+          <h6 class="col pb-2">
+            Queue Overlay
+            <span role="button" id="q-info">
               <FaIcon @icon="question-circle" class="text-info" role="presentation" />
             </span>
-            <BsPopover @triggerEvents="click" @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-              <div role="dialog" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                <p class="my-0">Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Here</a></p>
+            <BsPopover @triggerEvents="click" @triggerElement="#q-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+              <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+                <p class="my-0">Overlays are based on HTML5 and Bootstrap. If you want to learn how to customize or create your own overlay check <a href="https://getbootstrap.com/docs/5.3/content/tables/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>official Bootstrap documentation</a>.</p>
               </div>
             </BsPopover>
-          </div>
-          <div class="col-sm">
-            <Textarea @value={{@overlay.qContainer}} rows="8" aria-label="Keywords" placeholder="Type the code of the container" class="form-control"/>
-          </div>
+          </h6>
         </div>
-       
-        <div class="form-group row pb-2">
-          <div class="col-md-4 col-form-label">
-            <label class="control-label">Items: </label>
-            <span role="button" id="q-items-info">
-              <FaIcon @icon="question-circle" class="text-info" role="presentation" />
-            </span>
-            <BsPopover @triggerEvents="click" @triggerElement="#q-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-              <div role="dialog" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                <p class="my-0">Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Here</a></p>
-              </div>
-            </BsPopover>
+        <div class="row pb-2">
+          <div class="col-12 col-md">
+            <div class="d-block">
+              <label class="control-label">Container: </label>
+              <span role="button" id="q-container-info">
+                <FaIcon @icon="question-circle" class="text-info" role="presentation" />
+              </span>
+              <BsPopover @triggerEvents="click" @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+                <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+                  <p class="my-0">This is the code of the main container of the request queue. Queue items will be placed inside replacing <strong>$htmlEntries</strong> in the code.</p>
+                </div>
+              </BsPopover>
+            </div>
+            <div class="d-block">
+              <Textarea @value={{@overlay.qContainer}} rows="8" aria-label="Container" placeholder="Type the code of the container" class="form-control"/>
+            </div>
           </div>
-          <div class="col-sm">
-            <Textarea @value={{@overlay.qItems}} rows="8" aria-label="Keywords" placeholder="Type the code of the items" class="form-control"/>
+          <div class="col-12 col-md">
+            <div class="d-block">
+              <label class="control-label">Items: </label>
+              <span role="button" id="q-items-info">
+                <FaIcon @icon="question-circle" class="text-info" role="presentation" />
+              </span>
+              <BsPopover @triggerEvents="click" @triggerElement="#q-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+                <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+                  <p class="my-0">This is the code used to represent each one of the request in the queue. The information about each request can be included using: <strong>$title</strong>, <strong>$artist</strong>, <strong>$time</strong> and <strong>$user</strong>. They will be replaced by the actual data in the overlay window/file.</p>
+                </div>
+              </BsPopover>
+            </div>
+            <div class="d-block">
+              <Textarea @value={{@overlay.qItems}} rows="8" aria-label="Items" placeholder="Type the code of the items" class="form-control"/>
+            </div>
           </div>
-        </div>      
-
+        </div>        
         <div class="form-group row">
           <div class="col"><hr></div>
+        </div>        
+        <div class="form-group row">
+          <div class="col">Custom CSS</div>
         </div>
         <div class="form-group row">
-          <label class="col-md-4 pb-2">Notifications Overlay</label>
-        </div>
-        
-        <div class="form-group row pb-2">
-          <div class="col-md-4 col-form-label">
-            <label class="control-label">Container: </label>
-            <span role="button" id="n-container-info">
-              <FaIcon @icon="question-circle" class="text-info" role="presentation" />
-            </span>
-            <BsPopover @triggerEvents="click" @triggerElement="#n-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-              <div role="dialog" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                <p class="my-0">Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Here</a></p>
-              </div>
-            </BsPopover>
-          </div>
-          <div class="col-sm">
-            <Textarea @value={{@overlay.nContainer}} rows="8" aria-label="Keywords" placeholder="Type the code of the container" class="form-control"/>
-          </div>
-        </div>
-
-        <div class="form-group row pb-2">
-          <div class="col-md-4 col-form-label">
-            <label class="control-label">Items: </label>
-            <span role="button" id="n-items-info">
-              <FaIcon @icon="question-circle" class="text-info" role="presentation" />
-            </span>
-            <BsPopover @triggerEvents="click" @triggerElement="#n-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-              <div role="dialog" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                <p class="my-0">Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Here</a></p>
-              </div>
-            </BsPopover>
-          </div>
-          <div class="col-sm">
-            <Textarea @value={{@overlay.nItems}} rows="8" aria-label="Keywords" placeholder="Type the code of the items" class="form-control"/>
+          <div class="col">
+            <Textarea @value={{@overlay.qCss}} rows="8" aria-label="Custom CSS" placeholder="Add some custom CSS rules" class="form-control"/>
           </div>
         </div>
     </div>  

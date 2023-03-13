@@ -52,77 +52,90 @@ export default class PbOverlayComponent extends Component {
   }
   
   @action async fontListGenerator(){
-    let fontlist = [];
+    let fontList = [];
     if ('queryLocalFonts' in window) {
       // The Local Font Access API is supported
       // Query for all available fonts and log metadata.
       try {
-        const availableFonts = await window.queryLocalFonts();
-        for (const fontData of availableFonts) {
-          fontlist.push({psName: fontData.postscriptName,fullName:fontData.fullName, family:fontData.family, style:fontData.style});
-        }
+        let availableFonts = await window.queryLocalFonts();
+        availableFonts.forEach(async (fontData) => {
+          let detected = await this.doesFontExist(fontData.fullName);
+          if(detected){
+            let fontName = '\"'+fontData.fullName+'\", '+fontData.family;
+            this.fonts.push(fontName);
+          }
+          // fontList.push({psName: fontData.postscriptName,fullName:fontData.fullName, family:fontData.family, style:fontData.style});
+        });
+        this.fonts = [...new Set(this.fonts)];
+        // this.processFonts(fontList);
       } catch (err) {
         console.error(err.name, err.message);
       }      
     } else {
-      fontlist.push({psName: 'cursive', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'monospace', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'serif', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'sans-serif', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'fantasy', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'default', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Arial', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Arial Black', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Arial Narrow', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Arial Rounded MT Bold', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Bookman Old Style', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Bradley Hand ITC', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Century', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Century Gothic', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Comic Sans MS', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Courier', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Courier New', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Georgia', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Gentium', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Impact', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'King', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Lucida Console', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Lalit', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Modena', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Monotype Corsiva', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Papyrus', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Tahoma', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'TeX', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Times', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Times New Roman', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Trebuchet MS', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Verdana', fullName:'', family:'', style:''});
-      fontlist.push({psName: 'Verona', fullName:'', family:'', style:''});
+      fontList.push({psName: 'cursive', fullName:'', family:'', style:''});
+      fontList.push({psName: 'monospace', fullName:'', family:'', style:''});
+      fontList.push({psName: 'serif', fullName:'', family:'', style:''});
+      fontList.push({psName: 'sans-serif', fullName:'', family:'', style:''});
+      fontList.push({psName: 'fantasy', fullName:'', family:'', style:''});
+      fontList.push({psName: 'default', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Arial', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Arial Black', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Arial Narrow', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Arial Rounded MT Bold', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Bookman Old Style', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Bradley Hand ITC', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Century', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Century Gothic', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Comic Sans MS', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Courier', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Courier New', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Georgia', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Gentium', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Impact', fullName:'', family:'', style:''});
+      fontList.push({psName: 'King', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Lucida Console', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Lalit', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Modena', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Monotype Corsiva', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Papyrus', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Tahoma', fullName:'', family:'', style:''});
+      fontList.push({psName: 'TeX', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Times', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Times New Roman', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Trebuchet MS', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Verdana', fullName:'', family:'', style:''});
+      fontList.push({psName: 'Verona', fullName:'', family:'', style:''});
+      this.processFonts(fontList);
     }
+  }
+  
+  @action async processFonts(fontList){
+    this.fonts = [];
+    
     // compute height and width for all fonts
-    for (let i=0; i<fontlist.length; i++) {
-      let font = fontlist.shift();
+    for (let i=0; i<fontList.length; i++) {
+      let font = fontList.shift();
       let detected = false;
       let fontName = '';
       if(font.fullName){
-        detected = this.doesFontExist(font.fullName);
+        detected = await this.doesFontExist(font.fullName);
         fontName = '\"'+font.fullName+'\", '+font.family;
       } else {        
-        detected = this.doesFontExist(font.psName);
+        detected = await this.doesFontExist(font.psName);
         fontName = font.psName;
       }
       if(detected){
+        // console.log(fontName);
         this.fonts.push(fontName);
       }
     }
-    this.fonts = this.fonts.filter(item => item);
-    console.log(this.fonts);
+    // this.fonts = await this.fonts.filter(item => item);   
   }
   
   @tracked fonts = [];
   
   get fontList(){
-    return this.fonts;
+    return [...new Set(this.fonts)];
   }
 
   fontSorting = Object.freeze(['name:asc']);
@@ -139,16 +152,13 @@ export default class PbOverlayComponent extends Component {
   }
   
   @action setFont(font){
-    console.log(font);
     if(!isEmpty(font)){
-      if(font.fullName){
-        this.args.overlay.font = String(font.fullName);
-      } else {
-        this.args.overlay.font = String(font.psName);        
-      }
-      console.log(this.args.overlay);
+      this.args.overlay.font = String(font);
     } else {
       this.args.overlay.font = '';
+    }
+    if(this.args.overlay.hasDirtyAttributes){
+      this.args.overlay.save();    
     }
   }
 }

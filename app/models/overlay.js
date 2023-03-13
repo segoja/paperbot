@@ -8,10 +8,12 @@ export default class OverlayModel extends Model {
   // Queue overlay parts:
   @attr('string', { defaultValue: '' }) qContainer;
   @attr('string', { defaultValue: '' }) qItems;
+  @attr('string', { defaultValue: '' }) qCss;
   
   // Notifications overlay parts:
   @attr('string', { defaultValue: '' }) nContainer;
   @attr('string', { defaultValue: '' }) nItems;
+  @attr('string', { defaultValue: '' }) nCss;
   
   @hasMany('stream', { inverse: 'overlay', save: true, async: true })
   streams;

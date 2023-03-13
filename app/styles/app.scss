@@ -554,30 +554,43 @@ span.deleted {
 html *, body *, main * {
   scrollbar-width: thin;
   scrollbar-color: var(--bs-border-color);
-  :-webkit-scrollbar {
-    width: 11px;
-  }
-  :-webkit-scrollbar-track {
-    background: var(--bs-border-color);
-  }
-  :-webkit-scrollbar-thumb {
-    background-color: var(--bs-secondary);
-    border: 3px solid var(--bs-secondary);
-  }
 
   ::-webkit-scrollbar{
-    background-color: var(--bs-border-color);
-    border: 3px solid var(--bs-border-color);
+    border-color: transparent;
+    background-color: transparent;
+    fill: var(--bs-border-color);
+    color: var(--bs-border-color);
   }
   ::-webkit-scrollbar-thumb {
     height: 10px;
     border-radius: 5px;
     color: var(--bs-gray-600);
-    border: 3px solid var(--bs-border-color);
+    border: 3px solid transparent;     
+    box-shadow: inset 0 0 0 10px var(--bs-gray-600);
+  } 
+  
+  ::-webkit-scrollbar-track {
+    border-color: transparent;
+    background-color: transparent;
   }
-
-  ::-webkit-scrollbar-thumb {        
-    box-shadow: inset 0 0 0 10px;
+  
+  textarea { overflow-x: hidden; }
+  textarea::-webkit-scrollbar-corner { background-color: transparent; }
+  textarea::-webkit-scrollbar-track {
+    border-color: transparent;
+    background-color: transparent;
+  }
+  textarea::-webkit-scrollbar{
+    background-color: transparent;
+    border: 3px solid transparent;
+  }
+  
+  textarea::-webkit-resizer {
+    border-width: 25px;
+    border-style: solid;
+    border-radius: 0px 0px 5px 0px;
+    background-color: transparent;
+    border-color: transparent var(--bs-gray-600) var(--bs-gray-600) transparent;
   }
 }
 
