@@ -71,11 +71,38 @@
           <div class="col">Custom CSS</div>
         </div>
         <div class="form-group row">
-          <div class="col">
-            <Textarea @value={{@overlay.qCss}} rows="8" aria-label="Custom CSS" placeholder="Add some custom CSS rules" class="form-control"/>
+          <div class="col-12 col-lg">
+            <Textarea @value={{@overlay.qCss}} rows="8" aria-label="Custom CSS" placeholder="Add some custom CSS rules" class="form-control h-100"/>
+          </div>
+          <div class="col-12 col-lg pt-3 pt-lg-0">
+            {{did-insert this.overlayGenerator}}
+            {{did-update this.overlayGenerator @overlay}}        
+            <style>
+            
+              .chroma { 
+                background-color: {{this.globalConfig.config.chromaColor}}!important; 
+                max-width: {{this.globalConfig.config.overlayWidth}}px !important; 
+                max-height: {{this.globalConfig.config.overlayHeight}}px !important; 
+                overflow: hidden;
+              }
+              
+              {{#if this.globalConfig.config.defOverlay.font}}
+                .chroma * {
+                  font-family: {{this.globalConfig.config.defOverlay.font}}!important;
+                }
+              {{/if}}
+              {{#if this.globalConfig.config.defOverlay.qCss}}
+                {{this.globalConfig.config.defOverlay.qCss}}
+              {{/if}}
+            </style>
+            <div class="card mx-auto h-100 rounded-0 border-0 text-body chroma" data-bs-theme="light">
+              <div class="card-body h-100 p-0">
+                {{this.overlayContent}}
+              </div>
+            </div>
           </div>
         </div>
-    </div>  
+    </div>
   </BsForm> 
     <div class="card-footer py-3 bg-transparent">
       <BsButton @type="success" @onClick={{@saveAndReturnOverlay}}><FaIcon @icon="save" /> Save & Return</BsButton> 

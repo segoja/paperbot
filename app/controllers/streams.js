@@ -81,7 +81,6 @@ export default class StreamsController extends Controller {
   @action async gridDeleteStream(stream) {
     let oldBotClient = await stream.get('botclient');
     let oldChatClient = await stream.get('chatclient');
-    let oldOverlay = await stream.get('overlay');
     
     stream.destroyRecord().then(() => {
       if(oldBotClient){
@@ -90,9 +89,7 @@ export default class StreamsController extends Controller {
       if(oldChatClient){
         oldChatClient.save();
       }
-      if(oldOverlay){
-        oldOverlay.save();
-      }       
+      
       this.currentUser.isViewing = false;
       this.stream.isEditing = false;
       this.currentUser.lastStream = null;

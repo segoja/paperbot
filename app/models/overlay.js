@@ -14,9 +14,7 @@ export default class OverlayModel extends Model {
   @attr('string', { defaultValue: '' }) nContainer;
   @attr('string', { defaultValue: '' }) nItems;
   @attr('string', { defaultValue: '' }) nCss;
-  
-  @hasMany('stream', { inverse: 'overlay', save: true, async: true })
-  streams;
+
   @hasMany('config', { inverse: 'defOverlay', save: true, async: true })
   configs;
 

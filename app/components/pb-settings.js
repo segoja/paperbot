@@ -100,26 +100,6 @@ export default class PbSettingsComponent extends Component {
 
   @action doneEditing() {
     this.globalConfig.config.save().then(() => {
-      this.session.invalidate();
-      if (!this.cloudState.online) {
-        if (this.globalConfig.config.canConnect) {
-          console.debug('Setting remote backup...');
-          this.store.adapterFor('application').configRemote();
-          this.store.adapterFor('application').connectRemote();
-        }
-      }
-      later(
-        this,
-        function () {
-          if (this.cloudState.online) {
-            this.cloudState.couchError = false;
-          }
-          this.isSaving = false;
-          this.isViewing = false;
-        },
-        500
-      );
-
       this.saving = true;
       later(() => {
         this.saving = false;

@@ -536,7 +536,7 @@ span.deleted {
   color: #000;
 }
 
-.table thead {
+.card .table thead {
   border-width: 0px 0px 3px 0px;
 } 
 
@@ -594,57 +594,132 @@ html *, body *, main * {
   }
 }
 
+
+/* Paperbot Colors */
+:root,
+[data-bs-theme=light] {      
+  --pb-green-text: #216c65;
+  --pb-green-bg: #e4fcf8;
+  --pb-green-border: #216c65;
+
+  --pb-dark-purple-text: #251a36; 
+  --pb-dark-purple-bg: #c3ace2;  
+  --pb-dark-purple-border: #251a36; 
+      
+  --pb-dark-purple2-text: #000000;  
+  --pb-dark-purple2-bg: #c3ace2;  
+  --pb-dark-purple2-border: #251a36; 
+
+  --pb-purple-text: #341d5b;  
+  --pb-purple-bg: #e3ccf2;  
+  --pb-purple-border: #341d5b; 
+      
+  --pb-light-green-text: #254815; 
+  --pb-light-green-bg: #d1f8ba;  
+  --pb-light-green-border: #254815; 
+
+  --pb-red-text: #721c24;  
+  --pb-red-bg: #e8c7ca;  
+  --pb-red-border: #721c24; 
+      
+  --pb-orange-text: #4a290f;
+  --pb-orange-bg: #ffd1b0;
+  --pb-orange-border: #4a290f;
+      
+  --pb-yellow-text: #856404;
+  --pb-yellow-bg: #fff3cd;
+  --pb-yellow-border: #ffeeba;
+}
+
+[data-bs-theme=dark] {
+  --pb-green-text: rgb(140, 220, 213);
+  --pb-green-bg: rgb(7, 62, 55);
+  --pb-green-border: rgb(50, 163, 152);
+
+  --pb-dark-purple-text: rgb(207, 203, 196);
+  --pb-dark-purple-bg: rgb(55, 31, 88); 
+  --pb-dark-purple-border: rgb(127, 118, 104);
+      
+  --pb-dark-purple2-text: rgb(232, 230, 227); 
+  --pb-dark-purple2-bg: rgb(55, 31, 88);
+  --pb-dark-purple2-border: rgb(127, 118, 104); 
+      
+  --pb-purple-text: rgb(179, 153, 222);  
+  --pb-purple-bg: rgb(42, 46, 47);  
+  --pb-purple-border: rgb(95, 53, 166); 
+
+  --pb-light-green-text: rgb(203, 198, 191);  
+  --pb-light-green-bg: rgb(51, 88, 9);  
+  --pb-light-green-border: rgb(125, 116, 102); 
+
+  --pb-red-text: rgb(225, 134, 143);  
+  --pb-red-bg: rgb(70, 29, 32);  
+  --pb-red-border: rgb(171, 42, 54); 
+
+  --pb-orange-text: rgb(204, 199, 193);
+  --pb-orange-bg: rgb(98, 41, 0);
+  --pb-orange-border: rgb(125, 116, 103);     
+      
+  --pb-yellow-text: rgb(251, 215, 112);
+  --pb-yellow-bg: rgb(61, 46, 0);
+  --pb-yellow-border: rgb(123, 92, 0);    
+}
+
+
 /* Info green */
 .event-merch, .event-donation{
-  color: #216c65;
-  background-color: #e4fcf8;
-  border-color: #216c65;
+  color: var(--pb-green-text);
+  background-color: var(--pb-green-bg);
+  border-color: var(--pb-green-border);
 }
 
 /* Dark purple */
 .event-resub, .event-gift{
-  color: #251a36;
-  background-color: #c3ace2;
-  border-color: #251a36;
+  color:  var(--pb-dark-purple-text);
+  background-color: var(--pb-dark-purple-bg);
+  border-color: var(--pb-dark-purple-border);
 }
+ 
 .event-bulk{
-  color: #000000;
-  background-color: #c3ace2;
-  border-color: #251a36;
+  color: var(--pb-dark-purple2-text);
+  background-color: var(--pb-dark-purple2-bg);
+  border-color: var(--pb-dark-purple2-border);
 }
 
 /* Purple */
 .event-sub{
-  color: #341d5b;
-  background-color: #e3ccf2;
-  border-color: #341d5b;
+  color: var(--pb-purple-text);
+  background-color: var(--pb-purple-bg);
+  border-color: var(--pb-purple-border);
 }
 
 /* Green */
 .event-nothing{
-  color: #254815;
-  background-color: #d1f8ba;
-  border-color: #254815;
+  color: var(--pb-light-green-text);
+  background-color: var(--pb-light-green-bg);
+  border-color: var(--pb-light-green-border);
 }
 
 /* Red */
 .event-raid, .event-cheer{
-  color: #721c24;
-  background-color: #e8c7ca;
-  border-color: #721c24;
+  color: var(--pb-red-text);
+  background-color: var(--pb-red-bg);
+  border-color: var(--pb-red-border);
 }
+
 /* Orange */
 .event-host{
-  color: #4a290f;
-  background-color: #ffd1b0;
-  border-color: #4a290f;
+  color: var(--pb-orange-text);
+  background-color: var(--pb-orange-bg);
+  border-color: var(--pb-orange-border);
 }
+
 /* Yellow */
 .event-redemption {
-  color: #856404;
-  background-color: #fff3cd;
-  border-color: #ffeeba;
-}
+  color: var(--pb-yellow-text);
+  background-color: var(--pb-yellow-bg);
+  border-color: var(--pb-yellow-border);
+      }
 
 .helptooltip>div.tooltip-inner{
   max-width: inherit!important;

@@ -32,19 +32,6 @@ export default class StreamController extends Controller {
     this.model.save();
   }
 
-  @action async setOverlay(overlay) {
-    let oldOverlay = await this.model.get('overlay');      
-    this.model.overlay = overlay;
-    this.model.save().then(()=>{
-      if(overlay){
-        overlay.save();
-      }      
-      if(oldOverlay){
-          oldOverlay.save();
-      }
-    });
-  }
-
   @action async setBotClient(client) {
     let oldClient = await this.model.get('botclient');
     this.model.botclient = client;
@@ -83,8 +70,7 @@ export default class StreamController extends Controller {
 
   @action async deleteStream() {
     let oldBotClient = await this.model.get('botclient');
-    let oldChatClient = await this.model.get('chatclient');    
-    let oldOverlay = await this.model.get('overlay');
+    let oldChatClient = await this.model.get('chatclient');
     
     this.model.destroyRecord().then(() => {
       if(oldBotClient){
@@ -92,9 +78,6 @@ export default class StreamController extends Controller {
       }
       if(oldChatClient){
         oldChatClient.save();
-      } 
-      if(oldOverlay){
-        oldOverlay.save();
       }
       
       this.currentUser.lastStream = null;

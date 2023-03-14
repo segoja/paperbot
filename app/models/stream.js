@@ -23,10 +23,6 @@ export default class StreamModel extends Model {
   })
   chatclient;
 
-  @belongsTo('overlay', { inverse: 'streams', async: true })
-  overlay;
-
-  @readOnly('overlay.name') overlayName;
   @readOnly('botclient.username') botName;
   @readOnly('chatclient.username') chatName;
 

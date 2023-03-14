@@ -1,6 +1,6 @@
-<button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window"  {{on "click" this.toggleModal}}><FaIcon @icon="wrench" @class={{if this.cloudState.cloudError "blinkcolor" (if this.cloudState.online "connected")}} /></button>
+<button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" {{on "click" this.toggleModal}}><FaIcon @icon="wrench" @class={{if this.cloudState.cloudError "blinkcolor" (if this.cloudState.online "connected")}} /></button>
 {{#if this.globalConfig.config}}
-    <BsModal @onSubmit={{this.generateSongs}} @open={{this.isViewing}} @scrollable={{true}} @size="lg" as |Modal|>
+    <BsModal @open={{this.isViewing}} @scrollable={{true}} @backdrop={{true}} @size="lg" as |Modal|>
       <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 border-bottom rounded-top">
         <div class="row g-0 w-100 bg-dark border-0 rounded-top">
           <div class="col py-1 ps-3"><span class="h5 text-white">Settings</span></div>

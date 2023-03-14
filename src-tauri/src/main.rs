@@ -13,11 +13,8 @@ fn main() {
 }
 
 #[tauri::command]
-async fn file_writer(filepath: String, filecontent: String, app: tauri::AppHandle) -> Result<(), String> {
-  //let app_dir = app.path_resolver().app_dir().expect("failed to get app dir");
-  //let report_path = app_dir.join("report.txt");
-  std::fs::write(&filepath, &filecontent)
-    .map_err(|e| e.to_string());
+async fn file_writer(filepath: String, filecontent: String) -> Result<(), String> {  
+  std::fs::write(&filepath, &filecontent).map_err(|e| e.to_string());    
   Ok(())
 }
 

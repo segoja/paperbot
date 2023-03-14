@@ -51,7 +51,7 @@ export default class PbReaderComponent extends Component {
             `;
     
     let defaultOverlay = `
-      <table class="table table-dark">
+      <table class="table">
         <thead>
           <tr>
             <th class="bg-transparent text-white"><span class="d-inline-block float-start">Title</span> <span class="d-inline-block float-end">Requested by</span></th>

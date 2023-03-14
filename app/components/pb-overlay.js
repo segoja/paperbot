@@ -5,9 +5,34 @@ import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
+import moment from 'moment';
+import { htmlSafe } from '@ember/template';
 
 export default class PbOverlayComponent extends Component {
   @service globalConfig;
+
+  constructor() {
+    super(...arguments);
+    
+    this.pendingRequests = [
+      {title: 'Fake song number one', artist: 'SuperFake', time: moment().add(1, 'minutes').format('YYYY/MM/DD HH:mm:ss'), user: 'Paperbot'},
+      {title: 'Just another fake song', artist: 'The faker', time: moment().add(4, 'minutes').format('YYYY/MM/DD HH:mm:ss'), user: 'Tinfoilbot'},
+      {title: 'Ultimate sake song', artist: 'Audiofake', time: moment().add(8, 'minutes').format('YYYY/MM/DD HH:mm:ss'), user: 'Anonymous'},
+      {title: 'You are so fake!', artist: 'The Fake Buffalo', time: moment().add(13, 'minutes').format('YYYY/MM/DD HH:mm:ss'), user: 'Baaabot'},
+      {title: 'Fake it!', artist: 'Fake Cold Sauce Cucumbers', time: moment().add(18, 'minutes').format('YYYY/MM/DD HH:mm:ss'), user: 'FaKuser'},
+      {title: 'Unfaked', artist: 'Jake the Fake', time: moment().add(22, 'minutes').format('YYYY/MM/DD HH:mm:ss'), user: 'UsEr4l'},
+    ];
+    
+    this.fontListGenerator();
+    this.overlayGenerator();
+  }
+  
+  
+  @tracked content = '';
+
+  get overlayContent(){
+    return this.content;
+  }
 
   //
   // Call this function and pass in the name of the font you want to check for availability.
@@ -44,11 +69,6 @@ export default class PbOverlayComponent extends Component {
       } else {
           return true;
       }
-  }
-
-  constructor() {
-    super(...arguments);
-    this.fontListGenerator();
   }
   
   @action async fontListGenerator(){
@@ -161,4 +181,54 @@ export default class PbOverlayComponent extends Component {
       this.args.overlay.save();    
     }
   }
+  
+  @action overlayGenerator(){    
+    let defaultEntry = `
+          <tr class="item">
+            <td class="bg-transparent text-white">
+              <div class="row g-0">
+                <strong class="col">$title</strong>
+                <div class="col-auto">$user</div>
+              </div>
+              <div class="row g-0">
+                <small class="col"><small>$artist</small></small>
+                <small class="col-auto"><small>$time</small></small>
+              </div>
+            </td>
+          </tr>
+            `;
+    
+    let defaultOverlay = `
+      <table class="table table-dark">
+        <thead>
+          <tr>
+            <th class="bg-transparent text-white"><span class="d-inline-block float-start">Title</span> <span class="d-inline-block float-end">Requested by</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          $items
+        </tbody>
+      </table>`;
+      
+    let htmlEntries = '';
+    
+    if (this.pendingRequests.length > 0) {
+      let visible = this.pendingRequests.slice(0, this.globalConfig.config.get('overlayLength') || 5);
+      visible.forEach((request) => {
+        let entry = this.args.overlay.qItems || defaultEntry;
+        entry = entry.replace('\$title', request.title);
+        entry = entry.replace('\$artist', request.artist);
+        entry = entry.replace('\$time', request.time);
+        entry = entry.replace('\$user', request.user);
+        
+        htmlEntries = htmlEntries.concat(entry);
+      });
+    }
+
+    let htmlOverlay = this.args.overlay.qContainer || defaultOverlay;        
+    htmlOverlay = htmlOverlay.replace('\$items', htmlEntries);
+    
+    this.content = htmlSafe(htmlOverlay);
+  }
+  
 }

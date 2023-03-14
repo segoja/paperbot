@@ -34,10 +34,6 @@ export default class OverlayController extends Controller {
     // collect the children before deletion
     var childrenList = [];
 
-    await this.model.streams.slice().forEach((stream) => {
-      childrenList.push(stream);
-    });
-
     await this.model.configs.slice().forEach((config) => {
       childrenList.push(config);
     });
@@ -55,7 +51,7 @@ export default class OverlayController extends Controller {
         if (children.length > 0) {
           console.debug('Unlinking chidren...');
           children.map(async (child) => {
-            return child.save();
+            return await child.save();
           });
         }
         this.router.transitionTo('overlays');

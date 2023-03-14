@@ -11,12 +11,7 @@
           <form.element @controlType="checkbox" @label="Event Logging" @formLayout="inline" @property="events" class="form-check form-check-inline"  />
           <form.element @controlType="checkbox" @label="Song Request System" @formLayout="inline" @property="requests" class="form-check form-check-inline"  />
         </div>
-      </div>
-      <form.element @controlType="power-select" class="pb-2" @property="overlay" @label="Overlay template" @options={{@overlays}} selected={{this.globalConfig.config.defOverlay}} @onChange={{@setOverlay}} required as |overlay|>
-        <overlay.control @allowClear={{true}} @placeholder="Select the overlay template for the stream" as |option|>
-          {{option.name}}
-        </overlay.control>
-      </form.element>     
+      </div>    
       <form.element @controlType="power-select" class="pb-2" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{@setBotClient}} required as |client|>
         <client.control @allowClear={{true}} @placeholder="Select the Bot Client for the stream" as |option|>
           {{option.username}}

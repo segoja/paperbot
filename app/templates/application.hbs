@@ -48,8 +48,8 @@
               </button>
               {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+                <PbCloud />
               {{/if}}
-              <CloudState />
             </div>
             <div class="col-auto d-md-none">
               <button type="button" class="btn btn-outline-secondary border-0 px-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
@@ -74,8 +74,8 @@
               </button>
               {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+                <PbCloud />
               {{/if}}
-              <CloudState />
             </div>
             <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>
             <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.maximizeWindow}}><FaIcon @icon="window-maximize" /></button>
@@ -127,8 +127,8 @@
             </button>
             {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              <PbCloud />
             {{/if}}
-            <CloudState />
 
           </div>          
           {{#if this.currentUser.isTauri}}
@@ -191,9 +191,9 @@
             </button>
             {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
-            {{/if}}
             
-            <CloudState />
+              <PbCloud />
+            {{/if}}
           </div>
           {{#if this.currentUser.isTauri}}
             <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="window-minimize" /></button>

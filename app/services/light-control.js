@@ -15,7 +15,7 @@ export default class LightControlService extends Service {
       if (status) {
         htmlElement.setAttribute('data-bs-theme', 'dark');
       } else {
-        htmlElement.setAttribute('data-bs-theme', '');
+        htmlElement.setAttribute('data-bs-theme', 'light');
       }
     }
     return status;
