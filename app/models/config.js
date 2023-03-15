@@ -87,13 +87,45 @@ export default class ConfigModel extends Model {
     return this.darkmode;
   }
 
+  @attr('string', { defaultValue: 'cloudstation' }) cloudType;
   @attr('string', { defaultValue: '' }) remoteUrl;
+  @attr('string', { defaultValue: '' }) database;
   @attr('string', { defaultValue: '' }) username;
   @attr('string', { defaultValue: '' }) password;
+  @attr('boolean',{ defaultValue: false }) autoConnect;
+  
+  get cloudUrl(){
+    let dbUrl = '';
+    if(this.cloudType == 'cloudstation'){
+      dbUrl = 'https://my.cloudstation.com/'+this.database;
+    }
+    if(this.cloudType == 'custom'){
+      dbUrl = this.remoteUrl;
+    }
+    console.debug('Connecting to: '+dbUrl);
+    return dbUrl;
+  }
+  
+  get isCloudDisabled(){
+    return this.cloudType == 'disabled';
+  }
+
+  get isCustomCloud(){
+    return this.cloudType == 'custom';
+  }
 
   get canConnect() {
-    if (this.remoteUrl && this.username && this.password) {
-      return true;
+    if(this.cloudType != 'disabled'){
+      if(this.cloudType == 'cloudstation'){
+        if (this.database && this.username && this.password) {
+          return true;
+        }
+      }
+      if(this.cloudType == 'custom'){
+        if (this.remoteUrl && this.username && this.password) {
+          return true;
+        }
+      }
     }
     return false;
   }

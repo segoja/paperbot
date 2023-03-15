@@ -1,5 +1,8 @@
-<button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" {{on "click" this.toggleModal}}><FaIcon @icon="wrench" @class={{if this.cloudState.cloudError "blinkcolor" (if this.cloudState.online "connected")}} /></button>
-{{#if this.globalConfig.config}}
+<button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" {{on "click" this.toggleModal}}>
+  <FaIcon @icon="wrench" @class={{if this.cloudState.cloudError "blinkcolor" (if this.cloudState.online "connected")}} />
+</button>
+
+{{#in-element this.modalWormhole insertBefore=null}}
     <BsModal @open={{this.isViewing}} @scrollable={{true}} @backdrop={{true}} @size="lg" as |Modal|>
       <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 border-bottom rounded-top">
         <div class="row g-0 w-100 bg-dark border-0 rounded-top">
@@ -214,45 +217,6 @@
               </div>
             </div>
           </div>
-          <div class="form-group row">
-            <div class="col"><hr></div>
-          </div>
-          <div class="d-block pb-2 h-5">Online backup:</div>
-            <div class="row py-2">
-              <div class="col">
-                <div class="input-group input-group-sm">
-                  <div class="input-group-text border-default"><FaIcon @icon="link" @size="sm" /></div>
-                  <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.remoteUrl}} aria-label="Hour cost" @type="text" placeholder="Enter remote url" />
-                </div>
-              </div>
-            </div> 
-            <div class="row pt-2 pb-4">
-              <div class="col">
-                <div class="input-group input-group-sm">
-                  <div class="input-group-text border-default"><FaIcon @icon="user" @size="sm" /></div>
-                  <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.username}} aria-label="Overtime hour cost" @type="text" placeholder="Enter remote username" />
-                </div>
-              </div>
-              <div class="col">
-                <div class="input-group input-group-sm">
-                  <div class="input-group-text border-default"><FaIcon @icon="key" @size="sm" /></div>
-                  <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Emergency cost" @type="password" placeholder="Enter remote password" />
-                </div>
-              </div>
-            </div>
-            {{#if this.cloudState.cloudError}}
-              <div class="row">
-                <div class="col">
-                  {{#if this.cloudState.connectionError}}
-                    <div class="alert alert-danger py-0 px-2"><small>The connection to the server failed. Check url and login credentials.</small></div>
-                  {{/if}}
-                  {{#if this.cloudState.couchError}}
-                    <div class="alert alert-danger py-0 px-2"><small>You connected to the server but the database doest not exist. Check database name.</small></div>
-                  {{/if}}
-                </div>
-              </div>
-            {{/if}}
-          
         </BsForm>
       </Modal.body>
       <Modal.footer class="py-2 row g-0">
@@ -283,4 +247,4 @@
         </div>
       </Modal.footer>
     </BsModal>
-{{/if}}
+{{/in-element}}

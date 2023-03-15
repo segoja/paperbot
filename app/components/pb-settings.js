@@ -23,7 +23,7 @@ export default class PbSettingsComponent extends Component {
     super.willDestroy(...arguments);
   }
 
-  get bootstrapWormhole() {
+  get modalWormhole() {
     return document.getElementById('ember-bootstrap-wormhole');
   }
 

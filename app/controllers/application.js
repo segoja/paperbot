@@ -440,7 +440,7 @@ export default class ApplicationController extends Controller {
   @action saveSettings() {
     return this.globalConfig.config.save().then((config) => {
       if (!this.cloudState.online) {
-        if (config.remoteUrl && config.username && config.password) {
+        if (config.cloudUrl && config.username && config.password && config.autoConnect) {
           console.debug('Setting remote backup...');
           this.store.adapterFor('application').configRemote();
           if (!this.session.isAuthenticated) {

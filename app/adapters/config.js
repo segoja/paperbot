@@ -8,6 +8,7 @@ import indexeddb from 'pouchdb-adapter-indexeddb';
 import HttpPouch from 'pouchdb-adapter-http';
 import mapreduce from 'pouchdb-mapreduce';
 import replication from 'pouchdb-replication';
+import auth from 'pouchdb-authentication';
 
 PouchDB.plugin(PouchDBFind)
   .plugin(PouchDBRelational)
@@ -15,7 +16,8 @@ PouchDB.plugin(PouchDBFind)
   .plugin(idb)
   .plugin(HttpPouch)
   .plugin(mapreduce)
-  .plugin(replication);
+  .plugin(replication)
+  .plugin(auth);
 
 export default class ConfigAdapter extends Adapter {
   constructor() {

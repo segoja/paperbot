@@ -88,9 +88,9 @@ $height-sizes: (
 }
 
 @keyframes warnblink {
-  0%   { color: black; }
-  50%  { color: white; }
-  100% { color: black; }
+  0%   { color: var(--bs-black-text); }
+  50%  { color: var(--bs-info-text); }
+  100% { color: var(--bs-black-text); }
 }
 
 .connected {

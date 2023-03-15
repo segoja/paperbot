@@ -1,6 +1,6 @@
-<BsButton @type="btn-outline-info px-2 border-0 rounded-0" @onClick={{this.toggleModal}} title={{this.cloudText}} >
+<BsButton @type="btn btn-outline-info text-black p-0 border-0 rounded-0 btn-window px-0" @onClick={{this.toggleModal}} title={{this.cloudText}} >
   <span class={{this.cloudColor}}><FaIcon @icon="cloud"  @size="lg" /></span>
-  <div class="sync-activity">
+  <div class="sync-activity mx-0">
     {{#unless this.showArrows}}
       <span class={{unless this.isCloudSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-up" @size="sm" /></span>
       <span class={{unless this.isLocalSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-down" @size="sm" /></span>
@@ -9,45 +9,69 @@
 </BsButton>
 
 {{#in-element this.modalWormhole insertBefore=null}}
-  <BsModal @size="md" @open={{this.visible}} as |Modal|>
-    <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
-      <div class="row g-0 w-100">
-        <div class="col py-1 ps-3"><span class="h5 text-white">Cloud settings</span></div>
-        <div class="col-auto">
-          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}}><FaIcon @icon="times" /></button>
+  {{#if this.globalConfig.config}}
+    <BsModal @size="lg" @open={{this.visible}} as |Modal|>
+      <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
+        <div class="row g-0 w-100">
+          <div class="col py-1 ps-3"><span class="h5 text-white">Cloud settings</span></div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}}><FaIcon @icon="times" /></button>
+          </div>
         </div>
-      </div>
-    </Modal.header>
-    <Modal.body>
-      <BsForm @formLayout="horizontal" @model={{this.globalConfig.config}} @onSubmit={{this.doneEditing}} as |form|>
-        <div class="d-block pb-2 h-5">Online backup:</div>
-          <div class="row py-2">
-            <div class="col">
-              <div class="input-group input-group-sm">
-                <div class="input-group-text border-default"><FaIcon @icon="link" @size="sm" /></div>
-                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.remoteUrl}} aria-label="Hour cost" @type="text" placeholder="Enter remote url" />
+      </Modal.header>
+      <Modal.body>
+        <BsForm @formLayout="horizontal" @model={{this.globalConfig.config}} @onSubmit={{this.doneEditing}} as |form|>
+          <div class="row pb-3">
+            <form.element @controlType="power-select" @property="cloudType" @onChange={{this.setCloudType}} @formLayout="inline" class="col border-light" @allowClear={{true}} @options={{this.cloudTypes}} required as |type|>
+              <type.control @placeholder="Select your cloud service" as |option|>
+                {{option}}
+              </type.control>
+            </form.element>
+          </div>
+          {{#if this.globalConfig.config.isCustomCloud}}
+            <div class="row pb-3">
+              <div class="col">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-text border-default"><FaIcon @icon="link" @size="sm" /></div>
+                  <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.remoteUrl}} aria-label="Remote url" @type="text" placeholder="Enter remote url" autocomplete="remoteUrl" />
+                </div>
               </div>
-            </div>
-          </div> 
-          <div class="row pt-2 pb-2">
+            </div> 
+          {{/if}}
+          {{#if (not this.globalConfig.config.isCustomCloud)}}
+            <div class="row pb-3">
+              <div class="col">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-text border-default"><FaIcon @icon="database" @size="sm" /></div>
+                  <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.database}} aria-label="Database name" @type="text" placeholder="Enter database name" autocomplete="database" />
+                </div>
+              </div>
+            </div> 
+          {{/if}}
+          <div class="row pb-3">
             <div class="col">
               <div class="input-group input-group-sm">
                 <div class="input-group-text border-default"><FaIcon @icon="user" @size="sm" /></div>
-                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.username}} aria-label="Overtime hour cost" @type="text" placeholder="Enter remote username" />
+                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.username}} aria-label="Username" @type="text" placeholder="Enter remote username" autocomplete="username" />
               </div>
             </div>
             <div class="col">
               <div class="input-group input-group-sm">
                 <div class="input-group-text border-default"><FaIcon @icon="key" @size="sm" /></div>
-                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Emergency cost" @type="password" placeholder="Enter remote password" />
+                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Password" @type="password" placeholder="Enter remote password" autocomplete="password" />
               </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <form.element @controlType="checkbox" @label="Auto-connect" @formLayout="inline" class="form-check form-check-inline ps-0 mb-0 pt-2" @property="autoConnect" required />
             </div>
           </div>
           {{#if this.cloudState.cloudError}}
             <div class="row">
               <div class="col">
                 {{#if this.cloudState.connectionError}}
-                  <div class="alert alert-danger py-0 px-2"><small>The connection to the server failed. Check url and login credentials.</small></div>
+                  <div class="alert alert-danger py-0 px-2"><small>The connection to the server failed. Check {{if this.globalConfig.config.isCustomCloud "remote url" "database name"}} and login credentials.</small></div>
                 {{/if}}
                 {{#if this.cloudState.couchError}}
                   <div class="alert alert-danger py-0 px-2"><small>You connected to the server but the database doest not exist. Check database name.</small></div>
@@ -55,21 +79,29 @@
               </div>
             </div>
           {{/if}}
-      </BsForm>
-    </Modal.body>
-    <Modal.footer class="py-2 row g-0">
-      <div class="col">
-        <button class="btn btn-sm btn-danger" type="button" {{on "click" this.reConnect}}>Reconnect</button>
-      </div>
-      <div class="col-auto">
-        <BsButton @type="success" @onClick={{this.doneEditing}}> 
-          {{#if this.saving}}
-            <span><FaIcon @icon="spinner" class="spin" /> Saving...</span>
-          {{else}}
-            <span class="pe-3 me-1"><FaIcon @icon="save" /> Save</span>
-          {{/if}}
-        </BsButton>
-      </div>
-    </Modal.footer>
-  </BsModal>
+        </BsForm>
+      </Modal.body>
+      <Modal.footer class="py-2 row g-0">
+        <div class="col">
+          
+          <BsButton @type="secondary btn-sm" @onClick={{if this.isOnline this.disconnect  this.reConnect}}> 
+            {{#if this.isOnline}}
+              <span><FaIcon @icon="toggle-on" /> Disconnect</span>
+            {{else}}
+              <span><FaIcon @icon="toggle-off"/> Connect   </span>
+            {{/if}}
+          </BsButton>
+        </div>
+        <div class="col-auto">
+          <BsButton @type="success" @onClick={{this.doneEditing}}> 
+            {{#if this.saving}}
+              <span><FaIcon @icon="spinner" class="spin" /> Saving...</span>
+            {{else}}
+              <span class="pe-3 me-1"><FaIcon @icon="save" /> Save</span>
+            {{/if}}
+          </BsButton>
+        </div>
+      </Modal.footer>
+    </BsModal>
+  {{/if}}
 {{/in-element}}

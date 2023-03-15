@@ -21,6 +21,7 @@ import { tracked } from '@glimmer/tracking';
     .plugin(replication)
     .plugin(auth);
 */
+
 export default class ApplicationAdapter extends Adapter {
   @service cloudState;
   @service session;
@@ -48,12 +49,12 @@ export default class ApplicationAdapter extends Adapter {
 
     // this.olddb = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
 
-    //this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true });
-    this.db = new PouchDB('paperbot', {
+    this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true, live: true, });
+    /*this.db = new PouchDB('paperbot', {
       adapter: 'idb',
       attachments: true,
       live: true,
-    });
+    });*/
     this.isRetrying = false;
     this.retryDelay = 0;
     /*
@@ -94,7 +95,7 @@ export default class ApplicationAdapter extends Adapter {
     // If we have specified a remote CouchDB instance, then replicate our local database to it
     if (this.globalConfig.config.canConnect) {
       console.debug('Setting remote couch replication...');
-      this.remoteDb = new PouchDB(this.globalConfig.config.remoteUrl, {
+      this.remoteDb = new PouchDB(this.globalConfig.config.cloudUrl, {
         adapter: 'indexeddb',
         fetch: function (url, opts) {
           opts.credentials = 'include';
@@ -266,7 +267,7 @@ export default class ApplicationAdapter extends Adapter {
       })
       .catch((reason) => {
         console.debug('Connection failed!');
-        // console.debug(reason);
+        console.debug(reason);
         this.cloudState.connectionError = true;
         this.cloudState.online = false;
         this.errorMessage = reason.message || reason;

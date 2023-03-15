@@ -63,7 +63,7 @@ export default class PbCloudComponent extends Component {
     if (this.cloudState.couchError) {
       return 'text-danger';
     }
-    return 'text-light';
+    return 'text-secondary';
   }
 
   get showArrows() {
@@ -87,6 +87,19 @@ export default class PbCloudComponent extends Component {
     return this.visible;
   }
 
+
+  cloudTypes = Object.freeze(['disabled', 'cloudstation', 'custom']);
+
+  @action setCloudType(type){
+    this.globalConfig.config.cloudType = type;
+    if(type == 'cloudstation'){
+      this.globalConfig.config.remoteUrl = '';
+    } else {
+      this.globalConfig.config.database = '';
+      this.globalConfig.config.remoteUrl = '';
+    }
+  }
+
   @action toggleModal() {
     this.visible = !this.visible;
     /*if (!this.visible && this.globalConfig.config.hasDirtyAttributes) {
@@ -99,8 +112,9 @@ export default class PbCloudComponent extends Component {
     if (!this.cloudState.online) {
       if (this.globalConfig.config.canConnect) {
         console.debug('Setting remote backup...');
-        this.store.adapterFor('application').configRemote();
-        this.store.adapterFor('application').connectRemote();
+        this.store.adapterFor('application').configRemote().then(()=>{
+          this.store.adapterFor('application').connectRemote();          
+        });
       }
     }
     later(
@@ -110,34 +124,17 @@ export default class PbCloudComponent extends Component {
           this.cloudState.couchError = false;
         }
         this.isSaving = false;
-        this.visible = false;
+        // this.visible = false;
       },
       500
     )
   }
+  @action disonnect(){    
+    this.session.invalidate();
+  }
 
   @action doneEditing() {
     this.globalConfig.config.save().then(() => {
-      this.session.invalidate();
-      if (!this.cloudState.online) {
-        if (this.globalConfig.config.canConnect) {
-          console.debug('Setting remote backup...');
-          this.store.adapterFor('application').configRemote();
-          this.store.adapterFor('application').connectRemote();
-        }
-      }
-      later(
-        this,
-        function () {
-          if (this.cloudState.online) {
-            this.cloudState.couchError = false;
-          }
-          this.isSaving = false;
-          this.visible = false;
-        },
-        500
-      );
-
       this.saving = true;
       later(() => {
         this.saving = false;
