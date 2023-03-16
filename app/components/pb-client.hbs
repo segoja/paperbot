@@ -25,7 +25,7 @@
         </div>
         <div class="col-md-8">
           <div class="input-group">
-            <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{@client.oauth}} class="form-control" placeholder="Paste your Oauth here including Oauth: "/>          
+            <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{@client.oauth}} autocomplete="current-password" class="form-control" placeholder="Paste your Oauth here including Oauth: "/>          
             <button type="button" class="btn btn-outline-secondary" {{on "click" this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></button>
           </div>
         </div>

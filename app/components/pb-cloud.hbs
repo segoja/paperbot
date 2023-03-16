@@ -58,7 +58,7 @@
             <div class="col">
               <div class="input-group input-group-sm">
                 <div class="input-group-text border-default"><FaIcon @icon="key" @size="sm" /></div>
-                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Password" @type="password" placeholder="Enter remote password" autocomplete="password" />
+                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Password" @type="password" placeholder="Enter remote password" autocomplete="current-password" />
               </div>
             </div>
           </div>

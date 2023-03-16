@@ -102,7 +102,6 @@ export default class ConfigModel extends Model {
     if(this.cloudType == 'custom'){
       dbUrl = this.remoteUrl;
     }
-    console.debug('Connecting to: '+dbUrl);
     return dbUrl;
   }
   
@@ -115,17 +114,8 @@ export default class ConfigModel extends Model {
   }
 
   get canConnect() {
-    if(this.cloudType != 'disabled'){
-      if(this.cloudType == 'cloudstation'){
-        if (this.database && this.username && this.password) {
-          return true;
-        }
-      }
-      if(this.cloudType == 'custom'){
-        if (this.remoteUrl && this.username && this.password) {
-          return true;
-        }
-      }
+    if (this.cloudUrl && this.username && this.password) {
+      return true;
     }
     return false;
   }

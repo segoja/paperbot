@@ -9,17 +9,8 @@ import PouchDB from 'pouchdb-core';
 import { later } from '@ember/runloop';
 import { tracked } from '@glimmer/tracking';
 /*
-  // Modules and plugins loaded are shared in the app, so we only need to load plugins once.
+  // Pouchdb Modules and plugins loaded are shared in the app, so we only need to load plugins once.
   // In this app config adapter loads before application adapter, so we can comment the following lines to prevent plugin redefinition errors.
-
-  PouchDB.plugin(PouchDBFind)
-    .plugin(PouchDBRelational)
-    .plugin(indexeddb)
-    .plugin(idb)
-    .plugin(HttpPouch)
-    .plugin(mapreduce)
-    .plugin(replication)
-    .plugin(auth);
 */
 
 export default class ApplicationAdapter extends Adapter {
@@ -39,22 +30,35 @@ export default class ApplicationAdapter extends Adapter {
   @tracked replicationToHandler = '';
   @tracked isRetrying = false;
   @tracked retryDelay = 0;
+  
+  replicationOptions = {
+    attachments: true,
+    live: true,
+    retry: true,
+    back_off_function: (delay) => {
+      console.debug('We are retrying... ');
+      if (delay === 0) {
+        return 1000;
+      }
+      return delay * 3;
+    },
+  };
 
   constructor() {
     super(...arguments);
 
-    this.localDb = config.local_couch || 'paperbot';
+    this.localDb = config.local_couch || 'i-paperbot';
 
     assert('local_couch must be set', !isEmpty(this.localDb));
 
     // this.olddb = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
 
-    this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true, live: true, });
-    /*this.db = new PouchDB('paperbot', {
+    // this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true, live: true, });
+    this.db = new PouchDB('paperbot', {
       adapter: 'idb',
       attachments: true,
       live: true,
-    });*/
+    });
     this.isRetrying = false;
     this.retryDelay = 0;
     /*
@@ -74,19 +78,6 @@ export default class ApplicationAdapter extends Adapter {
 
     this.configRemote();
 
-    this.replicationOptions = {
-      live: true,
-      retry: true,
-      back_off_function: (delay) => {
-        console.debug('We are retrying... ');
-        if (delay === 0) {
-          return 1000;
-        }
-        return delay * 3;
-      },
-      attachments: true,
-    };
-
     return this;
   }
 
@@ -94,14 +85,12 @@ export default class ApplicationAdapter extends Adapter {
     console.debug('Trying to set remote couch replication...');
     // If we have specified a remote CouchDB instance, then replicate our local database to it
     if (this.globalConfig.config.canConnect) {
-      console.debug('Setting remote couch replication...');
+      console.debug('Setting remote couch replication to:'+this.globalConfig.config.cloudUrl);  
       this.remoteDb = new PouchDB(this.globalConfig.config.cloudUrl, {
-        adapter: 'indexeddb',
         fetch: function (url, opts) {
           opts.credentials = 'include';
           return PouchDB.fetch(url, opts);
-        },
-        attachments: true,
+        }
       });
 
       this.replicationFromHandler = null;
@@ -182,7 +171,9 @@ export default class ApplicationAdapter extends Adapter {
             // yo, something changed!
             // console.debug(change);
             this.cloudState.setPush(change);
-            console.debug('Pushing changes to the cloud...');
+            if(change){
+              console.debug('Pushing changes to the cloud...');
+            }
           })
           .on('paused', (info) => {
             this.cloudState.setPush(!info);
@@ -253,7 +244,8 @@ export default class ApplicationAdapter extends Adapter {
     }
   }
 
-  async connectRemote() {
+  async connectRemote() {        
+    console.debug('Connecting to: '+this.globalConfig.config.cloudUrl);
     this.session
       .authenticate(
         'authenticator:pouch',

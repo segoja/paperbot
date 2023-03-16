@@ -11,13 +11,13 @@ import replication from 'pouchdb-replication';
 import auth from 'pouchdb-authentication';
 
 PouchDB.plugin(PouchDBFind)
-  .plugin(PouchDBRelational)
-  .plugin(indexeddb)
-  .plugin(idb)
+  .plugin(auth)
   .plugin(HttpPouch)
+  .plugin(idb)
+  .plugin(indexeddb)
   .plugin(mapreduce)
-  .plugin(replication)
-  .plugin(auth);
+  .plugin(PouchDBRelational)
+  .plugin(replication);
 
 export default class ConfigAdapter extends Adapter {
   constructor() {
