@@ -21,11 +21,6 @@ module.exports = function (environment) {
       //},
     },
     // This fix the huge deprecated warning.
-    /*emberKeyboard: {
-      disableInputsInitializer: true,
-      listeners: ['keyUp', 'keyDown', 'keyPress', 'click'], // use only `keyUp`, `keyDown`, and `click`,
-      propagation: true,
-    },*/
     fontawesome: {
       warnIfNoIconsIncluded: false,
       defaultPrefix: 'fas', // fas for Solid, fab for brands, fal for light(pro)
@@ -38,7 +33,7 @@ module.exports = function (environment) {
   };
 
   ENV['ember-cli-workbox'] = {
-    enabled: environment !== 'test',
+    enabled: environment == 'webapp',
     debug: true,
     autoRegister: true,
   };
@@ -64,6 +59,10 @@ module.exports = function (environment) {
 
     ENV.APP.rootElement = '#ember-testing';
     ENV.APP.autoboot = false;
+  }
+
+  if (environment === 'production') {
+    ENV.rootURL = '/paperbot-app/';
   }
 
   if (environment === 'production') {

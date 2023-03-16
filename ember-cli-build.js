@@ -3,7 +3,7 @@
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
-  // let config = process.env.EMBER_ENV || 'development';
+  let config = process.env.EMBER_ENV || 'development';
   let app = new EmberApp(defaults, {
     // Add options here
     outputPaths: {
@@ -18,15 +18,11 @@ module.exports = function (defaults) {
       // This fix the tauri build blocking, but I have to check a better solution messing with cors.
       enabled: true,
     },
-    /*'ember-cli-workbox': {
-      enabled: true,
-      debug: true,
-      autoRegister: true,
-    },*/
     // Exclude .png favicons from being fingerprinted
-    //origin: 'https://tauri.localhost/',
+    // Origin and prepend are only for the webapp, disable them on desktop app building.
+    origin: config == 'webapp' ? 'https://segoja.github.io/paperbot-app/' : '/',
     fingerprint: {
-      //prepend: 'https://tauri.localhost/',
+      prepend: config == 'webapp' ? 'https://segoja.github.io/paperbot-app/' : '/',
       exclude: [
         'android-chrome-192x192.png',
         'android-chrome-512x512.png',
