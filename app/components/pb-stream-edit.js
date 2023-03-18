@@ -7,6 +7,7 @@ import { later } from '@ember/runloop';
 export default class PbStreamEditComponent extends Component {
   @service eventsExternal;
   @service twitchChat;
+  @service youtubeChat;
   @service globalConfig;
   @service audio;
   @service currentUser;

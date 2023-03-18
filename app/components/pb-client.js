@@ -9,6 +9,8 @@ export default class PbClientComponent extends Component {
 
   @tracked saving = false;
 
+  clientTypes = Object.freeze(['twitch', 'youtube', 'discord']);
+
   @action doneEditing() {
     this.args.saveClient();
     this.saving = true;

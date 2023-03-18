@@ -2,10 +2,10 @@ import { attr, hasMany } from '@ember-data/model';
 import { Model } from 'ember-pouch';
 
 export default class ClientModel extends Model {
-  @attr('string', { defaultValue: '' }) username;
-  @attr('string', { defaultValue: '' }) oauth;
-  
   @attr('string', { defaultValue: '' }) type;
+  
+  @attr('string', { defaultValue: '' }) username;
+  @attr('string', { defaultValue: '' }) oauth;  
 
   @attr('string', { defaultValue: '' }) channel;
   @attr('boolean', { defaultValue: false }) debug;

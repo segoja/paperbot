@@ -9,6 +9,14 @@
   </div>
   <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{@saveClient}} as |form|>
     <div class="card-body">
+      <div class="form-group row pb-2">
+        <label class="col-md-4">Advanced Settings</label>
+        <form.element @controlType="power-select" @property="type" @onChange={{fn (mut @client.type)}} @formLayout="inline" class="col-sm border-light pb-2" @allowClear={{true}} @options={{this.clientTypes}} required as |type|>
+          <type.control @placeholder="Select streaming service you want the bot for" as |option|>
+            {{option}}
+          </type.control>
+        </form.element>
+      </div>
       <form.element @controlType="text" @label="Username" placeholder="Username" class="pb-2" @property="username" required />  
       
       <div class="form-group row pb-2">
