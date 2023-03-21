@@ -9,12 +9,15 @@ import tmi from 'tmi.js';
 import { later, cancel } from '@ember/runloop';
 import { TrackedArray } from 'tracked-built-ins';
 
-export default class TwitchChatService extends Service {
+export default class MessageParserService extends Service {
   @service audio;
   @service globalConfig;
   @service queueHandler;
   @service currentUser;
   @service store;
+  
+  @service twitchChat;
+  @service youtubeChat;
   
   constructor() {
     super(...arguments);
@@ -87,7 +90,8 @@ export default class TwitchChatService extends Service {
 
   @tracked takessongrequests = false;
 
-  async connector(options, clientType) {
+
+  @action async connector(options, clientType) {
     // We check what kind of client is connecting
     if (clientType === 'bot') {
       if (this.botConnected === true) {
@@ -131,7 +135,7 @@ export default class TwitchChatService extends Service {
     }
   }
 
-  async disconnector() {
+  @action async disconnector() {
     var isDisconnected = false;
     if (this.botConnected === true) {
       this.botclient.disconnect().then(() => {
@@ -144,7 +148,7 @@ export default class TwitchChatService extends Service {
     }
     return isDisconnected;
   }
-  async disconnectBot() {
+  @action async disconnectBot() {
     var isDisconnected = false;
     if (this.botConnected === true) {
       this.botclient.disconnect().then(() => {

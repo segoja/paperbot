@@ -54,7 +54,15 @@
       <BsButton @type="success" @onClick={{@saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 
       <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
       <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Client saved!</span></div>
+      
+      <BsButton @type="secondary float-end" @onClick={{this.connectYoutube}}>YT con</BsButton>       
+      <BsButton @type="secondary float-end" @onClick={{this.disconnectYoutube}}>YT disc</BsButton> 
       <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this client?" @targetAction={{@deleteClient}} />
     </div>
   </BsForm>
 </div>
+{{#each this.youtubeChat.messages as |message|}}
+  <div class="alert alert-secondary p-1 my-1">
+    {{message.author}}: {{message.message}}
+  </div>
+{{/each}}
