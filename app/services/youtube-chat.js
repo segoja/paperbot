@@ -10,7 +10,7 @@ export default class youtubeChatService extends Service {
 
   async subscribe(livestreamId) {
     const callbackUrl = 'https://webhook.site/62450136-cd18-4b91-8aa4-ccabf7a69ce4';
-    const topicUrl = `https://www.youtube.com/live_chat?v=${livestreamId}`;
+    const topicUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=UCqqliyjLbIsBVHj3giKUeKw`;
 
     const hubUrl = await this.getHubUrl(topicUrl);
     if (!hubUrl) {

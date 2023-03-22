@@ -21,6 +21,7 @@
     "lint:js:fix": "eslint . --fix",
     "start": "ember serve",
     "tauri": "tauri",
+    "etauri": "concurrently \"tauri dev\" \"ember serve\"",
     "test": "concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
     "test:ember": "ember test"
   },
@@ -119,5 +120,9 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "dependencies": {
+    "googleapis": "^113.0.0",
+    "youtube-chat": "^2.2.0"
   }
 }
