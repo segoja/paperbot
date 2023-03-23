@@ -14,7 +14,8 @@ export default class ChordParser extends Helper {
     let content = params[0];
     let key = hash.key;
     let mode = hash.mode;
-
+    let processed = '';
+    
     try {
       content = Transposer.transpose(content);
 
@@ -22,7 +23,7 @@ export default class ChordParser extends Helper {
         content = content.up(key);
       }
       
-      let processed = '';
+      processed = '';
       if(mode){
         if (content.tokens) {
           content.tokens.map((token) => {
@@ -72,7 +73,6 @@ export default class ChordParser extends Helper {
 
         // console.debug(content);
         //content = content.replace(regex, `<strong>$1</strong>`);*/
-        let processed = '';
         lines.forEach((line) => {
           if (line.replace(/\s/g, '')) {
             processed += '<div>' + line.replace(/\s/g, '&nbsp') + '</div>';

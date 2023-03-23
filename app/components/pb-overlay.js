@@ -24,16 +24,16 @@ export default class PbOverlayComponent extends Component {
     ];
     
     this.fontListGenerator();
-    this.overlayGenerator();
+    // this.overlayGenerator();
   }
   
-  
+/*  
   @tracked content = '';
 
   get overlayContent(){
     return this.content;
   }
-
+*/
   //
   // Call this function and pass in the name of the font you want to check for availability.
   //
@@ -182,7 +182,7 @@ export default class PbOverlayComponent extends Component {
     }
   }
   
-  @action overlayGenerator(){    
+  get overlayContent(){
     let defaultEntry = `
           <tr class="item">
             <td class="bg-transparent text-white">
@@ -228,7 +228,7 @@ export default class PbOverlayComponent extends Component {
     let htmlOverlay = this.args.overlay.qContainer || defaultOverlay;        
     htmlOverlay = htmlOverlay.replace('\$items', htmlEntries);
     
-    this.content = htmlSafe(htmlOverlay);
+    return htmlSafe(htmlOverlay);
   }
   
 }

@@ -39,7 +39,7 @@
               </span>
               <BsPopover @triggerEvents="click" @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
                 <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                  <p class="my-0">This is the code of the main container of the request queue. Queue items will be placed inside replacing <strong>$htmlEntries</strong> in the code.</p>
+                  <p class="my-0">This is the code of the main container of the request queue. Queue items will be placed inside replacing <strong>$items</strong> in the code.</p>
                 </div>
               </BsPopover>
             </div>
@@ -68,15 +68,17 @@
           <div class="col"><hr></div>
         </div>        
         <div class="form-group row">
-          <div class="col">Custom CSS</div>
+          <div class="col">Custom CSS
+            {{#unless (valid-css this.globalConfig.config.defOverlay.qCss)}}
+              <small class="text-warning">No valid CSS applied.</small>
+            {{/unless}}
+          </div>
         </div>
         <div class="form-group row">
           <div class="col-12 col-lg">
             <Textarea @value={{@overlay.qCss}} rows="8" aria-label="Custom CSS" placeholder="Add some custom CSS rules" class="form-control h-100"/>
           </div>
-          <div class="col-12 col-lg pt-3 pt-lg-0">
-            {{did-insert this.overlayGenerator}}
-            {{did-update this.overlayGenerator @overlay}}        
+          <div class="col-12 col-lg pt-3 pt-lg-0">    
             <style>
             
               .chroma { 
@@ -92,12 +94,12 @@
                 }
               {{/if}}
               {{#if this.globalConfig.config.defOverlay.qCss}}
-                {{this.globalConfig.config.defOverlay.qCss}}
+                {{valid-css this.globalConfig.config.defOverlay.qCss}}
               {{/if}}
             </style>
             <div class="card mx-auto h-100 rounded-0 border-0 text-body chroma" data-bs-theme="light">
-              <div class="card-body h-100 p-0">
-                {{this.overlayContent}}
+              <div class="card-body h-100 p-0">              
+                {{valid-html this.overlayContent}}
               </div>
             </div>
           </div>

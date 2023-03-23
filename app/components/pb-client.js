@@ -25,16 +25,4 @@ export default class PbClientComponent extends Component {
   @action toggleMask() {
     this.isMasked = !this.isMasked;
   }
-  
-  
-  @action connectYoutube(){
-    //if(this.args.client.oauth && this.args.client.channel){
-    //  this.youtubeChat.connectToChat(this.args.client.channel, this.args.client.oauth);
-    //}
-    this.youtubeChat.subscribe(this.args.client.channel);
-  }
-  
-  @action disconnectYoutube(){  
-    this.youtubeChat.disconnectFromChat();
-  }
 }

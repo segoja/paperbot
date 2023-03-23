@@ -6,7 +6,13 @@
       }
     {{/if}}
     {{#if this.globalConfig.config.defOverlay.qCss}}
-      {{this.globalConfig.config.defOverlay.qCss}}
+      {{valid-css this.globalConfig.config.defOverlay.qCss}}
+    {{else}}
+      .chroma .table {
+        text-shadow: 0px 0px 5px #000000;
+        font-size: 1.5em!important;
+        font-weight: 500;
+      }
     {{/if}}
   </style>
-    {{this.overlayContent}}
+  {{valid-html this.overlayContent}}
