@@ -14,7 +14,7 @@
       </Modal.header>
       <Modal.body>
         <BsForm @formLayout="horizontal" @model={{this.globalConfig.config}}  @onSubmit={{this.doneEditing}} as |form|>
-          <form.element @controlType="text" @label="Default channel (name)" class="pb-2" placeholder="Default channel name" @property="defchannel" required />
+          <form.element @controlType="text" @label="Default channel (name)" class="pb-2" placeholder="Default channel name" @property="defchannel" autocomplete="channel" required />
           
           <div class="row pb-2">
             <div class="col-form-label col-md-4">
@@ -29,11 +29,19 @@
               </BsPopover>
             </div>
             <div class="col-md-8 border-light">
-              <div class="row input-group g-0">
-                <form.element @controlType="password" @label="" placeholder="Oauth token" @formLayout="inline" @property="externaleventskey" class="col" as |el|>
-                  <el.control @inline={{true}} class="rounded-0 rounded-start" />
+              <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline" class="d-lg-none" as |el|>
+                <el.control @inline={{true}} />
+                <el.label />
+              </form.element>
+              <div class="input-group form-row g-0 rounded">
+                <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline" class="d-none d-lg-flex input-group-text ps-1 px-0 py-1 col-lg rounded-0 rounded-start" @horizontalLabelGridClass="me-0" as |el|>
+                  <el.control @inline={{true}} @horizontalLabelGridClass="me-0"/>
+                  <el.label @horizontalLabelGridClass="me-0" />
                 </form.element>
-                <form.element @controlType="radio" @label="" @options={{this.externalEventServices}} @property="externalevents" @formLayout="inline" class="input-group-text col py-1 rounded-0 rounded-end" as |el|>
+                <form.element @controlType="password" @label="" placeholder="Oauth token" @formLayout="inline" @property="externaleventskey" class="d-none d-lg-inline-block col-lg" as |el|>
+                  <el.control @inline={{true}} class="rounded-0 rounded-end" />
+                </form.element>
+                <form.element @controlType="password" @label="" autocomplete="oauth" placeholder="Oauth token" @formLayout="inline" @property="externaleventskey" class="col-12 d-lg-none" as |el|>
                   <el.control @inline={{true}}/>
                 </form.element>
               </div>

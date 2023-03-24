@@ -8,7 +8,7 @@ module.exports = function (defaults) {
     // Add options here
     'ember-service-worker': {
       versionStrategy: 'every-build',
-      enabled: config != 'development',
+      enabled: config == 'production',
     },
     outputPaths: {
       app: {

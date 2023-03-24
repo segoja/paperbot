@@ -13,6 +13,7 @@ import {
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 import { TrackedArray } from 'tracked-built-ins';
+import NoSleep from 'nosleep.js';
 
 export default class ApplicationController extends Controller {
   @service cloudState;
@@ -274,6 +275,8 @@ export default class ApplicationController extends Controller {
         //}
       });
     }
+    this.noSleep = new NoSleep();
+    this.noSleep.enable();
   }
 
   get serverStatus() {
@@ -451,16 +454,20 @@ export default class ApplicationController extends Controller {
     });
   }
 
-  @action toggleMenu() {
-    this.currentUser.expandMenu = !this.currentUser.expandMenu;
+
+
+  @action closeMenu() {    
+    let htmlElement = document.getElementsByClassName('navbar-collapse')[0];
+    if(htmlElement){
+      htmlElement.classList.remove('show');
+    }
   }
 
-  @action toggleSubmenu() {
-    this.currentUser.expandSubmenu = !this.currentUser.expandSubmenu;
-  }
-
-  @action closeMenu() {
-    this.currentUser.expandMenu = false;
+  @action openMenu() {    
+    let htmlElement = document.getElementsByClassName('navbar-collapse')[0];
+    if(htmlElement){
+      htmlElement.classList.add('show');
+    }
   }
 
   @action toggleLyrics() {

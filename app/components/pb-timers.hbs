@@ -21,22 +21,24 @@
               </form.element>
             </BsForm>
             <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">
-              <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered timers?" @targetAction={{this.wipeTimers}} />
-              
-              {{#let (file-queue name="uploadTimersCSV" onFileAdded=this.timerImport) as |queue|}}
-                <label role="button" for="upload-csv" class="btn btn-secondary" title="Import timers by CSV">Import</label>  
-                <input
-                  type="file"
-                  id="upload-csv"
-                  accept="text/csv"
-                  class="p-0 m-0"
-                  hidden
-                  {{queue.selectFile}}
-                >
-              {{/let}}
-              
-              <BsButton @type="secondary" @onClick={{this.timerExportFiltered}}>Export</BsButton>
-              <BsButton @type="primary" @onClick={{@createTimer}}>Add New</BsButton>
+              <div class="d-block float-end">
+                <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered timers?" @targetAction={{this.wipeTimers}} />
+                
+                {{#let (file-queue name="uploadTimersCSV" onFileAdded=this.timerImport) as |queue|}}
+                  <label role="button" for="upload-csv" class="btn btn-secondary" title="Import timers by CSV">Import</label>  
+                  <input
+                    type="file"
+                    id="upload-csv"
+                    accept="text/csv"
+                    class="p-0 m-0"
+                    hidden
+                    {{queue.selectFile}}
+                  >
+                {{/let}}
+                
+                <BsButton @type="secondary" @onClick={{this.timerExportFiltered}}>Export</BsButton>
+                <BsButton @type="primary" @onClick={{@createTimer}}>Add New</BsButton>
+              </div>
             </div>
           </div>
         </div>

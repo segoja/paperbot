@@ -122,5 +122,8 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "dependencies": {
+    "nosleep.js": "^0.12.0"
   }
 }

@@ -14,20 +14,22 @@
               </form.element>
             </BsForm>
             <div class="col-lg-auto col-12 mx-1 ps-0 pe-2 px-lg-0">
-              {{#let (file-queue name="uploadClientsCSV" onFileAdded=this.clientImport) as |queue|}}
-                <label type="button" for="upload-csv" class="btn btn-secondary" title="Import clients by CSV">Import</label>  
-                <input
-                  type="file"
-                  id="upload-csv"
-                  accept="text/csv"
-                  class="p-0 m-0"
-                  hidden
-                  {{queue.selectFile}}
-                >
-              {{/let}}
-            
-              <BsButton @type="secondary" @onClick={{this.clientExportFiltered}}>Export</BsButton>
-              <BsButton @type="primary" @onClick={{@createClient}}>Add New</BsButton>
+              <div class="d-block float-end">
+                {{#let (file-queue name="uploadClientsCSV" onFileAdded=this.clientImport) as |queue|}}
+                  <label type="button" for="upload-csv" class="btn btn-secondary" title="Import clients by CSV">Import</label>  
+                  <input
+                    type="file"
+                    id="upload-csv"
+                    accept="text/csv"
+                    class="p-0 m-0"
+                    hidden
+                    {{queue.selectFile}}
+                  >
+                {{/let}}
+              
+                <BsButton @type="secondary" @onClick={{this.clientExportFiltered}}>Export</BsButton>
+                <BsButton @type="primary" @onClick={{@createClient}}>Add New</BsButton>
+              </div>
             </div>
           </div>
         </div>

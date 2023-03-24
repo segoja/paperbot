@@ -9,21 +9,20 @@
 <HeadLayout />
 {{#if this.currentUser.hideMenu}}
   {{#unless this.isOverlay}}
-    <header class="m-0 p-0" id="headerA" aria-label="overlay only header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
+    <header class="m-0 p-0" id="headerA" aria-label="overlay only header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} >
       <BsNavbar
         @type="dark"
-        class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
+        class="px-0 my-0 py-0 border-0 border-bottom border-secondary papermenu"
         @backgroundColor="dark"
         @collapsed={{true}}
         @fluid={{true}}
         @position="fixed-top"
         @toggleBreakpoint="lg"
-        @onCollapse={{fn (mut this.collapsed) true}}
-        @container="none container-fluid px-0 ps-2"
-        @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
+        @container="none container-fluid px-0 ps-2"        
+        as |navbar|>
           <div class="navbar-header row col-lg-auto col g-0">
             <div class="col-auto">
-              <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 px-0 m-0 d-none" />
+              <navbar.toggle class="rounded-0 btn btn-outline-info border-0 p-0 m-0 d-none" />
               <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0">
                 {{svg-jar "papercat-gray-icon" class="logo" }}
                 <span class="d-none d-sm-inline-block pe-3">Paperbot Reader</span> 
@@ -88,19 +87,17 @@
   <header class="m-0 p-0" id="headerB" aria-label="regular header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
     <BsNavbar
       @type="dark"
-      class="px-0 my-0 py-0 border border-1 border-bottom-0 border-secondary papermenu"
+      class="px-0 my-0 py-0 border-0 border-bottom border-secondary papermenu"
       @backgroundColor="dark"
       @collapsed={{true}}
       @fluid={{true}}
       @position="fixed-top"
       @toggleBreakpoint="lg"
-      @onCollapse={{fn (mut this.collapsed) true}}
-      @container="none container-fluid px-0 ps-lg-2"
-      @onExpand={{fn (mut this.collapsed) false}} as |navbar|>
+      @container="none container-fluid px-0 ps-lg-2" as |navbar|>
 
         <div class="navbar-header row col-lg-auto col g-0">
           <div class="col-auto">
-            <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 px-0 m-0 ps-2" />
+            <navbar.toggle class="rounded-0 btn btn-outline-dark border-0 py-0 px-0 m-0 ps-2" {{on "click" this.openMenu}} {{on "mouseover" this.openMenu}}  />
             <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0">
               {{svg-jar "papercat-gray-icon" class="logo" }}
               <span class="d-none d-sm-inline-block pe-3">Paperbot</span> 
@@ -138,7 +135,7 @@
             </div>
           {{/if}}
         </div>
-        <navbar.content class="px-lg-0 px-3">
+        <navbar.content class="px-lg-0 px-3 pb-2 pb-lg-0" {{on "click" this.closeMenu}} {{on "mouseleave" this.closeMenu}}>
           <navbar.nav class="col" as |nav|>
             <nav.item>
               <nav.link-to @route="streams.index" class="py-1">Streams</nav.link-to>
@@ -167,7 +164,7 @@
               </nav.item>              
             {{/unless}}
             <nav.item>
-              <PbFirstRun />
+              <PbFirstRun {{on "click" this.toggleMenu}} />
             </nav.item>
           </navbar.nav>
         </navbar.content>
@@ -214,7 +211,7 @@
     {{outlet}}
   </main>
 {{else}}
-  <main class="container-fluid pt-custom px-0 alert-secondary border border-secondary bg-secondary border-1" id="mainB">
+  <main class="container-fluid pt-custom px-0 alert-secondary border-0 border-top-1 border-secondary bg-secondary" id="mainB">
     {{outlet}}
   </main>
 {{/if}}

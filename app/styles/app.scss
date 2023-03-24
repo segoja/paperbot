@@ -146,11 +146,13 @@ button svg.stream-status {
 .listframe{
   max-height: 100% !important;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .listframe-reader, .listframe-setlist{
   max-height: 100% !important;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .listheader tr th {
