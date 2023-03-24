@@ -6,6 +6,10 @@ module.exports = function (defaults) {
   let config = process.env.EMBER_ENV || 'development';
   let app = new EmberApp(defaults, {
     // Add options here
+    'ember-service-worker': {
+      versionStrategy: 'every-build',
+      enabled: config != 'development',
+    },
     outputPaths: {
       app: {
         css: {
@@ -20,9 +24,9 @@ module.exports = function (defaults) {
     },
     // Exclude .png favicons from being fingerprinted
     // Origin and prepend are only for the webapp, disable them on desktop app building.
-    origin: config == 'webapp' ? 'https://segoja.github.io/paperbot-app/' : '/',
+    /* origin: config == 'webapp' ? 'https://segoja.github.io/paperbot-app/' : '/', */
     fingerprint: {
-      prepend: config == 'webapp' ? 'https://segoja.github.io/paperbot-app/' : '/',
+      // prepend: config == 'webapp' ? 'https://segoja.github.io/paperbot-app/' : '/',
       exclude: [
         'android-chrome-192x192.png',
         'android-chrome-512x512.png',

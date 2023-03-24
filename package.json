@@ -62,7 +62,6 @@
     "ember-cli-sass": "^11.0.1",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-terser": "^4.0.2",
-    "ember-cli-workbox": "^3.1.2",
     "ember-concurrency": "^2.3.7",
     "ember-cp-validations": "^5.0.0",
     "ember-data": "~4.8.8",
@@ -79,13 +78,16 @@
     "ember-power-select": "^7.0.0",
     "ember-qunit": "^6.1.1",
     "ember-resolver": "^10.0.0",
+    "ember-service-worker": "^9.0.1",
+    "ember-service-worker-asset-cache": "^0.6.4",
+    "ember-service-worker-cache-first": "^0.6.3",
+    "ember-service-worker-index": "^0.7.2",
     "ember-simple-auth": "^4.2.2",
     "ember-simple-auth-pouch": "^0.3.0-beta.3",
     "ember-sortable": "^5.0.0",
     "ember-source": "~4.8.2",
     "ember-svg-jar": "^2.3.4",
     "ember-template-lint": "^5.3.1",
-    "ember-websockets": "^10.2.1",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-ember": "^11.4.3",
@@ -120,9 +122,5 @@
   },
   "ember": {
     "edition": "octane"
-  },
-  "dependencies": {
-    "googleapis": "^113.0.0",
-    "youtube-chat": "^2.2.0"
   }
 }

@@ -62,7 +62,7 @@ module.exports = function (environment) {
   }
 
   if (environment === 'production') {
-    ENV.rootURL = '/paperbot-app/';
+    ENV.rootURL = '/';
   }
 
   if (environment === 'production') {
