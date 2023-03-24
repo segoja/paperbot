@@ -64,6 +64,12 @@
         "removeFile": true,
         "renameFile": true
       }, 
+      "shell": {
+        "all": true,
+        "execute": true,
+        "sidecar": true,
+        "open": true
+      },
       "http": {
         "all": true,
         "request": true,

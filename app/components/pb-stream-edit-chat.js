@@ -13,7 +13,7 @@ export default class PbStreamEditChatComponent extends Component {
       darkmode = '&darkpopout';
     }
 
-    console.debug(hostname);
+    console.debug('The hostname is: '+hostname);
     return (
       'https://www.twitch.tv/embed/' +
       channel +
