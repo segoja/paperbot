@@ -1,4 +1,4 @@
-<div class="card border-0 rounded-0 h-100 flex-fill">
+<div class="card border-0 rounded-0 flex-fill mh-100">
   <div class="card-header bg-dark p-0 m-0 border-0 border-bottom rounded-0">
     <div class="row g-0">
       <div class="col py-1 ps-3"><span class="h5 text-white">{{@overlay.name}}</span></div>
@@ -7,109 +7,109 @@
       </div>
     </div>
   </div>
-  <BsForm @formLayout="horizontal" @model={{@overlay}} @onSubmit={{@saveOverlay}} class="row h-100 mx-0 flex-fill overflow-hidden" as |form|>
-    <div class="card-body mx-0 flex-fill h-100 listframe">
-        <form.element @controlType="text" @label="Name" placeholder="Type the name of the overlay" class="pb-2" @property="name" required /> 
-        
-        <form.element @controlType="power-select" @label="Font" @property="font" @onChange={{this.setFont}} @formLayout="horizontal" class="pb-2 border-light"  @options={{this.fontList}} as |item|>
-          <item.control @allowClear={{true}} @placeholder="Select the font to use in the overlay" as |option|>
-            {{option}}
-          </item.control>
-        </form.element>
-        
-        <div class="form-group row">
-          <h6 class="col pb-2">
-            Queue Overlay
-            <span role="button" id="q-info">
+  <div class="card-body listframe">
+    <BsForm @formLayout="horizontal" @model={{@overlay}} @onSubmit={{@saveOverlay}} as |form|>
+      <form.element @controlType="text" @label="Name" placeholder="Type the name of the overlay" class="pb-2" @property="name" required /> 
+      
+      <form.element @controlType="power-select" @label="Font" @property="font" @onChange={{this.setFont}} @formLayout="horizontal" class="pb-2 border-light"  @options={{this.fontList}} as |item|>
+        <item.control @allowClear={{true}} @placeholder="Select the font to use in the overlay" as |option|>
+          {{option}}
+        </item.control>
+      </form.element>
+      
+      <div class="form-group row">
+        <h6 class="col pb-2">
+          Queue Overlay
+          <span role="button" id="q-info">
+            <FaIcon @icon="question-circle" class="text-info" role="presentation" />
+          </span>
+          <BsPopover @triggerEvents="click" @triggerElement="#q-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+            <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+              <p class="my-0">Overlays are based on HTML5 and Bootstrap. If you want to learn how to customize or create your own overlay check <a href="https://getbootstrap.com/docs/5.3/content/tables/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>official Bootstrap documentation</a>.</p>
+            </div>
+          </BsPopover>
+        </h6>
+      </div>
+      <div class="row pb-2">
+        <div class="col-12 col-md">
+          <div class="d-block">
+            <label class="control-label">Container: </label>
+            <span role="button" id="q-container-info">
               <FaIcon @icon="question-circle" class="text-info" role="presentation" />
             </span>
-            <BsPopover @triggerEvents="click" @triggerElement="#q-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+            <BsPopover @triggerEvents="click" @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
               <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                <p class="my-0">Overlays are based on HTML5 and Bootstrap. If you want to learn how to customize or create your own overlay check <a href="https://getbootstrap.com/docs/5.3/content/tables/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>official Bootstrap documentation</a>.</p>
+                <p class="my-0">This is the code of the main container of the request queue. Queue items will be placed inside replacing <strong>$items</strong> in the code.</p>
               </div>
             </BsPopover>
-          </h6>
-        </div>
-        <div class="row pb-2">
-          <div class="col-12 col-md">
-            <div class="d-block">
-              <label class="control-label">Container: </label>
-              <span role="button" id="q-container-info">
-                <FaIcon @icon="question-circle" class="text-info" role="presentation" />
-              </span>
-              <BsPopover @triggerEvents="click" @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-                <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                  <p class="my-0">This is the code of the main container of the request queue. Queue items will be placed inside replacing <strong>$items</strong> in the code.</p>
-                </div>
-              </BsPopover>
-            </div>
-            <div class="d-block">
-              <Textarea @value={{@overlay.qContainer}} rows="8" aria-label="Container" placeholder="Type the code of the container" class="form-control"/>
-            </div>
           </div>
-          <div class="col-12 col-md">
-            <div class="d-block">
-              <label class="control-label">Items: </label>
-              <span role="button" id="q-items-info">
-                <FaIcon @icon="question-circle" class="text-info" role="presentation" />
-              </span>
-              <BsPopover @triggerEvents="click" @triggerElement="#q-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-                <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                  <p class="my-0">This is the code used to represent each one of the request in the queue. The information about each request can be included using: <strong>$title</strong>, <strong>$artist</strong>, <strong>$time</strong> and <strong>$user</strong>. They will be replaced by the actual data in the overlay window/file.</p>
-                </div>
-              </BsPopover>
-            </div>
-            <div class="d-block">
-              <Textarea @value={{@overlay.qItems}} rows="8" aria-label="Items" placeholder="Type the code of the items" class="form-control"/>
-            </div>
-          </div>
-        </div>        
-        <div class="form-group row">
-          <div class="col"><hr></div>
-        </div>        
-        <div class="form-group row">
-          <div class="col">Custom CSS
-            {{#unless (valid-css this.globalConfig.config.defOverlay.qCss)}}
-              <small class="text-warning">No valid CSS applied.</small>
-            {{/unless}}
+          <div class="d-block">
+            <Textarea @value={{@overlay.qContainer}} rows="8" aria-label="Container" placeholder="Type the code of the container" class="form-control"/>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-12 col-lg">
-            <Textarea @value={{@overlay.qCss}} rows="8" aria-label="Custom CSS" placeholder="Add some custom CSS rules" class="form-control h-100"/>
-          </div>
-          <div class="col-12 col-lg pt-3 pt-lg-0">    
-            <style>
-            
-              .chroma { 
-                background-color: {{this.globalConfig.config.chromaColor}}!important; 
-                max-width: {{this.globalConfig.config.overlayWidth}}px !important; 
-                max-height: {{this.globalConfig.config.overlayHeight}}px !important; 
-                overflow: hidden;
-              }
-              
-              {{#if this.globalConfig.config.defOverlay.font}}
-                .chroma * {
-                  font-family: {{this.globalConfig.config.defOverlay.font}}!important;
-                }
-              {{/if}}
-              {{#if this.globalConfig.config.defOverlay.qCss}}
-                {{valid-css this.globalConfig.config.defOverlay.qCss}}
-              {{/if}}
-            </style>
-            <div class="card mx-auto h-100 rounded-0 border-0 text-body chroma" data-bs-theme="light">
-              <div class="card-body h-100 p-0">              
-                {{valid-html this.overlayContent}}
+        <div class="col-12 col-md">
+          <div class="d-block">
+            <label class="control-label">Items: </label>
+            <span role="button" id="q-items-info">
+              <FaIcon @icon="question-circle" class="text-info" role="presentation" />
+            </span>
+            <BsPopover @triggerEvents="click" @triggerElement="#q-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+              <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+                <p class="my-0">This is the code used to represent each one of the request in the queue. The information about each request can be included using: <strong>$title</strong>, <strong>$artist</strong>, <strong>$time</strong> and <strong>$user</strong>. They will be replaced by the actual data in the overlay window/file.</p>
               </div>
+            </BsPopover>
+          </div>
+          <div class="d-block">
+            <Textarea @value={{@overlay.qItems}} rows="8" aria-label="Items" placeholder="Type the code of the items" class="form-control"/>
+          </div>
+        </div>
+      </div>        
+      <div class="form-group row">
+        <div class="col"><hr></div>
+      </div>        
+      <div class="form-group row">
+        <div class="col">Custom CSS
+          {{#unless (valid-css this.globalConfig.config.defOverlay.qCss)}}
+            <small class="text-warning">No valid CSS applied.</small>
+          {{/unless}}
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-12 col-lg">
+          <Textarea @value={{@overlay.qCss}} rows="8" aria-label="Custom CSS" placeholder="Add some custom CSS rules" class="form-control h-100"/>
+        </div>
+        <div class="col-12 col-lg pt-3 pt-lg-0">    
+          <style>
+          
+            .chroma { 
+              background-color: {{this.globalConfig.config.chromaColor}}!important; 
+              max-width: {{this.globalConfig.config.overlayWidth}}px !important; 
+              max-height: {{this.globalConfig.config.overlayHeight}}px !important; 
+              overflow: hidden;
+            }
+            
+            {{#if this.globalConfig.config.defOverlay.font}}
+              .chroma * {
+                font-family: {{this.globalConfig.config.defOverlay.font}}!important;
+              }
+            {{/if}}
+            {{#if this.globalConfig.config.defOverlay.qCss}}
+              {{valid-css this.globalConfig.config.defOverlay.qCss}}
+            {{/if}}
+          </style>
+          <div class="card mx-auto h-100 rounded-0 border-0 text-body chroma" data-bs-theme="light">
+            <div class="card-body h-100 p-0">              
+              {{valid-html this.overlayContent}}
             </div>
           </div>
         </div>
-    </div>
-  </BsForm> 
-    <div class="card-footer py-3 bg-transparent">
-      <BsButton @type="success" @onClick={{@saveAndReturnOverlay}}><FaIcon @icon="save" /> Save & Return</BsButton> 
-      <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
-      <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Overlay saved!</span></div>
-      <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this overlay?" @targetAction={{@deleteOverlay}} />
-    </div>
+      </div>
+    </BsForm> 
+  </div>
+  <div class="card-footer py-3 bg-transparent">
+    <BsButton @type="success" @onClick={{@saveAndReturnOverlay}}><FaIcon @icon="save" /> Save & Return</BsButton> 
+    <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
+    <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Overlay saved!</span></div>
+    <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this overlay?" @targetAction={{@deleteOverlay}} />
+  </div>
 </div>
