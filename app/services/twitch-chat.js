@@ -19,8 +19,12 @@ export default class TwitchChatService extends Service {
   @tracked botclient;
 
   @tracked savechat = false;
+  
+  @tracked scrollPosition = 0;
 
-  @tracked msglist = [];
+  @tracked message = "";
+  
+  @tracked msglist = new TrackedArray();
   get messages() {
     if (this.savechat) {
       return this.msglist || [];
@@ -457,6 +461,7 @@ export default class TwitchChatService extends Service {
         }
       } else {
         this.msglist.push(this.lastmessage);
+        this.scrollPosition = 0;
         this.commandHandler(target, tags, msg, self);
       }
     } else {
@@ -472,6 +477,11 @@ export default class TwitchChatService extends Service {
     { conjunction: 'and', sort: false }
   )
   filteredSongs;
+
+  @action sendMessage() {
+    this.botclient.say(this.channel, this.message);
+    this.message = "";
+  } 
 
   // Called every time a message comes in
   @action async commandHandler(target, tags, msg, self) {

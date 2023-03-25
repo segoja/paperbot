@@ -9,12 +9,12 @@ export default helper(function ([message]) {
 
   if (message.type != 'system') {
     if (message.reward) {
-      pre = '<div class="col chatline py-1 highlight alert-warning">';
+      pre = '<div class="d-block chatline py-1 highlight alert alert-warning">';
     } else {
-      pre = '<div class="col chatline py-1">';
+      pre = '<div class="d-block chatline py-1">';
     }
   } else {
-    pre = '<div class="col chatline py-1 system alert-light">';
+    pre = '<div class="d-block chatline py-1 system alert alert-light">';
   }
 
   var body = '';

@@ -6,16 +6,32 @@
         <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
       </BsButtonGroup>
     </div>
-    <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanmessages}}>                         
-      <iframe 
-        src={{this.embedChatUrl}}
-        height="100%"
-        width="100%"
-        sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation"        
-        class="w-100 p-0 m-0"
-        title="Twitch chat"
-      />
-    </BsCollapse>  
+    <BsCollapse class="row d-flex flex-column flex-fill h-100" @collapsed={{this.globalConfig.config.cpanmessages}}>
+      <div class="col d-flex flex-column flex-fill h-100 p-0">
+        <div class="d-block flex-fill overflow-hidden">
+          <div class="d-block ps-2 me-2 chatframe" {{scroll-position position=this.twitchChat.scrollPosition relative=false}}>
+            {{#each this.twitchChat.messages as |message|}}
+              <div class="row" id="{{message.id}}">
+                {{message-format message}}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        <div class="row alert alert-secondary p-0 my-0">
+          <BsForm @formLayout="inline" @model={{this.twitchChat}} @onSubmit={{this.twitchChat.sendMessage}} as |form|>
+            <form.element @property="message" as |el|>
+              <el.control 
+                @controlType="text"
+                autocomplete="off"
+                placeholder="Type your message here"
+                 class="mb-0 my-0 py-1 rounded-0 chatinput border-dark"
+                readonly={{this.inputDisabled}}        
+              />
+            </form.element>
+          </BsForm>
+        </div>
+      </div>
+    </BsCollapse> 
   </div>
 </div>
 
