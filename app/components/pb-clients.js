@@ -33,7 +33,7 @@ export default class PbClientsComponent extends Component {
   }
 
   @action async clientImport(file) {
-    let reference = '"type","username","oauth","channel","debug","reconnect","secure"';
+    let reference = '"type","publicKey","username","oauth","channel","debug","reconnect","secure"';
     let extension = 'csv';
     let recordType = 'client';
     let response = '';
@@ -60,6 +60,7 @@ export default class PbClientsComponent extends Component {
     if (this.filteredContent.length > 0) {
       let header = [
         'type',
+        'publicKey',
         'username',
         'oauth',
         'channel',
@@ -71,6 +72,7 @@ export default class PbClientsComponent extends Component {
       this.filteredContent.forEach((client) => {
         let csvrow = [
           client.type,
+          client.publicKey,
           client.username,
           client.oauth,
           client.channel,

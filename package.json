@@ -124,6 +124,7 @@
     "edition": "octane"
   },
   "dependencies": {
-    "nosleep.js": "^0.12.0"
+    "nosleep.js": "^0.12.0",
+    "tmi-emote-parse": "^2.0.0"
   }
 }

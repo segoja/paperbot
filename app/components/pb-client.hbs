@@ -25,8 +25,10 @@
         </div>
         <div class="col-md-8">
           <div class="input-group">
-            <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{@client.oauth}} autocomplete="current-password" class="form-control" placeholder="Paste your Oauth here including Oauth: "/>          
-            <button type="button" class="btn btn-outline-secondary" {{on "click" this.toggleMask}}><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></button>
+            {{did-insert this.setOauth}}
+            {{did-update this.setOauth @client}}
+            <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{this.oauth}} autocomplete="current-oauth" class="form-control" disabled={{this.isMasked}} placeholder="Paste your Oauth here including Oauth: "/>          
+            <button type="button" class="btn btn-outline-secondary" {{on "click" this.toggleMask}}><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
           </div>
         </div>
       </div>
@@ -44,7 +46,7 @@
     </BsForm>
   </div>  
   <div class="card-footer py-3 bg-transparent">
-    <BsButton @type="success" @onClick={{@saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 
+    <BsButton @type="success" @onClick={{this.saveAndReturnClient}}><FaIcon @icon="save" /> Save & Return</BsButton> 
     <BsButton @type="secondary" @onClick={{this.doneEditing}}><FaIcon @icon="save" /></BsButton>
     <div class="text-success ms-2 {{if this.saving "d-inline-block fadeout" "d-none"}}"><FaIcon @icon="spinner" class={{if this.saving "spin"}} /> <span>Client saved!</span></div>
     <ButtonConfirm @btnClass="btn btn-danger float-end" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this client?" @targetAction={{@deleteClient}} />

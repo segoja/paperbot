@@ -6,8 +6,13 @@ import { assign } from '@ember/polyfills';
 import moment from 'moment';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import tmi from 'tmi.js';
+import emoteParser from 'tmi-emote-parse';
 import { later, cancel } from '@ember/runloop';
 import { TrackedArray } from 'tracked-built-ins';
+
+emoteParser.events.on("error", e => {
+    console.log("Error:", e);
+})
 
 export default class TwitchChatService extends Service {
   @service audio;
@@ -146,8 +151,7 @@ export default class TwitchChatService extends Service {
       this.botclient.on('message', this.messageHandler);
       // this.botclient.on('hosting', this.onHostHandler);
       // Connect the client
-      this.botConnected = await this.botclient.connect().then(
-        function () {
+      this.botConnected = await this.botclient.connect().then(() => {
           console.debug('bot client connected!');
           return true;
         },
@@ -201,6 +205,22 @@ export default class TwitchChatService extends Service {
   }
 
   @action async timersLauncher() {
+    console.log(this.botclient);
+    //console.log(pass);
+    const response = await fetch(`https://api.twitch.tv/helix/users?login=${this.botUsername}`, {
+      headers: {
+        'Authorization': `Bearer oauth:${this.botPassword}`
+      }
+    });
+    
+    const data = await response.json();
+    console.log(data);
+    console.log(response);
+    // const userId = data.data[0].id;
+    // emoteParser.setTwitchCredentials(this.botUsername, userId);
+    // emoteParser.loadAssets("twitch");
+    // emoteParser.loadAssets("twitchdev");
+
     let count = 1;
     console.debug('Scheduling timers...');
     if (this.currentUser.isTauri) {
@@ -346,7 +366,7 @@ export default class TwitchChatService extends Service {
             'color: ' + this.setDefaultColor(tags['username']).toString()
           ),
       badges: tags['badges'] ? tags['badges'] : null,
-      htmlbadges: '', //tags['badges'] ? this.parseBadges(tags['badges']).toString() : '',
+      htmlbadges: tags['badges'] ? this.parseBadges(tags['badges']).toString() : '',
       type: tags['message-type'] ? tags['message-type'] : null,
       usertype: tags['user-type'] ? tags['user-type'].toString() : null,
       reward: tags['msg-id'] ? true : false,
@@ -479,8 +499,10 @@ export default class TwitchChatService extends Service {
   filteredSongs;
 
   @action sendMessage() {
-    this.botclient.say(this.channel, this.message);
-    this.message = "";
+    if(this.message){
+      this.botclient.say(this.channel, this.message);
+      this.message = "";
+    }
   } 
 
   // Called every time a message comes in
@@ -1115,7 +1137,7 @@ export default class TwitchChatService extends Service {
 
   kraken(opts) {
     let defaults = {
-      base: 'https://api.twitch.tv/kraken/',
+      base: 'https://api.twitch.tv/helix/',
       headers: {
         'Client-ID': this.botUsername,
         Authorization: 'OAuth ' + this.botPassword,
@@ -1149,8 +1171,8 @@ export default class TwitchChatService extends Service {
     };
 
     this.kraken(opts).then((data) => {
-      //console.debug('Getting badges!');
-      //console.debug(data.badge_sets);
+      console.debug('Getting badges!');
+      console.debug(data.badge_sets);
       if (channel) {
         this.channelBadges = data.badge_sets;
       } else {

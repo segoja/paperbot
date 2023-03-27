@@ -98,12 +98,12 @@
          <div class="{{if this.globalConfig.config.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
           <div class="{{if this.globalConfig.config.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
               <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.extraPanLeftTop (if this.globalConfig.config.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
-                <Container class="col h-100 border m-0 p-0">
+                <Container class="col h-100 border m-0 p-0 overflow-hidden">
                    <PbStreamEditEvents @stream={{@stream}} />
                 </Container>
               </div>          
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanLeftBottom (if this.globalConfig.config.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
-              <Container class="col h-100 border m-0 p-0">
+              <Container class="col h-100 border m-0 p-0 overflow-hidden">
                 <PbStreamEditChat @stream={{@stream}} />
               </Container>
             </div>
@@ -116,12 +116,12 @@
           {{/if}}
           <div class="{{if @stream.requests (if this.globalConfig.config.extraPanRight (if this.globalConfig.config.extraPanLeft "col-5 h-100 border  m-0 p-0" "col h-100 border  m-0 p-0") "d-none")}}">
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightTop (if this.globalConfig.config.extraPanRightBottom "h-50" "h-100") "d-none"}} border">
-              <Container class="col h-100 m-0 p-0"> 
+              <Container class="col h-100 m-0 p-0 overflow-hidden"> 
                 <PbStreamEditPending @requests={{@stream.requests}} />
               </Container>
             </div>
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanRightBottom (if this.globalConfig.config.extraPanRightTop "h-50" "h-100") "d-none"}} border">
-              <Container class="col h-100 m-0 p-0"> 
+              <Container class="col h-100 m-0 p-0 overflow-hidden"> 
                 <PbStreamEditPlayed @requests={{@stream.requests}} />
               </Container>        
             </div>

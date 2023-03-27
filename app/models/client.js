@@ -3,7 +3,9 @@ import { Model } from 'ember-pouch';
 
 export default class ClientModel extends Model {
   @attr('string', { defaultValue: '' }) type;
+
   
+  @attr('string', { defaultValue: '' }) publicKey;  
   @attr('string', { defaultValue: '' }) username;
   @attr('string', { defaultValue: '' }) oauth;  
 

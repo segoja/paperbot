@@ -1,37 +1,33 @@
-<div id="chat" class="row {{unless this.globalConfig.config.cpanmessages "h-100 dragpanel"}} overflow-hidden border border-secondary m-0 p-0">            
-  <div class="col {{unless this.globalConfig.config.cpanmessages "h-100"}} flex-column flex-fill d-flex overflow-hidden">
-    <div class="row bg-secondary text-light">
-      <div class="col d-block align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Recent messages</h6></div>
+<div id="chat" class="card rounded-0 {{unless this.globalConfig.config.cpanmessages "dragpanel h-100"}} border border-secondary overflow-hidden m-0 p-0">
+  <div class="card-header bg-secondary text-light rounded-0 p-0 m-0">
+    <div class="row g-0">
+      <div class="col align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Recent messages</h6></div>
       <BsButtonGroup class="col-auto px-0" as |bg|>
         <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
       </BsButtonGroup>
     </div>
-    <BsCollapse class="row d-flex flex-column flex-fill h-100" @collapsed={{this.globalConfig.config.cpanmessages}}>
-      <div class="col d-flex flex-column flex-fill h-100 p-0">
-        <div class="d-block flex-fill overflow-hidden">
-          <div class="d-block ps-2 me-2 chatframe" {{scroll-position position=this.twitchChat.scrollPosition relative=false}}>
-            {{#each this.twitchChat.messages as |message|}}
-              <div class="row" id="{{message.id}}">
-                {{message-format message}}
-              </div>
-            {{/each}}
-          </div>
+  </div>
+  <div class="card-body {{unless this.globalConfig.config.cpanmessages "h-100" "d-none"}} flex-fill overflow-hidden p-0">
+    <BsCollapse class="d-block flex-fill h-100 chatframe" @collapsed={{this.globalConfig.config.cpanmessages}} {{scroll-position position=this.twitchChat.scrollPosition relative=false}}>
+      {{#each this.twitchChat.messages as |message|}}
+        <div class="row" id="{{message.id}}">
+          {{message-format message}}
         </div>
-        <div class="row alert alert-secondary p-0 my-0">
-          <BsForm @formLayout="inline" @model={{this.twitchChat}} @onSubmit={{this.twitchChat.sendMessage}} as |form|>
-            <form.element @property="message" as |el|>
-              <el.control 
-                @controlType="text"
-                autocomplete="off"
-                placeholder="Type your message here"
-                 class="mb-0 my-0 py-1 rounded-0 chatinput border-dark"
-                readonly={{this.inputDisabled}}        
-              />
-            </form.element>
-          </BsForm>
-        </div>
-      </div>
-    </BsCollapse> 
+      {{/each}}
+    </BsCollapse>
+  </div>
+  <div class="card-footer rounded-0 p-0 m-0 border-0 border-top border-secondary {{if this.globalConfig.config.cpanmessages "d-none"}}">
+    <BsForm @formLayout="inline" @model={{this.twitchChat}} @onSubmit={{this.twitchChat.sendMessage}} as |form|>
+      <form.element @property="message" class="rounded-0" as |el|>
+        <el.control 
+          @controlType="text"
+          autocomplete="off"
+          placeholder="Send a message"
+           class="mb-0 my-0 py-1 rounded-0 chatinput border-0 border-top border-secondary"
+          readonly={{this.inputDisabled}}        
+        />
+      </form.element>
+    </BsForm>
   </div>
 </div>
 

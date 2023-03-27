@@ -177,15 +177,10 @@ button svg.stream-status {
 
 .eventsframe::-webkit-scrollbar {
   display: none;
-} 
-.chatframe {
-  overflow-y: scroll;
-  overflow-x: none;
 }
+
 .chatframe::-webkit-scrollbar {
   display: none;
-  
-  overflow-y: scroll;
 } 
 
 .queueframe::-webkit-scrollbar {
