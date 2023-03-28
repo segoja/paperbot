@@ -66,7 +66,20 @@
                 </client.control>
               </form.element>
           </div>
-          
+          <div class="row pb-2">
+            <label class="control-label col-form-label col-md-4">
+              Default Chat client 
+              <span role="btn">
+                <FaIcon @icon="question-circle" class="text-info" />
+                <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
+              </span>
+            </label>
+            <form.element @controlType="power-select" @property="defchatclient" @onChange={{this.setdefChat}} @formLayout="inline" class="col-md-8 border-light" @options={{@clients}} required as |client|>
+              <client.control @allowClear={{true}} @placeholder="Select the default Chat Client for new streams" as |option|>
+                {{option.username}}
+              </client.control>
+            </form.element>
+          </div> 
           <div class="row pb-2">
             <div class="col-form-label col-md-4">
               <label class="control-label">Default overlay template</label>

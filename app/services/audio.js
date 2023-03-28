@@ -196,7 +196,7 @@ export default class AudioService extends Service {
             });
         }
       });
-      console.debug(this.sounds);
+      // console.debug(this.sounds);
     }
   }
 
@@ -279,6 +279,25 @@ export default class AudioService extends Service {
   }
 
   /**
+   * Stops all sounds in the sounds register
+   *
+   * @public
+   * @method audioSwitch
+   *
+   * @param {bool} the desired status the sound system.   
+   */
+
+  @action audioSwitch(status) {
+    this.isEnabled = status;
+
+    Howler.mute(!this.isEnabled);
+    if (!this.isEnabled) {
+      Howler.stop();
+    }
+  }
+
+
+  /**
    * Removes a Sound instance by its id from the sounds register
    *
    * @public
@@ -332,7 +351,7 @@ export default class AudioService extends Service {
       });
       Howler.stop();
       Howler.unload();
-      console.debug(this.sounds);
+      // console.debug(this.sounds);
     }
   }
 }

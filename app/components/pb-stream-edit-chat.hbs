@@ -9,7 +9,7 @@
   </div>
   <div class="card-body {{unless this.globalConfig.config.cpanmessages "h-100" "d-none"}} flex-fill overflow-hidden p-0">
     <BsCollapse class="d-block flex-fill h-100 chatframe" @collapsed={{this.globalConfig.config.cpanmessages}} {{scroll-position position=this.twitchChat.scrollPosition relative=false}}>
-      {{#each this.twitchChat.messages as |message|}}
+      {{#each this.messages as |message|}}
         <div class="row" id="{{message.id}}">
           {{message-format message}}
         </div>

@@ -302,7 +302,8 @@ export default class QueueHandlerService extends Service {
       // console.debug(selected.fullText+' added at position '+nextPosition);
       this.lastsongrequest = newRequest;
       this.scrollPendingPosition = 0;
-      this.scrollPlayedPosition = 0;
+      this.scrollPlayedPosition = 0;      
+      this.fileContent(this.pendingSongs);
     });
     this.fileContent(this.pendingSongs);
   }
@@ -361,6 +362,7 @@ export default class QueueHandlerService extends Service {
       firstRequest.save().then(() => {
         this.scrollPlayedPosition = 0;
         this.scrollPendingPosition = 0;
+        this.fileContent(this.pendingSongs);
       });
     }
 

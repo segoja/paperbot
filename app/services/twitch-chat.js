@@ -20,8 +20,10 @@ export default class TwitchChatService extends Service {
   @service queueHandler;
   @service currentUser;
   @service store;
+  @service cryptoData;
 
   @tracked botclient;
+  @tracked chatclient;
 
   @tracked savechat = false;
   
@@ -53,8 +55,18 @@ export default class TwitchChatService extends Service {
   @tracked channel = '';
   @tracked botUsername = '';
   @tracked botPassword = '';
+  @tracked chatUsername = '';
+  @tracked chatPassword = '';
+
+  get sameClient(){
+    if(this.chatUsername === this.botUsername){
+      return true;
+    }
+    return false;
+  }
 
   @tracked botConnected = false;
+  @tracked chatConnected = false;
 
   @tracked chanId;
 
@@ -129,53 +141,102 @@ export default class TwitchChatService extends Service {
     super(...arguments);
   }
 
-  async connector(options, clientType) {
+  async connector(opts, clientType) {
     // We check what kind of client is connecting
+    console.log('The channel is: '+ this.channel);
+    
     if (clientType === 'bot') {
       if (this.botConnected === true) {
         this.botclient.disconnect();
       }
+      if(this.chatUsername === opts.identity.username.toString() && this.chatConnected){
+        console.debug("chat client is the same of the chat, enabling bot...");
+        this.botConnected = true;
+      }
+    }
+    
+    if(clientType === "chat"){
+      if(this.chatConnected === true){
+        this.chatclient.disconnect();
+      }
+      console.log(opts);
+      if(this.botUsername === opts.identity.username.toString() && this.botConnected){
+        console.debug("chat client is the same of the bot, enabling chat...");
+        this.chatConnected = true;
+      }
     }
 
+    let options = opts;    
+  
     if (!this.botConnected && clientType === 'bot') {
       // this.channel = options.channels.toString();
       this.botUsername = options.identity.username.toString();
-      this.botPassword = options.identity.password.replace(/oauth:/g, '');
-
+      
+      let key = this.cryptoData.newKey(this.botUsername);
+      let pass = this.cryptoData.decrypt(options.identity.password.toString(), key);  
+      
+      this.botPassword = pass.replace(/oauth:/g, '');
+      
+      options.identity.password = this.botPassword;
+      
       this.botclient = new tmi.client(options);
       // Register our event handlers (defined below)
       this.botclient.on('connecting', this.soundboard);
       this.botclient.on('connected', this.timersLauncher);
       this.botclient.on('connected', this.onBotConnectedHandler);
       this.botclient.on('disconnected', this.unloadSoundboard);
-      this.botclient.on('message', this.messageHandler);
+      this.botclient.on('message', this.messageHandler);      
       // this.botclient.on('hosting', this.onHostHandler);
       // Connect the client
-      this.botConnected = await this.botclient.connect().then(() => {
-          console.debug('bot client connected!');
-          return true;
+      this.botclient.connect().then(
+        (success) => {
+          console.debug('bot client connected!',success);
+          this.botConnected = true;
+          this.botclient.join(this.channel);
+          this.timersLauncher();
         },
-        function () {
-          console.debug('error connecting bot client!');
-          return false;
+        (error) => {
+          console.debug('error connecting bot client!',error);
+          this.botConnected = false;
         }
       );
-
-      if (this.botConnected) {
-        this.botclient.join(this.channel);
-        this.timersLauncher();
-        // this.twitchNameToUser(this.channel);
-        // console.debug(this.badgespack);
-      }
-
       return this.botConnected;
     }
+    
+    if (!this.chatConnected && clientType === 'chat') {
+      // this.channel = options.channels.toString();
+      this.chatUsername = options.identity.username.toString();
+      
+      let key = this.cryptoData.newKey(this.chatUsername);
+      let pass = this.cryptoData.decrypt(options.identity.password.toString(), key);  
+      
+      this.chatPassword = pass.replace(/oauth:/g, '');
+      
+      options.identity.password = this.chatPassword;
+      
+      this.chatclient = new tmi.client(options);
+      
+      // Connect the client
+      this.chatclient.connect().then(
+        (success) => {
+          console.debug('chat client connected!',success);
+          this.chatConnected = true;
+          this.chatclient.join(this.channel);
+        },
+        (error) => {
+          console.debug('error connecting chat client!',error);
+          this.chatConnected = false;
+        }
+      );
+      return this.chatConnected;
+    }    
   }
 
   async disconnector() {
     var isDisconnected = false;
     if (this.botConnected === true) {
       this.botclient.disconnect().then(() => {
+        this.audio.audioSwitch(false);
         this.botConnected = false;
         this.channel = '';
         this.botUsername = '';
@@ -183,21 +244,19 @@ export default class TwitchChatService extends Service {
         console.debug('The bot client got disconnected!');
       });
     }
-    return isDisconnected;
-  }
-  async disconnectBot() {
-    var isDisconnected = false;
-    if (this.botConnected === true) {
-      this.botclient.disconnect().then(() => {
-        this.botConnected = false;
+    if (this.chatConnected === true) {
+      this.chatclient.disconnect().then(() => {
+        this.audio.audioSwitch(false);
+        this.chatConnected = false;
         this.channel = '';
-        this.botUsername = '';
+        this.chatUsername = '';
         isDisconnected = true;
-        console.debug('The bot client got disconnected!');
+        console.debug('The chat client got disconnected!');
       });
     }
     return isDisconnected;
   }
+
 
   // Called every time the bot connects to Twitch chat
   @action onBotConnectedHandler(addr, port) {
@@ -205,22 +264,6 @@ export default class TwitchChatService extends Service {
   }
 
   @action async timersLauncher() {
-    console.log(this.botclient);
-    //console.log(pass);
-    const response = await fetch(`https://api.twitch.tv/helix/users?login=${this.botUsername}`, {
-      headers: {
-        'Authorization': `Bearer oauth:${this.botPassword}`
-      }
-    });
-    
-    const data = await response.json();
-    console.log(data);
-    console.log(response);
-    // const userId = data.data[0].id;
-    // emoteParser.setTwitchCredentials(this.botUsername, userId);
-    // emoteParser.loadAssets("twitch");
-    // emoteParser.loadAssets("twitchdev");
-
     let count = 1;
     console.debug('Scheduling timers...');
     if (this.currentUser.isTauri) {
@@ -343,10 +386,10 @@ export default class TwitchChatService extends Service {
   }
 
   @action async messageHandler(target, tags, msg, self) {
-    //console.debug('__________________________');
-    //console.debug(msg);
-    //console.debug(tags);
-    // this.parseBadges(tags['badges']);
+    console.debug('__________________________');
+    console.debug(msg);
+    console.debug(tags);
+    this.parseBadges(tags['badges']);
 
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
@@ -372,6 +415,9 @@ export default class TwitchChatService extends Service {
       reward: tags['msg-id'] ? true : false,
       emotes: tags['emotes'] ? tags['emotes'] : null,
     };
+
+    console.log(this.lastmessage);
+    console.log('----------------------------------');
 
     if (tags['message-type'] != 'whisper') {
       if (
@@ -500,7 +546,7 @@ export default class TwitchChatService extends Service {
 
   @action sendMessage() {
     if(this.message){
-      this.botclient.say(this.channel, this.message);
+      this.chatclient.say(this.channel, this.message);
       this.message = "";
     }
   } 
@@ -1118,42 +1164,38 @@ export default class TwitchChatService extends Service {
   // ************************ //
   // Badge retrieving system: //
   // ************************ //
-
   formQuerystring(qs = {}) {
     return Object.keys(qs)
-      .map((key) => `${key}=${qs[key]}`)
+      .map(key => `${key}=${qs[key]}`)
       .join('&');
   }
-
   request({ base = '', endpoint = '', qs, headers = {}, method = 'get' }) {
     let opts = {
-      method,
-      headers: new Headers(headers),
-    };
-    return fetch(base + endpoint + '?' + this.formQuerystring(qs), opts).then(
-      (res) => res.json()
-    );
+        method,
+        headers: new Headers(headers)
+      };
+    return fetch(base + endpoint + '?' + this.formQuerystring(qs), opts)
+    .then(res => res.json());
   }
-
   kraken(opts) {
     let defaults = {
-      base: 'https://api.twitch.tv/helix/',
-      headers: {
-        'Client-ID': this.botUsername,
-        Authorization: 'OAuth ' + this.botPassword,
-        Accept: 'application/vnd.twitchtv.v5+json',
-      },
-    };
-
+        base: 'https://api.twitch.tv/kraken/',
+        headers: {
+          'Client-ID': this.botUsername,
+          'Authorization': 'OAuth '+this.botPassword,          
+          Accept: 'application/vnd.twitchtv.v5+json'
+        }
+      };
+    
     return this.request(Object.assign(defaults, opts));
   }
-
+  
   twitchNameToUser(username) {
     let opts = {
       endpoint: 'users',
-      qs: { login: username },
+      qs: { login: username }
     };
-
+    
     this.kraken(opts).then((data) => {
       // console.debug(username+' id number is: '+data.users[0]._id);
       this.chanId = data.users[0]._id;
@@ -1162,27 +1204,293 @@ export default class TwitchChatService extends Service {
       this.getBadges('');
     });
   }
-
+  
   getBadges(channel) {
     let opts = {
       base: 'https://badges.twitch.tv/v1/badges/',
       endpoint: (channel ? `channels/${channel}` : 'global') + '/display',
-      qs: { language: 'en' },
+      qs: { language: 'en' }
     };
-
+    
     this.kraken(opts).then((data) => {
-      console.debug('Getting badges!');
-      console.debug(data.badge_sets);
-      if (channel) {
-        this.channelBadges = data.badge_sets;
+      //console.debug('Getting badges!');
+      //console.debug(data.badge_sets);
+      if(channel){
+        this.channelBadges = data.badge_sets;        
       } else {
         this.globalBadges = data.badge_sets;
       }
-      if (this.channelBadges && this.globalBadges) {
+      if(this.channelBadges && this.globalBadges){
         //console.debug(this.allbadges);
       }
     });
   }
+
+
+  @action superHandler(client){
+
+    client.on("ban", (channel, username, reason, userstate) => {
+        // Do your stuff.
+        this.chateventHandler("<strong>@"+username+"</strong> has been banned.");
+    });
+
+    client.on("unban", (channel, username, reason, userstate) => {
+        // Do your stuff.
+        this.chateventHandler("<strong>@"+username+"</strong> has been unbanned.");
+    });
+
+    client.on("chant", (channel, username, reason, userstate) => {
+        // Do your stuff.
+        this.chateventHandler("<strong>@"+username+"</strong> started a chant!");
+    });
+
+
+    client.on("clearchat", (channel) => {
+        // Do your stuff.
+        this.chateventHandler("<strong>"+channel+"</strong> room has been cleared.");
+    });
+
+    client.on("emoteonly", (channel, enabled) => {
+        // Do your stuff.
+        let message = "";
+        if(enabled){  
+          message = "<strong#"+channel+"</strong> enabled emotes only mode";
+        } else {
+          message = "<strong>"+channel+"</strong> disabled emotes only mode";
+        }        
+        this.chateventHandler(message);      
+    });
+
+    client.on("followersonly", (channel, enabled, length) => {
+        // Do your stuff.
+        let message = "";
+        if(enabled){
+          if(length){
+            message = "<strong>"+channel+"</strong> enabled followers only mode for "+length+"s.";
+          } else {
+            message = "<strong>"+channel+"</strong> enabled followers only mode";
+          }
+        } else {
+          message = "<strong>"+channel+"</strong> disabled followers only mode";
+        }
+        this.chateventHandler(message);
+    });
+
+    client.on("hosting", (channel, target, viewers) => {
+        // Do your stuff.
+        this.chateventHandler("<strong>"+channel+"</strong> is hosting <strong>@"+target+"</strong> with <strong>"+viewers+"</strong> viewers");
+    });
+
+    client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
+        // Do your stuff.
+        this.msglist.slice(-60).map((msg)=>{
+          if (msg['id'] == userstate["target-msg-id"]){
+            msg['type'] = 'deleted';
+          }
+        });
+        this.chateventHandler("<strong>"+channel+"</strong> deleted <strong>@"+username+"</strong> message: "+deletedMessage);
+    });
+
+    // Someone got modded
+    client.on("mod", (channel, username) => {
+        // Do your stuff.
+        this.chateventHandler("<strong>"+channel+"</strong> modded <strong>@"+username+"</strong>!");
+    });
+
+    client.on("notice", (channel, msgid, message) => {
+        // Do your stuff.
+        console.debug("we got a notice!");
+        this.chateventHandler(message);    
+    });
+
+    client.on("slowmode", (channel, enabled, length) => {
+        // Do your stuff.
+        let message = "";
+        if(enabled){
+          if(length){
+            message = "<strong>"+channel+"</strong> enabled slow mode for "+length+"s.";
+          } else {
+            message = "<strong>"+channel+"</strong> enabled slow mode";
+          }
+        } else {
+          message = "<strong>"+channel+"</strong> disabled slow mode";
+        }
+        this.chateventHandler(message);
+    });    
+    
+    // Subscribers only mode:
+    client.on("subscribers", (channel, enabled) => {
+        // Do your stuff.
+        let message = "";
+        if(enabled){  
+          message = "<strong>"+channel+"</strong> enabled subscribers only mode";
+        } else {
+          message = "<strong>"+channel+"</strong> disabled subscribers only mode";
+        }
+        this.chateventHandler(message);
+    });
+
+    client.on("timeout", (channel, username, reason, duration, userstate) => {
+        // Do your stuff.
+        // console.debug(userstate);
+        let message = "";
+        if(reason){
+          message = "<strong>@"+username+"</strong> has been timed out for "+duration+"s because: "+reason;
+        } else {
+          message = "<strong>@"+username+"</strong> has been timed out for "+duration+"s";
+        }
+        
+        this.chateventHandler(message);
+    });
+
+    client.on("unhost", (channel, viewers) => {
+        // Do your stuff.
+        this.chateventHandler(""+channel+" stopped hosting the stream with "+viewers+" viewers");
+    });
+
+
+    client.on("unmod", (channel, username) => {
+        // Do your stuff.
+        this.chateventHandler(""+channel+" unmodded @"+username+"  :(");
+    });
+
+    // Vip list
+    client.on("vips", (channel, vips) => {
+        // Do your stuff.
+        console.debug(channel);
+        console.debug(vips);
+    });
+
+    client.on("whisper", (from, userstate, message, self) => {
+        // Don't listen to my own messages..
+        if (self) return;
+
+        // Do your stuff.
+    });
+    
+    
+    // Stream events you would get in streamlabels event list.
+    client.on("anongiftpaidupgrade", (channel, username, userstate) => {
+        // Do your stuff.
+        this.eventHandler("@"+username+" got upgraded to "+userstate["msg-param-cumulative-months"]+".", "gift");
+    });
+    
+    client.on("cheer", (channel, userstate, message) => {
+        // Do your stuff.
+        this.eventHandler(""+channel+" got cheered by @"+userstate['display-name']+" with "+userstate['bits']+" and the message: "+message, "cheer");
+    });
+    
+    client.on("follow", (channel, userstate) => {
+        // Do your stuff.
+        this.eventHandler(""+channel+" got a new follower");
+    });
+    
+    client.on("hosted", (channel, username, viewers, autohost) => {
+        // Do your stuff.
+        this.eventHandler(""+channel+" has been hosted by @"+username+" with "+viewers+" viewers. The raid is autohost? "+autohost, "host");
+    });
+    
+    client.on("raided", (channel, username, viewers) => {
+        // Do your stuff.
+        this.eventHandler(""+channel+" has been raided by @"+username+" with "+viewers+" viewers.", "raid");
+    });
+    
+    client.on("resub", (channel, username, streakMonths, msg, tags, methods) => {
+        // Do your stuff.
+        
+        let plan = "";
+        if(methods['plan'] != null){
+          switch (methods['plan']) {
+            case 'Prime':{
+              plan = "Prime";
+              break;
+            }
+            case '1000':{
+              plan = "Tier 1";
+              break;
+            }
+            case '2000':{
+              plan = "Tier 2";
+              break;
+            }
+            case '3000':{
+              plan = "Tier 3";
+              break;
+            }         
+          }
+        }
+        this.eventHandler("@"+username+" resubscribed at "+plan+". They've subscribed for "+tags["msg-param-cumulative-months"]+" months!", "resub");        
+    });
+
+
+    
+    client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
+        // Do your stuff.
+        /*console.debug("Mistery gifted: =============================")
+        console.debug(methods);
+        console.debug(userstate);*/
+        this.eventHandler("@"+username+" gifted "+numbOfSubs+" subs.", "gift");
+    });
+    
+    client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
+        // Do your stuff.
+        /*console.debug("Sub gifted: =============================")
+        console.debug(methods);
+        console.debug(userstate);*/      
+        this.eventHandler("@"+username+" gifted @"+recipient+" a sub.", "gift");
+    });
+    
+    client.on("subscription", (channel, username, method, message, userstate) => {
+        // Do your stuff.
+        /*console.debug("Subscribed: =============================")
+        console.debug(method);
+        console.debug(userstate);
+        console.debug(message);*/
+        var plan = '';
+        if(method['plan'] != null){
+          switch (method['plan']) {
+            case 'Prime':{
+              plan = "Prime";
+              break;
+            }
+            case '1000':{
+              plan = "Tier 1";
+              break;
+            }
+            case '2000':{
+              plan = "Tier 2";
+              break;
+            }
+            case '3000':{
+              plan = "Tier 3";
+              break;
+            }         
+          }
+        }
+        this.eventHandler("@"+username+" subscribed to "+channel+" with "+plan+".", "sub");
+    });
+  }
+  
+  @action chateventHandler(notice){
+    this.lastmessage = {
+      id: 'system',
+      timestamp: moment().format(),
+      body: null,
+      parsedbody: this.parseMessage(notice, []).toString(),    
+      user: "[Info]",
+      displayname: "[Info]",      
+      color: "inherit",
+      csscolor: htmlSafe('color: inherit'),        
+      badges: null,
+      htmlbadges:  '',
+      type: "system",
+      usertype: null,
+      reward: false,
+      emotes: null
+    };
+    this.msglist.push(this.lastmessage);
+  }
+
 
   @tracked lastEvent = null;
   @action eventHandler(event, type) {

@@ -19,6 +19,10 @@ export default class PbStreamEditComponent extends Component {
     return this.args.stream.botclient.get('optsgetter');
   }
 
+  get optschat() {
+    return this.args.stream.chatclient.get('optsgetter');
+  }
+
   @tracked message = '';
   @tracked msglist = [];
 
@@ -26,18 +30,6 @@ export default class PbStreamEditComponent extends Component {
     if (
       this.args.stream.finished === true ||
       this.args.stream.botclient === '' ||
-      this.args.stream.channel === ''
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  get disableChatButton() {
-    if (
-      this.twitchChat.botConnected === false ||
-      this.args.stream.finished === true ||
       this.args.stream.channel === ''
     ) {
       return true;
@@ -55,10 +47,11 @@ export default class PbStreamEditComponent extends Component {
   }
 
   // With this getter we limit the number of messages displayed on screen.
-  get messages() {
+  /* get messages() {
     return this.msglist.slice(-45);
-  }
-  // With this getter we limit the number of messages displayed on screen.
+  }*/
+  
+  // With this getter we limit the number of events displayed on screen.
   get events() {
     let events = [];
     if (this.arrangedDescEvents.length > 0) {
@@ -74,22 +67,6 @@ export default class PbStreamEditComponent extends Component {
     return result;
   }
 
-  get embedChatUrl() {
-    let hostname = window.location.hostname;
-    let channel = this.args.stream.channel;
-    let darkmode = '';
-    if (this.globalConfig.config.darkmode) {
-      darkmode = '&darkpopout';
-    }
-    return (
-      'https://www.twitch.tv/embed/' +
-      channel +
-      '/chat?parent=' +
-      hostname +
-      darkmode
-    );
-  }
-
   constructor() {
     super(...arguments);
     // These lines is to allow switching to other routes
@@ -99,36 +76,10 @@ export default class PbStreamEditComponent extends Component {
     } else {
       this.eventlist = this.twitchChat.events;
     }
-
-    this.msglist = this.twitchChat.messages;
+    
     // this.queueHandler.songqueue = this.queueHandler.songqueue.slice();
-    this.queueHandler.scrollPlayedPosition =
-      this.queueHandler.pendingSongs.length;
-    this.queueHandler.scrollPendingPosition =
-      this.queueHandler.playedSongs.length;
-
-    if (this.twitchChat.botConnected === true) {
-      this.twitchChat.botclient.on('message', this.msgGetter);
-    }
-    if (this.twitchChat.botConnected === true) {
-      // Chat events:
-      this.twitchChat.botclient.on('ban', this.msgGetter);
-      this.twitchChat.botclient.on('clearchat', this.msgGetter);
-      this.twitchChat.botclient.on('emoteonly', this.msgGetter);
-      this.twitchChat.botclient.on('follow', this.msgGetter);
-      this.twitchChat.botclient.on('followersonly', this.msgGetter);
-      this.twitchChat.botclient.on('hosting', this.msgGetter);
-      this.twitchChat.botclient.on('messagedeleted', this.msgGetter);
-      this.twitchChat.botclient.on('mod', this.msgGetter);
-      this.twitchChat.botclient.on('notice', this.msgGetter);
-      this.twitchChat.botclient.on('slowmode', this.msgGetter);
-      this.twitchChat.botclient.on('subscribers', this.msgGetter);
-      this.twitchChat.botclient.on('timeout', this.msgGetter);
-      this.twitchChat.botclient.on('unban', this.msgGetter);
-      this.twitchChat.botclient.on('unhost', this.msgGetter);
-      this.twitchChat.botclient.on('unmod', this.msgGetter);
-      this.twitchChat.botclient.on('whisper', this.msgGetter);
-    }
+    this.queueHandler.scrollPlayedPosition = this.queueHandler.pendingSongs.length;
+    this.queueHandler.scrollPendingPosition = this.queueHandler.playedSongs.length;
   }
 
   @action moves(el, container, handle) {
@@ -145,6 +96,7 @@ export default class PbStreamEditComponent extends Component {
     this.twitchChat.savechat = this.args.stream.savechat;
 
     this.twitchChat.botUsername = this.args.stream.botName || '';
+    this.twitchChat.chatUsername = this.args.stream.chatName || '';
 
     if (
       this.args.stream.events &&
@@ -156,41 +108,10 @@ export default class PbStreamEditComponent extends Component {
       this.eventsExternal.createClient();
     }
 
-    this.twitchChat.connector(this.optsbot, 'bot').then(() => {
-      // Chat events:
-      this.twitchChat.botclient.on('message', this.msgGetter);
-      this.twitchChat.botclient.on('unban', this.msgGetter);
-      this.twitchChat.botclient.on('ban', this.msgGetter);
-      this.twitchChat.botclient.on('clearchat', this.msgGetter);
-      this.twitchChat.botclient.on('emoteonly', this.msgGetter);
-      this.twitchChat.botclient.on('follow', this.msgGetter);
-      this.twitchChat.botclient.on('followersonly', this.msgGetter);
-      this.twitchChat.botclient.on('hosting', this.msgGetter);
-      this.twitchChat.botclient.on('messagedeleted', this.msgGetter);
-      this.twitchChat.botclient.on('mod', this.msgGetter);
-      this.twitchChat.botclient.on('notice', this.msgGetter);
-      this.twitchChat.botclient.on('slowmode', this.msgGetter);
-      this.twitchChat.botclient.on('subscribers', this.msgGetter);
-      this.twitchChat.botclient.on('timeout', this.msgGetter);
-      this.twitchChat.botclient.on('unhost', this.msgGetter);
-      this.twitchChat.botclient.on('unmod', this.msgGetter);
-      this.twitchChat.botclient.on('whisper', this.msgGetter);
+    this.twitchChat.connector(this.optsbot, 'bot').then(()=>{
+      let opts = this.optchat || this.optsbot;
+      this.twitchChat.connector(opts, "chat");
     });
-  }
-
-  @action disconnectBot() {
-    this.twitchChat.disconnectBot().then(
-      function () {
-        console.debug('Bot client disconnected!');
-        //
-      },
-      function () {
-        console.debug('Error disconnecting!');
-      }
-    );
-    if (this.eventsExternal.connected) {
-      this.eventsExternal.disconnectClient();
-    }
   }
 
   @action disconnectClients() {
@@ -211,7 +132,7 @@ export default class PbStreamEditComponent extends Component {
   @action finishStream() {
     if (this.args.stream.finished != true) {
       if (this.args.stream.savechat) {
-        this.args.stream.chatlog = this.twitchChat.messages;
+        this.args.stream.chatlog = this.twitchChat.msglist;
       }
 
       this.args.stream.songqueue = [];
@@ -256,6 +177,7 @@ export default class PbStreamEditComponent extends Component {
 
       if (
         this.twitchChat.botConnected === true ||
+        this.twitchChat.chatConnected === true ||
         this.eventsExternal.connected
       ) {
         this.disconnectClients();
@@ -268,20 +190,6 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.msglist = [];
       this.msglist = [];
     }
-  }
-
-  // This action gets triggered every time the channel receives a
-  // message and updates both the chatlog and the song queue.
-  @action msgGetter() {
-    this.msglist = this.twitchChat.messages;
-    if (this.currentUser.updateQueueOverlay && this.args.stream.requests) {
-      this.queueHandler.fileContent(this.queueHandler.pendingSongs);
-    }
-  }
-
-  @action sendMessage() {
-    this.twitchChat.botclient.say(this.twitchChat.channel, this.message);
-    this.message = '';
   }
 
   // Stream saving actions

@@ -120,5 +120,12 @@ export default class ConfigModel extends Model {
     return false;
   }
 
+  get canGetEvents(){
+    if (this.externalevents && this.externaleventskey) {
+      return true;
+    }
+    return false;
+  }
+
   @attr('string') rev;
 }
