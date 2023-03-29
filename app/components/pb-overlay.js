@@ -145,7 +145,7 @@ export default class PbOverlayComponent extends Component {
         fontName = font.psName;
       }
       if(detected){
-        // console.log(fontName);
+        // console.debug(fontName);
         this.fonts.push(fontName);
       }
     }

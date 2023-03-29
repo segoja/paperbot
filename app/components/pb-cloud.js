@@ -15,10 +15,13 @@ export default class PbCloudComponent extends Component {
   constructor() {
     super(...arguments);
     this.visible = false;
+    this.saving = false;
   }
 
   willDestroy() {
     super.willDestroy(...arguments);
+    this.visible = false;
+    this.saving = false;
   }
 
   @tracked visible = false;
@@ -109,7 +112,7 @@ export default class PbCloudComponent extends Component {
 
   @action reConnect(){
     this.session.invalidate();
-    if (!this.cloudState.online) {
+    if (!this.isOnline) {
       if (this.globalConfig.config.canConnect) {
         console.debug('Setting remote backup...');
         this.store.adapterFor('application').configRemote().then(()=>{
@@ -120,7 +123,7 @@ export default class PbCloudComponent extends Component {
     later(
       this,
       function () {
-        if (this.cloudState.online) {
+        if (this.isOnline) {
           this.cloudState.couchError = false;
         }
         this.isSaving = false;
@@ -129,8 +132,20 @@ export default class PbCloudComponent extends Component {
       500
     )
   }
-  @action disonnect(){    
-    this.session.invalidate();
+  
+  @action toggleConnection(){
+    if(this.isOnline){
+      console.log('Disconnecting');
+      this.globalConfig.config.autoConnect = false;
+      this.globalConfig.config.save(()=>{
+        this.session.invalidate();
+        // this.globalConfig.config.autoConnect = true;
+        //this.globalConfig.config.save();
+      });
+    } else {
+      console.log('Reconnecting');
+      this.reConnect();
+    }
   }
 
   @action doneEditing() {

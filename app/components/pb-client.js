@@ -26,26 +26,26 @@ export default class PbClientComponent extends Component {
     let result = '';
     let key = this.newKey();
     if(key && this.oauth && !this.args.client.publicKey){
-      console.log('Generating new key and encrypted oauth');
+      console.debug('Generating new key and encrypted oauth');
       this.args.client.publicKey = key;
       result = this.cryptoData.encrypt(this.oauth, key);
     } else {
       if(key){
-        console.log('New key: '+key);
+        // console.debug('New key: '+key);
         let oldOauth = this.cryptoData.decrypt(this.args.client.oauth, this.args.client.publicKey);
-        console.log('Old oauth: '+oldOauth);
+        // console.debug('Old oauth: '+oldOauth);
         
         if(key != this.args.client.publicKey || this.oauth != oldOauth){
           if(this.oauth || oldOauth){
             let oauth = oldOauth;
             let update = false;
             if(this.oauth != oldOauth && this.oauth){
-              console.log('Updating encrypted oauth');
+              console.debug('Updating encrypted oauth');
               oauth = this.oauth;
               update = true;              
             } else {
               if(key != this.args.client.publicKey && this.args.client.publicKey){
-                console.log('Updating key and re-encrypting oauth');
+                console.debug('Updating key and re-encrypting oauth');
                 update = true;      
               }
             }
@@ -53,14 +53,14 @@ export default class PbClientComponent extends Component {
               this.args.client.publicKey = key;
               result = this.cryptoData.encrypt(oauth, key);
             } else {
-              console.log('Nothing to update');
+              console.debug('Nothing to update');
             }
           } 
         } else {
-          console.log('No changes in key nor oauth.');
+          console.debug('No changes in key nor oauth.');
         }
       } else {
-        console.log('No key generated.');
+        console.debug('No key generated.');
       }
     }
     return result;

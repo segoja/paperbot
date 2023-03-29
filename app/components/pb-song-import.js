@@ -69,7 +69,7 @@ export default class PbSongComponent extends Component {
 
   @tracked songsData = [];
   @action async openSongsFolder(file) {
-    console.log('mec mec mec!');
+    console.debug('mec mec mec!');
     if (this.currentUser.isTauri) {
       dialog.open({ directory: true }).then((directory) => {
         // console.debug(directory);

@@ -1,4 +1,4 @@
-<BsButton @type={{ @btnClass}} @onClick={{this.toggleModal}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
+<BsButton @type={{ @btnClass}} @onClick={{this.toggleModal}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} /><span class="d-none d-md-inline"> {{@btnText}}</span></BsButton>
 
 <BsModal @size="md" @open={{this.isViewing}} as |Modal|>
   <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">

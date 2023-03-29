@@ -11,7 +11,7 @@ import { later, cancel } from '@ember/runloop';
 import { TrackedArray } from 'tracked-built-ins';
 
 emoteParser.events.on("error", e => {
-    console.log("Error:", e);
+    console.debug("Error:", e);
 })
 
 export default class TwitchChatService extends Service {
@@ -109,8 +109,8 @@ export default class TwitchChatService extends Service {
   @tracked globalBadges = [];
   get allbadges() {
     let pack = [];
-    console.debug(this.globalBadges);
-    console.debug(this.channelBadges);
+    // console.debug(this.globalBadges);
+    // console.debug(this.channelBadges);
     if (this.channelBadges > 0) {
       pack = assign(this.globalBadges, this.channelBadges);
     }
@@ -143,7 +143,7 @@ export default class TwitchChatService extends Service {
 
   async connector(opts, clientType) {
     // We check what kind of client is connecting
-    console.log('The channel is: '+ this.channel);
+    console.debug('The channel is: '+ this.channel);
     
     if (clientType === 'bot') {
       if (this.botConnected === true) {
@@ -159,7 +159,6 @@ export default class TwitchChatService extends Service {
       if(this.chatConnected === true){
         this.chatclient.disconnect();
       }
-      console.log(opts);
       if(this.botUsername === opts.identity.username.toString() && this.botConnected){
         console.debug("chat client is the same of the bot, enabling chat...");
         this.chatConnected = true;
@@ -185,8 +184,7 @@ export default class TwitchChatService extends Service {
       this.botclient.on('connected', this.timersLauncher);
       this.botclient.on('connected', this.onBotConnectedHandler);
       this.botclient.on('disconnected', this.unloadSoundboard);
-      this.botclient.on('message', this.messageHandler);      
-      // this.botclient.on('hosting', this.onHostHandler);
+      this.botclient.on('message', this.messageHandler);
       // Connect the client
       this.botclient.connect().then(
         (success) => {
@@ -278,7 +276,7 @@ export default class TwitchChatService extends Service {
         }
       }
     }
-    console.log(this.timersList);
+    // console.debug(this.timersList);
     this.activeTimers = new TrackedArray();
     this.timersList.map((timer) => {
       this.timerScheduler(timer, count);
@@ -286,17 +284,17 @@ export default class TwitchChatService extends Service {
     });
   }
 
-  /*
-    The timer scheduler works the following way:
-    Timers are fired when two criteria are met: 
-    - The specified time has passed
-    - The amount of lines between the previous timer and the moment 
-     the new one is scheduled is bigger than the specified number of lines in the settings.
-    If the number of lines is not bigger the timer will be rescheduled the specified time 
-    ahead over and over again until the number of chat lines required have been reached.
-    
-    The scheduler also avoids to fire the same timer twice in a row.
-  */
+  
+  //  The timer scheduler works the following way:
+  //  Timers are fired when two criteria are met: 
+  //  - The specified time has passed
+  //  - The amount of lines between the previous timer and the moment 
+  //   the new one is scheduled is bigger than the specified number of lines in the settings.
+  //  If the number of lines is not bigger the timer will be rescheduled the specified time 
+  //  ahead over and over again until the number of chat lines required have been reached.
+  //  
+  //  The scheduler also avoids to fire the same timer twice in a row.
+  
   @action async timerScheduler(timer, order) {
     if (
       !timer.hasDirtyAttributes &&
@@ -379,17 +377,11 @@ export default class TwitchChatService extends Service {
     }
   }
 
-  @action onHostHandler(channel, target, viewers) {
-    console.debug(
-      channel + ' hosted ' + target + ' with our ' + viewers + ' viewers.'
-    );
-  }
-
   @action async messageHandler(target, tags, msg, self) {
-    console.debug('__________________________');
-    console.debug(msg);
-    console.debug(tags);
-    this.parseBadges(tags['badges']);
+    // console.debug('__________________________');
+    // console.debug(msg);
+    // console.debug(tags);
+    // this.parseBadges(tags['badges']);
 
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
@@ -416,8 +408,8 @@ export default class TwitchChatService extends Service {
       emotes: tags['emotes'] ? tags['emotes'] : null,
     };
 
-    console.log(this.lastmessage);
-    console.log('----------------------------------');
+    // console.debug(this.lastmessage);
+    // console.debug('----------------------------------');
 
     if (tags['message-type'] != 'whisper') {
       if (

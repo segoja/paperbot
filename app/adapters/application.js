@@ -244,8 +244,8 @@ export default class ApplicationAdapter extends Adapter {
     }
   }
 
-  async connectRemote() {        
-    console.debug('Connecting to: '+this.globalConfig.config.cloudUrl);
+  async connectRemote() {
+    console.debug('Connecting to: '+this.globalConfig.config.cloudUrl);    
     this.session
       .authenticate(
         'authenticator:pouch',

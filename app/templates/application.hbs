@@ -43,7 +43,7 @@
                 </button>
               {{/if}}            
               <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
-                <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+                <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
               </button>
               {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
@@ -69,7 +69,7 @@
                 </button>
               {{/unless}}
               <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
-                <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+                <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
               </button>
               {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
@@ -120,7 +120,7 @@
               {{/unless}}
             {{/if}}
             <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
-              <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+              <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
@@ -135,37 +135,37 @@
             </div>
           {{/if}}
         </div>
-        <navbar.content class="px-lg-0 px-3 pb-2 pb-lg-0" {{on "click" this.closeMenu}} {{on "mouseleave" this.closeMenu}} {{on "focusout" this.closeMenu}}>
+        <navbar.content class="px-0 pb-2 pb-lg-0" {{on "click" this.closeMenu}} {{on "mouseleave" this.closeMenu}} {{on "focusout" this.closeMenu}}>
           <navbar.nav class="col" as |nav|>
-            <nav.item>
+            <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="streams.index" class="py-1">Streams</nav.link-to>
             </nav.item>
-            <nav.item>
+            <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="commands.index" class="py-1">Commands</nav.link-to>
             </nav.item>
-            <nav.item>
+            <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="timers.index" class="py-1">Timers</nav.link-to>
             </nav.item> 
-            <nav.item>
+            <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="songs.index" class="py-1">Songs</nav.link-to>
             </nav.item>
-            <nav.item>
+            <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="clients.index" class="py-1">Clients</nav.link-to>
             </nav.item>
-            <nav.item>
+            <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="overlays.index" class="py-1">Overlays</nav.link-to>
             </nav.item>            
             {{#unless this.currentUser.isTauri}}
-              <nav.item>
-                <nav.link-to @route="reader" class="btn btn-outline-secondary border-0 p-0 pt-1 rounded-0 btn-window d-none d-lg-inline"><FaIcon @icon="align-center" /></nav.link-to>
+              <nav.item class="px-lg-0 px-3">
+                <nav.link-to @route="reader" class="btn btn-outline-secondary border-0 px-lg-2 px-0 rounded-0 btn-window d-none d-lg-inline"><FaIcon @icon="align-center" /></nav.link-to>
                 <nav.link-to @route="reader" class="py-1 d-lg-none d-block"><FaIcon @icon="align-center" /><span class="d-inline-block d-lg-none ps-1"> Lyrics</span></nav.link-to>
               </nav.item>
-              <nav.item>
-                <nav.link-to @route="overlay" target="_blank" class="btn btn-outline-secondary border-0 p-0 pt-1 rounded-0 btn-window d-none d-lg-inline"><FaIcon @icon="list-alt" /></nav.link-to>
+              <nav.item class="px-lg-0 px-3">
+                <nav.link-to @route="overlay" target="_blank" class="btn btn-outline-secondary border-0 px-lg-2 px-0 rounded-0 btn-window d-none d-lg-inline"><FaIcon @icon="list-alt" /></nav.link-to>
                 <nav.link-to @route="overlay" target="_blank" class="py-1 d-lg-none d-block"><FaIcon @icon="list-alt" /><span class="d-inline-block d-lg-none ps-1"> Overlay</span></nav.link-to>
               </nav.item>              
             {{/unless}}
-            <nav.item>
+            <nav.item class="px-lg-0 px-3">
               <PbFirstRun {{on "click" this.toggleMenu}} />
             </nav.item>
           </navbar.nav>
@@ -185,7 +185,7 @@
               {{/if}}
             {{/if}}
             <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
-              <FaIcon @icon="lightbulb" @prefix={{if this.updateLight "far" "fas"}} />
+              <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />

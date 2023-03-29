@@ -97,7 +97,7 @@ export default class BotBrainService extends Service {
         }
       }
     }
-    console.log(this.timersList);
+    console.debug(this.timersList);
     this.activeTimers = new TrackedArray();
     this.timersList.map((timer) => {
       this.timerScheduler(timer, count);

@@ -27,6 +27,10 @@ export default class StreamController extends Controller {
     this.isEditing = false;
     this.model.save();
   }
+  
+  @action returnStream() {
+    this.isEditing = false;
+  }
 
   @action saveStream() {
     this.model.save();

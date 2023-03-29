@@ -64,46 +64,42 @@ export default class ApplicationController extends Controller {
             this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
+        
+        if (this.currentUser.isTauri) {
+          let currentWindow = getCurrent();
+          if (currentWindow.label === 'Main') {
+            //if(!this.globalConfig.config.mainMax){
+            //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
+            let position = new PhysicalPosition(
+              this.globalConfig.config.mainPosX,
+              this.globalConfig.config.mainPosY
+            );
+            currentWindow.setPosition(position);
+            //}
+            let size = new PhysicalSize(
+              this.globalConfig.config.mainWidth,
+              this.globalConfig.config.mainHeight
+            );
+            currentWindow.setSize(size);
+            //}
+            if (
+              this.globalConfig.config.showOverlay &&
+              this.globalConfig.config.overlayType === 'window'
+            ) {
+              this.currentUser.toggleOverlay();
+            }
+            if (this.globalConfig.config.showLyrics) {
+              this.currentUser.showLyrics();
+            }
+          }
+        }
 
         if (this.globalConfig.config.canConnect) {
-          await this.store
-            .adapterFor('application')
-            .configRemote()
-            .then(async () => {
-              await this.store
-                .adapterFor('application')
-                .connectRemote()
-                .then(async () => {
-                  if (this.currentUser.isTauri) {
-                    let currentWindow = getCurrent();
-                    if (currentWindow.label === 'Main') {
-                      //if(!this.globalConfig.config.mainMax){
-                      //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
-                      let position = new PhysicalPosition(
-                        this.globalConfig.config.mainPosX,
-                        this.globalConfig.config.mainPosY
-                      );
-                      currentWindow.setPosition(position);
-                      //}
-                      let size = new PhysicalSize(
-                        this.globalConfig.config.mainWidth,
-                        this.globalConfig.config.mainHeight
-                      );
-                      currentWindow.setSize(size);
-                      //}
-                      if (
-                        this.globalConfig.config.showOverlay &&
-                        this.globalConfig.config.overlayType === 'window'
-                      ) {
-                        this.currentUser.toggleOverlay();
-                      }
-                      if (this.globalConfig.config.showLyrics) {
-                        this.currentUser.showLyrics();
-                      }
-                    }
-                  }
-                });
-            });
+          await this.store.adapterFor('application').configRemote().then(async () => {
+            if(this.globalConfig.config.autoConnect){
+              await this.store.adapterFor('application').connectRemote();
+            }
+          });
         } else {
           if (this.currentUser.isTauri) {
             let currentWindow = getCurrent();
@@ -345,7 +341,7 @@ export default class ApplicationController extends Controller {
     if (this.commands.length > 0) {
       this.twitchChat.commands = new TrackedArray(this.commands);
       console.debug('Commands array changed');
-      // console.log(this.twitchChat.commands);
+      // console.debug(this.twitchChat.commands);
     }
   }
 
@@ -357,7 +353,7 @@ export default class ApplicationController extends Controller {
         console.debug('Updating active bot timers');
         this.twitchChat.timersLauncher();
       }
-      // console.log(this.twitchChat.commands);
+      // console.debug(this.twitchChat.commands);
     }
   }
 
@@ -365,7 +361,7 @@ export default class ApplicationController extends Controller {
     if (this.songs.length > 0) {
       this.queueHandler.songs = new TrackedArray(this.songs);
       console.debug('Songs array changed');
-      // console.log(this.queueHandler.songs);
+      // console.debug(this.queueHandler.songs);
     }
   }
 

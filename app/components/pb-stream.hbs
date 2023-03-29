@@ -1,7 +1,7 @@
 <div class="card {{unless @isEditing "h-100 flex-fill"}} mb-0 rounded-0 border-0">
   <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-0">
     <div class="row g-0">
-      <div class="col align-self-center pe-0 ps-3 text-truncate"><h5 class="my-0 text-white text-truncate">{{#if @stream.channel}} #{{@stream.channel}} - {{/if}}{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
+      <div class="col align-self-center pe-0 ps-3 text-truncate"><h5 class="my-0 text-white text-truncate"><span class="d-none d-lg-inline">Stream: </span>{{#if @stream.channel}} #{{@stream.channel}} - {{/if}}{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
       <div class="col-auto float-end">
         <BsButtonGroup class="px-0 rounded float-end" as |bg|>
           {{#unless @isEditing}}
@@ -22,16 +22,13 @@
             <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
           {{/unless}}
           <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.queueHandler.exportQueue}} ><FaIcon @icon="file-download" /></bg.button>
-          {{#if this.currentUser.isTauri}}
-            <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.currentUser.showLyrics}} ><FaIcon @icon="align-center" /></bg.button>
-          {{/if}}
-          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{@closeStream}}><FaIcon @icon="times" /></bg.button>
+          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{@closeStream}}><FaIcon @icon="xmark" /></bg.button>
         </BsButtonGroup>
       </div>
     </div>
   </div>
   {{#if this.restore}}
-    <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @overlays={{@overlays}} @commands={{@commands}} @songs={{@songs}} @isEditing={{@isEditing}} @editStream={{@editStream}} @saveStream={{@saveStream}} @setOverlay={{@setOverlay}} @setChatClient={{@setChatClient}} @setBotClient={{@setBotClient}} @overlayGenerator={{@overlayGenerator}} @saveAndReturnStream={{@saveAndReturnStream}} @deleteStream={{@deleteStream}} />
+    <PbStreamEdit @stream={{@stream}} @clients={{@clients}} @overlays={{@overlays}} @commands={{@commands}} @songs={{@songs}} @isEditing={{@isEditing}} @editStream={{@editStream}} @saveStream={{@saveStream}} @setOverlay={{@setOverlay}} @setChatClient={{@setChatClient}} @setBotClient={{@setBotClient}} @overlayGenerator={{@overlayGenerator}} @saveAndReturnStream={{@saveAndReturnStream}} @deleteStream={{@deleteStream}} @returnStream={{@returnStream}} />
   {{/if}}
   {{#unless @isEditing}}
     {{#if @stream.finished}}

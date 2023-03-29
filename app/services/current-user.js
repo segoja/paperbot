@@ -68,7 +68,7 @@ export default class CurrentUserService extends Service {
         dynamicTyping: true
       }).data;
       let csvfields = response.split('\r\n').slice(0, 1);
-      console.log(rows);
+      console.debug(rows);
       // We check if the structure is the same.
       if (csvfields.toString() === reference) {
         let importcontent = rows;

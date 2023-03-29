@@ -20,9 +20,9 @@ export default class CryptoDataService extends Service {
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7,
       });
-      console.log('Encrypted: '+encrypted);
+      // console.debug('Encrypted: '+encrypted);
       let encryptedData = CryptoJS.enc.Base64.stringify(encrypted.ciphertext);
-      console.log('Encrypted data: '+encryptedData);
+      // console.debug('Encrypted data: '+encryptedData);
       return encrypted;
     }
     return '';
@@ -37,7 +37,7 @@ export default class CryptoDataService extends Service {
         padding: CryptoJS.pad.Pkcs7,
       });
       let decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
-      console.log('Decrypted UTF8: '+decryptedData);
+      // console.debug('Decrypted UTF8: '+decryptedData);
       return decryptedData;
     }
     return '';

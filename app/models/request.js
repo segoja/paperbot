@@ -23,6 +23,7 @@ export default class RequestModel extends Model {
   @readOnly('song.title') songTitle;
   @readOnly('song.artist') songArtist;
   @readOnly('song.id') songId;
+  @readOnly('song.isDeleted') songDeleted;
 
   get effectiveTitle(){
     return this.title || this.songTitle;

@@ -33,7 +33,7 @@
               <div class="col">
                 <div class="input-group input-group-sm">
                   <div class="input-group-text border-default"><FaIcon @icon="link" @size="sm" /></div>
-                  <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.remoteUrl}} aria-label="Remote url" @type="text" placeholder="Enter remote url" autocomplete="remoteUrl" />
+                  <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.remoteUrl}} aria-label="Remote url" @type="text" placeholder="Enter remote url" autocomplete="remoteUrl" />
                 </div>
               </div>
             </div> 
@@ -43,7 +43,7 @@
               <div class="col">
                 <div class="input-group input-group-sm">
                   <div class="input-group-text border-default"><FaIcon @icon="database" @size="sm" /></div>
-                  <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.database}} aria-label="Database name" @type="text" placeholder="Enter database name" autocomplete="database" />
+                  <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.database}} aria-label="Database name" @type="text" placeholder="Enter database name" autocomplete="database" />
                 </div>
               </div>
             </div> 
@@ -52,13 +52,13 @@
             <div class="col">
               <div class="input-group input-group-sm">
                 <div class="input-group-text border-default"><FaIcon @icon="user" @size="sm" /></div>
-                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.username}} aria-label="Username" @type="text" placeholder="Enter remote username" autocomplete="username" />
+                <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.username}} aria-label="Username" @type="text" placeholder="Enter remote username" autocomplete="username" />
               </div>
             </div>
             <div class="col">
               <div class="input-group input-group-sm">
                 <div class="input-group-text border-default"><FaIcon @icon="key" @size="sm" /></div>
-                <Input class={{if this.cloudState.cloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Password" @type="password" placeholder="Enter remote password" autocomplete="current-password" />
+                <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Password" @type="password" placeholder="Enter remote password" autocomplete="current-password" />
               </div>
             </div>
           </div>
@@ -67,13 +67,13 @@
               <form.element @controlType="checkbox" @label="Auto-connect" @formLayout="inline" class="form-check form-check-inline ps-0 mb-0 pt-2" @property="autoConnect" required />
             </div>
           </div>
-          {{#if this.cloudState.cloudError}}
+          {{#if this.cloudState.isCloudError}}
             <div class="row">
               <div class="col">
-                {{#if this.cloudState.connectionError}}
+                {{#if this.cloudState.isConnError}}
                   <div class="alert alert-danger py-0 px-2"><small>The connection to the server failed. Check {{if this.globalConfig.config.isCustomCloud "remote url" "database name"}} and login credentials.</small></div>
                 {{/if}}
-                {{#if this.cloudState.couchError}}
+                {{#if this.cloudState.isCouchError}}
                   <div class="alert alert-danger py-0 px-2"><small>You connected to the server but the database doest not exist. Check database name.</small></div>
                 {{/if}}
               </div>
@@ -84,7 +84,7 @@
       <Modal.footer class="py-2 row g-0">
         <div class="col">
           
-          <BsButton @type="secondary btn-sm" @onClick={{if this.isOnline this.disconnect  this.reConnect}}> 
+          <BsButton @type={{if this.isOnline "danger" "secondary"}} class="btn-sm" @onClick={{this.toggleConnection}}> 
             {{#if this.isOnline}}
               <span><FaIcon @icon="toggle-on" /> Disconnect</span>
             {{else}}

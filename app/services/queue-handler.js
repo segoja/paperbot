@@ -2,7 +2,7 @@ import Service, { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { sort, uniqBy } from '@ember/object/computed';
-import { writeFile } from '@tauri-apps/api/fs';
+import { invoke } from "@tauri-apps/api";
 import moment from 'moment';
 import { TrackedArray } from 'tracked-built-ins';
 
@@ -38,14 +38,6 @@ export default class QueueHandlerService extends Service {
     return this.arrangedAscQueue.filter((request) => !request.processed);
   }
 
-  get pendingSongsRecords() {
-    return this.pendingSongs.map((request) => {
-      return request.song.then(async (song) => {
-        return await song;
-      });
-    });
-  }
-
   @action async nextPosition() {
     let positioned = this.pendingSongs.filter(
       (request) => !isNaN(request.position)
@@ -54,7 +46,7 @@ export default class QueueHandlerService extends Service {
 
     if (positioned.length > 0) {
       let lastRequest = await positioned.pop();
-      console.debug(lastRequest);
+      // console.debug(lastRequest);
       if (await lastRequest) {
         nextPos = Number(await lastRequest.position) + 1;
       }
@@ -64,22 +56,6 @@ export default class QueueHandlerService extends Service {
 
   get playedSongs() {
     return this.arrangedAscQueue.filter((request) => request.processed);
-  }
-
-  get playedSongsRecords() {
-    return this.playedSongs.map((request) => {
-      return request.song.then(async (song) => {
-        return await song;
-      });
-    });
-  }
-
-  get wastedSongs() {
-    return this.songqueue.map(async (request) => {
-      return await request.song.then(async (song) => {
-        return await song;
-      });
-    });
   }
 
   get songList() {
@@ -245,7 +221,7 @@ export default class QueueHandlerService extends Service {
       request.processed = !request.processed;
 
       request.save().then(() => {
-        if (request.processed) {
+        if (request.processed && request.songId) {
           this.store
             .findRecord('song', request.song.get('id'))
             .then(async (actualSong) => {
@@ -325,15 +301,17 @@ export default class QueueHandlerService extends Service {
       firstRequest.position = 0;
       firstRequest.processed = true;
       firstRequest.save().then(() => {
-        this.store
-          .findRecord('song', firstRequest.song.get('id'))
-          .then(async (song) => {
-            if (await song.isLoaded) {
-              //console.debug(song);
-              song.times_played = Number(song.times_played) + 1;
-              await song.save();
-            }
-          });
+        if(!request.song.get('isDeleted')){
+          this.store
+            .findRecord('song', firstRequest.song.get('id'))
+            .then(async (song) => {
+              if (await song.isLoaded) {
+                //console.debug(song);
+                song.times_played = Number(song.times_played) + 1;
+                await song.save();
+              }
+            });
+        }
         this.scrollPlayedPosition = 0;
         this.scrollPendingPosition = 0;
         this.fileContent(this.pendingSongs);
@@ -479,7 +457,7 @@ export default class QueueHandlerService extends Service {
     } finally {
       //let text = unescape(encodeURIComponent(thisHtml));
       //let arrayBuff = new TextEncoder().encode(text);
-      writeFile({ path: pathString, contents: thisHtml }).then(() => {
+      invoke('file_writer', { filepath: pathString, filecontent: thisHtml}).then(()=>{
         console.debug('done!');
       });
     }

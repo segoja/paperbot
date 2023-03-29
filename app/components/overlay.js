@@ -66,7 +66,7 @@ export default class PbReaderComponent extends Component {
         let visible = this.pendingRequests.slice(0, this.globalConfig.config.get('overlayLength') || 5);
         visible.forEach((pendingsong) => {
           title = pendingsong.effectiveTitle;
-          console.log(pendingsong.effectiveArtist);
+          console.debug(pendingsong.effectiveArtist);
           artist = pendingsong.effectiveArtist;
           time = moment(pendingsong.timestamp).format(
             'YYYY/MM/DD HH:mm:ss'
