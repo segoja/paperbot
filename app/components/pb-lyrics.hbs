@@ -1,0 +1,50 @@
+<BsForm @formLayout="inline" @model={{@song}} @onSubmit={{@saveSong}} as |form|>
+  <div class="row g-1">
+    <div class="col-auto">
+      <button type="button" class="btn btn-secondary" {{on "click" this.toggleEdit}} alt="formatted text"><FaIcon @icon="pen" /> Edit</button>
+      <button type="button" class="btn btn-secondary" {{on "click" this.modeSwitch}} alt="formatted text"><FaIcon @icon="paragraph" /></button>
+      <div class="btn-group">
+        <span class="btn btn-secondary disabled text-white">Transpose</span>
+        <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} alt="transpose down"><FaIcon @icon="down-long" /></button>
+        <button type="button" class="btn btn-secondary" {{on "click" this.upKey}} alt="transpose up"><FaIcon @icon="up-long" /></button>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn btn-secondary" {{on "click" this.resetZoom}} alt="Reset zoom"><FaIcon @icon="undo" /></button>
+        <button type="button" class="btn btn-secondary" {{on "click" this.subZoom}} alt="Zoom out"><FaIcon @icon="search-minus" /></button>
+        <button type="button" class="btn btn-secondary" {{on "click" this.addZoom}} alt="Zoom in"><FaIcon @icon="search-plus" /></button>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn btn-secondary {{if (eq this.globalConfig.config.readerColumns 0) "active"}}" {{on "click" this.autoColumn}} alt="Auto columns">
+          <FaIcon @icon="columns" /> 
+          {{if (gt this.globalConfig.config.readerColumns 0) this.globalConfig.config.readerColumns}}
+        </button>
+        <button type="button" class="btn btn-secondary px-1" {{on "click" this.lessColumn}} alt="Less columns"><FaIcon @icon="minus" /></button>
+        <button type="button" class="btn btn-secondary px-1" {{on "click" this.moreColumn}} alt="More columns"><FaIcon @icon="plus" /></button>
+      </div>
+    </div>
+  </div>
+  {{#if this.isEditing}}
+    <div class="row">
+      <div class="col-12">
+        <div class="row"><label class="col-md-4">Lyrics/tab:</label></div>
+        <div class="form-group row py-2">            
+          <div class="col-sm">   
+            <Textarea @value={{@song.lyrics}} aria-label="Lyrics/tab" class="form-control" placeholder="Write/paste your lyrics/tab here." rows="15" />
+          </div>
+        </div>
+      </div>
+    </div>
+  {{else}}  
+    <style>
+      .fancy-columns-pre,
+      .fancy-columns {
+        font-size: {{@song.readerZoom}}em!important; 
+        column-count: {{@song.readerColumns}}!important;
+        column-rule-width: auto;
+      }   
+    </style>
+    <div class="row mx-0 flex-fill listframe-reader">
+       <div class={{if @song.viewMode "fancy-columns" "fancy-columns-pre"}}>{{chord-parser @song.lyrics key=0 mode=@song.viewMode}}</div>
+    </div>
+  {{/if}}  
+</BsForm>

@@ -18,8 +18,6 @@ export default class PbReaderComponent extends Component {
   @tracked zoomLevel = 0.85;
   @tracked transKey = 0;
   @tracked mode = true;
-  
-  @service globalConfig;
 
   constructor() {
     super(...arguments);

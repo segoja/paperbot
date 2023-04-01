@@ -19,12 +19,16 @@ export default class SongModel extends Model {
   @attr('date', { defaultValue: '' }) date_added;
   @attr('date', { defaultValue: '' }) last_requested;
   @attr('date', { defaultValue: '' }) last_played;
+  
+  @attr('number', { defaultValue: 0.85 }) zoomLevel;
+  @attr('number', { defaultValue: 0 }) transKey;
+  @attr('boolean', { defaultValue: true }) viewMode;
 
   @hasMany('request', { async: true, inverse: 'song' }) requests;
 
   @attr('number', { defaultValue: 0 }) times_requested;
   @attr('number', { defaultValue: 0 }) times_played;
-
+  
   @attr('string', { defaultValue: '' }) account;
 
   @attr('string', { defaultValue: '' }) remoteid;
