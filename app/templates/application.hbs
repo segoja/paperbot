@@ -48,7 +48,7 @@
               {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
               {{/if}}
-              <PbCloud />
+              {{#if this.isMain}}<PbCloud />{{/if}}
             </div>
             <div class="col-auto d-lg-none">
               <button type="button" class="btn btn-outline-secondary border-0 px-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="minus" /></button>
@@ -73,8 +73,8 @@
               </button>
               {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
-              {{/if}}
-              <PbCloud />
+              {{/if}}              
+              {{#if this.isMain}}<PbCloud />{{/if}}
             </div>
             <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="minus" /></button>
             <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.maximizeWindow}}><FaIcon @icon="square" @prefix="far" /></button>
@@ -124,8 +124,8 @@
             </button>
             {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
-            {{/if}}
-            <PbCloud />
+            {{/if}}            
+            {{#if this.isMain}}<PbCloud />{{/if}}
           </div>          
           {{#if this.currentUser.isTauri}}
             <div class="col-auto d-lg-none">
@@ -190,7 +190,7 @@
             {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
             {{/if}}
-            <PbCloud />
+            {{#if this.isMain}}<PbCloud />{{/if}}
           </div>
           {{#if this.currentUser.isTauri}}
             <button type="button" class="btn btn-outline-secondary border-0 p-0 rounded-0 btn-window" {{on "click" this.minimizeWindow}}><FaIcon @icon="minus" /></button>

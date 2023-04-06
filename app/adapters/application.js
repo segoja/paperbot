@@ -8,6 +8,8 @@ import PouchDB from 'pouchdb-core';
 
 import { later } from '@ember/runloop';
 import { tracked } from '@glimmer/tracking';
+import { computed } from '@ember/object';
+
 /*
   // Pouchdb Modules and plugins loaded are shared in the app, so we only need to load plugins once.
   // In this app config adapter loads before application adapter, so we can comment the following lines to prevent plugin redefinition errors.
@@ -79,6 +81,13 @@ export default class ApplicationAdapter extends Adapter {
     this.configRemote();
 
     return this;
+  }
+  @computed('session.isAuthenticated')
+  get sessReconnect(){
+    //if(this.session.isAuthenticated && !this.cloudState.online){
+    // return this.connectRemote();      
+    //}
+    console.debug('wooooowowowow');
   }
 
   async configRemote() {
@@ -219,7 +228,7 @@ export default class ApplicationAdapter extends Adapter {
                 this.retryDelay = this.retryDelay * 3;
               }
             }
-          });
+          }); 
       });
 
       this.remoteDb.on('loggedout', () => {
@@ -234,10 +243,11 @@ export default class ApplicationAdapter extends Adapter {
         this.cloudState.setPull(false);
         this.cloudState.online = false;
         console.debug('Disconnected from the cloud.');
+        this.cloudState.setOffline();
       });
-
       // const { target } = event;
       // event.preventDefault();
+      
       return true;
     } else {
       return false;

@@ -34,4 +34,12 @@ export default class CloudStateService extends Service {
   setPull(val) {
     this.cloudPull = val;
   }
+  
+  setOffline(){
+    this.cloudPush = false;
+    this.cloudPull = false;
+    this.online = false;
+    this.couchError = true;
+    this.connectionError = true;
+  }  
 }
