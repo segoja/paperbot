@@ -32,8 +32,6 @@ export default class PbStreamEditPendingComponent extends Component {
     return result;
   }
 
-  @tracked showPlayed = false;
-
   @action togglePlayed() {
     this.currentUser.showPlayed = !this.currentUser.showPlayed;
   }

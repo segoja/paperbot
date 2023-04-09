@@ -242,9 +242,9 @@
       </Modal.body>
       <Modal.footer class="py-2 row g-0">
         <div class="col">
-          <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}}>Export Database</button>
+          <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}}>Export DB</button>
           {{#let (file-queue name="uploadfile" onFileAdded=@handleImport) as |queue|}}
-            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary">Import Database</label>  
+            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary">Import DB</label>  
             <input
               type="file"
               id="upload-backup"
@@ -256,6 +256,7 @@
             >
           {{/let}}
           <button class="btn btn-sm btn-danger" type="button" {{on "click" @wipeDatabase}}>Wipe DB</button>
+          <button class="btn btn-sm btn-danger" type="button" {{on "click" @wipeConfig}}>Wipe Config</button>          
         </div>
         <div class="col-auto">
           <BsButton @type="success" @onClick={{this.doneEditing}}> 

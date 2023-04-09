@@ -1,5 +1,5 @@
 <div class="row h-100 flex-fill m-0 p-0 bg-body">
-  <div class={{if this.isSetlist "col-12 col-lg-8 h-50 h-lg-100 flex-fill p-0 m-0 bg-body" "col-12 h-100 flex-fill p-0 m-0 bg-body"}}> 
+  <div class={{if this.isSetlist "col-12 col-lg-8 h-100 flex-fill p-0 m-0 bg-body" "col-12 h-100 flex-fill p-0 m-0 bg-body"}}> 
       {{!-- song listing --}}
       <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill rounded-0"}}">
         <div class="card-header">
@@ -112,6 +112,9 @@
           </div>
         </div>
         <div class="card-footer py-0 my-0 px-0">
+          <div class={{if this.isSetlist "d-lg-none offcanvas offcanvas-end pt-5 show border-top border-bottom rounded-start" "d-lg-none offcanvas offcanvas-end pt-5 border-top border-bottom rounded-start"}} data-bs-backdrop="true" data-bs-scroll="true">
+            <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}}/>
+          </div>
           <PageNumbers @content={{this.pagedContent}} @showTotal={{true}} />
         </div>
       </div>
@@ -120,7 +123,7 @@
       {{yield}}
     {{/if}}
   </div>
-  <div class={{if this.isSetlist "col-lg-4 col-12 h-50 h-lg-100 flex-fill my-0 px-0" "d-none"}}>
+  <div class={{if this.isSetlist "col-lg-4 d-lg-block d-none h-100 flex-fill my-0 px-0" "d-none"}}>
     <PbSongsSetlist />
-  </div>
+  </div> 
 </div>

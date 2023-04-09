@@ -1,4 +1,5 @@
 import { Adapter } from 'ember-pouch';
+import { inject as service } from '@ember/service';
 
 import PouchDB from 'pouchdb-core';
 import PouchDBFind from 'pouchdb-find';
@@ -20,6 +21,8 @@ PouchDB.plugin(PouchDBFind)
   .plugin(replication);
 
 export default class ConfigAdapter extends Adapter {
+  @service store;
+  
   constructor() {
     super(...arguments);
 
@@ -43,5 +46,18 @@ export default class ConfigAdapter extends Adapter {
     });*/
 
     return this;
+  }
+  
+  wipeDatabase() {
+    this.store.unloadAll();
+    this.db
+      .destroy()
+      .then(() => {
+        window.location.replace('./');
+      })
+      .catch(function (err) {
+        console.debug(err);
+        return false;
+      });
   }
 }

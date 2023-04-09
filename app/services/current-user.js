@@ -23,6 +23,7 @@ export default class CurrentUserService extends Service {
   @tracked expandSubmenu = false;
   @tracked songqueue = [];
   @tracked showSetlist = false;
+  @tracked showPlayed = false;
   @tracked lastStream = '';
 
   @tracked currentConfig = '';

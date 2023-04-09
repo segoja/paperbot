@@ -13,6 +13,10 @@ html,body{
   --main-scrollbar-color: red;
 }
 
+header {
+  z-index: 9999;
+}
+
 $height-sizes: (
   0: 0,
   25: 25%,

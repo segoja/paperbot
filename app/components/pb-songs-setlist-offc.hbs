@@ -1,18 +1,19 @@
-<div class="card col h-100 flex-column flex-fill d-flex overflow-hidden rounded-0">
-  <div class="card-header">
-    <div class="row">
-      <div class="col py-2 pe-1"><span class="h5 card-title">Setlist/Queue</span></div>
-      <div class="col-auto px-1">
-        <button type="button" class="btn btn-secondary" {{on "click" this.togglePlayed}}>
-          Show played ({{this.playedSongs.length}})
-          <FaIcon @icon={{if this.currentUser.showPlayed "minus-square" "plus-square"}} @size="1x" />
-        </button>
-        <BsButton @type="secondary" @onClick={{this.queueHandler.exportQueue}} title="Download setlist intext"><FaIcon @icon="file-download" /></BsButton>
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="If you do this while streaming you will wipe all requests. Are you sure?" @targetAction={{this.queueHandler.clearAll}} @buttonTitle="Wipe setlist" />        
-      </div>
+<div class="h-100 flex-column flex-fill d-flex overflow-hidden rounded-0">
+  <div class="offcanvas-header py-0">Setlist/Queue</div>
+  <div class="offcanvas-header pt-0 pb-2 row g-0">
+    <div class="col">
+      <button type="button" class="btn btn-secondary" {{on "click" this.togglePlayed}}>
+        Show played ({{this.playedSongs.length}})
+        <FaIcon @icon={{if this.currentUser.showPlayed "minus-square" "plus-square"}} @size="1x" />
+      </button>
+      <BsButton @type="secondary" @onClick={{this.queueHandler.exportQueue}} title="Download setlist intext"><FaIcon @icon="file-download" /></BsButton>
+      <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="If you do this while streaming you will wipe all requests. Are you sure?" @targetAction={{this.queueHandler.clearAll}} @buttonTitle="Wipe setlist" />
+    </div>
+    <div class="col-auto">
+      <BsButton @type="secondary" @onClick={{@toggleSetlist}} title="Close setlist panel"><FaIcon @icon="times" /></BsButton>
     </div>
   </div>
-  <div class="card-body row h-100 overflow-hidden g-0 py-0">
+  <div class="offcanvas-body row g-0 h-100 overflow-hidden py-0">
     <div 
       class="col-md listframe-setlist" 
       id="songqueue" 
@@ -71,7 +72,7 @@
       {{/each}}     
     </div>
   </div>
-  <div class="card-footer py-0 my-0 px-2">
+  <div class="offcanvas-footer py-0 my-0 px-2">
     <span class="page-link disabled float-end bg-transparent border-0 text-secondary">Total: {{this.total}}</span>
   </div>  
 </div>

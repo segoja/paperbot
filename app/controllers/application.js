@@ -432,6 +432,21 @@ export default class ApplicationController extends Controller {
     });
   }
 
+  @action wipeConfig() {
+    if (this.currentUser.isTauri) {
+      getAll().forEach((item) => {
+        if (item.label != 'Main') {
+          item.close();
+        }
+      });
+    }
+    var adapter = this.store.adapterFor('config');
+    adapter.wipeDatabase().then(() => {
+      console.debug('The config has been wiped.');
+      window.location.reload(true);
+    });
+  }
+
   @action rollBackSettings() {
     this.globalConfig.config.rollbackAttributes();
   }

@@ -6,6 +6,7 @@
 {{did-update this.updateTimerList this.timers}}
 {{did-update this.updateSongList this.songs}}
 {{did-update this.updateRequestList this.requests}}
+
 <HeadLayout />
 {{#if this.currentUser.hideMenu}}
   {{#unless this.isOverlay}}
@@ -46,7 +47,7 @@
                 <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
               </button>
               {{#if this.showSettings}}
-                <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+                <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeConfig={{this.wipeConfig}} @wipeDatabase={{this.wipeDatabase}} />
               {{/if}}
               {{#if this.isMain}}<PbCloud />{{/if}}
             </div>
@@ -72,7 +73,7 @@
                 <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
               </button>
               {{#if this.showSettings}}
-                <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+                <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeConfig={{this.wipeConfig}} @wipeDatabase={{this.wipeDatabase}} />
               {{/if}}              
               {{#if this.isMain}}<PbCloud />{{/if}}
             </div>
@@ -123,7 +124,7 @@
               <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
-              <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeConfig={{this.wipeConfig}} @wipeDatabase={{this.wipeDatabase}} />
             {{/if}}            
             {{#if this.isMain}}<PbCloud />{{/if}}
           </div>          
@@ -188,7 +189,7 @@
               <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
-              <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeDatabase={{this.wipeDatabase}} />
+              <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeConfig={{this.wipeConfig}} @wipeDatabase={{this.wipeDatabase}} />
             {{/if}}
             {{#if this.isMain}}<PbCloud />{{/if}}
           </div>
