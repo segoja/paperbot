@@ -112,7 +112,7 @@
           </div>
         </div>
         <div class="card-footer py-0 my-0 px-0">
-          <div class={{if this.isSetlist "d-lg-none offcanvas offcanvas-end pt-5 show border-top border-bottom rounded-start" "d-lg-none offcanvas offcanvas-end pt-5 border-top border-bottom rounded-start"}} data-bs-backdrop="true" data-bs-scroll="true">
+          <div class={{if this.isSetlist "d-lg-none offcanvas offcanvas-end pt-5 show border-top border-bottom rounded-start" "d-lg-none offcanvas offcanvas-end pt-5 border-top border-bottom rounded-start"}} data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
             <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}}/>
           </div>
           <PageNumbers @content={{this.pagedContent}} @showTotal={{true}} />

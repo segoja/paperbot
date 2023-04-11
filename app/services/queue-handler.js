@@ -123,8 +123,8 @@ export default class QueueHandlerService extends Service {
 
   @action clearPending() {
     if (this.pendingSongs.length > 0) {
-      this.uniquePending.forEach((item) => {
-        item.song.then((song) => {
+      this.uniquePending.forEach(async (item) => {
+        await item.get('song').then(async(song) => {
           if(song){
             let requests = this.pendingSongs.filter(
               (request) => request.songId == song.get('id')
@@ -135,7 +135,7 @@ export default class QueueHandlerService extends Service {
             requests.forEach((request) => {
               request.destroyRecord();
             });
-            song.save().then(() => {
+            await song.save().then(() => {
               console.debug(song.title + ' requests adjusted by -' + times);
             });          
           }

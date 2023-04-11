@@ -38,7 +38,7 @@ export default class PbStreamEditPendingComponent extends Component {
 
   @action async reorderItems(originalList, sortedList) {
     let count = 0;
-    sortedList.forEach((item) => {
+    await sortedList.forEach((item) => {
       // We do this to prevent saving records that remain the same
       if (item.position != count) {
         item.position = count;
@@ -53,7 +53,7 @@ export default class PbStreamEditPendingComponent extends Component {
       count = Number(count) + 1;
     });
     let playedCount = 0;
-    this.queueHandler.playedSongs.reverse().forEach((played) => {
+    await this.queueHandler.playedSongs.reverse().forEach((played) => {
       played.position = playedCount;
       played.save().then(() => {
         // console.debug(played.position+'. '+played.title);
