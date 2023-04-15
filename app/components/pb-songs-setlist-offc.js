@@ -38,22 +38,15 @@ export default class PbStreamEditPendingComponent extends Component {
 
   @action async reorderItems(originalList, sortedList) {
     let count = 0;
-    await sortedList.forEach((item) => {
-      // We do this to prevent saving records that remain the same
-      if (item.position != count) {
-        item.position = count;
-        item.save().then(() => {
-          // console.debug(item.position+'. '+item.title);
-        });
-      } else {
-        console.debug(
-          item.position + '. ' + item.title + ' remained the same.'
-        );
-      }
+    sortedList.forEach((item) => {
+      item.position = count;
+      item.save().then(() => {
+        // console.debug(item.position+'. '+item.title);
+      });
       count = Number(count) + 1;
     });
     let playedCount = 0;
-    await this.queueHandler.playedSongs.reverse().forEach((played) => {
+    this.queueHandler.playedSongs.reverse().forEach((played) => {
       played.position = playedCount;
       played.save().then(() => {
         // console.debug(played.position+'. '+played.title);

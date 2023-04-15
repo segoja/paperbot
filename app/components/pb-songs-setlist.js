@@ -32,7 +32,11 @@ export default class PbStreamEditPendingComponent extends Component {
     }
     return 0;
   }
-
+  
+  get scrollPlayedPosition() {
+    return this.playedSongs.length;
+  }
+  
   get playedSongs() {
     return this.queueHandler.playedSongs.reverse();
   }
@@ -50,9 +54,9 @@ export default class PbStreamEditPendingComponent extends Component {
     this.currentUser.showPlayed = !this.currentUser.showPlayed;
   }
 
-  @action async reorderItems(originalList, sortedList) {
+  @action reorderItems(originalList, sortedList) {
     let count = 0;
-    await sortedList.forEach((item) => {
+    sortedList.forEach((item) => {
       // We do this to prevent saving records that remain the same
       if (item.position != count) {
         item.position = count;
@@ -67,7 +71,7 @@ export default class PbStreamEditPendingComponent extends Component {
       count = Number(count) + 1;
     });
     let playedCount = 0;
-    await this.queueHandler.playedSongs.reverse().forEach((played) => {
+    this.queueHandler.playedSongs.forEach((played) => {
       played.position = playedCount;
       played.save().then(() => {
         //console.debug(played.position+'. '+played.title);

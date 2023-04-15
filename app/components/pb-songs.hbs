@@ -37,8 +37,8 @@
                 
                 <BsButton @type="secondary" @onClick={{this.songExportFiltered}} title="Export songs to CSV">Export</BsButton>
                 <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered songs?" @targetAction={{this.wipeSongs}} @buttonTitle="Delete all listed songs" />
-                <BsButton @type="info" @onClick={{this.toggleSetlist}} title="Setlist/queue manager"><FaIcon @icon="th-list" /> Setlist</BsButton>
                 <BsButton @type="primary" @onClick={{@createSong}} title="Add new song">Add New</BsButton>
+                <BsButton @type="info" @onClick={{this.toggleSetlist}} title="Setlist/queue manager"><FaIcon @icon={{if this.isSetlist "angle-right" "angle-left"}} /></BsButton>
               </div>
             </div> 
           </div>
