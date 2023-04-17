@@ -24,7 +24,9 @@
               <div class="d-block float-end">
                 <PbSongImport @songTypes={{@songTypes}} />
                 {{#let (file-queue name="uploadSongsCSV" onFileAdded=this.songImport) as |queue|}}
-                  <label role="button" for="upload-csv" class="btn btn-secondary" title="Import songs by CSV">Import</label>
+                  <label role="button" for="upload-csv" class="btn btn-secondary" title="Import songs by CSV">
+                    <FaIcon @icon="file-import" class="d-lg-none" /><span class="d-none d-lg-inline">Import</span>
+                  </label>
                   <input
                     type="file"
                     id="upload-csv"
@@ -35,10 +37,10 @@
                   >
                 {{/let}}
                 
-                <BsButton @type="secondary" @onClick={{this.songExportFiltered}} title="Export songs to CSV">Export</BsButton>
+                <BsButton @type="secondary" @onClick={{this.songExportFiltered}} title="Export songs to CSV"><FaIcon @icon="file-export" class="d-lg-none" /><span class="d-none d-lg-inline">Export</span></BsButton>
                 <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered songs?" @targetAction={{this.wipeSongs}} @buttonTitle="Delete all listed songs" />
                 <BsButton @type="primary" @onClick={{@createSong}} title="Add new song">Add New</BsButton>
-                <BsButton @type="info" @onClick={{this.toggleSetlist}} title="Setlist/queue manager"><FaIcon @icon={{if this.isSetlist "angle-right" "angle-left"}} /></BsButton>
+                <BsButton @type={{if this.isSetlist "info d-none d-lg-inline-block" "info"}} @onClick={{this.toggleSetlist}} title="Setlist/queue manager"><FaIcon @icon={{if this.isSetlist "angle-right" "angle-left"}} /></BsButton>
               </div>
             </div> 
           </div>
@@ -112,7 +114,7 @@
           </div>
         </div>
         <div class="card-footer py-0 my-0 px-0">
-          <div class={{if this.isSetlist "d-lg-none offcanvas offcanvas-end pt-5 show border-top border-bottom rounded-start" "d-lg-none offcanvas offcanvas-end pt-5 border-top border-bottom rounded-start"}} data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
+          <div class={{if this.isSetlist "d-lg-none offcanvas offcanvas-end pt-custom show border-0 bg-transparent" "d-lg-none offcanvas offcanvas-end pt-custom border-0 bg-transparent"}} data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
             <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}}/>
           </div>
           <PageNumbers @content={{this.pagedContent}} @showTotal={{true}} />

@@ -22,7 +22,6 @@ export default class SortableGroupModifier extends SortableGroup {
    //
     return diff;
   }
-  */
   @action update() {
     let sortedItems = this.sortedItems;
     
@@ -79,4 +78,5 @@ export default class SortableGroupModifier extends SortableGroup {
       position += item[dimension];
     });
   }
+  */
 }

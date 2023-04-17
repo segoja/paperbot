@@ -337,6 +337,22 @@ export default class ApplicationController extends Controller {
     return false;
   }
 
+  @action setBorder(){
+    if(this.currentUser.isTauri && !this.isOverlay){      
+      let headerElement =  document.getElementsByClassName('papermenu')[0];
+      headerElement.classList.add('border-start');
+      headerElement.classList.add('border-end');
+      headerElement.classList.add('border-top');
+      headerElement.classList.add('border-transparent');
+      
+      let mainElement = document.body;
+      mainElement.classList.add('border-start');
+      mainElement.classList.add('border-end');
+      mainElement.classList.add('border-bottom');
+      mainElement.classList.add('border-transparent');
+    }    
+  }
+
   @action updateCommandList() {
     if (this.commands.length > 0) {
       this.twitchChat.commands = new TrackedArray(this.commands);
