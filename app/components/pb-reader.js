@@ -5,6 +5,7 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import { later } from '@ember/runloop';
+import * as Transposer from 'chord-transposer';
 
 export default class PbReaderComponent extends Component {
   @service currentUser;
@@ -18,6 +19,8 @@ export default class PbReaderComponent extends Component {
   @tracked zoomLevel = 0.85;
   @tracked transKey = 0;
   @tracked mode = true;
+  
+  @tracked firstRequest = '';
 
   constructor() {
     super(...arguments);
@@ -25,14 +28,6 @@ export default class PbReaderComponent extends Component {
 
   requestSorting = Object.freeze(['position:asc', 'timestamp:desc']);
   @sort('args.requests', 'requestSorting') arrangedRequests;
-
-  get firstRequest() {
-    let pending = this.arrangedRequests.filterBy('processed', false);
-    if (pending.length > 0) {
-      return pending[0];
-    }
-    return '';
-  }
 
   songsSorting = Object.freeze(['date_added:asc']);
   @sort('args.songs', 'songsSorting') arrangedContent;
@@ -50,12 +45,24 @@ export default class PbReaderComponent extends Component {
       song = this.selected;
     } else {
       if (this.firstRequest) {
-        song = this.firstRequest.song;
+        song = this.firstRequest;
       } else {
         console.debug('No songs active.');
       }
     }
     return song;
+  }
+
+  @action async setActiveSong(){
+    if(this.currentSong.hasDirtyAttributes){
+      this.currentSong.rollbackAttributes();
+    }
+    let pending = this.arrangedRequests.filter(request => !request.processed);
+    if (pending.length > 0) {
+      if(pending[0].get('song')){
+        this.firstRequest = await pending[0].get('song');
+      }
+    }
   }
 
   @action searchSong(query) {
@@ -64,6 +71,9 @@ export default class PbReaderComponent extends Component {
   }
 
   @action selectSong(song) {
+    if(this.currentSong.hasDirtyAttributes){
+      this.currentSong.rollbackAttributes();
+    }
     this.selected = song;
     this.restore = false;
     later(() => {
@@ -72,56 +82,82 @@ export default class PbReaderComponent extends Component {
   }
 
   @action resetZoom() {
-    this.globalConfig.config.readerZoom = Number(0.85);
-    this.globalConfig.config.save();
+    if(this.currentSong){
+      this.currentSong.zoomLevel = Number(0.85);
+    }
   }
 
   @action autoColumn() {
-    this.globalConfig.config.readerColumns = 0;
-    this.globalConfig.config.save();
+    if(this.currentSong){
+      this.currentSong.columns = 0;
+    }
   }
 
   @action moreColumn() {
-    if (this.globalConfig.config.readerColumns < 5) {
-      this.globalConfig.config.readerColumns =
-        Number(this.globalConfig.config.readerColumns) + 1;
-      this.globalConfig.config.save();
+    if(this.currentSong){
+      if (this.currentSong.columns < 5) {
+        this.currentSong.columns =
+          Number(this.currentSong.columns) + 1;
+      }
     }
   }
 
   @action lessColumn() {
-    if (this.globalConfig.config.readerColumns > 0) {
-      this.globalConfig.config.readerColumns =
-        Number(this.globalConfig.config.readerColumns) - 1;
-      this.globalConfig.config.save();
+    if (this.currentSong.columns > 0) {
+      this.currentSong.columns =
+        Number(this.currentSong.columns) - 1;
     }
   }
 
   @action upKey() {
-    if (this.transKey < 12) {
-      this.transKey++;
+    if(this.currentSong){
+      this.transpose(1);
     }
   }
 
   @action downKey() {
-    if (this.transKey > -12) {
-      this.transKey--;
+    if(this.currentSong){
+      this.transpose(-1);
+    }
+  }
+
+  @action transpose(step){    
+    if(this.currentSong.lyrics){
+      let content = Transposer.transpose(this.currentSong.lyrics);
+      if (!isNaN(step)) {        
+        content = content.up(step);
+        this.currentSong.transSteps += step;
+        this.currentSong.lyrics = String(content);
+      }
     }
   }
 
   @action addZoom() {
-    this.globalConfig.config.readerZoom =
-      Number(this.globalConfig.config.readerZoom) + Number(0.025);
-    this.globalConfig.config.save();
+    if(this.currentSong){
+      this.currentSong.zoomLevel = Number(this.currentSong.zoomLevel) + Number(0.025);
+    }
   }
 
   @action subZoom() {
-    this.globalConfig.config.readerZoom =
-      Number(this.globalConfig.config.readerZoom) - Number(0.025);
-    this.globalConfig.config.save();
+    if(this.currentSong){
+      this.currentSong.zoomLevel = Number(this.currentSong.zoomLevel) - Number(0.025);
+    }
   }
   
   @action modeSwitch(){
-    this.mode = !this.mode;
+    if(this.currentSong){
+      this.currentSong.viewMode = !this.currentSong.viewMode;
+    }
+  }
+  
+  @tracked saving = false;
+  @action doneEditing() {
+    if(this.currentSong){
+      this.currentSong.save();
+      this.saving = true;
+      later(() => {
+        this.saving = false;
+      }, 500);
+    }
   }
 }

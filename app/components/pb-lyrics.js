@@ -25,22 +25,22 @@ export default class PbLyricsComponent extends Component {
   }
   
   @action resetZoom() {
-    this.args.song.readerZoom = Number(0.85);
+    this.args.song.zoomLevel = Number(0.85);
   }
 
   @action autoColumn() {
-    this.args.song.readerColumns = 0;
+    this.args.song.columns = 0;
   }
 
   @action moreColumn() {
-    if (this.args.song.readerColumns < 5) {
-      this.args.song.readerColumns = Number(this.args.song.readerColumns) + 1;
+    if (this.args.song.columns < 5) {
+      this.args.song.columns = Number(this.args.song.columns) + 1;
     }
   }
 
   @action lessColumn() {
-    if (this.args.song.readerColumns > 0) {
-      this.args.song.readerColumns = Number(this.args.song.readerColumns) - 1;
+    if (this.args.song.columns > 0) {
+      this.args.song.columns = Number(this.args.song.columns) - 1;
     }
   }
 
@@ -52,22 +52,23 @@ export default class PbLyricsComponent extends Component {
     this.transpose(-1);
   }
 
-  @action transpose(key){
+  @action transpose(step){
     if(this.args.song.lyrics){
       let content = Transposer.transpose(this.args.song.lyrics);
-      if (!isNaN(key)) {
-        content = content.up(key);
+      if (!isNaN(step)) {
+        content = content.up(step);
+        this.args.song.transSteps += step;
         this.args.song.lyrics = String(content);
       }
     }
   }
 
   @action addZoom() {
-    this.args.song.readerZoom = Number(this.args.song.readerZoom) + Number(0.025);
+    this.args.song.zoomLevel = Number(this.args.song.zoomLevel) + Number(0.025);
   }
 
   @action subZoom() {
-    this.globalConfig.config.readerZoom = Number(this.args.song.readerZoom) - Number(0.025);
+    this.args.song.zoomLevel = Number(this.args.song.zoomLevel) - Number(0.025);
   }
   
   @action modeSwitch(){

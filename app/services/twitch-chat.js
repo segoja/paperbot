@@ -378,11 +378,14 @@ export default class TwitchChatService extends Service {
   }
 
   @action async messageHandler(target, tags, msg, self) {
-    // console.debug('__________________________');
-    // console.debug(msg);
-    // console.debug(tags);
+    console.debug('__________________________');
+    console.debug(msg);
+    console.debug(tags);
     // this.parseBadges(tags['badges']);
-
+    
+    //let badges = tags.filter(tag => tag.startsWith('badges=')).join('').replace(/badges=|\/1/g, '').split(',');
+    //console.log('Badges: '+badges);
+    
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
       timestamp: moment().format(),
@@ -401,15 +404,15 @@ export default class TwitchChatService extends Service {
             'color: ' + this.setDefaultColor(tags['username']).toString()
           ),
       badges: tags['badges'] ? tags['badges'] : null,
-      htmlbadges: tags['badges'] ? this.parseBadges(tags['badges']).toString() : '',
+      htmlbadges: tags['badges-raw'] ? this.parseBadges(tags['badges-raw']).toString() : '',
       type: tags['message-type'] ? tags['message-type'] : null,
       usertype: tags['user-type'] ? tags['user-type'].toString() : null,
       reward: tags['msg-id'] ? true : false,
       emotes: tags['emotes'] ? tags['emotes'] : null,
     };
 
-    // console.debug(this.lastmessage);
-    // console.debug('----------------------------------');
+    console.debug(this.lastmessage);
+    console.debug('----------------------------------');
 
     if (tags['message-type'] != 'whisper') {
       if (
@@ -1098,7 +1101,55 @@ export default class TwitchChatService extends Service {
 
   @action parseBadges(userbadges) {
     var htmlbadges = '';
-    // console.debug(userbadges);
+    console.log(userbadges);
+    let badges = userbadges.split(',');
+    console.debug(badges);
+    if(badges){
+      badges.forEach((badgeId) => {
+        let badgeParts = badgeId.split('/');
+        let badgeType = badgeParts[0];
+        let badgeVersion = badgeParts[1];
+        switch (badgeType) {
+          case 'artist-badge': {
+            htmlbadges += '<span class="badge badge-twitch text-bg-primary" title="Artist">A</span>';
+            break;
+          }
+          case 'broadcaster': {
+            htmlbadges += '<span class="badge badge-twitch text-bg-danger" title="Broadcaster">B</span>';
+            break;
+          }
+          case 'moderator': {
+            htmlbadges += '<span class="badge badge-twitch text-bg-success" title="Moderator">M</span>';
+            break;
+          }
+          case 'partner': {
+            htmlbadges += '<span class="badge badge-twitch text-bg-partner" title="Partner">P</span>';
+            break;
+          }
+          case 'staff': {
+            htmlbadges += '<span class="badge badge-twitch text-bg-staff" title="Partner">S</span>';
+            break;
+          }
+          case 'subscriber': {
+            htmlbadges += '<span class="badge badge-twitch text-bg-subscriber" title="Subscriber">S</span>';
+            break;
+          }
+          case 'founder': {
+            htmlbadges += '<span class="badge badge-twitch text-bg-founder" title="Founder">F</span>';
+            break;
+          }
+          case 'vip': {
+            htmlbadges += '<span class="badge badge-twitch text-bg-vip" title="VIP">V</span>';
+            break;
+          }
+          default:{
+            htmlbadges += '<span class="badge badge-twitch text-bg-secondary" title="'+badgeType+'">'+badgeType.charAt(0).toUpperCase()+'</span>';
+          }
+        }        
+      });
+    }
+    
+    /*
     if (this.allbadges.length > 0) {
       for (var category in userbadges) {
         // console.debug("this is the first index: "+category);
@@ -1120,8 +1171,18 @@ export default class TwitchChatService extends Service {
       }
     } else {
       console.debug('No badges to parse');
-    }
+    }*/
+    
+    
+    
     return htmlSafe(htmlbadges);
+  }
+  
+  @action getBadgeImageUrl(badgeId) {
+    const badgeParts = badgeId.split('/');
+    const badgeType = badgeParts[0];
+    const badgeVersion = badgeParts[1];
+    return `https://static-cdn.jtvnw.net/badges/v1/${badgeType}/${badgeVersion}/1`;
   }
 
   @action parseMessage(text, emotes) {

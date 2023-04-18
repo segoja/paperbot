@@ -64,7 +64,7 @@ export default class ApplicationController extends Controller {
             this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
-        
+        /*
         if (this.currentUser.isTauri) {
           let currentWindow = getCurrent();
           if (currentWindow.label === 'Main') {
@@ -88,11 +88,11 @@ export default class ApplicationController extends Controller {
             ) {
               this.currentUser.toggleOverlay();
             }
-            if (this.globalConfig.config.showLyrics) {
+            if (this.globalConfig.config.showLyrics && this.router.currentURL != '/reader') {
               this.currentUser.showLyrics();
             }
           }
-        }
+        } */
 
         if (this.globalConfig.config.canConnect) {
           await this.store.adapterFor('application').configRemote().then(async () => {
@@ -124,7 +124,7 @@ export default class ApplicationController extends Controller {
               ) {
                 this.currentUser.toggleOverlay();
               }
-              if (this.globalConfig.config.showLyrics) {
+              if (this.globalConfig.config.showLyrics && this.router.currentURL != '/reader') {
                 this.currentUser.showLyrics();
               }
             }
@@ -340,16 +340,16 @@ export default class ApplicationController extends Controller {
   @action setBorder(){
     if(this.currentUser.isTauri && !this.isOverlay){      
       let headerElement =  document.getElementsByClassName('papermenu')[0];
-      headerElement.classList.add('border-start');
-      headerElement.classList.add('border-end');
-      headerElement.classList.add('border-top');
-      headerElement.classList.add('border-transparent');
-      
+      headerElement.classList.remove('border-0');
+      headerElement.classList.remove('border-bottom');
+      headerElement.classList.remove('border-secondary');
+      headerElement.classList.add('border');
+      headerElement.classList.add('border-app');
+
       let mainElement = document.body;
-      mainElement.classList.add('border-start');
-      mainElement.classList.add('border-end');
-      mainElement.classList.add('border-bottom');
-      mainElement.classList.add('border-transparent');
+      mainElement.classList.add('border');
+      mainElement.classList.add('border-app');
+      // mainElement.classList.add('border-dark');
     }    
   }
 
@@ -420,14 +420,20 @@ export default class ApplicationController extends Controller {
         console.debug('DONE', args);
         //window.location.reload(true);
       });*/
-
+      if (this.currentUser.isTauri) {
+        getAll().forEach((item) => {
+          if (item.label != 'Main') {
+            item.close();
+          }
+        });
+      }
       adapter.db
         .bulkDocs(importable, { new_edits: false })
-        .then(function () {
+        .then(() => {
           console.debug('Success!');
           window.location.reload(true);
         })
-        .catch(function () {
+        .catch(() => {
           console.debug('FAIL!');
         });
     }
@@ -543,7 +549,9 @@ export default class ApplicationController extends Controller {
             } else {
               currentconfig.showLyrics = true;
               await currentconfig.save().then(async () => {
-                this.currentUser.showLyrics();
+                if(this.router.currentURL != '/reader'){
+                  this.currentUser.showLyrics();
+                }
               });
             }
           }

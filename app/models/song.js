@@ -20,8 +20,10 @@ export default class SongModel extends Model {
   @attr('date', { defaultValue: '' }) last_requested;
   @attr('date', { defaultValue: '' }) last_played;
   
+  
   @attr('number', { defaultValue: 0.85 }) zoomLevel;
-  @attr('number', { defaultValue: 0 }) transKey;
+  @attr('number', { defaultValue: 0 }) transSteps;
+  @attr('number', { defaultValue: 3 }) columns;
   @attr('boolean', { defaultValue: true }) viewMode;
 
   @hasMany('request', { async: true, inverse: 'song' }) requests;
