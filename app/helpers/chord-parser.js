@@ -2,6 +2,10 @@ import Helper from '@ember/component/helper';
 import { htmlSafe } from '@ember/template';
 import { isEmpty } from '@ember/utils';
 import * as Transposer from 'chord-transposer';
+import {
+	chordParserFactory,
+	chordRendererFactory,
+} from 'chord-symbol/lib/chord-symbol.js'; // bundled version
 
 export default class ChordParser extends Helper {
 
@@ -15,7 +19,9 @@ export default class ChordParser extends Helper {
     let key = hash.key;
     let mode = hash.mode;
     let processed = '';
-    
+    const parseChord = chordParserFactory();
+    const renderChord = chordRendererFactory({ useShortNamings: true });
+        
     try {
       content = Transposer.transpose(content);
 
@@ -30,6 +36,17 @@ export default class ChordParser extends Helper {
             if (token.length > 1) {
               token.map((item) => {
                 if (typeof item === 'object') {
+                  // console.log(item);
+                  let fullName = '';
+                  if(item.root) { fullName += item.root; }
+                   
+                  if(item.suffix) { fullName += item.suffix; }
+                  
+                  if(item.bass) { fullName += item.bass; }
+                  
+                  let chord = parseChord(fullName);
+                  
+                  // console.log(chord);
                   item.root = '<strong>' + item.root;
                   item.suffix = item.suffix + '</strong>';
                   if (item.bass) {

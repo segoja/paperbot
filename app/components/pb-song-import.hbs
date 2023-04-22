@@ -55,7 +55,7 @@
                 <th class="col" scope="col">Title</th>
                 <th class="col-auto pe-0" scope="col" colspan="2"><span class="float-start unwrappable">Type</span><span class="float-end unwrappable">Select</span></th>
               </tr>
-              <tr>
+              <tr class="border-start">
                 {{#if this.separator}}<th class="col-lg-auto d-lg-table-cell d-none" scope="col"></th>{{/if}}
                 <th class="col" scope="col"><small class="float-end text-secondary unwrappable">Bulk actions:</small></th>
                 <th class="col-3 col-lg-2 p-0">
@@ -80,7 +80,7 @@
             </thead>
             <tbody>
               {{#each this.pagedSongs as |song|}}                
-                <tr class={{if song.selected "bg-success bg-opacity-10"}}>                    
+                <tr class={{if song.selected "bg-success bg-opacity-10 border-start" "border-start"}}>                    
                   {{#if this.separator}}<td class="col-lg-auto d-lg-table-cell d-none"><div class="unwrappable">{{song.artist}}</div></td>{{/if}}
                   <td class="col"><div class="unwrappable">{{song.title}}</div></td>
                   <td class="col-3 col-lg-2 p-0 formcol border-start-0 border-end-0">  

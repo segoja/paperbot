@@ -1,14 +1,7 @@
 {{did-insert this.setActiveSong}}
-{{did-update this.setActiveSong this.arrangedRequests}}
+{{did-update this.setActiveSong this.queueHandler.pendingSongs}}
+{{did-update this.setActiveSong this.selected}}
 
-  <style>
-    .fancy-columns-pre,
-    .fancy-columns {
-      font-size: {{this.currentSong.zoomLevel}}em!important; 
-      column-count: {{this.currentSong.columns}}!important;
-      column-rule-width: auto;
-    }   
-  </style>
 <div class="row h-100 flex-fill m-0 p-0">
   <div class="col-12 h-100 flex-fill p-0 m-0"> 
       {{!-- song listing --}}
@@ -21,7 +14,9 @@
               </PowerSelect>
             </div>
             <div class="col-auto">
-              <button type="button" class={{if this.currentSong.viewMode "btn btn-primary" "btn btn-secondary"}} {{on "click" this.modeSwitch}} alt="formatted text"><FaIcon @icon="paragraph" /></button>
+              <BsButton @type="secondary" @onClick={{this.autoAdjust}}>
+                <FaIcon @icon="cog" @spin={{this.calculating}} />
+              </BsButton>               <button type="button" class={{if this.currentSong.viewMode "btn btn-primary" "btn btn-secondary"}} {{on "click" this.modeSwitch}} alt="formatted text"><FaIcon @icon="paragraph" /></button>
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} alt="transpose down"><FaIcon @icon="down-long" /></button>
                 <span class="btn btn-secondary disabled text-white">{{this.currentSong.transSteps}}</span>
@@ -48,11 +43,26 @@
         </div>
         <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
           <div class="row mx-0 flex-fill listframe-reader">
-              {{!-- Song content --}}
               {{#if this.restore}}
                 {{#if this.currentSong}}
                   <h5>{{this.currentSong.title}}</h5>
-                  <div class={{if this.currentSong.viewMode "fancy-columns" "fancy-columns-pre"}}>{{chord-parser this.currentSong.lyrics key=0 mode=this.currentSong.viewMode}}</div>
+                    <style>
+                      .fancy-columns-pre,
+                      .fancy-columns {
+                        font-size: {{this.currentSong.zoomLevel}}em!important; 
+                        column-count: {{this.currentSong.columns}}!important;
+                        column-rule-width: auto;
+                      }   
+                    </style>
+                  {{#if this.currentSong.viewMode}} 
+                    <div class="fancy-columns">
+                      {{chord-parser this.currentSong.lyrics key=0 mode=this.currentSong.viewMode}}
+                    </div>
+                  {{else}}
+                    <div class="fancy-columns-pre">
+                      {{this.currentSong.lyrics}}
+                    </div>
+                  {{/if}}
                 {{/if}}
               {{else}}
                 Reloading...

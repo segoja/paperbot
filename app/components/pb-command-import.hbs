@@ -29,7 +29,7 @@
                 <th class="col" scope="col">Command</th>
                 <th class="col" scope="col" colspan="2">Volume</th>
               </tr>
-              <tr>
+              <tr class="border-start">
                 <th class="col-6" scope="col" colspan="2"><small class="float-end text-secondary">Bulk actions:</small></th>
                 <td class="col p-0 border-start">
                   <Input @type="range" min="1" max="100" aria-label="Volume" @value={{this.bulkVolume}}  {{on "change" (fn this.bulkChangeVolume this.bulkVolume)}} class="form-control slider intable w-100 border-0 rounded-0 btn-secondary" />
@@ -47,7 +47,7 @@
             </thead>
             <tbody>
               {{#each this.pagedCommands as |command|}}
-                <tr class={{if command.selected "bg-success bg-opacity-10"}}>
+                <tr class={{if command.selected "bg-success bg-opacity-10 border-start" "border-start"}}>
                   <td class="col-6 py-0 pt-2">{{command.name}}</td>             
                   <td class="col p-0 m-0 border-start">
                     <Input @type="text" @value={{command.command}} aria-label="Command" class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent py-0 pt-2" placeholder="Enter command." />

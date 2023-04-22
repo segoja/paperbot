@@ -124,5 +124,8 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "dependencies": {
+    "chord-symbol": "^4.0.0"
   }
 }
