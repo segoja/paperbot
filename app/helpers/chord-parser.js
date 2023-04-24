@@ -2,10 +2,6 @@ import Helper from '@ember/component/helper';
 import { htmlSafe } from '@ember/template';
 import { isEmpty } from '@ember/utils';
 import * as Transposer from 'chord-transposer';
-import {
-	chordParserFactory,
-	chordRendererFactory,
-} from 'chord-symbol/lib/chord-symbol.js'; // bundled version
 
 export default class ChordParser extends Helper {
 
@@ -19,8 +15,6 @@ export default class ChordParser extends Helper {
     let key = hash.key;
     let mode = hash.mode;
     let processed = '';
-    const parseChord = chordParserFactory();
-    const renderChord = chordRendererFactory({ useShortNamings: true });
         
     try {
       content = Transposer.transpose(content);
@@ -44,8 +38,6 @@ export default class ChordParser extends Helper {
                   
                   if(item.bass) { fullName += item.bass; }
                   
-                  let chord = parseChord(fullName);
-                  
                   // console.log(chord);
                   item.root = '<strong>' + item.root;
                   item.suffix = item.suffix + '</strong>';
@@ -63,12 +55,31 @@ export default class ChordParser extends Helper {
         content = content.replace(/\n\s\n/g, '\n\n');
         content = content.replace(/\n/g, '<br>\n');
         let lines = content.split('<br>\n');
+        
+        let isPhrase = false;
 
         lines.forEach((line) => {
           if (line.replace(/\s/g, '')) {
-            processed += '<div>' + line.replace(/\s/g, '&nbsp') + '</div>';
+            if(line.includes('<strong>') && line.includes('</strong>')){
+              isPhrase = true;
+              processed += '<div>'
+              processed += '<span>' + line.replace(/\s/g, '&nbsp') + '<br></span>';
+            } else {
+              if(isPhrase){
+              isPhrase = false;
+                processed += '<span>' + line.replace(/\s/g, '&nbsp') + '<br></span>';
+                processed += '</div>';
+              } else {
+                processed += '<div>' + line.replace(/\s/g, '&nbsp') + '</div>';
+              }
+            }
           } else {
-            processed += '<div><br></div>';
+            if(isPhrase){
+              isPhrase = false;
+              processed += '</div><div><br></div>';
+            } else {
+              processed += '<div><br></div>';
+            }
           }
         });
       } else {

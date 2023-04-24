@@ -6,10 +6,10 @@ import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import { later } from '@ember/runloop';
 import * as Transposer from 'chord-transposer';
-import {
-	chordParserFactory,
-	chordRendererFactory,
-} from 'chord-symbol/lib/chord-symbol.js'; // bundled version
+
+import chordictionary from 'chordictionary';
+
+import * as vexchords from 'vexchords';
 
 export default class PbReaderComponent extends Component {
   @service currentUser;
@@ -202,6 +202,73 @@ export default class PbReaderComponent extends Component {
   
   @tracked calculating = false;
   @action autoAdjust(){
+    //console.log(chordictionary);
+    // var myInstrument = new Instrument (tuning, fretNumber, fretsToDisplay, maxSpan);
+    let myInstrument = new chordictionary.Instrument('EADGBE', 24, 7, 4);
+
+    let lyrics = document.getElementById('bodycontainer');
+    let chords = lyrics.querySelectorAll('strong');
+    //console.debug(chords);
+    
+    if(!this.calculating && this.currentSong.viewMode){
+      this.calculating = true;
+      let idcounter = 0;
+      chords.forEach((chord)=>{
+        //console.log(chord);
+        let info = myInstrument.getChordsList(chord.innerText,4);
+        
+        if(info.chordList.length > 0){
+          let tooltip = document.createElement("div");
+          tooltip.className = 'chord-tooltip';
+          // let result = chordictionary.parseChord(chord.innerText);
+          info.chordList.forEach((variation)=>{
+            let subElement = document.createElement("div");
+            subElement.className = 'chord-variation';
+            subElement.id = 'variation'+idcounter;
+            subElement.innerHTML = idcounter;
+            // let htmlContent = myInstrument.getChordLayout(variation.tab.join(""));
+            subElement.innerHTML = idcounter;
+            tooltip.appendChild(subElement);
+
+            idcounter++
+          });
+        
+          chord.appendChild(tooltip);
+        }
+        
+        // let htmlContent = myInstrument.getChordLayout(result.tab.join(""), result.chords[0]);        
+        // tooltip.innerHTML = 'Text';
+      });
+     /* 
+      
+        let info = myInstrument.getChordsList(chord.innerText,4);
+        if(info.chordList.length > 0){
+          info.chordList.forEach((variation)=>{
+            let subElement = document.createElement("div");
+            subElement.id = 'variation'+idcounter;
+            let stringNr = 1;
+            let tabArray = []:
+            variation.tab.forEach((fret)=>{
+              let pair = (stringNr, fret); 
+              tabArray.push(pair);
+            });
+            console.log(pair);
+            //let htmlContent = myInstrument.getChordLayout(variation.tab.join(""));
+            //tooltip.innerHTML += htmlContent;
+             vexchords.draw(
+                sel,
+                {
+                  chord: [[1, 2], [2, 1], [3, 2], [4, 0], [5, 'x'], [6, 'x']]
+                },
+                { width: 200, height: 240, defaultColor: '#745' }
+              ); 
+        
+            idcounter++
+            
+          });
+        }
+      */
+    }
     if(this.currentSong){
       if(this.currentSong.lyrics){        
         let songLines = this.currentSong.lyrics.replace(/\r/g,'').split('\n');
@@ -209,10 +276,12 @@ export default class PbReaderComponent extends Component {
           return b.length - a.length;
         });
         let numLines = songLines.length;
-        console.log('Number of lines: '+numLines);
+        // console.log('Number of lines: '+numLines);
         let longestLine =  sortedSongLines[0];  
         
+        // var lyricsContainers = document.getElementsByClassName('card-body');
         var lyricsContainers = document.getElementsByClassName(this.currentSong.viewMode? 'fancy-columns':'fancy-columns-pre'); 
+        
         if(lyricsContainers.length > 0){
           let fontDetails = this.getCanvasFont(lyricsContainers[0]);
           // 40px is the column separation
@@ -220,67 +289,83 @@ export default class PbReaderComponent extends Component {
           let lineHeightStyle = window.getComputedStyle(lyricsContainers[0], null).getPropertyValue('line-height');
           let lineHeight = parseFloat(lineHeightStyle);
           
-          console.log('Line width: '+lineWidth+'px');
-          console.log('Line height: '+lineHeight+'px'); 
+          // console.log('Line width: '+lineWidth+'px');
+          // console.log('Line height: '+lineHeight+'px'); 
           
           let container = document.getElementById('bodycontainer');
           if(container){
-            console.log('The container dimensions are: '+container.offsetWidth+'x'+container.offsetHeight+'px');
+            // console.log('The container dimensions are: '+container.offsetWidth+'x'+container.offsetHeight+'px');
             // 24px is the external padding.
             let numColumns = Math.floor((container.offsetWidth - 24) / lineWidth);
-            console.log('Number of columns: '+ numColumns);
+            // console.log('Number of columns: '+ numColumns);
             
             let actualColWidth = container.offsetWidth / numColumns;
-            console.log('Actual col width: '+ actualColWidth +'px');
+            // console.log('Actual col width: '+ actualColWidth +'px');
             
             let optimalNumLines = Math.floor(container.offsetHeight / lineHeight);
             
-            console.log('Optimal num lines to fill height: '+ optimalNumLines);
+            let containerHeight = container.offsetHeight;
+            
+            // console.log('Optimal num lines to fill height: '+ optimalNumLines);
             
             let linesPerColumn = numLines / numColumns;
-            console.log('Lines per column: '+ linesPerColumn);
+            // console.log('Lines per column: '+ linesPerColumn);
             
             let linesRatio = optimalNumLines / linesPerColumn;
             let widthRatio = actualColWidth / lineWidth;
             
-            console.log('Lines ratio opt/colL: '+ linesRatio);
-            console.log('Width ratio: '+ widthRatio);
+            // console.log('Lines ratio opt/colL: '+ linesRatio);
+            // console.log('Width ratio: '+ widthRatio);
                         
             this.currentSong.columns = numColumns;
             
             let fontsize = this.getCssStyle(container, 'font-size');
             
-            let percentHeight = (linesPerColumn * 100) / optimalNumLines;
+            let colHeight = numColumns * lineHeight;
+            let optimalColHeight = optimalNumLines * lineHeight;
+            
+            // let percentHeight = (colHeight * 100) / optimalColHeight;
+            let percentHeight = (linesPerColumn * 100) / ( optimalNumLines -3 );
             let percentWidth= (lineWidth * 100) / actualColWidth;
             
-            let zoomLevel = (this.currentSong.zoomLevel * (optimalNumLines - 4)) / linesPerColumn;
+            let totalPercentWidth = (actualColWidth * numColumns) * 100 / container.offsetWidth;
             
-            if(percentHeight > 90 && percentWidth < 75){
-              this.currentSong.columns = numColumns +1;
-            }
-                        
-            console.log('Estimated font size: '+zoomLevel);
-            console.log('Percent of the col width filled: '+percentWidth);
-            console.log('Percent of the height filled: '+percentHeight);
-
+            let zoomLevel = (this.currentSong.zoomLevel * ( optimalNumLines -3 )) / linesPerColumn;
+            
+            let diffPercent = percentHeight - percentWidth;
+            
+            //if(percentHeight > 90 && diffPercent > 10){
+            //  zoomLevel = (this.currentSong.zoomLevel * (optimalNumLines -3)) / linesPerColumn;
+            //}
+            
+            // console.log('All columns width %: '+totalPercentWidth);            
+            // console.log('Estimated font size: '+zoomLevel);
+            // console.log('Percent of the col width filled: '+percentWidth);
+            // console.log('Percent of the height filled: '+percentHeight);
             
             
-            if(percentHeight < percentWidth || percentWidth < 75){
+            if(percentHeight < percentWidth || percentWidth < 90){
               //if(percentWidth < 90){
                 this.currentSong.zoomLevel += 0.025;
-                this.calculating = true;
                 later(() => {
                   this.autoAdjust(); 
-                }, 10);
+                }, 5);
               //} else {
                 // this.currentSong.zoomLevel = zoomLevel; 
              // }
             } else {
               if(percentHeight > percentWidth){
                 this.currentSong.zoomLevel = zoomLevel;
-                this.calculating = false;
+                if(totalPercentWidth < 75){
+                  this.currentSong.columns = numColumns +1;                 
+                }
               }
             }
+            
+            
+            later(() => {
+              this.calculating = false;
+            }, 5000);
           } 
         }        
         // console.log('Longest line: ',longestLine);

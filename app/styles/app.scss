@@ -454,6 +454,29 @@ div.pan-buttons-row{
   @include media-breakpoint-down(lg) { column-count: 1; } 
   hr { visibility: hidden; }
   strong { color: #09f; }
+  
+  
+  strong .chord-tooltip {
+    display: inline-block;
+    visibility: hidden;
+    font-weight: initial;
+    background-color: white;
+    /* color: #fff; */
+    padding: 5px 0;
+    border-radius: 6px;
+    min-width: 100px;
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    
+    .chord {
+      display: block;
+    }
+  }
+  
+  strong:hover .chord-tooltip {
+    visibility: visible;
+  }
 }
 
 .fancy-columns-pre {

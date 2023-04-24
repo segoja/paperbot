@@ -15,7 +15,7 @@
             </div>
             <div class="col-auto">
               <BsButton @type="secondary" @onClick={{this.autoAdjust}}>
-                <FaIcon @icon="cog" @spin={{this.calculating}} />
+                <FaIcon @icon={{if this.calculating "spinner" "wand-magic-sparkles"}} @spin={{this.calculating}} />
               </BsButton>               <button type="button" class={{if this.currentSong.viewMode "btn btn-primary" "btn btn-secondary"}} {{on "click" this.modeSwitch}} alt="formatted text"><FaIcon @icon="paragraph" /></button>
               <div class="btn-group">
                 <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} alt="transpose down"><FaIcon @icon="down-long" /></button>
