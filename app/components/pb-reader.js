@@ -210,8 +210,8 @@ export default class PbReaderComponent extends Component {
     let chords = lyrics.querySelectorAll('strong');
     //console.debug(chords);
     
-    if(!this.calculating && this.currentSong.viewMode){
-      this.calculating = true;
+   if(!this.calculating && this.currentSong.viewMode){
+      /* this.calculating = true;
       let idcounter = 0;
       chords.forEach((chord)=>{
         //console.log(chord);
@@ -238,7 +238,7 @@ export default class PbReaderComponent extends Component {
         
         // let htmlContent = myInstrument.getChordLayout(result.tab.join(""), result.chords[0]);        
         // tooltip.innerHTML = 'Text';
-      });
+      }); */
      /* 
       
         let info = myInstrument.getChordsList(chord.innerText,4);
@@ -349,15 +349,18 @@ export default class PbReaderComponent extends Component {
                 this.currentSong.zoomLevel += 0.025;
                 later(() => {
                   this.autoAdjust(); 
-                }, 5);
+                }, 1);
               //} else {
                 // this.currentSong.zoomLevel = zoomLevel; 
              // }
             } else {
               if(percentHeight > percentWidth){
                 this.currentSong.zoomLevel = zoomLevel;
-                if(totalPercentWidth < 75){
+                if(totalPercentWidth < 80){
                   this.currentSong.columns = numColumns +1;                 
+                }
+                if(percentWidth > 85){
+                  this.currentSong.zoomLevel -= 0.025;
                 }
               }
             }

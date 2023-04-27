@@ -29,6 +29,9 @@ $height-sizes: (
   @each $size, $length in $height-sizes {
     @include media-breakpoint-up($breakpoint) {
       .h-#{$breakpoint}-#{$size} {height: $length !important;}
+      .mh-#{$breakpoint}-#{$size} {max-height: $length !important;}
+      .w-#{$breakpoint}-#{$size} {width: $length !important;}
+      .mw-#{$breakpoint}-#{$size} {max-width: $length !important;}
     }
   }
 }
@@ -388,6 +391,8 @@ div.pan-buttons-row{
   .nav-item:hover { background-color: #111519!important; }
 }
 
+.navbar-collapse.show .nav-link { padding-top: 1em!important; padding-bottom: 1em!important; }
+  
 .slider {
   -webkit-appearance: none;
   width: 100%;
@@ -438,6 +443,21 @@ div.pan-buttons-row{
 }
 
 
+.setlist-btn-text {
+    font-size: 0.7em;
+    writing-mode: vertical-lr;
+    text-orientation: sideways-right;
+    line-height: 0;
+    margin-left: 0.5em;
+    margin-right: 0.75em;
+    margin-top: 0.415em;
+    margin-bottom: 0.415em;
+    font-weight: 900;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0em;
+}
+
 .fancy-columns {
   /* max-height: 75%!important; */
   column-count: 3;
@@ -455,6 +475,11 @@ div.pan-buttons-row{
   hr { visibility: hidden; }
   strong { color: #09f; }
   
+  
+  .song-phrase {
+    .chords-row { display: inline-block;  width: 100%; white-space: pre; }
+    .lyrics-row { display: inline-block;  width: 100%; white-space: pre;}
+  }
   
   strong .chord-tooltip {
     display: inline-block;

@@ -30,7 +30,7 @@ export default class ChordParser extends Helper {
             if (token.length > 1) {
               token.map((item) => {
                 if (typeof item === 'object') {
-                  // console.log(item);
+
                   let fullName = '';
                   if(item.root) { fullName += item.root; }
                    
@@ -44,12 +44,13 @@ export default class ChordParser extends Helper {
                   if (item.bass) {
                     item.bass = '<strong>' + item.bass + '</strong>';
                   }
+                  
                 }
               });
             }
           });
         }
-      
+        // console.log(content);
         content = content.toString();
         content = content.replace(/\r\n?/g, '\n');
         content = content.replace(/\n\s\n/g, '\n\n');
@@ -57,28 +58,44 @@ export default class ChordParser extends Helper {
         let lines = content.split('<br>\n');
         
         let isPhrase = false;
-
-        lines.forEach((line) => {
+         
+        let idcounter = 0;
+        lines.forEach((line) => { 
           if (line.replace(/\s/g, '')) {
             if(line.includes('<strong>') && line.includes('</strong>')){
               isPhrase = true;
-              processed += '<div>'
-              processed += '<span>' + line.replace(/\s/g, '&nbsp') + '<br></span>';
+              processed += '<div class="song-phrase"><div class="chords-row">';
+              // let chordLine = line.replace(/\s/g, '&nbsp');
+              let chordLines = line.split('</strong>');
+              // console.log(chordLines);
+              let classified = [];
+              if(chordLines.length > 0){
+                chordLines.forEach((chord) => { 
+                  let idLine = chord.replace(/\<strong\>/g, '<strong class="chord" id="chordId'+idcounter+'">')+'</strong>';
+                  idcounter++
+                  classified.push(idLine);              
+                });
+                // console.debug(classified);
+                processed += classified.join("").toString();
+              } else {
+                processed += line.replace(/\<strong\>/g, '<strong class="chord">');
+              }
+              processed += '</div>';
             } else {
               if(isPhrase){
               isPhrase = false;
-                processed += '<span>' + line.replace(/\s/g, '&nbsp') + '<br></span>';
+                processed += '<div class="lyrics-row">' + line + '</div>';
                 processed += '</div>';
               } else {
-                processed += '<div>' + line.replace(/\s/g, '&nbsp') + '</div>';
+                processed += '<div class="lyrics-row">' + line + '</div>';
               }
             }
           } else {
             if(isPhrase){
               isPhrase = false;
-              processed += '</div><div><br></div>';
+              processed += '</div><div class="empty-row"><br></div>';
             } else {
-              processed += '<div><br></div>';
+              processed += '<div class="empty-row"><br></div>';
             }
           }
         });
