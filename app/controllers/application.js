@@ -64,7 +64,7 @@ export default class ApplicationController extends Controller {
             this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
-        
+        /*
         if (this.currentUser.isTauri) {
           let currentWindow = getCurrent();
           if (currentWindow.label === 'Main') {
@@ -88,11 +88,11 @@ export default class ApplicationController extends Controller {
             ) {
               this.currentUser.toggleOverlay();
             }
-            if (this.globalConfig.config.showLyrics) {
+            if (this.globalConfig.config.showLyrics && this.router.currentURL != '/reader') {
               this.currentUser.showLyrics();
             }
           }
-        }
+        } */
 
         if (this.globalConfig.config.canConnect) {
           await this.store.adapterFor('application').configRemote().then(async () => {
@@ -124,7 +124,7 @@ export default class ApplicationController extends Controller {
               ) {
                 this.currentUser.toggleOverlay();
               }
-              if (this.globalConfig.config.showLyrics) {
+              if (this.globalConfig.config.showLyrics && this.router.currentURL != '/reader') {
                 this.currentUser.showLyrics();
               }
             }
@@ -337,6 +337,22 @@ export default class ApplicationController extends Controller {
     return false;
   }
 
+  @action setBorder(){
+    if(this.currentUser.isTauri && !this.isOverlay){      
+      let headerElement =  document.getElementsByClassName('papermenu')[0];
+      headerElement.classList.remove('border-0');
+      headerElement.classList.remove('border-bottom');
+      headerElement.classList.remove('border-secondary');
+      headerElement.classList.add('border');
+      headerElement.classList.add('border-app');
+
+      let mainElement = document.body;
+      mainElement.classList.add('border');
+      mainElement.classList.add('border-app');
+      // mainElement.classList.add('border-dark');
+    }    
+  }
+
   @action updateCommandList() {
     if (this.commands.length > 0) {
       this.twitchChat.commands = new TrackedArray(this.commands);
@@ -404,14 +420,20 @@ export default class ApplicationController extends Controller {
         console.debug('DONE', args);
         //window.location.reload(true);
       });*/
-
+      if (this.currentUser.isTauri) {
+        getAll().forEach((item) => {
+          if (item.label != 'Main') {
+            item.close();
+          }
+        });
+      }
       adapter.db
         .bulkDocs(importable, { new_edits: false })
-        .then(function () {
+        .then(() => {
           console.debug('Success!');
           window.location.reload(true);
         })
-        .catch(function () {
+        .catch(() => {
           console.debug('FAIL!');
         });
     }
@@ -428,6 +450,21 @@ export default class ApplicationController extends Controller {
     var adapter = this.store.adapterFor('application');
     adapter.wipeDatabase().then(() => {
       console.debug('The database has been wiped.');
+      window.location.reload(true);
+    });
+  }
+
+  @action wipeConfig() {
+    if (this.currentUser.isTauri) {
+      getAll().forEach((item) => {
+        if (item.label != 'Main') {
+          item.close();
+        }
+      });
+    }
+    var adapter = this.store.adapterFor('config');
+    adapter.wipeDatabase().then(() => {
+      console.debug('The config has been wiped.');
       window.location.reload(true);
     });
   }
@@ -512,7 +549,9 @@ export default class ApplicationController extends Controller {
             } else {
               currentconfig.showLyrics = true;
               await currentconfig.save().then(async () => {
-                this.currentUser.showLyrics();
+                if(this.router.currentURL != '/reader'){
+                  this.currentUser.showLyrics();
+                }
               });
             }
           }

@@ -135,12 +135,17 @@ export default class PbCloudComponent extends Component {
   
   @action toggleConnection(){
     if(this.isOnline){
-      console.log('Disconnecting');
+      console.log('Disconnecting...');
       this.globalConfig.config.autoConnect = false;
-      this.globalConfig.config.save(()=>{
-        this.session.invalidate();
+      this.globalConfig.config.save().then(()=>{
+        
+        this.session.invalidate().then((success) => {          
+          console.log('Disconnected!');
+        }, (error) => {
+          console.log('Could not disconnect!');          
+        });
         // this.globalConfig.config.autoConnect = true;
-        //this.globalConfig.config.save();
+        // this.globalConfig.config.save();
       });
     } else {
       console.log('Reconnecting');

@@ -1,5 +1,5 @@
 {{#if @isEditing}}
-  <div class="card-body">
+  <div class="card-body listframe">
     <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{this.doneAndReturnEditing}} as |form|>
       <form.element @controlType="text" @label="Stream Title" class="pb-2" placeholder="Stream title" @property="title" required />
       <form.element @controlType="text" @label="Stream Channel" class="pb-2" placeholder="Stream channel" @property="channel" required />
@@ -73,6 +73,20 @@
           <BsButton class="btn-sm col col-sm text-editstream text-truncate border rounded-0" @type="warning" @onClick={{@editStream}}><FaIcon @icon="edit" /> Edit Stream</BsButton>
         </div>
       </div>
+      {{#if @stream.requests}}
+        <div class="col-auto">
+          <div class="row g-0 h-100">
+            <BsButton @type={{if this.globalConfig.config.extraPanRight "info btn-sm m-0 p-0 px-2 col-12 col-sm text-truncate border rounded-0  h-50 h-sm-100" "info btn-sm m-0 p-0 px-2 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100"}} @onClick={{this.toggleExtraPanRightTop}} title="Setlist/queue manager" disabled={{not this.twitchChat.botConnected}}>
+              <FaIcon @icon={{if this.globalConfig.config.extraPanRightTop "angle-right" "angle-left"}} class="mx-1 align-middle" />
+              <span class="setlist-btn-text">|||||</span>
+            </BsButton>
+            <BsButton @type={{if this.globalConfig.config.extraPanRight "secondary btn-sm m-0 p-0 px-2 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100" "secondary btn-sm m-0 p-0 px-2 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100"}} @onClick={{this.toggleExtraPanRightBottom}} title="Setlist/queue manager" disabled={{not this.twitchChat.botConnected}}>
+              <FaIcon @icon={{if this.globalConfig.config.extraPanRightBottom "angle-right" "angle-left"}} class="mx-1 align-middle" />
+              <span class="setlist-btn-text">|||||</span>
+            </BsButton>
+          </div>
+        </div>
+      {{/if}}
     </div>
     {{#unless @stream.finished}}
       {{#if this.currentUser.isTauri}}

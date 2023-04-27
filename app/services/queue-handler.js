@@ -123,8 +123,8 @@ export default class QueueHandlerService extends Service {
 
   @action clearPending() {
     if (this.pendingSongs.length > 0) {
-      this.uniquePending.forEach((item) => {
-        item.song.then((song) => {
+      this.uniquePending.forEach(async (item) => {
+        await item.get('song').then(async(song) => {
           if(song){
             let requests = this.pendingSongs.filter(
               (request) => request.songId == song.get('id')
@@ -135,7 +135,7 @@ export default class QueueHandlerService extends Service {
             requests.forEach((request) => {
               request.destroyRecord();
             });
-            song.save().then(() => {
+            await song.save().then(() => {
               console.debug(song.title + ' requests adjusted by -' + times);
             });          
           }
@@ -201,34 +201,35 @@ export default class QueueHandlerService extends Service {
           (item) => item.id != request.id
         );
         let count = 0;
-        oldPending.forEach((pending) => {
+        oldPending.forEach(async (pending) => {
           count = Number(count) + 1;
           pending.position = count;
-          pending.save();
+          await pending.save();
           //console.debug(pending.position+'. '+pending.effectiveTitle);
         });
       } else {
         let oldPlayed = this.playedSongs;
         let count = 0;
-        oldPlayed.forEach((played) => {
-          count = Number(count) - 1;
+        oldPlayed.forEach(async (played) => {
+          count = Number(count) + 1;
           played.position = count;
-          played.save();
+          await played.save();
           //console.debug(played.position+'. '+played.effectiveTitle);
         });
       }
 
       request.processed = !request.processed;
 
-      request.save().then(() => {
+      await request.save().then(() => {
+        console.log('Updated request'+request.position);
         if (request.processed && request.songId) {
           this.store
             .findRecord('song', request.song.get('id'))
-            .then(async (actualSong) => {
-              if (await actualSong.isLoaded) {
+            .then((actualSong) => {
+              if (actualSong.isLoaded) {
                 actualSong.last_played = new Date();
                 actualSong.times_played = Number(actualSong.times_played) + 1;
-                await actualSong.save();
+                actualSong.save();
               }
             });
         }

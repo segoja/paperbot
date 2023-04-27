@@ -244,14 +244,22 @@ export default class PbStreamEditComponent extends Component {
   }
 
   @action toggleExtraPanRightTop() {
-    this.globalConfig.config.extraPanRightTop =
-      !this.globalConfig.config.extraPanRightTop;
+    this.globalConfig.config.extraPanRightTop = !this.globalConfig.config.extraPanRightTop;
+    if(!this.globalConfig.config.extraPanRightBottom && !this.globalConfig.config.extraPanRightTop){
+      this.globalConfig.config.extraPanRight = false;
+    }  else  {
+      this.globalConfig.config.extraPanRight = true;
+    }   
     this.globalConfig.config.save();
   }
 
   @action toggleExtraPanRightBottom() {
-    this.globalConfig.config.extraPanRightBottom =
-      !this.globalConfig.config.extraPanRightBottom;
+    this.globalConfig.config.extraPanRightBottom = !this.globalConfig.config.extraPanRightBottom;
+    if(!this.globalConfig.config.extraPanRightBottom && !this.globalConfig.config.extraPanRightTop){
+      this.globalConfig.config.extraPanRight = false;
+    }  else  {
+      this.globalConfig.config.extraPanRight = true;
+    }   
     this.globalConfig.config.save();
   }
 

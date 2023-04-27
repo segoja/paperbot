@@ -4,11 +4,11 @@
       <ul class="pagination my-0 {{if @fullBorder "border-top border-bottom"}}">
         {{#if this.canStepBackward}}
           <li class="page-item arrow prev enabled-arrow">
-            <a href="#" {{on "click" (fn this.incrementPage -1)}} class="page-link text-secondary border-top-0 border-bottom-0 rounded-0">&laquo;</a>
+            <a href="#" {{on "click" (fn this.incrementPage -1)}} class="page-link text-secondary {{if @fullBorder "border-top-0 border-bottom-0" "border-0 border-end "}} rounded-0">&laquo;</a>
           </li>
         {{else}}
           <li class="page-item arrow prev disabled">
-            <a href="#" {{on "click" (fn this.incrementPage -1)}} class="page-link text-secondary border-top-0 border-bottom-0 rounded-0">&laquo;</a>
+            <a href="#" {{on "click" (fn this.incrementPage -1)}} class="page-link text-secondary {{if @fullBorder "border-top-0 border-bottom-0" "border-0 border-end "}} rounded-0">&laquo;</a>
           </li>
         {{/if}}
 

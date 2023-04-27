@@ -20,6 +20,18 @@
         </div>
       </Modal.header>
       <Modal.body>
+        <p>You can sync Paperbot among different devices using a self hosted or third-party CouchDb database like <a href="https://www.cloudstation.com/en" target="_blank">CloudStation</a>
+          <span role="button" id="remote-couch-info">
+            <FaIcon @icon="question-circle" class="text-info" role="presentation" />
+          </span>
+          <BsPopover @triggerEvents="click" @triggerElement="#remote-couch-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+            <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+              <p>Songs, requests, commands, streams, clients and overlays will be synced, but not the bot settings, wich will stay in your device/browser only.</p>
+              <p>If you use CloudStation make sure you uncheck the "Publicly accessible" checkbox when creating your database.</p>
+            </div>
+          </BsPopover>
+        </p>
+
         <BsForm @formLayout="horizontal" @model={{this.globalConfig.config}} @onSubmit={{this.doneEditing}} as |form|>
           <div class="row pb-3">
             <form.element @controlType="power-select" @property="cloudType" @onChange={{this.setCloudType}} @formLayout="inline" class="col border-light" @allowClear={{true}} @options={{this.cloudTypes}} required as |type|>
@@ -33,7 +45,7 @@
               <div class="col">
                 <div class="input-group input-group-sm">
                   <div class="input-group-text border-default"><FaIcon @icon="link" @size="sm" /></div>
-                  <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.remoteUrl}} aria-label="Remote url" @type="text" placeholder="Enter remote url" autocomplete="remoteUrl" />
+                  <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.remoteUrl}} aria-label="Remote url" @type="text" placeholder="Enter remote url" autocomplete="remoteUrl" disabled={{this.globalConfig.config.isCloudDisabled}}  />
                 </div>
               </div>
             </div> 
@@ -43,7 +55,7 @@
               <div class="col">
                 <div class="input-group input-group-sm">
                   <div class="input-group-text border-default"><FaIcon @icon="database" @size="sm" /></div>
-                  <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.database}} aria-label="Database name" @type="text" placeholder="Enter database name" autocomplete="database" />
+                  <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.database}} aria-label="Database name" @type="text" placeholder="Enter database name" autocomplete="database" disabled={{this.globalConfig.config.isCloudDisabled}}  />
                 </div>
               </div>
             </div> 
@@ -52,13 +64,13 @@
             <div class="col">
               <div class="input-group input-group-sm">
                 <div class="input-group-text border-default"><FaIcon @icon="user" @size="sm" /></div>
-                <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.username}} aria-label="Username" @type="text" placeholder="Enter remote username" autocomplete="username" />
+                <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.username}} aria-label="Username" @type="text" placeholder="Enter remote username" autocomplete="username" disabled={{this.globalConfig.config.isCloudDisabled}} />
               </div>
             </div>
             <div class="col">
               <div class="input-group input-group-sm">
                 <div class="input-group-text border-default"><FaIcon @icon="key" @size="sm" /></div>
-                <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Password" @type="password" placeholder="Enter remote password" autocomplete="current-password" />
+                <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.password}} aria-label="Password" @type="password" placeholder="Enter remote password" autocomplete="current-password" disabled={{this.globalConfig.config.isCloudDisabled}}  />
               </div>
             </div>
           </div>

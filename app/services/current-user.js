@@ -23,6 +23,7 @@ export default class CurrentUserService extends Service {
   @tracked expandSubmenu = false;
   @tracked songqueue = [];
   @tracked showSetlist = false;
+  @tracked showPlayed = false;
   @tracked lastStream = '';
 
   @tracked currentConfig = '';
@@ -139,14 +140,14 @@ export default class CurrentUserService extends Service {
       let readerWindow = '';
       let currentWindow = getCurrent();
 
-      getAll().forEach((windowItem) => {
+      /*getAll().forEach((windowItem) => {
         if (windowItem.label === 'reader') {
           readerWindow = windowItem;
         }
-      });
+      });*/
 
       if (
-        readerWindow === '' &&
+        //readerWindow === '' &&
         currentWindow.label != 'overlay' &&
         currentWindow.label != 'reader'
       ) {
@@ -154,7 +155,7 @@ export default class CurrentUserService extends Service {
           url: 'reader',
           label: 'reader',
           title: 'Paperbot - Lyrics',
-          /* parent: currentWindow, */
+          // parent: currentWindow, 
           decorations: false,
           minWidth: 450,
           minHeight: 600,
@@ -164,6 +165,7 @@ export default class CurrentUserService extends Service {
           x: Number(this.globalConfig.config.readerPosX),
           y: Number(this.globalConfig.config.readerPosY),
         };
+        console.debug('Creating reader window...');
         readerWindow = new WebviewWindow('reader', options);
 
         readerWindow.once('tauri://window-created', function () {
