@@ -46,14 +46,14 @@
               {{#if this.restore}}
                 {{#if this.currentSong}}
                   <h5>{{this.currentSong.title}}</h5>
-                    <style>
-                      .fancy-columns-pre,
-                      .fancy-columns {
-                        font-size: {{this.currentSong.zoomLevel}}em!important; 
-                        column-count: {{this.currentSong.columns}}!important;
-                        column-rule-width: auto;
-                      }   
-                    </style>
+                  <style>
+                    .fancy-columns-pre,
+                    .fancy-columns {
+                      font-size: {{this.currentSong.zoomLevel}}em!important; 
+                      column-count: {{this.currentSong.columns}}!important;
+                      column-rule-width: auto;
+                    }   
+                  </style>
                   {{#if this.currentSong.viewMode}} 
                     <div class="fancy-columns">
                       {{chord-parser this.currentSong.lyrics key=0 mode=this.currentSong.viewMode}}

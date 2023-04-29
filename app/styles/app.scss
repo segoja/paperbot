@@ -460,26 +460,18 @@ div.pan-buttons-row{
 
 .fancy-columns {
   /* max-height: 75%!important; */
-  column-count: 3;
   column-gap: 40px;
-  word-break: break-word;
   white-space: normal;
   font-family: var(--bs-font-monospace);
-  font-size: 0.85em;
   direction: ltr /* rtl:ignore */;
-  /* white-space: pre-wrap; */
+  white-space: pre-wrap;
   unicode-bidi: bidi-override;
   margin: 1em 0px;
-  @include media-breakpoint-down(xl) { column-count: 2; }  
-  @include media-breakpoint-down(lg) { column-count: 1; } 
   hr { visibility: hidden; }
   strong { color: #09f; }
   
-  
-  .song-phrase {
-    .chords-row { display: inline-block;  width: 100%; white-space: pre; }
-    .lyrics-row { display: inline-block;  width: 100%; white-space: pre;}
-  }
+  .phrase .chords-row, .chords-row { display: inline-block;  width: 100%; white-space: pre-wrap; word-break: break-word; }
+  .phrase .lyrics-row, .lyrics-row { display: inline-block;  width: 100%; white-space: pre-wrap; word-break: break-word; }
   
   strong .chord-tooltip {
     display: inline-block;
@@ -502,16 +494,16 @@ div.pan-buttons-row{
   strong:hover .chord-tooltip {
     visibility: visible;
   }
+  @include media-breakpoint-down(xl) { column-count: 2; }  
+  @include media-breakpoint-down(lg) { column-count: 1; }   
 }
 
 .fancy-columns-pre {
   /* max-height: 75%!important; */
-  column-count: 3;
   column-gap: 40px;
   word-break: break-word;
   white-space: normal;
   font-family: var(--bs-font-monospace);
-  font-size: 0.85em;
   direction: ltr /* rtl:ignore */;
   white-space: pre-wrap;
   unicode-bidi: bidi-override;

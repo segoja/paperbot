@@ -47,7 +47,6 @@ export default class PbReaderComponent extends Component {
   @tracked activeSong = [];
   @action setActiveSong(){
     if(this.selected){
-      console.debug('Custom selection active...');
       this.activeSong = this.selected;
       console.debug('Custom selection active...');
     } else {
@@ -102,16 +101,14 @@ export default class PbReaderComponent extends Component {
   @action moreColumn() {
     if(this.currentSong){
       if (this.currentSong.columns < 5) {
-        this.currentSong.columns =
-          Number(this.currentSong.columns) + 1;
+        this.currentSong.columns = Number(this.currentSong.columns) + 1;
       }
     }
   }
 
   @action lessColumn() {
     if (this.currentSong.columns > 0) {
-      this.currentSong.columns =
-        Number(this.currentSong.columns) - 1;
+      this.currentSong.columns = Number(this.currentSong.columns) - 1;
     }
   }
 
@@ -139,14 +136,15 @@ export default class PbReaderComponent extends Component {
   }
 
   @action addZoom() {
-    if(this.currentSong){
-      this.currentSong.zoomLevel = Number(this.currentSong.zoomLevel) + Number(0.025);
+    if(this.currentSong){      
+      this.currentSong.zoomLevel = Number(this.currentSong.zoomLevel) + Number(0.25);
+      let lyricsContainers = document.getElementsByClassName(this.currentSong.viewMode? 'fancy-columns':'fancy-columns-pre'); 
     }
   }
 
   @action subZoom() {
     if(this.currentSong){
-      this.currentSong.zoomLevel = Number(this.currentSong.zoomLevel) - Number(0.025);
+      this.currentSong.zoomLevel = Number(this.currentSong.zoomLevel) - Number(0.25);
     }
   }
   
@@ -199,7 +197,7 @@ export default class PbReaderComponent extends Component {
     const metrics = context.measureText(text);
     return metrics.width;
   }
-  
+    
   @tracked calculating = false;
   @action autoAdjust(){
     //console.log(chordictionary);
@@ -209,66 +207,7 @@ export default class PbReaderComponent extends Component {
     let lyrics = document.getElementById('bodycontainer');
     let chords = lyrics.querySelectorAll('strong');
     //console.debug(chords);
-    
-   if(!this.calculating && this.currentSong.viewMode){
-      /* this.calculating = true;
-      let idcounter = 0;
-      chords.forEach((chord)=>{
-        //console.log(chord);
-        let info = myInstrument.getChordsList(chord.innerText,4);
-        
-        if(info.chordList.length > 0){
-          let tooltip = document.createElement("div");
-          tooltip.className = 'chord-tooltip';
-          // let result = chordictionary.parseChord(chord.innerText);
-          info.chordList.forEach((variation)=>{
-            let subElement = document.createElement("div");
-            subElement.className = 'chord-variation';
-            subElement.id = 'variation'+idcounter;
-            subElement.innerHTML = idcounter;
-            // let htmlContent = myInstrument.getChordLayout(variation.tab.join(""));
-            subElement.innerHTML = idcounter;
-            tooltip.appendChild(subElement);
 
-            idcounter++
-          });
-        
-          chord.appendChild(tooltip);
-        }
-        
-        // let htmlContent = myInstrument.getChordLayout(result.tab.join(""), result.chords[0]);        
-        // tooltip.innerHTML = 'Text';
-      }); */
-     /* 
-      
-        let info = myInstrument.getChordsList(chord.innerText,4);
-        if(info.chordList.length > 0){
-          info.chordList.forEach((variation)=>{
-            let subElement = document.createElement("div");
-            subElement.id = 'variation'+idcounter;
-            let stringNr = 1;
-            let tabArray = []:
-            variation.tab.forEach((fret)=>{
-              let pair = (stringNr, fret); 
-              tabArray.push(pair);
-            });
-            console.log(pair);
-            //let htmlContent = myInstrument.getChordLayout(variation.tab.join(""));
-            //tooltip.innerHTML += htmlContent;
-             vexchords.draw(
-                sel,
-                {
-                  chord: [[1, 2], [2, 1], [3, 2], [4, 0], [5, 'x'], [6, 'x']]
-                },
-                { width: 200, height: 240, defaultColor: '#745' }
-              ); 
-        
-            idcounter++
-            
-          });
-        }
-      */
-    }
     if(this.currentSong){
       if(this.currentSong.lyrics){        
         let songLines = this.currentSong.lyrics.replace(/\r/g,'').split('\n');
@@ -276,99 +215,141 @@ export default class PbReaderComponent extends Component {
           return b.length - a.length;
         });
         let numLines = songLines.length;
-        // console.log('Number of lines: '+numLines);
         let longestLine =  sortedSongLines[0];  
-        
-        // var lyricsContainers = document.getElementsByClassName('card-body');
         var lyricsContainers = document.getElementsByClassName(this.currentSong.viewMode? 'fancy-columns':'fancy-columns-pre'); 
         
         if(lyricsContainers.length > 0){
           let fontDetails = this.getCanvasFont(lyricsContainers[0]);
+          
+          let fontSize = this.getCssStyle(lyricsContainers[0], 'font-size').replace('px', '');
+          console.log(fontSize);
+          
           // 40px is the column separation
           let lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
           let lineHeightStyle = window.getComputedStyle(lyricsContainers[0], null).getPropertyValue('line-height');
           let lineHeight = parseFloat(lineHeightStyle);
           
-          // console.log('Line width: '+lineWidth+'px');
-          // console.log('Line height: '+lineHeight+'px'); 
+          console.log(lyricsContainers[0].className);
+          
+          let totalHeight = lineHeight * numLines;
           
           let container = document.getElementById('bodycontainer');
           if(container){
-            // console.log('The container dimensions are: '+container.offsetWidth+'x'+container.offsetHeight+'px');
-            // 24px is the external padding.
-            let numColumns = Math.floor((container.offsetWidth - 24) / lineWidth);
-            // console.log('Number of columns: '+ numColumns);
+            // console.log('The container dimensions are: '+(container.offsetWidth -24)+'x'+(container.offsetHeight -32)+'px');
+            // 24px is the left+right total external padding.
+            let numColumns = Math.ceil((container.offsetWidth - 24) / lineWidth);
+            let optimalColWidth = (container.offsetWidth - 24) / numColumns;            
+            // 34 is the sum of upper and lower margins of the container
+            let containerHeight = container.offsetHeight - 34;
+            let optimalNumLines = Math.floor(containerHeight / lineHeight);            
+            let linesPerColumn = Math.floor(numLines / numColumns);
+            let columnHeight = (linesPerColumn - 3 )* lineHeight;
+         
+            let widthCoef = (lineWidth / optimalColWidth) * 100;            
+            let heightCoef = (columnHeight / containerHeight) * 100;
+            let widthDiff = Math.abs(Math.floor(optimalColWidth - lineWidth));
+            let TotalWDiff = (container.offsetWidth - 24) - ((lineWidth * numColumns)+(40*(numColumns-1)));
             
-            let actualColWidth = container.offsetWidth / numColumns;
-            // console.log('Actual col width: '+ actualColWidth +'px');
+            let defFontsize = this.getCssStyle(document.body, 'font-size').replace('px', ''); 
+            console.log('Default font size: '+defFontsize);            
             
-            let optimalNumLines = Math.floor(container.offsetHeight / lineHeight);
+            let zoomLevel = (((container.offsetWidth - 24) * fontSize) / lineWidth) / defFontsize;
             
-            let containerHeight = container.offsetHeight;
-            
-            // console.log('Optimal num lines to fill height: '+ optimalNumLines);
-            
-            let linesPerColumn = numLines / numColumns;
-            // console.log('Lines per column: '+ linesPerColumn);
-            
-            let linesRatio = optimalNumLines / linesPerColumn;
-            let widthRatio = actualColWidth / lineWidth;
-            
-            // console.log('Lines ratio opt/colL: '+ linesRatio);
-            // console.log('Width ratio: '+ widthRatio);
-                        
-            this.currentSong.columns = numColumns;
-            
-            let fontsize = this.getCssStyle(container, 'font-size');
-            
-            let colHeight = numColumns * lineHeight;
-            let optimalColHeight = optimalNumLines * lineHeight;
-            
-            // let percentHeight = (colHeight * 100) / optimalColHeight;
-            let percentHeight = (linesPerColumn * 100) / ( optimalNumLines -3 );
-            let percentWidth= (lineWidth * 100) / actualColWidth;
-            
-            let totalPercentWidth = (actualColWidth * numColumns) * 100 / container.offsetWidth;
-            
-            let zoomLevel = (this.currentSong.zoomLevel * ( optimalNumLines -3 )) / linesPerColumn;
-            
-            let diffPercent = percentHeight - percentWidth;
-            
-            //if(percentHeight > 90 && diffPercent > 10){
-            //  zoomLevel = (this.currentSong.zoomLevel * (optimalNumLines -3)) / linesPerColumn;
-            //}
-            
-            // console.log('All columns width %: '+totalPercentWidth);            
-            // console.log('Estimated font size: '+zoomLevel);
-            // console.log('Percent of the col width filled: '+percentWidth);
-            // console.log('Percent of the height filled: '+percentHeight);
-            
-            
-            if(percentHeight < percentWidth || percentWidth < 90){
-              //if(percentWidth < 90){
-                this.currentSong.zoomLevel += 0.025;
-                later(() => {
-                  this.autoAdjust(); 
-                }, 1);
-              //} else {
-                // this.currentSong.zoomLevel = zoomLevel; 
-             // }
-            } else {
-              if(percentHeight > percentWidth){
-                this.currentSong.zoomLevel = zoomLevel;
-                if(totalPercentWidth < 80){
-                  this.currentSong.columns = numColumns +1;                 
-                }
-                if(percentWidth > 85){
-                  this.currentSong.zoomLevel -= 0.025;
-                }
-              }
+            console.log('Zoom level: '+zoomLevel);
+            if(widthCoef < 80 || heightCoef < 50){
+              this.currentSong.zoomLevel = zoomLevel;
             }
             
+            this.currentSong.columns = numColumns;  
             
-            later(() => {
-              this.calculating = false;
-            }, 5000);
+            /*if(heightCoef > 100){
+              this.currentSong.zoomLevel -= 0.025;
+              this.currentSong.columns += 1; 
+            }*/ 
+            
+            //later(() => {
+              // if(columnHeight > containerHeight || lineWidth > optimalColWidth){
+                do {
+                  
+                  console.log('=============================');
+                  console.log('Initial font size: '+fontSize+'px');
+                  console.log('Container height: '+ containerHeight +'px');
+                  console.log('Column height: '+ columnHeight +'px');
+                  console.log('Height coef: '+heightCoef+'%');
+                  console.log('Number of columns: '+ this.currentSong.columns);
+                  console.log('Container width: '+ (container.offsetWidth - 24) +'px');
+                  console.log('Optimal column width: '+optimalColWidth+'px');              
+                  console.log('Actual line width: '+lineWidth+'px');
+                  console.log('Width coef: '+widthCoef+'%');
+                  console.log('Col Width Diff: '+widthDiff+'px');
+                  console.log('Total Width Diff: '+TotalWDiff+'px');
+                  console.log('Zoom level: '+this.currentSong.zoomLevel+'%');
+                  
+                  lyricsContainers = document.getElementsByClassName(this.currentSong.viewMode? 'fancy-columns':'fancy-columns-pre'); 
+                  fontDetails = this.getCanvasFont(lyricsContainers[0]);
+                  fontSize = this.getCssStyle(lyricsContainers[0], 'font-size').replace('px', '');
+                  
+                  lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
+                  lineHeightStyle = window.getComputedStyle(lyricsContainers[0], null).getPropertyValue('line-height');
+                  lineHeight = parseFloat(lineHeightStyle);
+                  
+                  totalHeight = lineHeight * numLines;
+                  numColumns = Math.ceil((container.offsetWidth - 24) / lineWidth);
+                  
+                  optimalColWidth = (container.offsetWidth - 24) / numColumns;
+                  
+                  // 34 is the sum of upper and lower margins of the container
+                  containerHeight = container.offsetHeight - 34;
+                  
+                  optimalNumLines = Math.floor(containerHeight / lineHeight);
+                                    
+                  linesPerColumn = Math.floor(numLines / numColumns);
+                  
+                  columnHeight = (linesPerColumn - 3) * lineHeight; 
+                  
+                  widthCoef = (lineWidth / optimalColWidth) * 100;            
+                  heightCoef = (columnHeight / containerHeight) * 100;
+                  widthDiff = Math.abs(Math.floor(optimalColWidth - lineWidth));
+                  TotalWDiff = (container.offsetWidth - 24) - ((lineWidth * numColumns)+(40*(numColumns-1)));
+                  
+                  zoomLevel = (((optimalColWidth - 24) * fontSize) / lineWidth) / defFontsize;
+
+                     
+                  if(columnHeight > containerHeight){
+                    if(widthCoef < 80 && heightCoef > 90){
+                      this.currentSong.columns =  numColumns + 1;
+                      if(lineWidth < optimalColWidth){
+                        this.currentSong.zoomLevel = zoomLevel + 0.25;
+                      } else {
+                        this.currentSong.zoomLevel -= 0.5;
+                      }
+                    } else {
+                      this.currentSong.zoomLevel -= 0.5
+                    }
+                  }
+                  
+                  if(lineWidth > optimalColWidth || (lineWidth * numColumns) > (container.offsetWidth - 24)){
+                    // this.currentSong.zoomLevel = zoomLevel - 0.25;
+                  }
+                  if(heightCoef < 90 && numColumns > 1){
+                    this.currentSong.columns = numColumns - 1; 
+                    this.currentSong.zoomLevel -= 0.5;                     
+                  }
+                  if(lineWidth < optimalColWidth){
+                    this.currentSong.zoomLevel += 0.25;
+                  }
+
+                  // this.currentSong.zoomLevel = zoomLevel;
+                  // this.currentSong.columns = numColumns;
+
+                  /*if(this.currentSong.zoomLevel * ( optimalNumLines ) > linesPerColumn){
+                    zoomLevel = (this.currentSong.zoomLevel * ( optimalNumLines - 3)) / linesPerColumn;
+                  }*/
+                
+                } while (widthCoef < 90);
+              //}
+              /*this.calculating = false;
+            }, 50);*/
           } 
         }        
         // console.log('Longest line: ',longestLine);
