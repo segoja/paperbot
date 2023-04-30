@@ -20,7 +20,10 @@ export default class ChordParser extends Helper {
     content = content.replace(/\]/g, 'þ]þ');
     content = content.replace(/\{/g, 'þ{þ');
     content = content.replace(/\}/g, 'þ}þ');
+    content = content.replace(/\n/g, 'þ\nþ');
+    content = content.replace(/\r/g, 'þ\rþ');
     content = content.replace(/\þ/g, ' þ ');
+    
     let key = hash.key;
     let mode = hash.mode;
     let processed = '';
@@ -61,9 +64,9 @@ export default class ChordParser extends Helper {
         }
         // console.log(content);
         content = content.toString();
-        content = content.replace(/\r\n?/g, '\n');
-        content = content.replace(/\n\s\n/g, '\n\n');
-        content = content.replace(/\n/g, '<br>\n');
+        content = content.replace(/\s\þ\s\r\s\þ\s\n\s\þ\s?/g, '\n');
+        content = content.replace(/\s\þ\s\n\s\þ\s\s\s\þ\s\n\s\þ\s/g, '\n\n');
+        content = content.replace(/\s\þ\s\n\s\þ\s/g, '<br>\n');
         let lines = content.split('<br>\n');
         
         let isPhrase = false;
@@ -116,9 +119,9 @@ export default class ChordParser extends Helper {
         console.debug('No chords detected, using basic parsing.');
 
         content = content.toString();
-        content = content.replace(/\r\n?/g, '\n');
-        content = content.replace(/\n\s\n/g, '\n\n');
-        content = content.replace(/\n/g, '<br>\n');
+        content = content.replace(/\s\þ\s\r\s\þ\s\n\s\þ\s?/g, '\n');
+        content = content.replace(/\s\þ\s\n\s\þ\s\s\s\þ\s\n\s\þ\s/g, '\n\n');
+        content = content.replace(/\s\þ\s\n\s\þ\s/g, '<br>\n');
         let lines = content.split('<br>\n');
         // console.debug(lines);
 
@@ -145,6 +148,7 @@ export default class ChordParser extends Helper {
     let classified = [];
     if(chordLines.length > 0){
       chordLines.forEach((chord) => {
+        let niceLine = '';
         // console.log(chord.match(/\<\/strong\>/g));
         if(chord.includes('</strong>')){
           if(chord.match(/\<\/strong\>/g).length > 1){
@@ -160,9 +164,12 @@ export default class ChordParser extends Helper {
             // console.log(chord);
             let idLine = '<strong class="chord" id="chordId'+this.idCounter+'">'+chord+'</strong>';
             this.idCounter++
-            classified.push(idLine);
+            niceLine += idLine;
           }
+        } else {
+          niceLine += chord;
         }
+        classified.push(niceLine);
       });
       // console.debug(classified);
       return classified.join("").toString();

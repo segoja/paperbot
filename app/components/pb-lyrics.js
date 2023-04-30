@@ -52,23 +52,36 @@ export default class PbLyricsComponent extends Component {
     this.transpose(-1);
   }
 
-  @action transpose(step){
+  @action transpose(step){    
     if(this.args.song.lyrics){
-      let content = Transposer.transpose(this.args.song.lyrics);
-      if (!isNaN(step)) {
+      let content = String(this.args.song.lyrics);
+      content = content.replace(/\(/g, 'þ(þ');
+      content = content.replace(/\)/g, 'þ)þ');
+      content = content.replace(/\[/g, 'þ[þ');
+      content = content.replace(/\]/g, 'þ]þ');
+      content = content.replace(/\{/g, 'þ{þ');
+      content = content.replace(/\}/g, 'þ}þ');
+      content = content.replace(/\n/g, 'þ\nþ');
+      content = content.replace(/\r/g, 'þ\rþ');
+      content = content.replace(/\þ/g, ' þ ');      
+      content = Transposer.transpose(content);
+      
+      if (!isNaN(step)) {        
         content = content.up(step);
         this.args.song.transSteps += step;
-        this.args.song.lyrics = String(content);
+        content = String(content);
+        content = content.replace(/\s\þ\s/g, '');
+        this.args.song.lyrics = content;
       }
     }
   }
 
   @action addZoom() {
-    this.args.song.zoomLevel = Number(this.args.song.zoomLevel) + Number(0.025);
+    this.args.song.zoomLevel = Number(this.args.song.zoomLevel) + Number(0.05);
   }
 
   @action subZoom() {
-    this.args.song.zoomLevel = Number(this.args.song.zoomLevel) - Number(0.025);
+    this.args.song.zoomLevel = Number(this.args.song.zoomLevel) - Number(0.05);
   }
   
   @action modeSwitch(){

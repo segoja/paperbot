@@ -42,7 +42,7 @@
           </div>
         </div>
         <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
-          <div class="row mx-0 flex-fill listframe-reader">
+          <div class="row m-0 flex-fill mh-100 listframe-reader">
               {{#if this.restore}}
                 {{#if this.currentSong}}
                   <h5>{{this.currentSong.title}}</h5>
@@ -51,7 +51,6 @@
                     .fancy-columns {
                       font-size: {{this.currentSong.zoomLevel}}em!important; 
                       column-count: {{this.currentSong.columns}}!important;
-                      column-rule-width: auto;
                     }   
                   </style>
                   {{#if this.currentSong.viewMode}} 
