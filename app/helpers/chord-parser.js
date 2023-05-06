@@ -22,6 +22,8 @@ export default class ChordParser extends Helper {
     content = content.replace(/\}/g, 'þ}þ');
     content = content.replace(/\n/g, 'þ\nþ');
     content = content.replace(/\r/g, 'þ\rþ');
+    content = content.replace(/\-/g, 'þ-þ');
+    content = content.replace(/\,/g, 'þ,þ');
     content = content.replace(/\þ/g, ' þ ');
     
     let key = hash.key;

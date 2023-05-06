@@ -43,23 +43,24 @@ export default class PbReaderComponent extends Component {
     return this.activeSong;
   }
 
-
   @tracked activeSong = [];
-  @action setActiveSong(){
-    if(this.selected){
+  @action setActiveSong() {
+    if (this.selected) {
       this.activeSong = this.selected;
       console.debug('Custom selection active...');
     } else {
-      let requests = this.queueHandler.pendingSongs
-      if(requests.length > 0){
-        let first = requests.find(item => item!==undefined);
-        if(first){
-          first.get('song').then((song)=>{
-            if(song){
+      let requests = this.queueHandler.pendingSongs;
+      if (requests.length > 0) {
+        let first = requests.find((item) => item !== undefined);
+        if (first) {
+          first.get('song').then((song) => {
+            if (song) {
               this.activeSong = song;
-                console.debug('First request active...');
+              console.debug('First request active...');
             } else {
-              console.debug('The first pending request in queue has no lyrics available.');
+              console.debug(
+                'The first pending request in queue has no lyrics available.'
+              );
             }
           });
         }
@@ -76,7 +77,7 @@ export default class PbReaderComponent extends Component {
   }
 
   @action selectSong(song) {
-    if(this.currentSong.hasDirtyAttributes){
+    if (this.currentSong.hasDirtyAttributes) {
       this.currentSong.rollbackAttributes();
     }
     this.selected = song;
@@ -87,19 +88,19 @@ export default class PbReaderComponent extends Component {
   }
 
   @action resetZoom() {
-    if(this.currentSong){
+    if (this.currentSong) {
       this.currentSong.zoomLevel = Number(0.85);
     }
   }
 
   @action autoColumn() {
-    if(this.currentSong){
+    if (this.currentSong) {
       this.currentSong.columns = 0;
     }
   }
 
   @action moreColumn() {
-    if(this.currentSong){
+    if (this.currentSong) {
       if (this.currentSong.columns < 5) {
         this.currentSong.columns = Number(this.currentSong.columns) + 1;
       }
@@ -113,62 +114,67 @@ export default class PbReaderComponent extends Component {
   }
 
   @action upKey() {
-    if(this.currentSong){
+    if (this.currentSong) {
       this.transpose(1);
     }
   }
 
   @action downKey() {
-    if(this.currentSong){
+    if (this.currentSong) {
       this.transpose(-1);
     }
   }
 
-  @action transpose(step){    
-    if(this.currentSong.lyrics){
+  @action transpose(step) {
+    if (this.currentSong.lyrics) {
       let content = String(this.currentSong.lyrics);
-      content = content.replace(/\(/g, 'þ(þ');
-      content = content.replace(/\)/g, 'þ)þ');
-      content = content.replace(/\[/g, 'þ[þ');
-      content = content.replace(/\]/g, 'þ]þ');
-      content = content.replace(/\{/g, 'þ{þ');
-      content = content.replace(/\}/g, 'þ}þ');
-      content = content.replace(/\n/g, 'þ\nþ');
-      content = content.replace(/\r/g, 'þ\rþ');
-      content = content.replace(/\þ/g, ' þ ');      
-      content = Transposer.transpose(content);
+      content = content.replace(/\(/g, 'Ã¾(Ã¾');
+      content = content.replace(/\)/g, 'Ã¾)Ã¾');
+      content = content.replace(/\[/g, 'Ã¾[Ã¾');
+      content = content.replace(/\]/g, 'Ã¾]Ã¾');
+      content = content.replace(/\{/g, 'Ã¾{Ã¾');
+      content = content.replace(/\}/g, 'Ã¾}Ã¾');
+      content = content.replace(/\n/g, 'Ã¾\nÃ¾');
+      content = content.replace(/\r/g, 'Ã¾\rÃ¾');
+      content = content.replace(/\-/g, 'Ã¾-Ã¾');
+      content = content.replace(/\,/g, 'Ã¾,Ã¾');
+      content = content.replace(/\Ã¾/g, ' Ã¾ ');
       
-      if (!isNaN(step)) {        
+      content = Transposer.transpose(content);
+
+      if (!isNaN(step)) {
         content = content.up(step);
         this.currentSong.transSteps += step;
         content = String(content);
-        content = content.replace(/\s\þ\s/g, '');
+        content = content.replace(/\s\Ã¾\s/g, '');
         this.currentSong.lyrics = content;
       }
     }
   }
 
   @action addZoom() {
-    if(this.currentSong){      
-      this.currentSong.zoomLevel = Number(this.currentSong.zoomLevel) + Number(0.05);
+    if (this.currentSong) {
+      this.currentSong.zoomLevel =
+        Number(this.currentSong.zoomLevel) + Number(0.05);
     }
   }
 
   @action subZoom() {
-    if(this.currentSong){
-      this.currentSong.zoomLevel = Number(this.currentSong.zoomLevel) - Number(0.05);
+    if (this.currentSong) {
+      this.currentSong.zoomLevel =
+        Number(this.currentSong.zoomLevel) - Number(0.05);
     }
   }
-  
-  @action modeSwitch(){
-    if(this.currentSong){
+
+  @action modeSwitch() {
+    if (this.currentSong) {
       this.currentSong.viewMode = !this.currentSong.viewMode;
     }
   }
-  
+
   @tracked saving = false;
   @action doneEditing() {
-    if(this.currentSong){
+    if (this.currentSong) {
       this.currentSong.save();
       this.saving = true;
       later(() => {
@@ -176,11 +182,9 @@ export default class PbReaderComponent extends Component {
       }, 500);
     }
   }
-  
-  
-  
+
   // Lyrics auto-adjustment functions:
-  
+
   getCssStyle(element, prop) {
     return window.getComputedStyle(element, null).getPropertyValue(prop);
   }
@@ -189,219 +193,217 @@ export default class PbReaderComponent extends Component {
     const fontWeight = this.getCssStyle(el, 'font-weight') || 'normal';
     const fontSize = this.getCssStyle(el, 'font-size') || '16px';
     const fontFamily = this.getCssStyle(el, 'font-family') || 'Times New Roman';
-    
+
     return `${fontWeight} ${fontSize} ${fontFamily}`;
-  }      
-          
+  }
+
   /**
-    * Uses canvas.measureText to compute and return the width and height of the given text of given font in pixels.
-    * 
-    * @param {String} text The text to be rendered.
-    * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
-    * 
-    * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
-    */
+   * Uses canvas.measureText to compute and return the width and height of the given text of given font in pixels.
+   *
+   * @param {String} text The text to be rendered.
+   * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
+   *
+   * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
+   */
   getTextWidth(text, font) {
     // re-use canvas object for better performance
-    const canvas = this.getTextWidth.canvas || (this.getTextWidth.canvas = document.createElement("canvas"));
-    const context = canvas.getContext("2d");
+    const canvas = this.getTextWidth.canvas || (this.getTextWidth.canvas = document.createElement('canvas'));
+    const context = canvas.getContext('2d');
     context.font = font;
     const metrics = context.measureText(text);
     return metrics.width;
   }
-    
+
   @tracked calculating = false;
-  @action autoAdjust(){
+  @action autoAdjust() {
     let myInstrument = new chordictionary.Instrument('EADGBE', 24, 7, 4);
 
     let lyrics = document.getElementById('bodycontainer');
     let chords = lyrics.querySelectorAll('strong');
 
-    if(this.currentSong){
-      if(this.currentSong.lyrics){        
-        let songLines = this.currentSong.lyrics.replace(/\r/g,'').split('\n');
-        let sortedSongLines = songLines.sort(function(a, b) { 
-          return b.length - a.length;
-        });
+    if (this.currentSong) {
+      if (this.currentSong.lyrics) {
+        let songLines = this.currentSong.lyrics.replace(/\r/g, '').split('\n');
+        let sortedSongLines = songLines.sort(function (a, b) { return b.length - a.length; });
         let numLines = songLines.length;
-        let longestLine =  sortedSongLines[0];  
-        var lyricsContainers = document.getElementsByClassName(this.currentSong.viewMode? 'fancy-columns':'fancy-columns-pre'); 
-        
-        if(lyricsContainers.length > 0){
+        let longestLine = sortedSongLines[0];
+        var lyricsContainers = document.getElementsByClassName(this.currentSong.viewMode ? 'fancy-columns' : 'fancy-columns-pre');
+
+        if (lyricsContainers.length > 0) {
           let fontDetails = this.getCanvasFont(lyricsContainers[0]);
-          
-          let fontSize = this.getCssStyle(lyricsContainers[0], 'font-size').replace('px', '');
+
+          let fontSize = this.getCssStyle(lyricsContainers[0],'font-size')
+          fontSize = fontSize.replace('px', '');
           console.log(fontSize);
-          
+
           // 40px is the column separation
           let lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
-          let lineHeightStyle = window.getComputedStyle(lyricsContainers[0], null).getPropertyValue('line-height');
+          let lineHeightStyle = window.getComputedStyle(lyricsContainers[0], null);
+          lineHeightStyle = lineHeightStyle.getPropertyValue('line-height');
           let lineHeight = parseFloat(lineHeightStyle);
-          
+
           console.log(lyricsContainers[0].className);
-          
+
           let totalHeight = lineHeight * numLines;
-          
+
           let container = document.getElementById('bodycontainer');
-          if(container){
+          if (container) {
             // console.log('The container dimensions are: '+(container.offsetWidth -24)+'x'+(container.offsetHeight -32)+'px');
             // 24px is the left+right total external padding.
             let numColumns = Math.ceil((container.offsetWidth - 24) / lineWidth);
-            let optimalColWidth = (container.offsetWidth - 24) / numColumns;    
-            let currentColWidth = (container.offsetWidth - 24) / this.currentSong.columns;    
+            let optimalColWidth = (container.offsetWidth - 24) / numColumns;
+            let currentColWidth = (container.offsetWidth - 24) / this.currentSong.columns;
 
-            if(currentColWidth > optimalColWidth){
+            if (currentColWidth > optimalColWidth) {
               currentColWidth = currentColWidth / 2;
             }
-            
+
             // 34 is the sum of upper and lower margins of the container
             let containerHeight = container.offsetHeight - 34;
-            let optimalNumLines = Math.floor(containerHeight / lineHeight);            
+            let optimalNumLines = Math.floor(containerHeight / lineHeight);
             let linesPerColumn = Math.floor(numLines / numColumns);
-            let columnHeight = (linesPerColumn - 3 )* lineHeight;
-         
-            let widthCoef = (lineWidth / optimalColWidth) * 100;            
+            let columnHeight = (linesPerColumn - 3) * lineHeight;
+
+            let widthCoef = (lineWidth / optimalColWidth) * 100;
             let heightCoef = (columnHeight / containerHeight) * 100;
             let widthDiff = Math.abs(Math.floor(optimalColWidth - lineWidth));
-            let TotalWDiff = (container.offsetWidth - 24) - ((lineWidth * numColumns)+(40*(numColumns-1)));
-            
-            let defFontsize = this.getCssStyle(document.body, 'font-size').replace('px', ''); 
-            console.log('Default font size: '+defFontsize);            
-            
-            let zoomLevel = (((container.offsetWidth - 24) * fontSize) / lineWidth) / defFontsize;
-            
-            if(zoomLevel > 2.5){
+            let TotalWDiff = container.offsetWidth - 24 - (lineWidth * numColumns + 40 * (numColumns - 1));
+
+            let defFontsize = this.getCssStyle(document.body, 'font-size').replace('px', '');
+            console.log('Default font size: ' + defFontsize);
+
+            let zoomLevel = ((container.offsetWidth - 24) * fontSize) / lineWidth / defFontsize;
+
+            if (zoomLevel > 2.5) {
               zoomLevel = 2.5;
             }
-            
+
             let finalFontSize = zoomLevel * defFontsize;
-            
-            console.log('Zoom level: '+zoomLevel);
-            if(widthCoef < 80 || heightCoef < 50 ){
-              if(finalFontSize > defFontsize || zoomLevel <= 2){
-                if(zoomLevel >= 2.5 ){
+
+            console.log('Zoom level: ' + zoomLevel);
+            if (widthCoef < 80 || heightCoef < 50) {
+              if (finalFontSize > defFontsize || zoomLevel <= 2) {
+                if (zoomLevel >= 2.5) {
                   this.currentSong.zoomLevel = zoomLevel;
-                  console.debug('Tweaked Zoom level 1: '+this.currentSong.zoomLevel+'em');
+                  console.debug('Tweaked Zoom level 1: ' + this.currentSong.zoomLevel + 'em');
                 }
               }
             }
-            
-            let finalLineWidth = this.getTextWidth(longestLine, this.getCanvasFont(lyricsContainers[0]));
-            
-            if(numColumns < 6){
-              this.currentSong.columns = numColumns;  
+
+            let finalLineWidth = this.getTextWidth( longestLine, this.getCanvasFont(lyricsContainers[0]));
+
+            if (numColumns < 6) {
+              this.currentSong.columns = numColumns;
             }
 
-                do {
-                  
-                  lyricsContainers = document.getElementsByClassName(this.currentSong.viewMode? 'fancy-columns':'fancy-columns-pre'); 
-                  fontDetails = this.getCanvasFont(lyricsContainers[0]);
-                  fontSize = this.getCssStyle(lyricsContainers[0], 'font-size').replace('px', '');
-                  
-                  lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
-                  lineHeightStyle = window.getComputedStyle(lyricsContainers[0], null).getPropertyValue('line-height');
-                  lineHeight = parseFloat(lineHeightStyle);
-                  
-                  totalHeight = lineHeight * numLines;
-                  numColumns = Math.ceil((container.offsetWidth - 24) / lineWidth);
-                     
-                  optimalColWidth = (container.offsetWidth - 24) / numColumns;
-                  currentColWidth = (container.offsetWidth - 24) / this.currentSong.columns;
-                  
-                  if(currentColWidth > optimalColWidth){
-                    currentColWidth = currentColWidth / 2;
-                  }
-                  
-                  // 34 is the sum of upper and lower margins of the container
-                  containerHeight = container.offsetHeight - 34;
-                  
-                  optimalNumLines = Math.floor(containerHeight / lineHeight);
-                                    
-                  linesPerColumn = Math.floor(numLines / numColumns);
-                  
-                  columnHeight = (linesPerColumn - 3) * lineHeight; 
-                  
-                  widthCoef = (lineWidth / optimalColWidth) * 100;            
-                  heightCoef = (columnHeight / containerHeight) * 100;
-                  widthDiff = Math.abs(Math.floor(optimalColWidth - lineWidth));
-                  TotalWDiff = (container.offsetWidth - 24) - ((lineWidth * numColumns)+(40*(numColumns-1)));
-                  
-                  zoomLevel = (((optimalColWidth - 24) * fontSize) / lineWidth) / defFontsize;
-                  
-                  if(zoomLevel > 2.5){
-                    zoomLevel = 2.5;
-                  }
-                  
-                  finalFontSize = zoomLevel * defFontsize;   
-                  
-                  if(columnHeight > containerHeight){
-                    if(widthCoef < 60 && heightCoef > 90){
-                      if(numColumns < 5){
-                        this.currentSong.columns =  numColumns + 1;
-                      }
-                      if(lineWidth < optimalColWidth && (zoomLevel + 0.025) <= 2){
-                        this.currentSong.zoomLevel = zoomLevel + 0.025;
-                          console.debug('Tweaked Zoom level 2: '+this.currentSong.zoomLevel+'em');
-                      } else {
-                        if(finalFontSize > defFontsize || this.currentSong.zoomLevel >= 2.5 ){
-                          this.currentSong.zoomLevel -= 0.05;
-                          console.debug('Tweaked Zoom level 3: '+this.currentSong.zoomLevel+'em');
-                        }
-                      }
-                    } else {
-                      if(finalFontSize > defFontsize || this.currentSong.zoomLevel >= 2.5 ){
-                        this.currentSong.zoomLevel -= 0.25;
-                          console.debug('Tweaked Zoom level 4: '+this.currentSong.zoomLevel+'em');
-                      }
-                    }
-                  }
-                  
-                  if(lineWidth > optimalColWidth || (lineWidth * numColumns) > (container.offsetWidth - 24)){
-                    if(finalFontSize > defFontsize && (zoomLevel - 0.25) <= 2){
-                      this.currentSong.zoomLevel = zoomLevel - 0.25;
-                          console.debug('Tweaked Zoom level 5: '+this.currentSong.zoomLevel+'em');
-                    }
-                  }
-                  if(heightCoef < 90 && numColumns > 1){
-                    if(numColumns < 6){
-                      this.currentSong.columns = numColumns - 1; 
-                    }
-                    if(finalFontSize > defFontsize || this.currentSong.zoomLevel >= 2.5 ){
-                      this.currentSong.zoomLevel -= 0.25;
-                      console.debug('Tweaked Zoom level 6: '+this.currentSong.zoomLevel+'em');
-                    }
-                  }
-                  if(lineWidth < optimalColWidth && this.currentSong.zoomLevel <= 2){
-                    this.currentSong.zoomLevel += 0.025;
-                    console.debug('Tweaked Zoom level 7: '+this.currentSong.zoomLevel+'em');
-                  }
-                
-                  finalLineWidth = this.getTextWidth(longestLine, this.getCanvasFont(lyricsContainers[0]));
-                  
+            do {
+              lyricsContainers = document.getElementsByClassName( this.currentSong.viewMode ? 'fancy-columns' : 'fancy-columns-pre');
+              fontDetails = this.getCanvasFont(lyricsContainers[0]);
+              fontSize = this.getCssStyle(lyricsContainers[0],'font-size').replace('px', '');
 
-                  
-                  console.log('=============================');
-                  console.log('Initial font size: '+fontSize+'px');
-                  console.log('Container height: '+ containerHeight +'px');
-                  console.log('Column height: '+ columnHeight +'px');
-                  console.log('Height coef: '+heightCoef+'%');
-                  console.log('Number of columns: '+ this.currentSong.columns);
-                  console.log('Container width: '+ (container.offsetWidth - 24) +'px');
-                  console.log('Optimal column width: '+optimalColWidth+'px');           
-                  console.log('Current column width: '+currentColWidth+'px');              
-                  console.log('Actual line width: '+lineWidth+'px');
-                  console.log('Width coef: '+widthCoef+'%');
-                  console.log('Col Width Diff: '+widthDiff+'px');
-                  console.log('Total Width Diff: '+TotalWDiff+'px');
-                  console.log('Zoom level: '+this.currentSong.zoomLevel+'%');
-                  
-                  console.log('Last font size: '+finalFontSize+'px');
-                  console.log('Last line width: '+finalLineWidth+'px');
-                  
-                
-                } while (currentColWidth > optimalColWidth && heightCoef > 70);
-          } 
-        }        
+              lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
+              lineHeightStyle = window.getComputedStyle(lyricsContainers[0], null).getPropertyValue('line-height');
+              lineHeight = parseFloat(lineHeightStyle);
+
+              totalHeight = lineHeight * numLines;
+              numColumns = Math.ceil((container.offsetWidth - 24) / lineWidth);
+
+              optimalColWidth = (container.offsetWidth - 24) / numColumns;
+              currentColWidth = (container.offsetWidth - 24) / this.currentSong.columns;
+
+              if (currentColWidth > optimalColWidth) {
+                currentColWidth = currentColWidth / 2;
+              }
+
+              // 34 is the sum of upper and lower margins of the container
+              containerHeight = container.offsetHeight - 34;
+
+              optimalNumLines = Math.floor(containerHeight / lineHeight);
+
+              linesPerColumn = Math.floor(numLines / numColumns);
+
+              columnHeight = (linesPerColumn - 3) * lineHeight;
+
+              widthCoef = (lineWidth / optimalColWidth) * 100;
+              heightCoef = (columnHeight / containerHeight) * 100;
+              widthDiff = Math.abs(Math.floor(optimalColWidth - lineWidth));
+              TotalWDiff = container.offsetWidth - 24 - (lineWidth * numColumns + 40 * (numColumns - 1));
+
+              zoomLevel = ((optimalColWidth - 24) * fontSize) / lineWidth / defFontsize;
+
+              if (zoomLevel > 2.5) {
+                zoomLevel = 2.5;
+              }
+
+              finalFontSize = zoomLevel * defFontsize;
+
+              if (columnHeight > containerHeight) {
+                if (widthCoef < 60 && heightCoef > 90) {
+                  if (numColumns < 5) {
+                    this.currentSong.columns = numColumns + 1;
+                  }
+                  if (lineWidth < optimalColWidth && zoomLevel + 0.025 <= 2) {
+                    this.currentSong.zoomLevel = zoomLevel + 0.025;
+                    console.debug('Tweaked Zoom level 2: ' + this.currentSong.zoomLevel + 'em');
+                  } else {
+                    if (finalFontSize > defFontsize || this.currentSong.zoomLevel >= 2.5) {
+                      this.currentSong.zoomLevel -= 0.05;
+                      console.debug('Tweaked Zoom level 3: ' + this.currentSong.zoomLevel + 'em');
+                    }
+                  }
+                } else {
+                  if (finalFontSize > defFontsize || this.currentSong.zoomLevel >= 2.5) {
+                    this.currentSong.zoomLevel -= 0.25;
+                    console.debug('Tweaked Zoom level 4: ' +this.currentSong.zoomLevel +'em');
+                  }
+                }
+              }
+
+              if (lineWidth > optimalColWidth || lineWidth * numColumns > container.offsetWidth - 24) {
+                if (finalFontSize > defFontsize && zoomLevel - 0.25 <= 2) {
+                  this.currentSong.zoomLevel = zoomLevel - 0.25;
+                  console.debug('Tweaked Zoom level 5: ' + this.currentSong.zoomLevel + 'em');
+                }
+              }
+              if (heightCoef < 90 && numColumns > 1) {
+                if (numColumns < 6) {
+                  this.currentSong.columns = numColumns - 1;
+                }
+                if (finalFontSize > defFontsize || this.currentSong.zoomLevel >= 2.5) {
+                  this.currentSong.zoomLevel -= 0.25;
+                  console.debug('Tweaked Zoom level 6: ' + this.currentSong.zoomLevel + 'em');
+                }
+              }
+              if (lineWidth < optimalColWidth && this.currentSong.zoomLevel <= 2) {
+                this.currentSong.zoomLevel += 0.025;
+                console.debug('Tweaked Zoom level 7: ' + this.currentSong.zoomLevel + 'em');
+              }
+
+              finalLineWidth = this.getTextWidth(
+                longestLine,
+                this.getCanvasFont(lyricsContainers[0])
+              );
+
+              console.log('=============================');
+              console.log('Initial font size: ' + fontSize + 'px');
+              console.log('Container height: ' + containerHeight + 'px');
+              console.log('Column height: ' + columnHeight + 'px');
+              console.log('Height coef: ' + heightCoef + '%');
+              console.log('Number of columns: ' + this.currentSong.columns);
+              console.log('Container width: ' + (container.offsetWidth - 24) + 'px');
+              console.log('Optimal column width: ' + optimalColWidth + 'px');
+              console.log('Current column width: ' + currentColWidth + 'px');
+              console.log('Actual line width: ' + lineWidth + 'px');
+              console.log('Width coef: ' + widthCoef + '%');
+              console.log('Col Width Diff: ' + widthDiff + 'px');
+              console.log('Total Width Diff: ' + TotalWDiff + 'px');
+              console.log('Zoom level: ' + this.currentSong.zoomLevel + '%');
+
+              console.log('Last font size: ' + finalFontSize + 'px');
+              console.log('Last line width: ' + finalLineWidth + 'px');
+            } while (currentColWidth > optimalColWidth && heightCoef > 70);
+          }
+        }
       }
     }
   }
