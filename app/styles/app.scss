@@ -464,15 +464,15 @@ div.pan-buttons-row{
   white-space: normal;
   font-family: var(--bs-font-monospace);
   direction: ltr /* rtl:ignore */;
-  white-space: pre-wrap;
+  /* white-space: pre-wrap; */
   word-break: break-word;
   unicode-bidi: bidi-override;
   margin: 1em 0px;
   hr { visibility: hidden; }
   strong { color: #09f; }
   
-  .phrase .chords-row, .chords-row { display: inline-block;  width: 100%; white-space: break-spaces; word-break: break-word; }
-  .phrase .lyrics-row, .lyrics-row { display: inline-block;  width: 100%; white-space: break-spaces; word-break: break-word; }
+  .phrase .chords-row, .chords-row { display: inline-block;  width: 100%; line-break: strict; white-space: break-spaces; word-break: break-word; ::after { } }
+  .phrase .lyrics-row, .lyrics-row { display: inline-block;  width: 100%; line-break: strict; white-space: break-spaces; word-break: break-word; }
   
   strong .chord-tooltip {
     display: inline-block;

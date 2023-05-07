@@ -128,17 +128,20 @@ export default class PbReaderComponent extends Component {
   @action transpose(step) {
     if (this.currentSong.lyrics) {
       let content = String(this.currentSong.lyrics);
-      content = content.replace(/\(/g, 'þ(þ');
-      content = content.replace(/\)/g, 'þ)þ');
-      content = content.replace(/\[/g, 'þ[þ');
-      content = content.replace(/\]/g, 'þ]þ');
-      content = content.replace(/\{/g, 'þ{þ');
-      content = content.replace(/\}/g, 'þ}þ');
-      content = content.replace(/\n/g, 'þ\nþ');
-      content = content.replace(/\r/g, 'þ\rþ');
-      content = content.replace(/\-/g, 'þ-þ');
-      content = content.replace(/\,/g, 'þ,þ');
-      content = content.replace(/\þ/g, ' þ ');
+      content = content.replace(/\(/g, '¶(¶');// \s\¶\s(\s\¶\sDb\s\¶\s\*\s\¶\s\s\¶\s)\s\¶\s
+      content = content.replace(/\)/g, '¶)¶');
+      content = content.replace(/\[/g, '¶[¶');
+      content = content.replace(/\]/g, '¶]¶');
+      content = content.replace(/\{/g, '¶{¶');
+      content = content.replace(/\}/g, '¶}¶');
+      content = content.replace(/\-/g, '¶-¶');
+      content = content.replace(/\,/g, '¶,¶');
+      content = content.replace(/\./g, '¶.¶');
+      content = content.replace(/\*/g, '¶\*¶');
+      content = content.replace(/\+/g, '¶\+¶');
+      content = content.replace(/\n/g, '¶\n¶');
+      content = content.replace(/\r/g, '¶\r¶');
+      content = content.replace(/¶/g, ' ¶ ');
       
       content = Transposer.transpose(content);
 
@@ -146,7 +149,11 @@ export default class PbReaderComponent extends Component {
         content = content.up(step);
         this.currentSong.transSteps += step;
         content = String(content);
-        content = content.replace(/\s\þ\s/g, '');
+        content = content.replace(/\s¶\s\s¶\s/g, '');
+        content = content.replace(/\s¶\s/g, '');
+        content = content.replace(/¶\s/g, '');
+        content = content.replace(/\s¶/g, '');
+        content = content.replace(/¶/g, '');
         this.currentSong.lyrics = content;
       }
     }

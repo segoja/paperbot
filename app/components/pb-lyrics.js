@@ -55,22 +55,31 @@ export default class PbLyricsComponent extends Component {
   @action transpose(step){    
     if(this.args.song.lyrics){
       let content = String(this.args.song.lyrics);
-      content = content.replace(/\(/g, 'þ(þ');
-      content = content.replace(/\)/g, 'þ)þ');
-      content = content.replace(/\[/g, 'þ[þ');
-      content = content.replace(/\]/g, 'þ]þ');
-      content = content.replace(/\{/g, 'þ{þ');
-      content = content.replace(/\}/g, 'þ}þ');
-      content = content.replace(/\n/g, 'þ\nþ');
-      content = content.replace(/\r/g, 'þ\rþ');
-      content = content.replace(/\þ/g, ' þ ');      
+      content = content.replace(/\)/g, '¶)¶');
+      content = content.replace(/\[/g, '¶[¶');
+      content = content.replace(/\]/g, '¶]¶');
+      content = content.replace(/\{/g, '¶{¶');
+      content = content.replace(/\}/g, '¶}¶');
+      content = content.replace(/\-/g, '¶-¶');
+      content = content.replace(/\,/g, '¶,¶');
+      content = content.replace(/\./g, '¶.¶');
+      content = content.replace(/\*/g, '¶\*¶');
+      content = content.replace(/\+/g, '¶\+¶');
+      content = content.replace(/\n/g, '¶\n¶');
+      content = content.replace(/\r/g, '¶\r¶');
+      content = content.replace(/¶/g, ' ¶ ');
+      
       content = Transposer.transpose(content);
       
       if (!isNaN(step)) {        
         content = content.up(step);
         this.args.song.transSteps += step;
         content = String(content);
-        content = content.replace(/\s\þ\s/g, '');
+        content = content.replace(/\s¶\s\s¶\s/g, '');
+        content = content.replace(/\s¶\s/g, '');
+        content = content.replace(/¶\s/g, '');
+        content = content.replace(/\s¶/g, '');
+        content = content.replace(/¶/g, '');
         this.args.song.lyrics = content;
       }
     }

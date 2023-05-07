@@ -14,17 +14,20 @@ export default class ChordParser extends Helper {
     }
         
     let content = params[0];
-    content = content.replace(/\(/g, 'þ(þ');
-    content = content.replace(/\)/g, 'þ)þ');
-    content = content.replace(/\[/g, 'þ[þ');
-    content = content.replace(/\]/g, 'þ]þ');
-    content = content.replace(/\{/g, 'þ{þ');
-    content = content.replace(/\}/g, 'þ}þ');
-    content = content.replace(/\n/g, 'þ\nþ');
-    content = content.replace(/\r/g, 'þ\rþ');
-    content = content.replace(/\-/g, 'þ-þ');
-    content = content.replace(/\,/g, 'þ,þ');
-    content = content.replace(/\þ/g, ' þ ');
+    content = content.replace(/\(/g, '¶(¶');
+    content = content.replace(/\)/g, '¶)¶');
+    content = content.replace(/\[/g, '¶[¶');
+    content = content.replace(/\]/g, '¶]¶');
+    content = content.replace(/\{/g, '¶{¶');
+    content = content.replace(/\}/g, '¶}¶');
+    content = content.replace(/\-/g, '¶-¶');
+    content = content.replace(/\,/g, '¶,¶');
+    content = content.replace(/\./g, '¶.¶');
+    content = content.replace(/\*/g, '¶\*¶');
+    content = content.replace(/\+/g, '¶\+¶');
+    content = content.replace(/\n/g, '¶\n¶');
+    content = content.replace(/\r/g, '¶\r¶');
+    content = content.replace(/\¶/g, ' ¶ ');
     
     let key = hash.key;
     let mode = hash.mode;
@@ -66,9 +69,9 @@ export default class ChordParser extends Helper {
         }
         // console.log(content);
         content = content.toString();
-        content = content.replace(/\s\þ\s\r\s\þ\s\n\s\þ\s?/g, '\n');
-        content = content.replace(/\s\þ\s\n\s\þ\s\s\s\þ\s\n\s\þ\s/g, '\n\n');
-        content = content.replace(/\s\þ\s\n\s\þ\s/g, '<br>\n');
+        content = content.replace(/\s\¶\s\r\s\¶\s\n\s\¶\s?/g, '\n');
+        content = content.replace(/\s\¶\s\n\s\¶\s\s\s\¶\s\n\s\¶\s/g, '\n\n');
+        content = content.replace(/\s\¶\s\n\s\¶\s/g, '<br>\n');
         let lines = content.split('<br>\n');
         
         let isPhrase = false;
@@ -113,7 +116,7 @@ export default class ChordParser extends Helper {
       } else {
         processed = content.toString();
       }
-      processed = processed.replace(/\s\þ\s/g, '');
+      processed = processed.replace(/\s\¶\s/g, '');
       return htmlSafe(processed);
     } catch (exceptionVar) {
       
@@ -121,9 +124,9 @@ export default class ChordParser extends Helper {
         console.debug('No chords detected, using basic parsing.');
 
         content = content.toString();
-        content = content.replace(/\s\þ\s\r\s\þ\s\n\s\þ\s?/g, '\n');
-        content = content.replace(/\s\þ\s\n\s\þ\s\s\s\þ\s\n\s\þ\s/g, '\n\n');
-        content = content.replace(/\s\þ\s\n\s\þ\s/g, '<br>\n');
+        content = content.replace(/\s\¶\s\r\s\¶\s\n\s\¶\s?/g, '\n');
+        content = content.replace(/\s\¶\s\n\s\¶\s\s\s\¶\s\n\s\¶\s/g, '\n\n');
+        content = content.replace(/\s\¶\s\n\s\¶\s/g, '<br>\n');
         let lines = content.split('<br>\n');
         // console.debug(lines);
 
