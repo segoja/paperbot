@@ -230,6 +230,7 @@ export default class PbReaderComponent extends Component {
 
     if (this.currentSong) {
       if (this.currentSong.lyrics) {
+        
         let songLines = this.currentSong.lyrics.replace(/\r/g, '').split('\n');
         let sortedSongLines = songLines.sort(function (a, b) { return b.length - a.length; });
         let numLines = songLines.length;
@@ -302,6 +303,8 @@ export default class PbReaderComponent extends Component {
             if (numColumns < 6) {
               this.currentSong.columns = numColumns;
             }
+
+            let overflow = true;
 
             do {
               lyricsContainers = document.getElementsByClassName( this.currentSong.viewMode ? 'fancy-columns' : 'fancy-columns-pre');
@@ -408,10 +411,20 @@ export default class PbReaderComponent extends Component {
 
               console.log('Last font size: ' + finalFontSize + 'px');
               console.log('Last line width: ' + finalLineWidth + 'px');
+              
+              overflow = false;
+              
+              if(lineWidth > optimalColWidth) { overflow =  true }
+              if(lineWidth >  container.offsetWidth) { overflow =  true }
+              if(columnHeight > container.offsetHeight) { overflow =  true }
+              if((this.currentSong.columns * optimalColWidth) > container.offsetWidth) { overflow =  true }
+              
+              console.log('Is overflowing? '+ overflow);
+            // } while (overflow  || currentColWidth > optimalColWidth && heightCoef > 70);
             } while (currentColWidth > optimalColWidth && heightCoef > 70);
           }
         }
       }
     }
-  }
+  }  
 }
