@@ -25,9 +25,17 @@ export default class PbReaderComponent extends Component {
   @tracked transKey = 0;
   @tracked mode = true;
 
-  constructor() {
+  constructor(){
     super(...arguments);
+    this.isEditing = false;
   }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.isEditing = false;
+  }
+
+  @tracked isEditing = false;
 
   songsSorting = Object.freeze(['date_added:asc']);
   @sort('args.songs', 'songsSorting') arrangedContent;
@@ -42,6 +50,11 @@ export default class PbReaderComponent extends Component {
   get currentSong() {
     return this.activeSong;
   }
+
+  @action clearSelect(){
+    this.selected = null;
+  }
+
 
   @tracked activeSong = [];
   @action setActiveSong() {
@@ -69,6 +82,29 @@ export default class PbReaderComponent extends Component {
         console.debug('No requests pending...');
       }
     }
+    /*
+    later(this,()=>{
+      let readerHeader = document.getElementById('readerTitle');
+      let separator = document.getElementById('readerTitleSeparator');
+      if(readerHeader && separator){
+        if(this.currentSong != undefined && this.currentSong != '' && this.currentSong != null && readerHeader != null  && separator != null ){
+          if(this.selected){
+            readerHeader.className = 'd-inline-block pe-3 text-secondary';
+          } else {
+            readerHeader.className = 'd-inline-block pe-3 text-info';
+          }
+          readerHeader.innerHTML = this.currentSong.title;
+          readerHeader.style.display = "inline!important";
+          separator.innerHTML = ' - ';
+          separator.style.display = "inline!important";
+        } else {
+          readerHeader.innerHTML = '';
+          readerHeader.style.display = "none!important";
+          separator.innerHTML = '';
+          separator.style.display = "none!important";
+        }
+      }
+    }, 150);*/
   }
 
   @action searchSong(query) {
@@ -92,7 +128,11 @@ export default class PbReaderComponent extends Component {
       this.currentSong.zoomLevel = Number(0.85);
     }
   }
-
+  
+  @action toggleEdit(){
+    this.isEditing = !this.isEditing;
+  }
+  
   @action autoColumn() {
     if (this.currentSong) {
       this.currentSong.columns = 0;
@@ -190,6 +230,19 @@ export default class PbReaderComponent extends Component {
     }
   }
 
+
+  get btnState(){
+    let btnClass = 'secondary';
+    if(this.currentSong.hasDirtyAttributes){
+      btnClass = 'warning pulse';
+    } else {
+      if(this.saving){
+        btnClass = 'success';
+      }
+    }
+    return btnClass;
+  }
+
   // Lyrics auto-adjustment functions:
 
   getCssStyle(element, prop) {
@@ -222,12 +275,7 @@ export default class PbReaderComponent extends Component {
   }
 
   @tracked calculating = false;
-  @action autoAdjust() {
-    let myInstrument = new chordictionary.Instrument('EADGBE', 24, 7, 4);
-
-    let lyrics = document.getElementById('bodycontainer');
-    let chords = lyrics.querySelectorAll('strong');
-
+  @action autoAdjust() {    
     if (this.currentSong) {
       if (this.currentSong.lyrics) {
         
@@ -290,10 +338,13 @@ export default class PbReaderComponent extends Component {
 
             console.log('Zoom level: ' + zoomLevel);
             if (widthCoef < 80 || heightCoef < 50) {
-              if (finalFontSize > defFontsize || zoomLevel <= 2) {
+              if (finalFontSize > defFontsize) {
                 if (zoomLevel >= 2.5) {
-                  this.currentSong.zoomLevel = zoomLevel;
+                  this.currentSong.zoomLevel = 2.5;
                   console.debug('Tweaked Zoom level 1: ' + this.currentSong.zoomLevel + 'em');
+                } else {
+                  this.currentSong.zoomLevel = zoomLevel;
+                  console.debug('Tweaked Zoom level 1: ' + this.currentSong.zoomLevel + 'em');                  
                 }
               }
             }
@@ -301,7 +352,7 @@ export default class PbReaderComponent extends Component {
             let finalLineWidth = this.getTextWidth( longestLine, this.getCanvasFont(lyricsContainers[0]));
 
             if (numColumns < 6) {
-              this.currentSong.columns = numColumns;
+              this.currentSong.columns = numColumns;  
             }
 
             let overflow = true;
@@ -364,12 +415,13 @@ export default class PbReaderComponent extends Component {
                 } else {
                   if (finalFontSize > defFontsize || this.currentSong.zoomLevel >= 2.5) {
                     this.currentSong.zoomLevel -= 0.25;
+                    this.currentSong.columns += 1;
                     console.debug('Tweaked Zoom level 4: ' +this.currentSong.zoomLevel +'em');
                   }
                 }
               }
 
-              if (lineWidth > optimalColWidth || lineWidth * numColumns > container.offsetWidth - 24) {
+              if (lineWidth > optimalColWidth || (lineWidth * numColumns) > container.offsetWidth - 24) {
                 if (finalFontSize > defFontsize && zoomLevel - 0.25 <= 2) {
                   this.currentSong.zoomLevel = zoomLevel - 0.25;
                   console.debug('Tweaked Zoom level 5: ' + this.currentSong.zoomLevel + 'em');

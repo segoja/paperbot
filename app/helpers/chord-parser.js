@@ -116,17 +116,19 @@ export default class ChordParser extends Helper {
       } else {
         processed = content.toString();
       }
-      processed = processed.replace(/\s\¶\s/g, '');
+      processed = processed.replace(/\s¶\s/g, '');
+      processed = processed.replace(/¶/g, '');
       return htmlSafe(processed);
     } catch (exceptionVar) {
       
       if(mode){
         console.debug('No chords detected, using basic parsing.');
 
-        content = content.toString();
-        content = content.replace(/\s\¶\s\r\s\¶\s\n\s\¶\s?/g, '\n');
-        content = content.replace(/\s\¶\s\n\s\¶\s\s\s\¶\s\n\s\¶\s/g, '\n\n');
-        content = content.replace(/\s\¶\s\n\s\¶\s/g, '<br>\n');
+        content = params[0].toString();
+        content = content.replace(/\r\n?/g, '\n');
+        content = content.replace(/\n\s\n/g, '\n\n');
+        content = content.replace(/\n/g, '<br>\n');
+        // console.log(content);
         let lines = content.split('<br>\n');
         // console.debug(lines);
 
@@ -140,7 +142,7 @@ export default class ChordParser extends Helper {
           }
         });
       } else {
-        processed = content.toString();
+        processed = params[0].toString();
       }
       return htmlSafe(processed);
     }

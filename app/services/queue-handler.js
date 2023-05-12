@@ -285,10 +285,10 @@ export default class QueueHandlerService extends Service {
     this.fileContent(this.pendingSongs);
   }
 
-  @action async nextSong() {
+  @action nextSong() {
     if (this.pendingSongs.length > 0) {
       // For selecting the last element of the array:
-      let firstRequest = this.pendingSongs.firstObject;
+      let firstRequest = this.pendingSongs[0];
 
       let oldPlayed = this.playedSongs;
       let count = 0;
@@ -302,7 +302,7 @@ export default class QueueHandlerService extends Service {
       firstRequest.position = 0;
       firstRequest.processed = true;
       firstRequest.save().then(() => {
-        if(!request.song.get('isDeleted')){
+        if(!firstRequest.song.get('isDeleted')){
           this.store
             .findRecord('song', firstRequest.song.get('id'))
             .then(async (song) => {
@@ -321,7 +321,7 @@ export default class QueueHandlerService extends Service {
     this.fileContent(this.pendingSongs);
   }
 
-  @action async prevSong() {
+  @action prevSong() {
     if (this.playedSongs.length > 0) {
       // For selecting the first element of the array:
 
@@ -334,7 +334,7 @@ export default class QueueHandlerService extends Service {
         //console.debug(pending.position+'. '+pending.effectiveTitle);
       });
 
-      let firstRequest = this.playedSongs.firstObject;
+      let firstRequest = this.playedSongs[0];
       firstRequest.position = 0;
       firstRequest.processed = false;
 
