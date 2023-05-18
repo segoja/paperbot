@@ -10,9 +10,19 @@ export default class PbStreamEditPendingComponent extends Component {
   @service queueHandler;
   @service store;
 
-  constructor() {
+  constructor(){
     super(...arguments);
+    this.activeTab = 'pending';
   }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.activeTab = 'pending';
+  }
+    
+  tabList = ['pending', 'played'];
+  
+  @tracked activeTab = 'pending';
 
   queueAscSorting = Object.freeze(['processed:desc','position:asc', 'timestamp:desc']);
   @sort('queueHandler.songqueue', 'queueAscSorting') arrangedAscQueue;
@@ -49,6 +59,14 @@ export default class PbStreamEditPendingComponent extends Component {
   }
 
   @tracked showPlayed = false;
+
+  @action tabSwitch(tab){
+    console.log(tab);
+    if(tab){
+      this.activeTab = tab;
+    }
+    console.log(this.activeTab);
+  }
 
   @action togglePlayed() {
     this.currentUser.showPlayed = !this.currentUser.showPlayed;
