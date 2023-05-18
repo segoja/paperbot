@@ -417,7 +417,11 @@ div.pan-buttons-row{
 }
 
 /*.navbar-collapse.show .nav-link { padding-top: 1em!important; padding-bottom: 1em!important; }*/  
-.navbar-collapse.show { border-top: 1px solid var(--bs-border-color); }
+.navbar-collapse.show { 
+  border-top: 1px solid var(--bs-gray);
+  background-color: var(--bs-dark-bg-subtle)!important; 
+  font-size: 1.25em!important;
+}
 
 .slider {
   -webkit-appearance: none;
