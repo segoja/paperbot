@@ -1,0 +1,8 @@
+{{did-insert this.setActiveSong}}
+{{did-update this.setActiveSong this.queueHandler.pendingSongs}}
+
+{{#if this.activeSong}}
+  <span class="px-2" title="This song is a request"><strong class="text-info">{{this.activeSong.title}}</strong></span>
+{{else}}
+  <span class="px-2">Select a song</span>
+{{/if}}

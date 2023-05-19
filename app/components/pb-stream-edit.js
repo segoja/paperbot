@@ -214,6 +214,10 @@ export default class PbStreamEditComponent extends Component {
   // Pannels interaction
 
   @action togglePan(pannel) {
+    if (pannel === 'setlist') {
+      this.globalConfig.config.cpansetlist =
+        !this.globalConfig.config.cpansetlist;
+    }
     if (pannel === 'pending') {
       this.globalConfig.config.cpanpending =
         !this.globalConfig.config.cpanpending;
@@ -230,6 +234,16 @@ export default class PbStreamEditComponent extends Component {
       this.globalConfig.config.cpanevents =
         !this.globalConfig.config.cpanevents;
     }
+    this.globalConfig.config.save();
+  }
+
+  @action toggleEvents() {
+    this.globalConfig.config.cpanevents = !this.globalConfig.config.cpanevents;
+    this.globalConfig.config.save();
+  }
+
+  @action toggleSetlist() {
+    this.globalConfig.config.cpansetlist = !this.globalConfig.config.cpansetlist;
     this.globalConfig.config.save();
   }
 

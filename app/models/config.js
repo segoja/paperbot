@@ -58,6 +58,7 @@ export default class ConfigModel extends Model {
   @attr('number', { defaultValue: 0 }) mainPosX;
   @attr('number', { defaultValue: 0 }) mainPosY;
 
+  @attr('boolean', { defaultValue: true }) cpansetlist;
   @attr('boolean', { defaultValue: false }) cpanpending;
   @attr('boolean', { defaultValue: false }) cpanplayed;
   @attr('boolean', { defaultValue: false }) cpanmessages;

@@ -2,7 +2,10 @@
   <div class="row g-2">
     <div class="col"></div>
     <div class="d-lg-none col-auto px-3">
-      <button type="button" class="btn btn-sm btn-secondary" {{on "click" this.toggleEdit}} alt="formatted text"><FaIcon @icon="pen" /> Edit</button>
+      <button type="button" class="btn btn-sm btn-secondary" {{on "click" this.toggleEdit}} alt="formatted text"><FaIcon @icon={{if this.isEditing "eye" "pen"}} /></button>
+      <BsButton @type="secondary btn-sm" @onClick={{this.autoAdjust}}>
+        <FaIcon @icon={{if this.calculating "spinner" "wand-magic-sparkles"}} @spin={{this.calculating}} />
+      </BsButton>
       <button type="button" class={{if @song.viewMode "btn btn-sm btn-primary" "btn btn-sm btn-secondary"}} {{on "click" this.modeSwitch}} alt="formatted text"><FaIcon @icon="paragraph" /></button>
       <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} alt="transpose down"><FaIcon @icon="down-long" /></button>
@@ -24,7 +27,10 @@
       </div>
     </div>
     <div class="d-none d-lg-block col-lg-auto px-3">
-      <button type="button" class="btn btn-secondary" {{on "click" this.toggleEdit}} alt="formatted text"><FaIcon @icon="pen" /> Edit</button>
+      <button type="button" class="btn btn-secondary" {{on "click" this.toggleEdit}} alt="formatted text"><FaIcon @icon={{if this.isEditing "eye" "pen"}} /> {{if this.isEditing "View" "Edit"}}</button>
+      <BsButton @type="secondary" @onClick={{this.autoAdjust}}>
+        <FaIcon @icon={{if this.calculating "spinner" "wand-magic-sparkles"}} @spin={{this.calculating}} />
+      </BsButton>
       <button type="button" class={{if @song.viewMode "btn btn-primary" "btn btn-secondary"}} {{on "click" this.modeSwitch}} alt="formatted text"><FaIcon @icon="paragraph" /></button>
       <div class="btn-group">
         <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} alt="transpose down"><FaIcon @icon="down-long" /></button>
@@ -56,18 +62,27 @@
         </div>
       </div>
     </div>
-  {{else}}  
-    <style>
-      .fancy-columns-pre,
-      .fancy-columns {
-        font-size: {{@song.zoomLevel}}em!important; 
-        column-count: {{@song.columns}}!important;
-        column-rule-width: auto;
-      }   
-    </style>
+  {{else}} 
     <div class="d-flex mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
-      <div class="row mx-0 flex-fill listframe-reader">
-        <div class={{if @song.viewMode "fancy-columns" "fancy-columns-pre"}}>{{chord-parser @song.lyrics key=0 mode=@song.viewMode}}</div>
+      <div class="row m-0 flex-fill mh-100 listframe-reader">
+        {{#if @song}}
+          <style>
+            .fancy-columns-pre,
+            .fancy-columns {
+              font-size: {{@song.zoomLevel}}em; 
+              column-count: {{@song.columns}};
+            }   
+          </style>
+          {{#if @song.viewMode}} 
+            <div class="fancy-columns">
+              {{chord-parser @song.lyrics key=0 mode=@song.viewMode}}
+            </div>
+          {{else}}
+            <div class="fancy-columns-pre">
+              {{@song.lyrics}}
+            </div>
+          {{/if}}
+        {{/if}}
       </div>
     </div>
   {{/if}}  

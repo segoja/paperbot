@@ -1,24 +1,56 @@
 <div class="card col h-100 flex-column flex-fill d-flex overflow-hidden rounded-0 border-start">
-  <div class="card-header">
-    <div class="row">
-      <div class="col py-2 px-1 my-0"><span class="h5 card-title">Queue</span></div>
+  <div class="card-header pb-0 px-0">
+    <div class="row"><div class="col"><hr class="p-0 m-0 opacity-0"></div></div>
+    <div class="row g-0 px-1">
+      <div class="col px-1">
+        <ul class="nav nav-tabs border-bottom-0">
+          {{#each this.tabList as |tab|}}
+            <li class="nav-item">
+              <a href="#"
+                {{on "click" (fn this.tabSwitch tab)}}
+                class={{if (eq this.activeTab tab) "nav-link active pb-3" "nav-link pb-3"}} 
+              >
+                <span class="text-capitalize">
+                  {{tab}}
+                    {{#if (eq tab "pending")}}
+                      {{#if (eq tab this.activeTab)}}
+                        <small class="badge bg-info text-dark p-1 opacity-75">
+                          {{this.queueHandler.pendingSongs.length}}
+                        </small>
+                      {{else}}
+                        <span class="placeholder-glow">
+                          <small class="badge bg-info text-dark p-1 placeholder">
+                            {{this.queueHandler.pendingSongs.length}}
+                          </small>
+                        </span>
+                      {{/if}}
+                    {{else}}
+                      {{#if (eq tab this.activeTab)}}
+                        <small class="badge bg-secondary p-1 opacity-75">
+                          {{this.queueHandler.playedSongs.length}}
+                        </small>
+                      {{else}}
+                        <span class="placeholder-glow">
+                          <small class="badge bg-secondary p-1 placeholder">
+                            {{this.queueHandler.playedSongs.length}}
+                          </small>
+                        </span>
+                      {{/if}}
+                    {{/if}}
+                </span>
+              </a>
+            </li>
+          {{/each}}
+        </ul> 
+      </div>
       <div class="col-auto px-1">
-        {{#if this.currentUser.showPlayed}}
-          <button type="button" class="btn btn-secondary" {{on "click" this.togglePlayed}}>
-            Pending ({{this.queueHandler.pendingSongs.length}})
-          </button>          
-        {{else}}
-          <button type="button" class="btn btn-secondary" {{on "click" this.togglePlayed}}>
-            Played ({{this.playedSongs.length}})
-          </button>          
-        {{/if}}
         <BsButton @type="secondary" @onClick={{this.queueHandler.exportQueue}} title="Download setlist intext"><FaIcon @icon="file-download" /></BsButton>
         <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="If you do this while streaming you will wipe all requests. Are you sure?" @targetAction={{this.queueHandler.clearAll}} @buttonTitle="Wipe setlist" />        
       </div>
     </div>
   </div>
-  <div class="card-body d-block h-100 overflow-hidden g-0 py-0 px-0">
-    {{#if this.currentUser.showPlayed}}
+  <div class="card-body d-block h-100 overflow-hidden g-0 py-2 px-0">
+    {{#if (eq this.activeTab "played")}}
       <div class="col listframe-setlist px-2 h-100" id="playedSlSongs">
         {{#each this.playedSongs as |playedsong|}}
           <div id={{playedsong.id}} class="alert alert-secondary w-100 text-decoration-none py-0 ps-2 pe-0 my-1 text-start row g-0">

@@ -9,10 +9,19 @@ export default class PbStreamEditPendingComponent extends Component {
   @service queueHandler;
   @service store;
 
-  constructor() {
+  constructor(){
     super(...arguments);
+    this.activeTab = 'pending';
   }
 
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.activeTab = 'pending';
+  }
+    
+  tabList = ['pending', 'played'];
+  
+  @tracked activeTab = 'pending';
   get scrollPendingPosition() {
     this.queueHandler.lastsongrequest;
     if (this.queueHandler.lastsongrequest) {
@@ -30,6 +39,14 @@ export default class PbStreamEditPendingComponent extends Component {
       Number(this.playedSongs.length) +
       Number(this.queueHandler.pendingSongs.length);
     return result;
+  }
+
+  @action tabSwitch(tab){
+    console.log(tab);
+    if(tab){
+      this.activeTab = tab;
+    }
+    console.log(this.activeTab);
   }
 
   @action togglePlayed() {
