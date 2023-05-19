@@ -40,18 +40,18 @@
                 <BsButton @type="secondary" @onClick={{this.songExportFiltered}} title="Export songs to CSV"><FaIcon @icon="file-export" class="d-lg-none" /><span class="d-none d-lg-inline">Export</span></BsButton>
                 <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered songs?" @targetAction={{this.wipeSongs}} @buttonTitle="Delete all listed songs" />
                 <BsButton @type="primary" @onClick={{@createSong}} title="Add new song">Add New</BsButton>
-                <BsButton @type="info alert alert-info m-0 p-0" @onClick={{this.toggleSetlist}} title="Setlist/queue manager">
+                <BsButton @type="info m-0 p-0 position-relative" @onClick={{this.toggleSetlist}} title="Setlist/queue manager">
                   <FaIcon @icon={{if this.isSetlist "angle-right" "angle-left"}} class="mx-1 align-middle" />
+                  <span class="setlist-btn-text position-relative">||||||</span>
                   {{#unless this.isSetlist}}
                     {{#if this.queueHandler.pendingSongs}}
-                      <span class="placeholder-glow">
-                        <small class="position-absolute top-0 translate-middle badge bg-danger p-1 pt-0 placeholder">
+                      <span class="position-relative opacity-75">
+                        <small class="position-absolute top-0 start-100 translate-middle badge p-1 pt-0 bg-danger">
                           {{this.queueHandler.pendingSongs.length}}
                         </small>
                       </span>
                     {{/if}}
                   {{/unless}}
-                  <span class="setlist-btn-text">||||||</span>
                 </BsButton>
               </div>
             </div> 

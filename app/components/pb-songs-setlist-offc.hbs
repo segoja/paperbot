@@ -1,8 +1,8 @@
 <div class="card h-100 flex-column flex-fill d-flex overflow-hidden shadow border-top border-secondary rounded-0">
   <div class="card-header px-0 border rounded-0 pb-0">
-    <div class="row w-100 g-0 px-2">
-      <div class="col py-2 my-0"><span class="h5 card-title ps-2">Queue</span></div>
-      <div class="col-auto px-1">
+    <div class="row"><div class="col"><hr class="p-0 m-0 opacity-0"></div></div>
+    <div class="row w-100 g-0 px-1">
+      <div class="col px-1">
         <ul class="nav nav-tabs border-bottom-0">
           {{#each this.tabList as |tab|}}
             <li class="nav-item">
@@ -43,13 +43,15 @@
           {{/each}}
         </ul> 
       </div>
-      <div class="col-auto">
+      <div class="col-auto px-1">
         <BsButton @type="secondary" @onClick={{this.queueHandler.exportQueue}} title="Download setlist intext"><FaIcon @icon="file-download" /></BsButton>
         <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="If you do this while streaming you will wipe all requests. Are you sure?" @targetAction={{this.queueHandler.clearAll}} @buttonTitle="Wipe setlist" />
-        <BsButton @type="info alert alert-info m-0 p-0" @onClick={{@toggleSetlist}} title="Setlist/queue manager">
-          <FaIcon @icon="angle-right" class="mx-1 align-middle" />     
-          <span class="setlist-btn-text">||||||</span>
-        </BsButton>
+        {{#unless @isStream}}
+          <BsButton @type="info m-0 p-0" @onClick={{@toggleSetlist}} title="Setlist/queue manager">
+            <FaIcon @icon="angle-right" class="mx-1 align-middle" />     
+            <span class="setlist-btn-text">||||||</span>
+          </BsButton>
+        {{/unless}}
       </div>
     </div>
   </div>

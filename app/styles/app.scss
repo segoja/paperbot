@@ -473,6 +473,14 @@ div.pan-buttons-row{
 }
 
 
+.badge.setlist{
+  position: relative;
+  margin-top: 0px;
+  margin-left: 0px;
+  top: 0px;
+  end: 0px; 
+}
+
 .setlist-btn-text {
     font-size: 0.7em;
     writing-mode: vertical-lr;
@@ -561,6 +569,15 @@ div.pan-buttons-row{
 
 .pt-custom {
   padding-top: 2.3rem !important;
+}
+
+.pt-custom-stream {
+  padding-top: 7.3rem;
+  @include media-breakpoint-down(sm) { padding-top: 9.2rem!important; }
+}
+
+.stream-menu {
+  z-index: 1050!important;
 }
 
 @keyframes spin {

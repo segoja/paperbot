@@ -56,15 +56,6 @@ export default class PbSongsComponent extends Component {
 
   @action toggleSetlist() {
     this.currentUser.showSetlist = !this.currentUser.showSetlist;
-    let setlist = document.getElementsByClassName('offcanvas');
-    setlist = setlist[0];
-    if(setlist){
-      if(!this.currentUser.isViewing){
-        setlist.hide;
-      } else {
-        setlist.show;
-      }
-    } 
   }
 
   @action wipeSongs() {
