@@ -40,7 +40,18 @@ export default class PbStreamEditPendingComponent extends Component {
       Number(this.queueHandler.pendingSongs.length);
     return result;
   }
-
+  
+  get isRelative(){
+    let result = false;
+    if(this.args.isStream){
+      result = true;
+    } else {
+      result = this.args.toTop || false;
+    }
+    console.log('Is relative? '+result);
+    return result;
+  }
+  
   @action tabSwitch(tab){
     console.log(tab);
     if(tab){

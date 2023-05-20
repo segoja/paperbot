@@ -34,6 +34,16 @@ export default class PbStreamEditPendingComponent extends Component {
     return this.arrangedAscQueue.filter((request) => !request.processed);
   }
 
+  get isRelative(){
+    let result = false;
+    if(this.args.isStream){
+      result = true;
+    } else {
+      result = this.args.toTop || false;
+    }
+    console.log('Is relative? '+result);
+    return result;
+  }
 
   get scrollPendingPosition() {
     this.queueHandler.lastsongrequest;

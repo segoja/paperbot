@@ -1,19 +1,21 @@
-<div id="chat" class="card rounded-0 {{unless this.globalConfig.config.cpanmessages "dragpanel h-100"}} border border-secondary overflow-hidden m-0 p-0">
-  <div class="card-header bg-secondary text-light rounded-0 p-0 m-0">
+<div id="chat" class="card rounded-0 {{unless this.globalConfig.config.cpanmessages "dragpanel h-100"}} border border-top-0 overflow-hidden m-0 p-0">
+  <div class="card-header rounded-0 p-0 m-0">
     <div class="row g-0">
       <div class="col align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Recent messages</h6></div>
       <BsButtonGroup class="col-auto px-0" as |bg|>
-        <bg.button @type="secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
+        <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
       </BsButtonGroup>
     </div>
   </div>
   <div class="card-body {{unless this.globalConfig.config.cpanmessages "h-100" "d-none"}} flex-fill overflow-hidden p-0">
-    <BsCollapse class="d-block flex-fill h-100 chatframe" @collapsed={{this.globalConfig.config.cpanmessages}} {{scroll-position position=this.twitchChat.scrollPosition relative=false}}>
-      {{#each this.messages as |message|}}
-        <div class="row" id="{{message.id}}">
-          {{message-format message}}
-        </div>
-      {{/each}}
+    <BsCollapse class="d-block flex-fill h-100 chatframe position-relative" @collapsed={{this.globalConfig.config.cpanmessages}}>
+      <div class="d-table-cell align-bottom w-100 chatframe position-absolute mh-100 chat-content" {{scroll-position position=this.twitchChat.scrollPosition relative=false}}>
+        {{#each this.messages as |message|}}
+          <div class="row g-0 px-1" id="{{message.id}}">
+            {{message-format message}}
+          </div>
+        {{/each}}
+      </div>
     </BsCollapse>
   </div>
   <div class="card-footer rounded-0 p-0 m-0 border-0 border-top border-secondary {{if this.globalConfig.config.cpanmessages "d-none"}}">

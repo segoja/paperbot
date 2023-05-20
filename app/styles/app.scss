@@ -52,7 +52,8 @@ $height-sizes: (
 
 .dragpanel{
   min-height: 33%!important;
-  max-height: 100%!important;  
+  max-height: 100%!important;
+  .bg-card { background-color: var(--bs-card-cap-bg); }
 }
 
 .handle{
@@ -193,6 +194,12 @@ button svg.stream-status {
   max-height: 100% !important;
   overflow-y: scroll;
   scrollbar-color: var(--main-scrollbar-color);
+  .chat-content { bottom: 0px; 
+    .message::after{
+        content: "\a";
+        white-space: pre;
+    }
+  }
 }
 
 #eventlist > div:first-child,
@@ -419,7 +426,7 @@ div.pan-buttons-row{
 /*.navbar-collapse.show .nav-link { padding-top: 1em!important; padding-bottom: 1em!important; }*/  
 .navbar-collapse.show { 
   border-top: 1px solid var(--bs-gray);
-  background-color: var(--bs-dark-bg-subtle)!important; 
+  border-bottom: 1px solid var(--bs-gray);
   font-size: 1.25em!important;
 }
 
@@ -571,9 +578,13 @@ div.pan-buttons-row{
   padding-top: 2.3rem !important;
 }
 
-.pt-custom-stream {
-  padding-top: 7.3rem;
-  @include media-breakpoint-down(sm) { padding-top: 9.2rem!important; }
+.pt-offc-custom {
+  padding-top: 2.40rem !important;
+}
+
+.pt-offc-custom-stream {
+  padding-top: 6.7rem;
+  @include media-breakpoint-down(sm) { padding-top: 8.65rem!important; }
 }
 
 .stream-menu {

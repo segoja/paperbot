@@ -75,11 +75,11 @@
       </div>
       <div class="col-auto">
         <div class="row g-0 h-100">
-          <BsButton @type={{if this.globalConfig.config.cpansetlist "info alert alert-info m-0 p-0 btn-sm m-0 p-0 px-2 col-12 col-sm text-truncate border rounded-0  h-50 h-sm-100" "info btn-sm m-0 p-0 px-2 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100"}} @onClick={{this.toggleSetlist}} title="Setlist/queue manager" disabled={{not (and this.twitchChat.botConnected @stream.requests)}}>
+          <BsButton @type={{if this.globalConfig.config.cpansetlist "info alert alert-info m-0 p-0 btn-sm pe-1 col-12 col-sm text-truncate border rounded-0  h-50 h-sm-100" "info btn-sm m-0 p-0 pe-1 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100"}} @onClick={{this.toggleSetlist}} title="Setlist/queue manager" disabled={{not (and this.twitchChat.botConnected @stream.requests)}}>
             <FaIcon @icon={{if this.globalConfig.config.cpansetlist "angle-right" "angle-left"}} class="mx-1 align-middle" />
             <span class="setlist-btn-text">|||||</span>
           </BsButton>
-          <BsButton @type={{if this.globalConfig.config.cpanevents "secondary btn-sm m-0 p-0 px-2 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100" "secondary btn-sm m-0 p-0 px-2 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100"}} @onClick={{this.toggleEvents}} title="Stream events" disabled={{not (and this.twitchChat.botConnected @stream.events)}}>
+          <BsButton @type={{if this.globalConfig.config.cpanevents "secondary btn-sm m-0 p-0 ps-0 pe-1 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100" "secondary btn-sm m-0 p-0 pe-1 col-12 col-sm text-truncate border rounded-0 h-50 h-sm-100"}} @onClick={{this.toggleEvents}} title="Stream events" disabled={{not (and this.twitchChat.botConnected @stream.events)}}>
             <FaIcon @icon={{if this.globalConfig.config.cpanevents "angle-right" "angle-left"}} class="mx-1 align-middle" />
             <span class="setlist-btn-text">|||||</span>
           </BsButton>
@@ -94,35 +94,17 @@
   </div>
   {{#unless @stream.finished}}
     {{#if this.twitchChat.botConnected}}
-      <div class="card-body p-0 m-0 pan-buttons-row">
-        <div class="row p-0 m-0">
-          {{#if @stream.events}}
-            {{#if this.globalConfig.config.extraPanLeft}}
-              <button type="button" class="col border alert alert-secondary rounded-0 p-0 m-0" disabled={{not this.globalConfig.config.extraPanLeft}} {{on "click" this.toggleExtraPanLeftTop}}>
-                <FaIcon @icon={{if this.globalConfig.config.extraPanLeftTop "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-              </button>
-            {{/if}}
-          {{else}}
-            {{#if this.globalConfig.config.extraPanLeft}}          
-              <div class="col border alert alert-secondary rounded-0 p-0 m-0"></div>
-            {{/if}}
-          {{/if}}
-          {{#if (and (not this.globalConfig.config.extraPanLeft) (not this.globalConfig.config.extraPanRight))}}          
-            <div class="col border alert alert-secondary rounded-0 p-0 m-0"></div>
-          {{/if}}
-        </div>
-      </div>
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <Dragula class="row flex-fill d-flex h-100 g-0 overflow-hidden" @options={{hash moves=this.moves}} as |Container|>
-         <div class="{{if this.globalConfig.config.noPanels "col h-100 border m-0 p-0" "d-none"}}"></div>
-          <div class="{{if this.globalConfig.config.extraPanLeft "col h-100 border m-0 p-0" "d-none"}}">
+         <div class="{{if this.globalConfig.config.noPanels "col h-100 border-0 m-0 p-0" "d-none"}}"></div>
+          <div class="{{if this.globalConfig.config.extraPanLeft "col h-100 border-0 border-top m-0 p-0" "d-none"}}">
               <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.extraPanLeftTop (if this.globalConfig.config.extraPanLeftBottom "h-25" "h-100") "d-none")  "d-none"}} border">          
-                <Container class="col h-100 border m-0 p-0 overflow-hidden">
+                <Container class="col h-100 border-0 m-0 p-0 overflow-hidden">
                    <PbStreamEditEvents @stream={{@stream}} />
                 </Container>
               </div>          
             <div class="row m-0 p-0 {{if this.globalConfig.config.extraPanLeftBottom (if this.globalConfig.config.extraPanLeftTop (if @stream.events "h-75" "h-100") "h-100") "d-none"}} border">
-              <Container class="col h-100 border m-0 p-0 overflow-hidden">
+              <Container class="col h-100 border-0 m-0 p-0 overflow-hidden">
                 <PbStreamEditChat @stream={{@stream}} />
               </Container>
             </div>
@@ -134,32 +116,14 @@
             {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}
           {{/if}}
           {{#if @stream.requests}}
-            <div class={{if this.globalConfig.config.cpansetlist "d-none d-lg-block col-lg h-100 border m-0 p-0" "d-none"}}>
-              <PbSongsSetlist />
+            <div class={{if this.globalConfig.config.cpansetlist "d-none d-md-block col-md-6 col-lg-4 h-100 border m-0 p-0" "d-none"}}>
+              <PbSongsSetlist @isStream={{true}} />
             </div>
-            <div class="d-lg-none offcanvas {{if this.globalConfig.config.cpansetlist "show" "hiding"}} offcanvas-end pt-custom-stream border-0 bg-transparent w-100 w-sm-75 w-md-50" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
+            <div class="d-md-none offcanvas {{if this.globalConfig.config.cpansetlist "show" "hiding"}} offcanvas-end pt-offc-custom-stream border-0 bg-transparent w-100 w-sm-75 w-md-50" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
               <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @isStream={{true}} />
             </div>
           {{/if}}
         </Dragula>
-      </div>
-      <div class="card-body p-0 m-0 pan-buttons-row">
-        <div class="row p-0 m-0">
-          {{#if @stream.events}}
-            {{#if this.globalConfig.config.extraPanLeft}}
-              <button type="button" class="col border alert alert-secondary rounded-0 p-0 m-0" disabled={{not this.globalConfig.config.extraPanLeft}} {{on "click" this.toggleExtraPanLeftBottom}}>
-                <FaIcon @icon={{if this.globalConfig.config.extraPanLeftBottom "grip-lines" "ellipsis-h"}} class="d-block mx-auto" />
-              </button>
-            {{/if}}
-          {{else}}
-            {{#if this.globalConfig.config.extraPanLeft}}          
-              <div class="col border alert alert-secondary rounded-0 p-0 m-0"></div>
-            {{/if}}
-          {{/if}}
-          {{#if (and (not this.globalConfig.config.extraPanLeft) (not this.globalConfig.config.extraPanRight))}}          
-            <div class="col border alert alert-secondary rounded-0 p-0 m-0"></div>
-          {{/if}}
-        </div>
       </div>
     {{/if}}
   {{/unless}}

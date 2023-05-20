@@ -14,6 +14,18 @@ export default class PbSongsComponent extends Component {
   @service twitchChat;
   @service globalConfig;
   @service store;
+  
+  @tracked toTop = false;
+
+  constructor(){
+    super(...arguments);
+    this.toTop = true;
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.toTop = true;
+  }
 
   songsSorting = Object.freeze(['date_added:asc']);
 
@@ -56,6 +68,11 @@ export default class PbSongsComponent extends Component {
 
   @action toggleSetlist() {
     this.currentUser.showSetlist = !this.currentUser.showSetlist;
+  }
+
+  @action songToQueue(song, toTop){
+    this.queueHandler.songToQueue(song, toTop);
+    this.toTop = toTop;
   }
 
   @action wipeSongs() {

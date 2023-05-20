@@ -75,7 +75,7 @@
       <div 
         class="col listframe-setlist px-2 h-100" 
         id="songqueue"
-      {{scroll-position position=this.scrollPendingPosition relative=false}}
+      {{scroll-position position=(if @isStream 0 this.queueHandler.scrollPendingPosition) relative=this.isRelative}}
       {{sortable-group groupName="setlist" onChange=(fn this.reorderItems this.queueHandler.pendingSongs)}}
       >
         {{#each this.queueHandler.pendingSongs as |pendingsong|}}

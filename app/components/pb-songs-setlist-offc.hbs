@@ -1,5 +1,6 @@
-<div class="card h-100 flex-column flex-fill d-flex overflow-hidden shadow border-top border-secondary rounded-0">
+<div class="card h-100 flex-column flex-fill d-flex overflow-hidden shadow border-top-0 border-secondary rounded-0">
   <div class="card-header px-0 border rounded-0 pb-0">
+    <div class="row"><div class="col"><hr class="p-0 m-0 opacity-0"></div></div>
     <div class="row"><div class="col"><hr class="p-0 m-0 opacity-0"></div></div>
     <div class="row w-100 g-0 px-1">
       <div class="col px-1">
@@ -80,7 +81,7 @@
     {{else}}  
       <div class="col listframe-setlist px-2 h-100"
          id="songqueue"
-        {{scroll-position position=this.scrollPendingPosition relative=false}}
+        {{scroll-position position=(if @isStream 0 this.queueHandler.scrollPendingPosition) relative=this.isRelative}}
         {{sortable-group groupName="setlistofc" onChange=(fn this.reorderItems this.queueHandler.pendingSongs)}}
       >
         {{#each this.queueHandler.pendingSongs as |pendingsong|}}
