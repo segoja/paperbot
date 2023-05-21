@@ -2,9 +2,9 @@
   <div class="card-header rounded-0 p-0 m-0">
     <div class="row g-0">
       <div class="col align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Recent messages</h6></div>
-      <BsButtonGroup class="col-auto px-0" as |bg|>
+      {{!-- <BsButtonGroup class="col-auto px-0" as |bg|>
         <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
-      </BsButtonGroup>
+      </BsButtonGroup> --}}
     </div>
   </div>
   <div class="card-body {{unless this.globalConfig.config.cpanmessages "h-100" "d-none"}} flex-fill overflow-hidden p-0">
