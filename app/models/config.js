@@ -61,8 +61,8 @@ export default class ConfigModel extends Model {
   @attr('boolean', { defaultValue: true }) cpansetlist;
   @attr('boolean', { defaultValue: false }) cpanpending;
   @attr('boolean', { defaultValue: false }) cpanplayed;
-  @attr('boolean', { defaultValue: false }) cpanmessages;
-  @attr('boolean', { defaultValue: false }) cpanevents;
+  @attr('boolean', { defaultValue: true }) cpanmessages;
+  @attr('boolean', { defaultValue: true }) cpanevents;
   @attr('boolean', { defaultValue: true }) extraPanRight;
   @attr('boolean', { defaultValue: true }) extraPanRightTop;
   @attr('boolean', { defaultValue: true }) extraPanRightBottom;

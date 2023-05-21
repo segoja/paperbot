@@ -1,17 +1,17 @@
 {{#if @stream.events}}
-  <div id="events" class="card rounded-0  {{unless this.globalConfig.config.cpanevents "h-100 dragpanel"}} border border-top-0 overflow-hidden m-0 p-0">
+  <div id="events" class="card rounded-0  {{if this.globalConfig.config.cpanevents "h-100 dragpanel"}} border border-top-0 overflow-hidden m-0 p-0">
     <div class="card-header rounded-0 p-0 m-0">
       <div class="row g-0">
         <div class="col align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Events</h6></div>
-        {{!-- <BsButtonGroup class="col-auto px-0" as |bg|>
-          <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanevents "window-maximize" "window-minimize"}}" /></bg.button>
-        </BsButtonGroup> --}}
+        <BsButtonGroup class="col-auto px-0" as |bg|>
+          <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon={{if this.globalConfig.config.cpanevents "window-minimize" "window-maximize"}} /></bg.button>
+        </BsButtonGroup>
       </div>
     </div>
-    <div class="card-body {{unless this.globalConfig.config.cpanevents "h-100" "d-none"}} flex-fill overflow-hidden p-0">
-      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{this.globalConfig.config.cpanevents}}>
-        {{#unless this.globalConfig.config.cpanevents}}                                                          
-          <div class="col-md eventsframe" {{scroll-position position=this.scrollEventsPosition relative=true}} id="eventlist">
+    <div class="card-body {{if this.globalConfig.config.cpanevents "h-100" "d-none"}} flex-fill overflow-hidden p-0">
+      <BsCollapse class="row h-100 overflow-hidden" @collapsed={{not this.globalConfig.config.cpanevents}}>
+        {{#if this.globalConfig.config.cpanevents}}                                                          
+          <div class="col-md eventsframe mx-2" {{scroll-position position=this.scrollEventsPosition relative=true}} id="eventlist">
             {{#each this.eventsExternal.arrangedEvents as |event|}}
               <div class="alert alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1">
                 <div class="row">
@@ -21,7 +21,7 @@
               </div>
             {{/each}}
           </div>
-        {{/unless}}  
+        {{/if}}  
       </BsCollapse> 
     </div>
   </div>

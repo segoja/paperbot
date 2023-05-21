@@ -1,14 +1,14 @@
-<div id="chat" class="card rounded-0 {{unless this.globalConfig.config.cpanmessages "dragpanel h-100"}} border border-top-0 overflow-hidden m-0 p-0">
+<div id="chat" class="card rounded-0 {{if this.globalConfig.config.cpanmessages "dragpanel h-100"}} border border-top-0 overflow-hidden m-0 p-0">
   <div class="card-header rounded-0 p-0 m-0">
     <div class="row g-0">
       <div class="col align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Recent messages</h6></div>
-      {{!-- <BsButtonGroup class="col-auto px-0" as |bg|>
-        <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-maximize" "window-minimize"}}" /></bg.button>
-      </BsButtonGroup> --}}
+      <BsButtonGroup class="col-auto px-0" as |bg|>
+        <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-minimize" "window-maximize"}}" /></bg.button>
+      </BsButtonGroup>
     </div>
   </div>
-  <div class="card-body {{unless this.globalConfig.config.cpanmessages "h-100" "d-none"}} flex-fill overflow-hidden p-0">
-    <BsCollapse class="d-block flex-fill h-100 chatframe position-relative" @collapsed={{this.globalConfig.config.cpanmessages}}>
+  <div class="card-body {{if this.globalConfig.config.cpanmessages "h-100" "d-none"}} flex-fill overflow-hidden p-0">
+    <BsCollapse class="d-block flex-fill h-100 chatframe position-relative" @collapsed={{not this.globalConfig.config.cpanmessages}}>
       <div class="d-table-cell align-bottom w-100 chatframe position-absolute mh-100 chat-content" {{scroll-position position=this.twitchChat.scrollPosition relative=false}}>
         {{#each this.messages as |message|}}
           <div class="row g-0 px-1" id="{{message.id}}">
@@ -18,14 +18,14 @@
       </div>
     </BsCollapse>
   </div>
-  <div class="card-footer rounded-0 p-0 m-0 border-0 border-top border-secondary {{if this.globalConfig.config.cpanmessages "d-none"}}">
+  <div class="card-footer rounded-0 p-0 m-0 border-0 border-top-2 border-transparent {{unless this.globalConfig.config.cpanmessages "d-none"}}">
     <BsForm @formLayout="inline" @model={{this.twitchChat}} @onSubmit={{this.twitchChat.sendMessage}} as |form|>
       <form.element @property="message" class="rounded-0" as |el|>
         <el.control 
           @controlType="text"
           autocomplete="off"
-          placeholder="Send a message"
-           class="mb-0 my-0 py-1 rounded-0 chatinput border-0 border-top border-secondary"
+          placeholder="Type a message"
+           class="mb-0 my-0 py-1 rounded-0 chatinput border-0 border-top border-transparent"
           readonly={{this.inputDisabled}}        
         />
       </form.element>

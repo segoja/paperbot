@@ -75,12 +75,12 @@
       </div>
       <div class="col-auto">
         <div class="row g-0 h-100">
-          <BsButton class="btn-sm col-12 col-sm border rounded-0 ps-0 pe-1 py-0 m-0 h-50 h-sm-100" @type={{if this.globalConfig.config.cpansetlist "info pe-1" "secondary"}} @onClick={{this.toggleSetlist}} title="Setlist/queue manager" disabled={{not (and this.twitchChat.botConnected @stream.requests)}}>
-            <FaIcon @icon={{if this.globalConfig.config.cpansetlist "angle-right" "angle-left"}} class="mx-1 align-middle" />
-            <span class="setlist-btn-text">|||||</span>
-          </BsButton>
           <BsButton class="btn-sm col-12 col-sm border rounded-0 ps-0 pe-1 py-0 m-0 h-50 h-sm-100" @type={{if this.globalConfig.config.cpanevents "success pe-1" "secondary"}} @onClick={{this.toggleEvents}} title="Stream events" disabled={{not (and this.twitchChat.botConnected @stream.events)}}>
             <FaIcon @icon={{if this.globalConfig.config.cpanevents "angle-right" "angle-left"}} class="mx-1 align-middle" />
+            <span class="setlist-btn-text">|||||</span>
+          </BsButton>
+          <BsButton class="btn-sm col-12 col-sm border rounded-0 ps-0 pe-1 py-0 m-0 h-50 h-sm-100" @type={{if this.globalConfig.config.cpansetlist "info pe-1" "secondary"}} @onClick={{this.toggleSetlist}} title="Setlist/queue manager" disabled={{not (and this.twitchChat.botConnected @stream.requests)}}>
+            <FaIcon @icon={{if this.globalConfig.config.cpansetlist "angle-right" "angle-left"}} class="mx-1 align-middle" />
             <span class="setlist-btn-text">|||||</span>
           </BsButton>
         </div>
@@ -97,12 +97,12 @@
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <div class="row flex-fill d-flex h-100 g-0 overflow-hidden">
           <div class="col h-100 border-0 border-top m-0 p-0 position-relative">
-            <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents "h-25" "d-none") "d-none"}} border">
+            <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents (if this.globalConfig.config.cpanmessages "h-25" "h-full-events")) "d-none"}} border">
               <div class="col h-100 border m-0 p-0 overflow-hidden">
                 <PbStreamEditEvents @stream={{@stream}} />
               </div>
             </div>
-            <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents "h-75" "h-100") "h-100"}} border">
+            <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents "h-75" "h-full-chat") "h-100"}} border">
               <div class="col h-100 border m-0 p-0 overflow-hidden">
                 <PbStreamEditChat @stream={{@stream}} />
               </div>

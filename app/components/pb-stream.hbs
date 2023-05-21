@@ -1,5 +1,5 @@
 <div class="card {{unless @isEditing "h-100" "mh-100"}} flex-fill mb-0 rounded-0 border-0">
-  <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-0">
+  <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-0 stream-menu">
     <div class="row g-0">
       <div class="col align-self-center pe-0 ps-3 text-truncate"><h5 class="my-0 text-white text-truncate"><span class="d-none d-lg-inline">Stream: </span>{{#if @stream.channel}} #{{@stream.channel}} - {{/if}}{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
       <div class="col-auto float-end">

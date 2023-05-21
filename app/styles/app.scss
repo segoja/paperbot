@@ -14,7 +14,7 @@ html,body{
 }
 
 header {
-  z-index: 1050;
+  z-index: 1070;
 }
 
 $height-sizes: (
@@ -136,7 +136,7 @@ $height-sizes: (
   width: auto;
 }
 
-.popover-wormhole { position: absolute; z-index: 9999; }
+.popover-wormhole { position: absolute; z-index: 1055; }
 
 svg.add-to-top, svg.add-to-bottom { min-width: 1em; }
 
@@ -262,7 +262,7 @@ div.system{
 }
 
 #ember-basic-dropdown-wormhole{
-  z-index: 1100;
+  z-index: 1057;
 }
 
 .ember-power-select-trigger{
@@ -421,6 +421,10 @@ div.pan-buttons-row{
    vertical-align: bottom;
   }
   .nav-item:hover { background-color: #111519!important; }
+}
+
+.fixed-top {
+  z-index: 1070!important;
 }
 
 /*.navbar-collapse.show .nav-link { padding-top: 1em!important; padding-bottom: 1em!important; }*/  
@@ -588,7 +592,7 @@ div.pan-buttons-row{
 }
 
 .stream-menu {
-  z-index: 1050!important;
+  z-index: 1046!important;
 }
 
 @keyframes spin {
@@ -629,7 +633,15 @@ div.pan-buttons-row{
 
 .chatinput{
   outline: none;
-  box-shadow:none !important;
+  border-top-width: 4px!important;
+  box-shadow: inset 5px 0px 0px var(--bs-primary-border-subtle) !important;
+}
+
+.h-full-chat {
+  height: calc(100% - 35px)!important;
+}
+.h-full-events {
+  height: calc(100% - 33px)!important;
 }
 
 .border-trans {
