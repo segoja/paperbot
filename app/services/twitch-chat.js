@@ -378,9 +378,9 @@ export default class TwitchChatService extends Service {
   }
 
   @action async messageHandler(target, tags, msg, self) {
-    console.debug('__________________________');
+    /*console.debug('__________________________');
     console.debug(msg);
-    console.debug(tags);
+    console.debug(tags); */
     // this.parseBadges(tags['badges']);
     
     //let badges = tags.filter(tag => tag.startsWith('badges=')).join('').replace(/badges=|\/1/g, '').split(',');
@@ -411,8 +411,8 @@ export default class TwitchChatService extends Service {
       emotes: tags['emotes'] ? tags['emotes'] : null,
     };
 
-    console.debug(this.lastmessage);
-    console.debug('----------------------------------');
+    // console.debug(this.lastmessage);
+    // console.debug('----------------------------------');
 
     if (tags['message-type'] != 'whisper') {
       if (
@@ -567,7 +567,7 @@ export default class TwitchChatService extends Service {
           song = song.replace(/\//g, ' ');
           song = song.replace(/-/g, ' ');
           song = song.replace(/[^a-zA-Z0-9'?! ]/g, '');
-          console.debug(song);
+          // console.debug(song);
           if (song) {
             this.requestpattern = song;
 
@@ -1101,9 +1101,9 @@ export default class TwitchChatService extends Service {
 
   @action parseBadges(userbadges) {
     var htmlbadges = '';
-    console.log(userbadges);
+    // console.log(userbadges);
     let badges = userbadges.split(',');
-    console.debug(badges);
+    // console.debug(badges);
     if(badges){
       badges.forEach((badgeId) => {
         let badgeParts = badgeId.split('/');

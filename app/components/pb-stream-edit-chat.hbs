@@ -1,4 +1,4 @@
-<div id="chat" class="card rounded-0 {{if this.globalConfig.config.cpanmessages "dragpanel h-100"}} border border-top-0 overflow-hidden m-0 p-0">
+<div id="chat" class="card rounded-0 {{if this.globalConfig.config.cpanmessages "h-100"}} border border-top-0 overflow-hidden m-0 p-0 h-effects">
   <div class="card-header rounded-0 p-0 m-0">
     <div class="row g-0">
       <div class="col align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Recent messages</h6></div>
@@ -7,8 +7,8 @@
       </BsButtonGroup>
     </div>
   </div>
-  <div class="card-body {{if this.globalConfig.config.cpanmessages "h-100" "d-none"}} flex-fill overflow-hidden p-0">
-    <BsCollapse class="d-block flex-fill h-100 chatframe position-relative" @collapsed={{not this.globalConfig.config.cpanmessages}}>
+  <div class="card-body {{if this.globalConfig.config.cpanmessages "h-100" "d-none"}} flex-fill overflow-hidden p-0 h-effects">
+    <BsCollapse class="d-block flex-fill h-100 chatframe position-relative h-effects" @collapsed={{not this.globalConfig.config.cpanmessages}}>
       <div class="d-table-cell align-bottom w-100 chatframe position-absolute mh-100 chat-content" {{scroll-position position=this.twitchChat.scrollPosition relative=false}}>
         {{#each this.messages as |message|}}
           <div class="row g-0 px-1" id="{{message.id}}">

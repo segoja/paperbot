@@ -163,6 +163,36 @@ button svg.stream-status {
 .h-33{
   height: 33%!important;
 }
+.h-35 {
+  height: 35% !important;
+}
+.h-65 {
+  height: 65% !important;
+}
+.h-66 {
+  height: 66% !important;
+}
+
+.h-full-chat {
+  height: calc(100% - 35px)!important;
+}
+.h-full-events {
+  height: calc(100% - 33px)!important;
+}
+
+.h-effects {
+  -moz-transition: height 0.5s ease;
+  -webkit-transition: height 0.5s ease;
+  -o-transition: height 0.5s ease;
+  transition: height 0.5s ease;
+}
+
+.w-effects {
+  -moz-transition: width 0.5s ease;
+  -webkit-transition: width 0.5s ease;
+  -o-transition: width 0.5s ease;
+  transition: width 0.5s ease;
+}
 
 @media (min-width: 576px){
   .pending {
@@ -405,6 +435,12 @@ div.pan-buttons-row{
   align: center;
 }
 
+svg.setlist-icon {
+  height: 1.2em!important;  
+  width: auto!important;
+  pading: 0px;
+}
+
 .click-through {
   pointer-events: none;
   .btn { pointer-events: initial; } 
@@ -635,13 +671,6 @@ div.pan-buttons-row{
   outline: none;
   border-top-width: 4px!important;
   box-shadow: inset 5px 0px 0px var(--bs-primary-border-subtle) !important;
-}
-
-.h-full-chat {
-  height: calc(100% - 35px)!important;
-}
-.h-full-events {
-  height: calc(100% - 33px)!important;
 }
 
 .border-trans {
