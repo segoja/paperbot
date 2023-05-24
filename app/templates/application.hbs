@@ -159,11 +159,11 @@
               <nav.link-to @route="overlays.index" class="py-1">Overlays</nav.link-to>
             </nav.item>            
             {{#unless this.currentUser.isTauri}}
-              <nav.item class="px-lg-0 px-3">
+              <nav.item class="px-lg-0 px-3 align-self-lg-center">
                 <nav.link-to @route="reader" class="btn btn-outline-secondary border-0 px-lg-2 px-0 rounded-0 btn-window d-none d-lg-inline"><FaIcon @icon="align-center" /></nav.link-to>
                 <nav.link-to @route="reader" class="py-1 d-lg-none d-block"><FaIcon @icon="align-center" /><span class="d-inline-block d-lg-none ps-1"> Lyrics</span></nav.link-to>
               </nav.item>
-              <nav.item class="px-lg-0 px-3">
+              <nav.item class="px-lg-0 px-3 align-self-lg-center">
                 <nav.link-to @route="overlay" target="_blank" class="btn btn-outline-secondary border-0 px-lg-2 px-0 rounded-0 btn-window d-none d-lg-inline"><FaIcon @icon="list-alt" /></nav.link-to>
                 <nav.link-to @route="overlay" target="_blank" class="py-1 d-lg-none d-block"><FaIcon @icon="list-alt" /><span class="d-inline-block d-lg-none ps-1"> Overlay</span></nav.link-to>
               </nav.item>              

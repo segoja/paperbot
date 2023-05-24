@@ -20,14 +20,14 @@
         </div>
       </Modal.header>
       <Modal.body>
-        <p>You can sync Paperbot among different devices using a self hosted or third-party CouchDb database like <a href="https://www.cloudstation.com/en" target="_blank">CloudStation</a>
+        <p>You can sync Paperbot among different devices using a self hosted or free third-party CouchDb database like <a href="https://www.cloudstation.com/en" target="_blank">CloudStation</a>
           <span role="button" id="remote-couch-info">
             <FaIcon @icon="question-circle" class="text-info" role="presentation" />
           </span>
-          <BsPopover @triggerEvents="click" @triggerElement="#remote-couch-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+          <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="bottom" @triggerElement="#remote-couch-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
             <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
               <p>Songs, requests, commands, streams, clients and overlays will be synced, but not the bot settings, wich will stay in your device/browser only.</p>
-              <p>If you use CloudStation make sure you uncheck the "Publicly accessible" checkbox when creating your database.</p>
+              <p class="text-danger">If you use CloudStation make sure you uncheck the "Publicly accessible" checkbox when creating your database.</p>
             </div>
           </BsPopover>
         </p>

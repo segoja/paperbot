@@ -1,4 +1,10 @@
-<BsButton @type={{ @btnClass}} @onClick={{this.toggleModal}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} /><span class="d-none d-md-inline"> {{@btnText}}</span></BsButton>
+<BsButton @type={{ @btnClass}} @onClick={{this.toggleModal}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} />
+  {{#if @notCompact}}
+    <span class="d-inline"> {{@btnText}}</span>
+  {{else}}
+    <span class="d-none d-md-inline"> {{@btnText}}</span>
+  {{/if}}
+</BsButton>
 
 <BsModal @size="md" @open={{this.isViewing}} as |Modal|>
   <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">

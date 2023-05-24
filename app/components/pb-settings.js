@@ -13,7 +13,7 @@ export default class PbSettingsComponent extends Component {
   @service currentUser;
   @service session;
   @service store;
-
+  
   constructor() {
     super(...arguments);
     this.isViewing = false;

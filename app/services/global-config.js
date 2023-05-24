@@ -5,7 +5,9 @@ export default class GlobalConfigService extends Service {
   @tracked config = '';
   @tracked showFirstRun = true;
   // Tooltip hide delay
-  @tracked ttdelay = 1000;
+  @tracked ttdelay = 1000;  
+  
+  popoverevents = ('click','hover','mouseover');
 
   get defbotclient() {
     if (this.config != '') {

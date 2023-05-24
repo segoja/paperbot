@@ -1,0 +1,12 @@
+<BsButton 
+  @type="outline-secondary alert alert-secondary"
+  class="rounded-0 col border-top-0 border-bottom-0 border-end-0 m-0" 
+  @onClick={{fn this.toggleOffcanvas}}
+>
+ <FaIcon @icon="cog" />
+</BsButton>
+<div class="position-relative">
+  <div class="position-absolute offcanvas offcanvas-end {{if this.visible "show" "hiding"}}" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas" id={{this.popoverId}} {{on "leave" this.toggleOffcanvas}}>
+    {{yield}}
+  </div>
+</div>

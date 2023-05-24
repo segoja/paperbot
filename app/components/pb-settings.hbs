@@ -22,7 +22,7 @@
               <span role="button" id="external-api-info">
                 <FaIcon @icon="question-circle" class="text-info" role="presentation" />
               </span>
-              <BsPopover @triggerEvents="click" @triggerElement="#external-api-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+              <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="top" @triggerElement="#external-api-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
                 <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
                   <p class="my-0">Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>StreamElements</a></p>
                 </div>
@@ -54,9 +54,9 @@
               <span role="button" id="clients-info">
                 <FaIcon @icon="question-circle" class="text-info" role="presentation" />
               </span>
-              <BsPopover @triggerEvents="click" @triggerElement="#clients-info"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+              <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="top" @triggerElement="#clients-info"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
                 <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                  <p class="my-0">To set a client you need to add clients <LinkTo @route="clients.index" {{on "click" po.close}}>here</LinkTo></p>
+                  <p class="my-0">You need to have clients in order to set a default one. You can add new clients <LinkTo @route="clients.index" {{on "click" po.close}}>here</LinkTo>.</p>
                 </div>
               </BsPopover>
             </div>
@@ -67,13 +67,17 @@
               </form.element>
           </div>
           <div class="row pb-2">
-            <label class="control-label col-form-label col-md-4">
-              Default Chat client 
-              <span role="btn">
-                <FaIcon @icon="question-circle" class="text-info" />
-                <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
+            <div class="col-form-label col-md-4">
+              <label class="control-label">Default Chat client</label>
+              <span role="button" id="clients-info2">
+                <FaIcon @icon="question-circle" class="text-info" role="presentation" />
               </span>
-            </label>
+              <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="top" @triggerElement="#clients-info2"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+                <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+                  <p class="my-0">You need to have clients in order to set a default one. You can add new clients <LinkTo @route="clients.index" {{on "click" po.close}}>here</LinkTo>.</p>
+                </div>
+              </BsPopover>
+            </div>            
             <form.element @controlType="power-select" @property="defchatclient" @onChange={{this.setdefChat}} @formLayout="inline" class="col-md-8 border-light" @options={{@clients}} required as |client|>
               <client.control @allowClear={{true}} @placeholder="Select the default Chat Client for new streams" as |option|>
                 {{option.username}}
@@ -242,9 +246,15 @@
       </Modal.body>
       <Modal.footer class="py-2 row g-0">
         <div class="col">
-          <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}}>Export DB</button>
+          <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}}>
+            <FaIcon @icon="file-export" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">Export</span> DB
+          </button>
           {{#let (file-queue name="uploadfile" onFileAdded=@handleImport) as |queue|}}
-            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary">Import DB</label>  
+            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary">
+              <FaIcon @icon="file-import" class="d-sm-none"/>
+              <span class="d-none d-sm-inline">Import</span> DB
+            </label>  
             <input
               type="file"
               id="upload-backup"
@@ -255,8 +265,8 @@
               {{queue.selectFile}}
             >
           {{/let}}
-          <button class="btn btn-sm btn-danger" type="button" {{on "click" @wipeDatabase}}>Wipe DB</button>
-          <button class="btn btn-sm btn-danger" type="button" {{on "click" @wipeConfig}}>Wipe Config</button>          
+          <ButtonConfirm @btnClass="btn btn-sm btn-danger" @btnIcon="trash-alt" @notCompact={{true}} @btnText="DB" @confirmDescription="Are you sure you want to wipe the database?" @targetAction={{@wipeDatabase}} />
+          <ButtonConfirm @btnClass="btn btn-sm btn-danger" @btnIcon="trash-alt" @notCompact={{true}} @btnText="Config" @confirmDescription="Are you sure you want wipe the local config?" @targetAction={{@wipeConfig}} />        
         </div>
         <div class="col-auto">
           <BsButton @type="success" @onClick={{this.doneEditing}}> 

@@ -17,7 +17,7 @@ export default class PbSongComponent extends Component {
   
   songTypes = ['original', 'cover'];
   
-  tabList = ['main', 'lyrics', 'metrics'];
+  tabList = ['main', 'lyrics']; //, 'metrics'];
   
   @tracked activeTab = 'main';
   

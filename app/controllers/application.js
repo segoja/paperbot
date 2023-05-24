@@ -64,7 +64,7 @@ export default class ApplicationController extends Controller {
             this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
-        /*
+        
         if (this.currentUser.isTauri) {
           let currentWindow = getCurrent();
           if (currentWindow.label === 'Main') {
@@ -92,7 +92,7 @@ export default class ApplicationController extends Controller {
               this.currentUser.showLyrics();
             }
           }
-        } */
+        }
 
         if (this.globalConfig.config.canConnect) {
           await this.store.adapterFor('application').configRemote().then(async () => {
