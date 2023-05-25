@@ -48,16 +48,16 @@ export default class PbStreamEditPendingComponent extends Component {
     } else {
       result = this.args.toTop || false;
     }
-    console.log('Is relative? '+result);
+    // console.log('Is relative? '+result);
     return result;
   }
   
   @action tabSwitch(tab){
-    console.log(tab);
+    // console.log(tab);
     if(tab){
       this.activeTab = tab;
     }
-    console.log(this.activeTab);
+    // console.log(this.activeTab);
   }
 
   @action togglePlayed() {

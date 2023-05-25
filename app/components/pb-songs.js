@@ -65,7 +65,27 @@ export default class PbSongsComponent extends Component {
     }
     return false;
   }
-
+    
+  get dynamicHeight(){
+    let elmnt = document.getElementById('bodycontainer');
+    let height = 0;
+    if(elmnt){
+      height = Number(elmnt.offsetHeight) || 0;
+    }
+    return height;
+  }
+  
+  @action updateRowNr(){
+    if(this.dynamicHeight){
+      let height = this.dynamicHeight;
+      let rows = Math.floor(height / 43);
+      if(!isNaN(rows) && rows > 1){
+        this.args.queryParamsObj.perPage = rows -1;
+        this.args.queryParamsObj.page = 1;
+      }
+    }
+  }
+  
   @action toggleSetlist() {
     this.currentUser.showSetlist = !this.currentUser.showSetlist;
   }

@@ -40,4 +40,24 @@ export default class PbStreamsComponent extends Component {
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
   }
+  
+  get dynamicHeight(){
+    let elmnt = document.getElementById('bodycontainer');
+    let height = 0;
+    if(elmnt){
+      height = Number(elmnt.offsetHeight) || 0;
+    }
+    return height;
+  }
+  
+  @action updateRowNr(){
+    if(this.dynamicHeight){
+      let height = this.dynamicHeight;
+      let rows = Math.floor(height / 43);
+      if(!isNaN(rows) && rows > 1){
+        this.args.queryParamsObj.perPage = rows -1;
+        this.args.queryParamsObj.page = 1;
+      }
+    }
+  }  
 }

@@ -1,4 +1,4 @@
-<div class="row h-100 flex-fill m-0 p-0 bg-body">
+<div class="row h-100 flex-fill m-0 p-0 bg-body" {{did-resize this.updateRowNr}}>
   <div class="col-12 h-100 flex-fill p-0 m-0 bg-body"> 
       {{!-- command listing --}}
       <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill rounded-0"}}">
@@ -56,51 +56,46 @@
             </div>
           </div>
         </div>
-        <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden">
+        <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
           <div class="row mx-0 flex-fill listframe">
             <table class="table table-condensed table-hover col-12 my-0 px-0">
               <thead class="listheader thead-light">
-                <tr class="w-100">
-                  <th scope="col" class="col">Command</th>
-                  <th scope="col" class="d-none d-lg-table-cell col-lg">Response</th>
-                  <th scope="col" colspan="2" class="col-auto formcol">Type</th>
+                <tr class="row g-0">
+                  <th scope="col" class="col position-relative"><span class="position-absolute d-block text-truncate w-100">Command</span></th>
+                  <th scope="col" class="d-none d-lg-table-cell col-lg-4 position-relative"><span class="position-absolute d-block text-truncate w-100">Response</span></th>
+                  <th scope="col" class="d-none d-sm-table-cell col-sm-2 position-relative"><span class="position-absolute d-block text-truncate w-100">Type</span></th>
+                  <th scope="col" class="col formcol command-ctrls">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {{#each this.pagedContent as |command|}}
-                  <tr class={{if command.active "bg-success bg-opacity-10"}}>
-                    <td class="col">{{if command.name command.name "unnamed"}}</td>
-                    <td class="d-none d-lg-table-cell col-lg overflow-hidden">
+                  <tr class="row g-0 {{if command.active "bg-success bg-opacity-10"}}">
+                    <td class="col position-relative"><span class="position-absolute d-block text-truncate w-100">{{if command.name command.name "unnamed"}}</span></td>
+                    <td class="d-none d-lg-table-cell col-lg-4 position-relative">
                       {{#if command.response}}
-                        <small class="muted">
-                          {{!-- {{line-clamp
-                            text=command.response
-                            lines=1
-                            ellipsis="..."
-                            seeMoreText="+ more"
-                            seeLessText="- less"
-                          }} --}}
-                        </small>
-                         <label>
+                         <label class="d-inline-block float-end">
                           <span role="button">
-                            <FaIcon @icon="eye" class="text-info" role="presentation" />
+                            <FaIcon @icon="eye" class="text-secondary" role="presentation" />
                             <BsTooltip @delayHide={{this.globalConfig.ttdelay}} role="presentation">{{command.response}}</BsTooltip>
                           </span>
                         </label>
+                        <div class="d-inline-block position-absolute text-truncate w-75 overflow-hidden float-start"> {{command.response}}</div>
                       {{/if}}
                     </td>
-                    <td class="col-lg">{{command.type}}</td>
-                    <td class="col-auto py-0 pe-0 formcol">
-                      <div class="btn-group text-nowrap float-end">
-                        <BsButton 
-                          @type={{if command.active "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
-                          class="rounded-0 col-auto border-top-0 border-bottom-0 border-end-0 px-0 py-2 m-0" 
-                          @onClick={{fn @gridActiveCommand command}}
-                        >
-                          <FaIcon @icon={{if command.active "check-square" "square"}} />
-                        </BsButton>
-                        <button type="button" class="col-auto btn btn-outline-warning alert alert-warning border-top-0 border-bottom-0 border-end-0 rounded-0 py-2 px-0 m-0" {{on "click" (fn @gridEditCommand command)}}><FaIcon @icon="edit" /></button>
-                        <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger border-top-0 border-bottom-0 rounded-0 py-2 px-0 col-auto m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this command?" @targetAction={{fn @gridDeleteCommand command}} />
+                    <td class="d-none d-sm-table-cell col-sm-2">{{command.type}}</td>
+                    <td class="col py-0 pe-0 formcol command-ctrls position-relative w-auto text-end">
+                      <div class="btn-group">
+                        <div class="row g-0 w-auto buttons">
+                          <BsButton 
+                            @type={{if command.active "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
+                            class="rounded-0 col-auto border-top-0 border-bottom-0 border-end-0 px-0 py-2 m-0" 
+                            @onClick={{fn @gridActiveCommand command}}
+                          >
+                            <FaIcon @icon={{if command.active "check-square" "square"}} />
+                          </BsButton>
+                          <button type="button" class="col-auto btn btn-outline-warning alert alert-warning border-top-0 border-bottom-0 border-end-0 rounded-0 py-2 px-0 m-0" {{on "click" (fn @gridEditCommand command)}}><FaIcon @icon="edit" /></button>
+                          <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger border-top-0 border-bottom-0 rounded-0 py-2 px-0 col-auto m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this command?" @targetAction={{fn @gridDeleteCommand command}} />
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -119,4 +114,4 @@
     {{/if}}
   </div>
 </div>
-
+{{did-insert this.updateRowNr}}

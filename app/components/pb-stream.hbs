@@ -5,7 +5,7 @@
       <div class="col-auto float-end">
         <BsButtonGroup class="px-0 rounded float-end" as |bg|>
           {{#unless @isEditing}}
-            <PbModal @btnClass="btn btn-dark text-white rounded-0 border-0 {{if @stream.finished "d-none"}}" @buttonTitle="Keyboard Shortcuts" @btnIcon="question-circle" @btnText="">
+            <PbModal @btnClass="btn btn-dark text-info rounded-0 border-0 {{if @stream.finished "d-none"}}" @buttonTitle="Keyboard Shortcuts" @btnIcon="question-circle" @btnText="">
               <div class="row">
                 <div class="col">
                   <p class="text-start">

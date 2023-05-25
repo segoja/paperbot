@@ -641,10 +641,12 @@ svg.setlist-icon {
 .pt-offc-custom {
   /* padding-top: 2.4rem !important; */
   padding-top: 2.29rem !important;
+  &.hiding .shadow { box-shadow: none!important; }
 }
 
 .pt-offc-custom-stream {
   padding-top: 6.7rem;
+  &.hiding .shadow { box-shadow: none!important; }
   @include media-breakpoint-down(sm) { padding-top: 8.65rem!important; }
 }
 
@@ -719,20 +721,6 @@ span.deleted {
 } 
 
 .table.table-condensed .formcol{ 
-  float: end; 
-  
-  
-  
-  .song-ctrls > .offcanvas {
-    min-width: 227px!important;
-    width: 227px!important;
-    @include media-breakpoint-down(md) {
-      min-width: 168px!important;
-      width: 168px!important;
-      max-width: 168px!important;
-    }
-  }
-
   .btn {
     padding: 0.5em 0.2em!important;
   }
@@ -745,24 +733,57 @@ span.deleted {
   
   .btn-double { 
     @include media-breakpoint-down(md) {
-      max-width: 2.25em!important;
+      max-width: 2.2em!important;
     }
     .btn {
       svg {
-        padding: 0px 0px!important;
+        max-width: 20px;
+        min-width: 20px;
+        width: 20px;
+        max-height: 18px;
+        min-height: 18px;
+        height: 18px;
       }
       @include media-breakpoint-down(md) {
         &:first-child { border-bottom: 1px solid var(--bs-alert-border-color)!important; }
         margin: 0px 0rem!important;
         padding: 0px 0px!important;
         height: 1.25em!important;
-        max-width: 2.25em!important;
+        max-width: 2.2em!important;
         svg {
           margin-top: -0.45em;
           max-height: 1em;
         }
       }
     }
+  }
+  
+  &.song-ctrls{
+    max-width: 226px!important;
+    @include media-breakpoint-down(md) {
+      max-width: 176px!important;
+    }
+    .buttons {
+      min-width: 218px!important;
+      width: 218px!important;
+      @include media-breakpoint-down(md) {
+        min-width: 168px!important;
+        width: 168px!important;
+        max-width: 168px!important;
+      }
+    }
+  }
+
+  &.timer-ctrls, &.command-ctrls, &.stream-ctrls{
+    max-width: 139px!important;
+    .buttons {
+      min-width: 132px!important;
+      width: 132px!important;
+    }
+  }
+
+  &.overlay-ctrls, &.client-ctrls {
+    max-width: 96px!important;
   }
 }
 

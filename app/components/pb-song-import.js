@@ -18,6 +18,19 @@ export default class PbSongComponent extends Component {
 
   @tracked queueLenght = 0;
 
+
+  @tracked componentId = '';
+
+  constructor() {
+    super(...arguments);
+    this.visible = false;
+
+    let elements = document.getElementsByClassName('modal');
+
+    let randomtext = Math.random().toString(36).slice(2, 7);
+    this.componentId = 'Importer' + String(randomtext) + String((elements.length || 0) + 1);
+  }
+
   get queue() {
     let queue = this.fileQueue.find('textqueue');
     return queue;
@@ -25,6 +38,33 @@ export default class PbSongComponent extends Component {
 
   get bootstrapWormhole() {
     return document.getElementById('ember-bootstrap-wormhole');
+  }
+  
+  get dynamicHeight(){
+    let height = 0;
+    let elmnt = document.getElementById(this.componentId);
+    if(elmnt){
+      let modalContent = elmnt.getElementsByClassName('modal-content')[0];
+      modalContent.classList.add("h-100");
+      let listframe = modalContent.getElementsByClassName('listframe')[0];
+      if(listframe){
+        // 150 is the height of the search box + the table header in pixels       
+        height = Number(listframe.offsetHeight) - 150 || 0;
+        modalContent.classList.remove("h-100");
+      }
+    }
+    return height;
+  }
+  
+  @action updateRowNr(){
+    if(this.dynamicHeight){
+      let height = this.dynamicHeight;
+      let rows = Math.floor(height / 43);
+      if(!isNaN(rows) && rows > 1){
+        this.perPage = rows -1;
+        this.page = 1;
+      }
+    }
   }
 
   @tracked isViewing = false;

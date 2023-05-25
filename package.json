@@ -78,6 +78,7 @@
     "ember-pouch": "^8.0.0-beta.2",
     "ember-power-select": "^7.0.0",
     "ember-qunit": "^6.1.1",
+    "ember-resize-modifier": "^0.6.0",
     "ember-resolver": "^10.0.0",
     "ember-service-worker": "^9.0.1",
     "ember-service-worker-asset-cache": "^0.6.4",

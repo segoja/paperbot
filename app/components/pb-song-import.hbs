@@ -1,6 +1,6 @@
 <BsButton @type="warning" @onClick={{this.toggleModal}} title="Generate songs from your text files"><FaIcon @icon="file-import" />Generate</BsButton>
 {{#in-element this.bootstrapWormhole insertBefore=null}}
-  <BsModal @onSubmit={{this.generateSongs}} @open={{this.isViewing}} @scrollable={{true}} @size="lg" as |Modal|>
+  <BsModal @onSubmit={{this.generateSongs}} id={{this.componentId}} @open={{this.isViewing}} @scrollable={{true}} @fullscreen={{false}} @size="xl" as |Modal|>
     <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
       <div class="row g-0 w-100">
         <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i> Import songs from your text files</span></div>
@@ -9,7 +9,7 @@
         </div>
       </div>
     </Modal.header>
-    <Modal.body class="listframe">
+    <Modal.body class="listframe" {{did-resize this.updateRowNr}}>
       <BsForm @model={{this}} @formLayout="inline" class="row g-0"  as |form|>
         <div class="row g-0 pb-2">
           {{#if this.currentUser.isTauri}}
@@ -109,15 +109,18 @@
         {{/if}}
     </Modal.body>
     <Modal.footer class="py-2 g-0">
-      {{#if this.songs}}
-        <div class="col">
-          <PageNumbers @content={{this.pagedSongs}} @fullBorder={{true}} />
+      <div class="row g-0 w-100">
+        <div class="col text-start">
+          {{#if this.songs}}
+            <PageNumbers @content={{this.pagedSongs}} @fullBorder={{true}} />
+          {{/if}}
         </div>
-      {{/if}}
-      <div class="col-auto">
-        <BsButton @onClick={{this.toggleModal}} @type="danger">Cancel</BsButton>
-        <BsButton @onClick={{this.generateSongs}} @type="success">Import</BsButton>
+        <div class="col-sm-auto col text-end">
+          <BsButton @onClick={{this.toggleModal}} @type="danger">Cancel</BsButton>
+          <BsButton @onClick={{this.generateSongs}} @type="success">Import</BsButton>
+        </div>
       </div>
     </Modal.footer>
   </BsModal>
 {{/in-element}}
+{{did-insert this.updateRowNr}}
