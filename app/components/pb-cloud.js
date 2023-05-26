@@ -66,7 +66,7 @@ export default class PbCloudComponent extends Component {
     if (this.cloudState.couchError) {
       return 'text-danger';
     }
-    return 'text-secondary';
+    return 'text-light';
   }
 
   get showArrows() {
@@ -78,12 +78,12 @@ export default class PbCloudComponent extends Component {
 
   get cloudText() {
     if (this.isOnline & this.isCloudSynced & this.isLocalSynced) {
-      return 'Connected and synced';
+      return 'Cloud settings | Status: Connected and synced';
     }
     if (this.isOnline) {
-      return 'Connected but not synced';
+      return 'Cloud settings | Status: Connected but not synced';
     }
-    return 'Offline';
+    return 'Cloud settings | Status: Offline';
   }
 
   get showUp() {

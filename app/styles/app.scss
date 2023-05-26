@@ -468,7 +468,14 @@ svg.setlist-icon {
 
 .papermenu *{
   align-items: bottom!important;
-  .navbar-toggler-icon { width: 27px; height: 26px; }
+  .navbar-toggler-icon { 
+    width: 27px;
+    height: 26px;
+    vertical-align: middle;
+    background-position: bottom;
+    background-size: 110%;
+    &:hover{ filter: brightness(2); } 
+  }
   .dragger { cursor: pointer!important; align-items: bottom!important; }
   svg.logo{
    /*fill: gray;*/
@@ -628,6 +635,10 @@ svg.setlist-icon {
   max-height: 32px;
   min-height: 32px;
   height: 32px;
+
+  svg.svg-shadow { 
+    filter: drop-shadow(-1px 1px 1px black)!important;
+  }  
 }
 
 .btn:focus {
@@ -640,7 +651,7 @@ svg.setlist-icon {
 
 .pt-offc-custom {
   /* padding-top: 2.4rem !important; */
-  padding-top: 2.29rem !important;
+  padding-top: 2.3rem !important;
   &.hiding .shadow { box-shadow: none!important; }
 }
 
@@ -720,8 +731,10 @@ span.deleted {
   border-width: 0px 0px 3px 0px;
 } 
 
-.table.table-condensed .formcol{ 
+.table.table-condensed .formcol{
+  padding-left: 0px!important;
   .btn {
+    max-width: 44px!important;
     padding: 0.5em 0.2em!important;
   }
   .btn svg {
@@ -731,59 +744,47 @@ span.deleted {
     margin: 0px 0.5rem;
   }
   
-  .btn-double { 
-    @include media-breakpoint-down(md) {
-      max-width: 2.2em!important;
-    }
-    .btn {
-      svg {
-        max-width: 20px;
-        min-width: 20px;
-        width: 20px;
-        max-height: 18px;
-        min-height: 18px;
-        height: 18px;
-      }
-      @include media-breakpoint-down(md) {
-        &:first-child { border-bottom: 1px solid var(--bs-alert-border-color)!important; }
-        margin: 0px 0rem!important;
-        padding: 0px 0px!important;
-        height: 1.25em!important;
-        max-width: 2.2em!important;
-        svg {
-          margin-top: -0.45em;
-          max-height: 1em;
-        }
-      }
-    }
-  }
   
   &.song-ctrls{
-    max-width: 226px!important;
+    min-width: 220px!important;
+    max-width: 220px!important;
     @include media-breakpoint-down(md) {
+      min-width: 176px!important;
       max-width: 176px!important;
-    }
-    .buttons {
-      min-width: 218px!important;
-      width: 218px!important;
+    }    
+    .btn-double { 
       @include media-breakpoint-down(md) {
-        min-width: 168px!important;
-        width: 168px!important;
-        max-width: 168px!important;
+        min-width: 44px!important;
+        max-width: 44px!important;
+      }
+      .btn {
+        svg {
+          max-height: 18px;
+          min-height: 18px;
+          height: 18px;
+        }
+        @include media-breakpoint-down(md) {
+          &:first-child { border-bottom: 1px solid var(--bs-alert-border-color)!important; }
+          margin: 0px 0px!important;
+          padding: 0px 0px!important;
+          height: 1.25em!important;
+          svg {
+            margin-top: -0.45em;
+            max-height: 1em;
+          }
+        }
       }
     }
   }
 
   &.timer-ctrls, &.command-ctrls, &.stream-ctrls{
-    max-width: 139px!important;
-    .buttons {
-      min-width: 132px!important;
-      width: 132px!important;
-    }
+    min-width: 132px!important;
+    max-width: 132px!important;
   }
 
   &.overlay-ctrls, &.client-ctrls {
-    max-width: 96px!important;
+    min-width: 88px!important;
+    max-width: 88px!important;
   }
 }
 

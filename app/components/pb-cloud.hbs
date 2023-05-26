@@ -1,5 +1,5 @@
-<BsButton @type="btn btn-outline-info text-black p-0 border-0 rounded-0 btn-window px-0" @onClick={{this.toggleModal}} title={{this.cloudText}} >
-  <span class={{this.cloudColor}}><FaIcon @icon="cloud"  @size="lg" /></span>
+<BsButton @type="btn btn-outline-secondary text-black p-0 border-0 rounded-0 btn-window px-0" @onClick={{this.toggleModal}} title={{this.cloudText}} >
+  <span class={{this.cloudColor}}><FaIcon @icon="cloud" class="svg-shadow" @size="lg" /></span>
   <div class="sync-activity mx-0">
     {{#unless this.showArrows}}
       <span class={{unless this.isCloudSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-up" @size="sm" /></span>
@@ -10,12 +10,12 @@
 
 {{#in-element this.modalWormhole insertBefore=null}}
   {{#if this.globalConfig.config}}
-    <BsModal @size="lg" @open={{this.visible}} as |Modal|>
+    <BsModal @size="lg" @open={{this.visible}} @onHide={{this.toggleModal}} as |Modal|>
       <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
         <div class="row g-0 w-100">
-          <div class="col py-1 ps-3"><span class="h5 text-white">Cloud settings</span></div>
+          <div class="col py-1 ps-3"><span class="h5 text-white">Cloud Settings</span></div>
           <div class="col-auto">
-            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}}><FaIcon @icon="times" /></button>
+            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}} title="Close"><FaIcon @icon="times" /></button>
           </div>
         </div>
       </Modal.header>
@@ -93,10 +93,10 @@
           {{/if}}
         </BsForm>
       </Modal.body>
-      <Modal.footer class="py-2 row g-0">
+      <Modal.footer class="py-2 row g-0 flex-nowrap">
         <div class="col">
           
-          <BsButton @type={{if this.isOnline "danger" "secondary"}} class="btn-sm" @onClick={{this.toggleConnection}}> 
+          <BsButton @type={{if this.isOnline "danger" "secondary"}} class="btn-sm" @onClick={{this.toggleConnection}} title={{if this.isOnline "Disconnect from cloud" "Connect to cloud"}}> 
             {{#if this.isOnline}}
               <span><FaIcon @icon="toggle-on" /> Disconnect</span>
             {{else}}
@@ -105,7 +105,7 @@
           </BsButton>
         </div>
         <div class="col-auto">
-          <BsButton @type="success" @onClick={{this.doneEditing}}> 
+          <BsButton @type="success" @onClick={{this.doneEditing}} title={{if this.saving "Saving..." "Save"}}> 
             {{#if this.saving}}
               <span><FaIcon @icon="spinner" class="spin" /> Saving...</span>
             {{else}}

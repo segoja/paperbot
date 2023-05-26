@@ -16,69 +16,69 @@
                   </PowerSelect>
                 </div>
                 <div class="col-auto">
-                  <BsButton @type="secondary rounded-start-0" @onClick={{this.clearSelect}} disabled={{not this.selected}}>
+                  <BsButton @type="secondary rounded-start-0" @onClick={{this.clearSelect}} disabled={{not this.selected}} title="Clear selection">
                     <FaIcon @icon="cancel" />
                   </BsButton>
                 </div>
                 <div class="col-auto">
-                  <button type="button" class="btn btn-secondary col-auto ms-1" {{on "click" this.toggleEdit}} disabled={{not this.currentSong}} alt="formatted text"><FaIcon @icon={{if this.isEditing "eye" "pen"}} /></button>
+                  <button type="button" class="btn btn-secondary col-auto ms-1" {{on "click" this.toggleEdit}} disabled={{not this.currentSong}} title="Edit lyrics"><FaIcon @icon={{if this.isEditing "eye" "pen"}} /></button>
                 </div>
               </div>
             </div>
             <div class="d-lg-none col-12 col-lg-auto text-end">
               <div class="row g-1 me-auto float-end">
-                <BsButton @type="secondary btn-sm col-auto" @onClick={{this.autoAdjust}}>
+                <BsButton @type="secondary btn-sm col-auto" @onClick={{this.autoAdjust}} title="Auto adjust">
                   <FaIcon @icon={{if this.calculating "spinner" "wand-magic-sparkles"}} @spin={{this.calculating}} />
                 </BsButton>
-                <button type="button" class={{if this.currentSong.viewMode "btn btn-primary btn-sm col-auto" "btn btn-secondary btn-sm col-auto"}} {{on "click" this.modeSwitch}} alt="formatted text"><FaIcon @icon="paragraph" /></button>
+                <button type="button" class={{if this.currentSong.viewMode "btn btn-primary btn-sm col-auto" "btn btn-secondary btn-sm col-auto"}} {{on "click" this.modeSwitch}} title="View mode"><FaIcon @icon="paragraph" /></button>
                 <div class="btn-group btn-group-sm col-auto">
-                  <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} alt="transpose down"><FaIcon @icon="down-long" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} title="Transpose down"><FaIcon @icon="down-long" /></button>
                   <span class="btn btn-secondary disabled text-white">{{this.currentSong.transSteps}}</span>
-                  <button type="button" class="btn btn-secondary" {{on "click" this.upKey}} alt="transpose up"><FaIcon @icon="up-long" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.upKey}} title="Transpose up"><FaIcon @icon="up-long" /></button>
                 </div>
                 <div class="btn-group btn-group-sm col-auto">
-                  <button type="button" class="btn btn-secondary" {{on "click" this.resetZoom}} alt="Reset zoom"><FaIcon @icon="undo" /></button>
-                  <button type="button" class="btn btn-secondary" {{on "click" this.subZoom}} alt="Zoom out"><FaIcon @icon="search-minus" /></button>
-                  <button type="button" class="btn btn-secondary" {{on "click" this.addZoom}} alt="Zoom in"><FaIcon @icon="search-plus" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.resetZoom}} title="Reset zoom"><FaIcon @icon="undo" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.subZoom}} title="Zoom out"><FaIcon @icon="search-minus" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.addZoom}} title="Zoom in"><FaIcon @icon="search-plus" /></button>
                 </div>
                 <div class="btn-group btn-group-sm col-auto">
-                  <button type="button" class="btn btn-secondary {{if (eq this.currentSong.columns 0) "active"}}" {{on "click" this.autoColumn}} alt="Auto columns">
+                  <button type="button" class="btn btn-secondary {{if (eq this.currentSong.columns 0) "active"}}" {{on "click" this.autoColumn}} title="Reset columns">
                     <FaIcon @icon="columns" /> 
                     {{if (gt this.currentSong.columns 0) this.currentSong.columns}}
                   </button>
-                  <button type="button" class="btn btn-secondary px-1" {{on "click" this.lessColumn}} alt="Less columns"><FaIcon @icon="minus" /></button>
-                  <button type="button" class="btn btn-secondary px-1" {{on "click" this.moreColumn}} alt="More columns"><FaIcon @icon="plus" /></button>
+                  <button type="button" class="btn btn-secondary px-1" {{on "click" this.lessColumn}} title="Less columns"><FaIcon @icon="minus" /></button>
+                  <button type="button" class="btn btn-secondary px-1" {{on "click" this.moreColumn}} title="More columns"><FaIcon @icon="plus" /></button>
                 </div>
-                <BsButton @type="{{this.btnState}} btn-sm col-auto" disabled={{not this.currentSong.hasDirtyAttributes}} @onClick={{this.doneEditing}}>
+                <BsButton @type="{{this.btnState}} btn-sm col-auto" disabled={{not this.currentSong.hasDirtyAttributes}} @onClick={{this.doneEditing}} title="Save song">
                   <FaIcon @icon="save" @pulse={{this.saving}} />
                 </BsButton>
               </div>
             </div>            
             <div class="d-none d-lg-block col-lg-auto">
               <div class="row g-1">
-                <BsButton @type="secondary col-auto" @onClick={{this.autoAdjust}}>
+                <BsButton @type="secondary col-auto" @onClick={{this.autoAdjust}} title="Auto adjust">
                   <FaIcon @icon={{if this.calculating "spinner" "wand-magic-sparkles"}} @spin={{this.calculating}} />
                 </BsButton>
-                <button type="button" class={{if this.currentSong.viewMode "btn btn-primary col-auto" "btn btn-secondary col-auto"}} {{on "click" this.modeSwitch}} alt="formatted text"><FaIcon @icon="paragraph" /></button>
+                <button type="button" class={{if this.currentSong.viewMode "btn btn-primary col-auto" "btn btn-secondary col-auto"}} {{on "click" this.modeSwitch}} title="View mode"><FaIcon @icon="paragraph" /></button>
                 <div class="btn-group col-auto">
-                  <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} alt="transpose down"><FaIcon @icon="down-long" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.downKey}} title="Transpose down"><FaIcon @icon="down-long" /></button>
                   <span class="btn btn-secondary disabled text-white">{{this.currentSong.transSteps}}</span>
-                  <button type="button" class="btn btn-secondary" {{on "click" this.upKey}} alt="transpose up"><FaIcon @icon="up-long" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.upKey}} title="Transpose up"><FaIcon @icon="up-long" /></button>
                 </div>
                 <div class="btn-group col-auto">
-                  <button type="button" class="btn btn-secondary" {{on "click" this.resetZoom}} alt="Reset zoom"><FaIcon @icon="undo" /></button>
-                  <button type="button" class="btn btn-secondary" {{on "click" this.subZoom}} alt="Zoom out"><FaIcon @icon="search-minus" /></button>
-                  <button type="button" class="btn btn-secondary" {{on "click" this.addZoom}} alt="Zoom in"><FaIcon @icon="search-plus" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.resetZoom}} title="Reset zoom"><FaIcon @icon="undo" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.subZoom}} title="Zoom out"><FaIcon @icon="search-minus" /></button>
+                  <button type="button" class="btn btn-secondary" {{on "click" this.addZoom}} title="Zoom in"><FaIcon @icon="search-plus" /></button>
                 </div>
                 <div class="btn-group col-auto">
-                  <button type="button" class="btn btn-secondary {{if (eq this.currentSong.columns 0) "active"}}" {{on "click" this.autoColumn}} alt="Auto columns">
+                  <button type="button" class="btn btn-secondary {{if (eq this.currentSong.columns 0) "active"}}" {{on "click" this.autoColumn}} title="Reset columns">
                     <FaIcon @icon="columns" /> 
                     {{if (gt this.currentSong.columns 0) this.currentSong.columns}}
                   </button>
-                  <button type="button" class="btn btn-secondary px-1" {{on "click" this.lessColumn}} alt="Less columns"><FaIcon @icon="minus" /></button>
-                  <button type="button" class="btn btn-secondary px-1" {{on "click" this.moreColumn}} alt="More columns"><FaIcon @icon="plus" /></button>
+                  <button type="button" class="btn btn-secondary px-1" {{on "click" this.lessColumn}} title="Less columns"><FaIcon @icon="minus" /></button>
+                  <button type="button" class="btn btn-secondary px-1" {{on "click" this.moreColumn}} title="More columns"><FaIcon @icon="plus" /></button>
                 </div>
-                <BsButton @type="{{this.btnState}}  col-auto" @class={{this.currentSong.hasDirtyAttributes "btn-warning pulse"}} disabled={{not this.currentSong.hasDirtyAttributes}} @onClick={{this.doneEditing}}>
+                <BsButton @type="{{this.btnState}}  col-auto" @class={{this.currentSong.hasDirtyAttributes "btn-warning pulse"}} disabled={{not this.currentSong.hasDirtyAttributes}} @onClick={{this.doneEditing}} title="Save song">
                   <FaIcon @icon="save" @pulse={{this.saving}} />
                 </BsButton>
               </div>

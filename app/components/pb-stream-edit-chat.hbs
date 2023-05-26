@@ -3,7 +3,9 @@
     <div class="row g-0">
       <div class="col align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Recent messages</h6></div>
       <BsButtonGroup class="col-auto px-0" as |bg|>
-        <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} ><FaIcon @icon="{{if this.globalConfig.config.cpanmessages "window-minimize" "window-maximize"}}" /></bg.button>
+        <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} title={{if this.globalConfig.config.cpanmessages "Minimize chat" "Maximize chat"}}>
+          <FaIcon @icon={{if this.globalConfig.config.cpanmessages "window-minimize" "window-maximize"}} />
+        </bg.button>
       </BsButtonGroup>
     </div>
   </div>

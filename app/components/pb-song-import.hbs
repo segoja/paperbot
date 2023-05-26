@@ -1,11 +1,11 @@
 <BsButton @type="warning" @onClick={{this.toggleModal}} title="Generate songs from your text files"><FaIcon @icon="file-import" />Generate</BsButton>
 {{#in-element this.bootstrapWormhole insertBefore=null}}
-  <BsModal @onSubmit={{this.generateSongs}} id={{this.componentId}} @open={{this.isViewing}} @scrollable={{true}} @fullscreen={{false}} @size="xl" as |Modal|>
+  <BsModal @onSubmit={{this.generateSongs}} @onHide={{this.toggleModal}} id={{this.componentId}} @open={{this.isViewing}} @scrollable={{true}} @fullscreen={{false}} @size="xl" as |Modal|>
     <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
       <div class="row g-0 w-100">
         <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i> Import songs from your text files</span></div>
         <div class="col-auto">
-          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}}><FaIcon @icon="times" /></button>
+          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}} title="Close"><FaIcon @icon="times" /></button>
         </div>
       </div>
     </Modal.header>
@@ -13,7 +13,7 @@
       <BsForm @model={{this}} @formLayout="inline" class="row g-0"  as |form|>
         <div class="row g-0 pb-2">
           {{#if this.currentUser.isTauri}}
-            <BsButton @type="warning col-auto me-1" @onClick={{this.openSongsFolder}}><FaIcon @icon="folder-open" /> Select folder</BsButton>
+            <BsButton @type="warning col-auto me-1" @onClick={{this.openSongsFolder}} title="Select folder"><FaIcon @icon="folder-open" /> Select folder</BsButton>
           {{else}}
             {{#let (file-queue name="textqueue" onFileAdded=this.openSongsFolder) as |queue|}}
               <label role="button" for="upload-songs" tabindex="0" class="btn btn-warning col-auto me-1" title="Import songs by text files">
@@ -73,6 +73,7 @@
                       @type={{if this.isBulk "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
                       class="rounded-0 border-top-0 border-bottom-0 border-start-0 px-0 py-2 m-0"
                       {{on "click" this.bulkSelectAll}}
+                      title={{if this.isBulk "Deselect all" "Select all"}}
                     >
                       <FaIcon @icon={{if this.isBulk "check-square" "square"}} />
                     </BsButton> 
@@ -98,6 +99,7 @@
                         @type={{if song.selected "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
                         class="rounded-0 border-top-0 border-bottom-0 border-start-0 px-0 py-2 m-0" 
                         @onClick={{fn this.addToImport song}}
+                        title={{if song.selected "Deselect song" "Select song"}}
                       >
                         <FaIcon @icon={{if song.selected "check-square" "square"}} />
                       </BsButton>
@@ -109,15 +111,15 @@
         {{/if}}
     </Modal.body>
     <Modal.footer class="py-2 g-0">
-      <div class="row g-0 w-100">
+      <div class="row g-0 w-100 flex-nowrap">
         <div class="col text-start">
           {{#if this.songs}}
-            <PageNumbers @content={{this.pagedSongs}} @fullBorder={{true}} />
+            <div class="d-block w-100"><PageNumbers @content={{this.pagedSongs}} @fullBorder={{true}} /></div>
           {{/if}}
         </div>
-        <div class="col-sm-auto col text-end">
-          <BsButton @onClick={{this.toggleModal}} @type="danger">Cancel</BsButton>
-          <BsButton @onClick={{this.generateSongs}} @type="success">Import</BsButton>
+        <div class="col-auto text-end">
+          <BsButton @onClick={{this.toggleModal}} @type="danger" title="Cancel import">Cancel</BsButton>
+          <BsButton @onClick={{this.generateSongs}} @type="success" title="Import">Import</BsButton>
         </div>
       </div>
     </Modal.footer>

@@ -23,13 +23,11 @@
         as |navbar|>
           <div class="navbar-header row col-lg-auto col g-0">
             <div class="col-auto">
-              <navbar.toggle class="rounded-0 btn btn-outline-info border-0 p-0 m-0 d-none" />
+              <navbar.toggle class="rounded-0 btn btn-outline-secondary text-light border-0 p-0 m-0 d-none" />
               <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0">
                 {{svg-jar "papercat-gray-icon" class="logo" }}
                 <span class="d-none d-sm-inline-block">Paperbot Reader</span>
-                {{!-- <span class="d-none d-sm-inline-block" id="readerTitleSeparator"> - </span>  
-                <strong class="d-inline-block pe-3" id="readerTitle"></strong>  --}}
-              </button>{{this.loadConfig}}
+              </button>
             </div>
             <div class="col d-lg-none d-flex">
               <button type="button" class="nav-link pt-3 pb-2 w-100 bg-transparent border-0"></button>
@@ -37,16 +35,16 @@
             <div class="btn-group btn-group-sm col-auto d-lg-none">
               {{#if this.isMain}}
                 {{#if this.isWinOverlayAllowed}}
-                  <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="Show overlay" {{on "click" this.toggleOverlay}}>
-                    <FaIcon @icon="list-alt" />
+                  <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                    <FaIcon @icon="list-alt" class="svg-shadow" />
                   </button>
                 {{/if}}
-                <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="Show lyrics" {{on "click" this.toggleLyrics}}>
-                  <FaIcon @icon="align-center" />
+                <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="Show lyrics" {{on "click" this.toggleLyrics}}>
+                  <FaIcon @icon="align-center" class="svg-shadow" />
                 </button>
               {{/if}}            
-              <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
-                <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
+              <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
+                <FaIcon @icon="lightbulb" class="svg-shadow" @prefix={{if this.lightControl.isDark "far" "fas"}} />
               </button>
               {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeConfig={{this.wipeConfig}} @wipeDatabase={{this.wipeDatabase}} />
@@ -63,16 +61,16 @@
             <div class="btn-group btn-group-sm col-auto">
               {{#unless (or this.isOverlay this.isLyrics)}}
                 {{#if this.isWinOverlayAllowed}}
-                  <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="Show overlay" {{on "click" this.toggleOverlay}}>
-                    <FaIcon @icon="list-alt" />
+                  <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                    <FaIcon @icon="list-alt" class="svg-shadow" />
                   </button>
                 {{/if}}
-                <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="Show lyrics" {{on "click" this.toggleLyrics}}>
-                  <FaIcon @icon="align-center" />
+                <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="Show lyrics" {{on "click" this.toggleLyrics}}>
+                  <FaIcon @icon="align-center" class="svg-shadow" />
                 </button>
               {{/unless}}
-              <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
-                <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
+              <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
+                <FaIcon @icon="lightbulb" class="svg-shadow" @prefix={{if this.lightControl.isDark "far" "fas"}} />
               </button>
               {{#if this.showSettings}}
                 <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeConfig={{this.wipeConfig}} @wipeDatabase={{this.wipeDatabase}} />
@@ -104,7 +102,7 @@
             <button type="button" class="navbar-brand bg-transparent border-0 p-0 m-0">
               {{svg-jar "papercat-gray-icon" class="logo" }}
               <span class="d-none d-sm-inline-block pe-3">Paperbot</span> 
-            </button>{{this.loadConfig}}
+            </button>
           </div>
           <div class="col d-lg-none d-flex">
             <button type="button" class="nav-link pt-3 pb-2 w-100 bg-transparent border-0"></button>
@@ -113,17 +111,24 @@
             {{#if this.currentUser.isTauri}}
               {{#unless (or this.isOverlay this.isLyrics)}}
                 {{#if this.isWinOverlayAllowed}}
-                  <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="Show overlay" {{on "click" this.toggleOverlay}}>
-                    <FaIcon @icon="list-alt" />
+                  <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                    <FaIcon @icon="list-alt" class="svg-shadow" />
                   </button>
                 {{/if}}
-                <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="Show lyrics" {{on "click" this.toggleLyrics}}>
-                  <FaIcon @icon="align-center" />
+                <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="Show lyrics" {{on "click" this.toggleLyrics}}>
+                  <FaIcon @icon="align-center" class="svg-shadow" />
                 </button>
               {{/unless}}
+            {{else}}
+              <LinkTo @route="reader" class="btn btn-outline-secondary text-light p-0 pt-1 border-0 rounded-0 btn-window" title="Lyrics">
+                <FaIcon @icon="align-center" class="svg-shadow" />
+              </LinkTo>
+              <LinkTo @route="overlay" class="btn btn-outline-secondary text-light p-0 pt-1 border-0 rounded-0 btn-window" title="Open overlay in new tab" target="_blank">
+                <FaIcon @icon="list-alt" class="svg-shadow" />
+              </LinkTo>
             {{/if}}
-            <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
-              <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
+            <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
+              <FaIcon @icon="lightbulb" class="svg-shadow" @prefix={{if this.lightControl.isDark "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeConfig={{this.wipeConfig}} @wipeDatabase={{this.wipeDatabase}} />
@@ -160,12 +165,10 @@
             </nav.item>            
             {{#unless this.currentUser.isTauri}}
               <nav.item class="px-lg-0 px-3 align-self-lg-center">
-                <nav.link-to @route="reader" class="btn btn-outline-secondary border-0 px-lg-2 px-0 rounded-0 btn-window d-none d-lg-inline"><FaIcon @icon="align-center" /></nav.link-to>
-                <nav.link-to @route="reader" class="py-1 d-lg-none d-block"><FaIcon @icon="align-center" /><span class="d-inline-block d-lg-none ps-1"> Lyrics</span></nav.link-to>
+                <nav.link-to @route="reader" class="py-1 d-lg-none d-block"><span class="d-inline-block d-lg-none">Lyrics</span></nav.link-to>
               </nav.item>
               <nav.item class="px-lg-0 px-3 align-self-lg-center">
-                <nav.link-to @route="overlay" target="_blank" class="btn btn-outline-secondary border-0 px-lg-2 px-0 rounded-0 btn-window d-none d-lg-inline"><FaIcon @icon="list-alt" /></nav.link-to>
-                <nav.link-to @route="overlay" target="_blank" class="py-1 d-lg-none d-block"><FaIcon @icon="list-alt" /><span class="d-inline-block d-lg-none ps-1"> Overlay</span></nav.link-to>
+                <nav.link-to @route="overlay" target="_blank" class="py-1 d-lg-none d-block"><span class="d-inline-block d-lg-none">Overlay</span></nav.link-to>
               </nav.item>              
             {{/unless}}
             <nav.item class="px-lg-0 px-3">
@@ -178,17 +181,24 @@
             {{#if this.currentUser.isTauri}}
               {{#if this.isMain}}
                 {{#if this.isWinOverlayAllowed}}
-                  <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="Show overlay" {{on "click" this.toggleOverlay}}>
+                  <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="Show overlay" {{on "click" this.toggleOverlay}}>
                     <FaIcon @icon="list-alt" />
                   </button>
                 {{/if}}
-                <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="Show lyrics" {{on "click" this.toggleLyrics}}>
+                <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="Show lyrics" {{on "click" this.toggleLyrics}}>
                   <FaIcon @icon="align-center" />
                 </button>
               {{/if}}
+            {{else}}
+              <LinkTo @route="reader" class="btn btn-outline-secondary text-light p-0 pt-1 border-0 rounded-0 btn-window" title="Lyrics">
+                <FaIcon @icon="align-center" class="svg-shadow" />
+              </LinkTo>
+              <LinkTo @route="overlay" class="btn btn-outline-secondary text-light p-0 pt-1 border-0 rounded-0 btn-window" title="Open overlay in new tab" target="_blank">
+                <FaIcon @icon="list-alt" class="svg-shadow" />
+              </LinkTo>
             {{/if}}
-            <button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
-              <FaIcon @icon="lightbulb" @prefix={{if this.lightControl.isDark "far" "fas"}} />
+            <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" title="{{if this.lightControl.isDark "Switch to light mode" "Switch to dark mode"}}" {{on "click" this.lightControl.toggleMode}}>
+              <FaIcon @icon="lightbulb" class="svg-shadow" @prefix={{if this.lightControl.isDark "far" "fas"}} />
             </button>
             {{#if this.showSettings}}
               <PbSettings @clients={{this.clients}} @overlays={{this.overlays}} @handleExport={{this.handleExport}} @handleImport={{this.handleImport}} @wipeConfig={{this.wipeConfig}} @wipeDatabase={{this.wipeDatabase}} />

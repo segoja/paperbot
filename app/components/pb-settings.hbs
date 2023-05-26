@@ -1,14 +1,14 @@
-<button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" {{on "click" this.toggleModal}}>
-  <FaIcon @icon="wrench" @class={{if this.cloudState.cloudError "blinkcolor" (if this.cloudState.online "connected")}} />
+<button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" {{on "click" this.toggleModal}} title="Local settings">
+  <FaIcon @icon="wrench" class="svg-shadow {{if this.cloudState.cloudError "blinkcolor" (if this.cloudState.online "connected")}}" />
 </button>
 
 {{#in-element this.modalWormhole insertBefore=null}}
-    <BsModal @open={{this.isViewing}} @scrollable={{true}} @backdrop={{true}} @size="xl" as |Modal|>
+    <BsModal @open={{this.isViewing}} @scrollable={{true}} @onHide={{this.toggleModal}} @backdrop={{true}} @size="xl" as |Modal|>
       <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 border-bottom rounded-top">
         <div class="row g-0 w-100 bg-dark border-0 rounded-top">
-          <div class="col py-1 ps-3"><span class="h5 text-white">Settings</span></div>
+          <div class="col py-1 ps-3"><span class="h5 text-white">Local Settings</span></div>
           <div class="col-auto">
-            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}}><FaIcon @icon="times" /></button>
+            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}} title="Close"><FaIcon @icon="times" /></button>
           </div>
         </div>
       </Modal.header>
@@ -120,7 +120,7 @@
                   <div class="input-group">
                     <el.control disabled class="border-form-control text-secondary" />
                     <div class="input-group-append">
-                      <BsButton @type="secondary rounded-0 rounded-end" @onClick={{fn this.opendialogfiles this.globalConfig.config}} >Select folder</BsButton>
+                      <BsButton @type="secondary rounded-0 rounded-end" @onClick={{fn this.opendialogfiles this.globalConfig.config}} title="Opens folder selector">Select folder</BsButton>
                     </div>
                   </div>
                 </form.element>
@@ -244,14 +244,14 @@
           </div>
         </BsForm>
       </Modal.body>
-      <Modal.footer class="py-2 row g-0">
+      <Modal.footer class="py-2 row g-0 flex-nowrap">
         <div class="col">
-          <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}}>
+          <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}} title="Export database">
             <FaIcon @icon="file-export" class="d-sm-none"/>
             <span class="d-none d-sm-inline">Export</span> DB
           </button>
           {{#let (file-queue name="uploadfile" onFileAdded=@handleImport) as |queue|}}
-            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary">
+            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary" title="Import database">
               <FaIcon @icon="file-import" class="d-sm-none"/>
               <span class="d-none d-sm-inline">Import</span> DB
             </label>  
@@ -265,11 +265,11 @@
               {{queue.selectFile}}
             >
           {{/let}}
-          <ButtonConfirm @btnClass="btn btn-sm btn-danger" @btnIcon="trash-alt" @notCompact={{true}} @btnText="DB" @confirmDescription="Are you sure you want to wipe the database?" @targetAction={{@wipeDatabase}} />
-          <ButtonConfirm @btnClass="btn btn-sm btn-danger" @btnIcon="trash-alt" @notCompact={{true}} @btnText="Config" @confirmDescription="Are you sure you want wipe the local config?" @targetAction={{@wipeConfig}} />        
+          <ButtonConfirm @btnClass="btn btn-sm btn-danger" @btnIcon="trash-alt" @buttonTitle="Wipe database" @notCompact={{true}} @btnText="DB" @confirmDescription="Are you sure you want to wipe the database?" @targetAction={{@wipeDatabase}} />
+          <ButtonConfirm @btnClass="btn btn-sm btn-danger" @btnIcon="trash-alt" @buttonTitle="Wipe local config" @notCompact={{true}} @btnText="Config" @confirmDescription="Are you sure you want wipe the local config?" @targetAction={{@wipeConfig}} />
         </div>
         <div class="col-auto">
-          <BsButton @type="success" @onClick={{this.doneEditing}}> 
+          <BsButton @type="success" @onClick={{this.doneEditing}} title="Save local config"> 
             {{#if this.saving}}
               <span><FaIcon @icon="spinner" class="spin" /> Saving...</span>
             {{else}}

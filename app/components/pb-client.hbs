@@ -3,7 +3,7 @@
     <div class="row g-0">
       <div class="col py-1 ps-3"><span class="h5 text-white"><span class="d-none d-md-inline">Client:</span> {{@client.username}}</span></div>
       <div class="col-auto">
-        <button type="button" class="btn btn-dark rounded-0 border-0" {{on "click" @closeClient}}><FaIcon @icon="xmark" /></button>
+        <button type="button" class="btn btn-dark rounded-0 border-0" {{on "click" @closeClient}} title="Close"><FaIcon @icon="xmark" /></button>
       </div>
     </div>
   </div>
@@ -27,8 +27,8 @@
           <div class="input-group">
             {{did-insert this.setOauth}}
             {{did-update this.setOauth @client}}
-            <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{this.oauth}} autocomplete="current-oauth" class="form-control" disabled={{this.isMasked}} placeholder="Paste your Oauth here including Oauth: "/>          
-            <button type="button" class="btn btn-outline-secondary" {{on "click" this.toggleMask}}><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
+            <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{this.oauth}} autocomplete="current-oauth" class="form-control" disabled={{this.isMasked}} placeholder="Paste your Oauth here including Oauth: "/>
+            <button type="button" class="btn btn-outline-secondary" {{on "click" this.toggleMask}} title="Show password"><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
           </div>
         </div>
       </div>
@@ -46,16 +46,16 @@
     </BsForm>
   </div>  
   <div class="card-footer py-3 bg-transparent">
-    <div class="row">
+    <div class="row g-1 w-100 flex-nowrap">
       <div class="col">
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash" @btnText="Delete" @confirmDescription="Are you sure you want to delete this client?" @targetAction={{@deleteClient}} />
+        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash" @buttonTitle="Delete client" @btnText="Delete" @confirmDescription="Are you sure you want to delete this client?" @targetAction={{@deleteClient}} />
       </div>
       <div class="col-auto">
-        <BsButton @type="secondary" {{on "click" @closeClient}}><FaIcon @icon="right-to-bracket" @flip="horizontal"  /><span class="d-none d-md-inline"> Back</span></BsButton>
-        <BsButton @type={{if this.saving "success" "secondary"}} class="d-none d-md-inline" @onClick={{this.doneEditing}}>
+        <BsButton @type="secondary" title="Go back" {{on "click" @closeClient}}><FaIcon @icon="right-to-bracket" @flip="horizontal"  /><span class="d-none d-md-inline"> Back</span></BsButton>
+        <BsButton @type={{if this.saving "success" "secondary"}} title="Save client" class="d-none d-md-inline" @onClick={{this.doneEditing}}>
           <FaIcon @icon="save" @pulse={{this.saving}} />
         </BsButton>
-        <BsButton @type="success" @onClick={{@saveAndReturnClient}}><FaIcon @icon="save" /> Save<span class="d-none d-md-inline"> & Return</span></BsButton>   
+        <BsButton @type="success" @onClick={{@saveAndReturnClient}} title="Save & return"><FaIcon @icon="save" /> Save<span class="d-none d-md-inline"> & Return</span></BsButton>   
       </div>
     </div>    
   </div>

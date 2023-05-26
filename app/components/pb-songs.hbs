@@ -44,9 +44,9 @@
                 {{/let}}
                 
                 <BsButton @type="secondary" @onClick={{this.songExportFiltered}} title="Export songs to CSV"><FaIcon @icon="file-export" class="d-md-none" /><span class="d-none d-md-inline">Export</span></BsButton>
-                <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered songs?" @targetAction={{this.wipeSongs}} @buttonTitle="Delete all listed songs" />
+                <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @buttonTitle="Delete filtered songs" @confirmDescription="Are you sure you want to delete all your filtered songs?" @targetAction={{this.wipeSongs}} />
                 <BsButton @type="primary" @onClick={{@createSong}} title="Add new song">Add New</BsButton>
-                <BsButton @type="info position-relative ps-1" @onClick={{this.toggleSetlist}} title="Setlist/queue manager">
+                <BsButton @type="info position-relative ps-1" @onClick={{this.toggleSetlist}} title="Queue/Setlist manager">
                   <div class="row g-0">
                     <div class="col-auto">
                     {{svg-jar (if this.isSetlist "setlist-close" "setlist-open") class="setlist-icon align-middle ms-1" }}
@@ -110,13 +110,14 @@
                         Never
                       {{/if}}
                     </td>--}}
-                    <td class="col py-0 pe-0 formcol song-ctrls position-relative w-auto text-end">
+                    <td class="col py-0 pe-0 formcol song-ctrls text-end">
                       <div class="btn-group">
-                        <div class="row g-0 w-auto buttons">
+                        <div class="row g-0 buttons">
                           <BsButton 
                             @type={{if song.active "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
                             class="rounded-0 col border-top-0 border-bottom-0 border-end-0 m-0" 
                             @onClick={{fn @gridActiveSong song}}
+                            title={{if song.active "Disable song" "Enable song"}}
                           >
                             <FaIcon @icon={{if song.active "check-square" "square"}} />
                           </BsButton>
@@ -131,8 +132,8 @@
                               </button>
                             </div>
                           </div>
-                          <button type="button" class="col btn btn-outline-warning alert alert-warning border-top-0 border-bottom-0 border-end-0 rounded-0 m-0" {{on "click" (fn @gridEditSong song)}}><FaIcon @icon="edit" title="Edit song" /></button>
-                          <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger border-top-0 border-bottom-0 rounded-0 col m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @targetAction={{fn @gridDeleteSong song}} />
+                          <button type="button" class="col btn btn-outline-warning alert alert-warning border-top-0 border-bottom-0 border-end-0 rounded-0 m-0" {{on "click" (fn @gridEditSong song)}} title="Edit song"><FaIcon @icon="edit" /></button>
+                          <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger border-top-0 border-bottom-0 rounded-0 col m-0" @buttonTitle="Delete song" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @targetAction={{fn @gridDeleteSong song}} />
                         </div>
                       </div>
                     </td>

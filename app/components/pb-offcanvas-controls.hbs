@@ -2,6 +2,7 @@
   @type="outline-secondary alert alert-secondary"
   class="rounded-0 col border-top-0 border-bottom-0 border-end-0 m-0" 
   @onClick={{fn this.toggleOffcanvas}}
+  title={{if this.visible "Hide queue/setlist" "Show queue/setlist"}}
 >
  <FaIcon @icon="cog" />
 </BsButton>

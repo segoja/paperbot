@@ -19,10 +19,10 @@
                 </div>
               </div>
             </PbModal>
-            <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
+            <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.reloadStream}} title="Reload stream UI"><FaIcon @icon="redo-alt" /></bg.button>
           {{/unless}}
-          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.queueHandler.exportQueue}} ><FaIcon @icon="file-download" /></bg.button>
-          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{@closeStream}}><FaIcon @icon="xmark" /></bg.button>
+          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.queueHandler.exportQueue}} title="Download setlist/queue"><FaIcon @icon="file-download" /></bg.button>
+          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{@closeStream}} title="Close"><FaIcon @icon="xmark" /></bg.button>
         </BsButtonGroup>
       </div>
     </div>
@@ -100,7 +100,6 @@
                 </div>
               {{/if}}
             </div>
-            
           </div>
         </div>
       </div>

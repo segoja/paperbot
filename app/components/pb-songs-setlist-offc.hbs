@@ -45,8 +45,8 @@
         </ul> 
       </div>
       <div class="col-auto px-1">
-        <BsButton @type="secondary" @onClick={{this.queueHandler.exportQueue}} title="Download setlist intext"><FaIcon @icon="file-download" /></BsButton>
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="If you do this while streaming you will wipe all requests. Are you sure?" @targetAction={{this.queueHandler.clearAll}} @buttonTitle="Wipe setlist" />
+        <BsButton @type="secondary" @onClick={{this.queueHandler.exportQueue}} title="Download setlist in a text file"><FaIcon @icon="file-download" /></BsButton>
+        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @buttonTitle="Wipe queue/setlist" @btnText="" @confirmDescription="If you do this while streaming you will wipe all requests. Are you sure?" @targetAction={{this.queueHandler.clearAll}}/>
         {{#unless @isStream}}
           <BsButton @type="info ps-1" @onClick={{@toggleSetlist}} title="Setlist/queue manager">
             <div class="row g-0">
@@ -64,7 +64,7 @@
       <div class="col listframe-setlist px-2 h-100" id="playedSlSongs">
         {{#each this.playedSongs as |playedsong|}}
           <div id="slofc-{{playedsong.id}}" class="alert alert-secondary w-100 text-decoration-none py-0 ps-2 pe-0 my-1 text-start row g-0 rounded-1">
-            <button class="col border-0 text-start text-reset bg-transparent text-decoration-none" type="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} >
+            <button class="col border-0 text-start text-reset bg-transparent text-decoration-none" title="Click here to mark it as pending" type="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} >
               <div class="row g-0" role="presentation">
                 <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
                 <div class="col-auto"><small class="pe-2">{{playedsong.user}}</small></div>
@@ -79,7 +79,7 @@
               </div>
             </button>
             <div class="col-auto">
-              <button type="button" class="btn btn-sm handle align-top" {{on "click" (fn this.queueHandler.removePlayed playedsong)}}>
+              <button type="button" class="btn btn-sm handle align-top" title="Remove request" {{on "click" (fn this.queueHandler.removePlayed playedsong)}}>
                 <FaIcon @icon="times" @size="1x" class="d-block" />
               </button>                  
             </div>
@@ -100,7 +100,7 @@
                 <FaIcon @icon="grip-vertical" @size="1x" class="d-block align-self-center" />
               </div>
             </div>
-            <button type="button" class="col border-0 text-start text-reset bg-transparent text-decoration-none" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}}>
+            <button type="button" class="col border-0 text-start text-reset bg-transparent text-decoration-none" title="Click here to mark it as played" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}}>
               <div class="col ps-2">
                 <div class="row g-0">
                   <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
@@ -119,7 +119,7 @@
               </div>
             </button>
             <div class="col-auto">
-              <button type="button" class="btn btn-sm handle align-top" {{on "click" (fn this.queueHandler.removePending pendingsong)}}>
+              <button type="button" class="btn btn-sm handle align-top" title="Remove request" {{on "click" (fn this.queueHandler.removePending pendingsong)}}>
                 <FaIcon @icon="times" @size="1x" class="d-block" />
               </button>              
             </div>                
