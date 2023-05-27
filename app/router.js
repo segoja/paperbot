@@ -15,7 +15,7 @@ Router.map(function () {
   });
   this.route('overlays', function () {
     this.route('overlay', { path: ':overlay_id' });
-  });  
+  });
   this.route('timers', function () {
     this.route('timer', { path: ':timer_id' });
   });

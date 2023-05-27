@@ -22,7 +22,7 @@ PouchDB.plugin(PouchDBFind)
 
 export default class ConfigAdapter extends Adapter {
   @service store;
-  
+
   constructor() {
     super(...arguments);
 
@@ -47,7 +47,7 @@ export default class ConfigAdapter extends Adapter {
 
     return this;
   }
-  
+
   wipeDatabase() {
     this.store.unloadAll();
     this.db

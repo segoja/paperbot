@@ -1,13 +1,9 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import { htmlSafe } from '@ember/template';
 import { action } from '@ember/object';
-import { assign } from '@ember/polyfills';
-import moment from 'moment';
-import computedFilterByQuery from 'ember-cli-filter-by-query';
-import tmi from 'tmi.js';
 import { later, cancel } from '@ember/runloop';
 import { TrackedArray } from 'tracked-built-ins';
+import { inject as service } from '@ember/service';
 
 export default class BotBrainService extends Service {
   @service audio;
@@ -15,7 +11,7 @@ export default class BotBrainService extends Service {
   @service queueHandler;
   @service currentUser;
   @service store;
-  
+
   @tracked savechat = false;
 
   @tracked msglist = [];
@@ -81,7 +77,7 @@ export default class BotBrainService extends Service {
   }
 
   @tracked takessongrequests = false;
-  
+
   @action async timersLauncher() {
     let count = 1;
     console.debug('Scheduling timers...');
@@ -196,5 +192,5 @@ export default class BotBrainService extends Service {
         console.debug('No sound commands to unload in soundboard!');
       }
     }
-  }  
+  }
 }

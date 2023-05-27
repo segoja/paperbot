@@ -15,7 +15,7 @@ export default class RequestModel extends Model {
   @attr('number', { defaultValue: 0 }) position;
 
   @attr('boolean', { defaultValue: false }) processed;
-  
+
   @attr('string', { defaultValue: '' }) title;
   @attr('string', { defaultValue: '' }) artist;
 
@@ -25,11 +25,11 @@ export default class RequestModel extends Model {
   @readOnly('song.id') songId;
   @readOnly('song.isDeleted') songDeleted;
 
-  get effectiveTitle(){
+  get effectiveTitle() {
     return this.title || this.songTitle;
   }
-  
-  get effectiveArtist(){
+
+  get effectiveArtist() {
     return this.artist || this.songArtist;
   }
 

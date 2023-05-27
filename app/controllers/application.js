@@ -64,7 +64,7 @@ export default class ApplicationController extends Controller {
             this.globalConfig.config.externaleventskey;
           this.eventsExternal.type = this.globalConfig.config.externalevents;
         }
-        
+
         if (this.currentUser.isTauri) {
           let currentWindow = getCurrent();
           if (currentWindow.label === 'Main') {
@@ -88,18 +88,24 @@ export default class ApplicationController extends Controller {
             ) {
               this.currentUser.toggleOverlay();
             }
-            if (this.globalConfig.config.showLyrics && this.router.currentURL != '/reader') {
-              this.currentUser.showLyrics();
+            if (
+              this.globalConfig.config.showLyrics &&
+              this.router.currentURL != '/reader'
+            ) {
+              // this.currentUser.showLyrics();
             }
           }
         }
 
         if (this.globalConfig.config.canConnect) {
-          await this.store.adapterFor('application').configRemote().then(async () => {
-            if(this.globalConfig.config.autoConnect){
-              await this.store.adapterFor('application').connectRemote();
-            }
-          });
+          await this.store
+            .adapterFor('application')
+            .configRemote()
+            .then(async () => {
+              if (this.globalConfig.config.autoConnect) {
+                await this.store.adapterFor('application').connectRemote();
+              }
+            });
         } else {
           if (this.currentUser.isTauri) {
             let currentWindow = getCurrent();
@@ -124,7 +130,10 @@ export default class ApplicationController extends Controller {
               ) {
                 this.currentUser.toggleOverlay();
               }
-              if (this.globalConfig.config.showLyrics && this.router.currentURL != '/reader') {
+              if (
+                this.globalConfig.config.showLyrics &&
+                this.router.currentURL != '/reader'
+              ) {
                 this.currentUser.showLyrics();
               }
             }
@@ -337,9 +346,9 @@ export default class ApplicationController extends Controller {
     return false;
   }
 
-  @action setBorder(){
-    if(this.currentUser.isTauri && !this.isOverlay){      
-      let headerElement =  document.getElementsByClassName('papermenu')[0];
+  @action setBorder() {
+    if (this.currentUser.isTauri && !this.isOverlay) {
+      let headerElement = document.getElementsByClassName('papermenu')[0];
       headerElement.classList.remove('border-0');
       headerElement.classList.remove('border-bottom');
       headerElement.classList.remove('border-secondary');
@@ -350,7 +359,7 @@ export default class ApplicationController extends Controller {
       mainElement.classList.add('border');
       mainElement.classList.add('border-app');
       // mainElement.classList.add('border-dark');
-    }    
+    }
   }
 
   @action updateCommandList() {
@@ -461,46 +470,46 @@ export default class ApplicationController extends Controller {
         }
       });
     }
-    
+
     let config = this.globalConfig.config;
-    
+
     let oldBotClient = '';
     let oldChatClient = '';
     let oldOverlay = '';
 
-    if(config.defBotId){
-      oldBotClient = await config.get('defbotclient') || false;
+    if (config.defBotId) {
+      oldBotClient = (await config.get('defbotclient')) || false;
     }
-    
-    if(config.defChatId){
-      oldChatClient = await config.get('defchatclient') || false;
+
+    if (config.defChatId) {
+      oldChatClient = (await config.get('defchatclient')) || false;
     }
-    
-    if(config.defOverlayId){
-      oldOverlay = await config.get('defOverlay') || false;
+
+    if (config.defOverlayId) {
+      oldOverlay = (await config.get('defOverlay')) || false;
     }
-    
+
     config.destroyRecord().then(async () => {
-      if(oldBotClient && oldChatClient){
-        if(oldBotClient.id != oldChatClient.id){          
+      if (oldBotClient && oldChatClient) {
+        if (oldBotClient.id != oldChatClient.id) {
           await oldBotClient.save();
           await oldChatClient.save();
-        } else {        
+        } else {
           await oldBotClient.save();
         }
       } else {
-        if(oldBotClient){
+        if (oldBotClient) {
           await oldBotClient.save();
         }
-        if(oldChatClient){
+        if (oldChatClient) {
           await oldChatClient.save();
-        }        
+        }
       }
-      
-      if(oldOverlay){
+
+      if (oldOverlay) {
         await oldOverlay.save();
       }
-      
+
       var adapter = this.store.adapterFor('config');
       adapter.wipeDatabase().then(() => {
         console.debug('The config has been wiped.');
@@ -516,7 +525,12 @@ export default class ApplicationController extends Controller {
   @action saveSettings() {
     return this.globalConfig.config.save().then((config) => {
       if (!this.cloudState.online) {
-        if (config.cloudUrl && config.username && config.password && config.autoConnect) {
+        if (
+          config.cloudUrl &&
+          config.username &&
+          config.password &&
+          config.autoConnect
+        ) {
           console.debug('Setting remote backup...');
           this.store.adapterFor('application').configRemote();
           if (!this.session.isAuthenticated) {
@@ -527,18 +541,16 @@ export default class ApplicationController extends Controller {
     });
   }
 
-
-
-  @action closeMenu() {    
+  @action closeMenu() {
     let htmlElement = document.getElementsByClassName('navbar-collapse')[0];
-    if(htmlElement){
+    if (htmlElement) {
       htmlElement.classList.remove('show');
     }
   }
 
-  @action openMenu() {    
+  @action openMenu() {
     let htmlElement = document.getElementsByClassName('navbar-collapse')[0];
-    if(htmlElement){
+    if (htmlElement) {
       htmlElement.classList.add('show');
     }
   }
@@ -589,7 +601,7 @@ export default class ApplicationController extends Controller {
             } else {
               currentconfig.showLyrics = true;
               await currentconfig.save().then(async () => {
-                if(this.router.currentURL != '/reader'){
+                if (this.router.currentURL != '/reader') {
                   this.currentUser.showLyrics();
                 }
               });
@@ -856,14 +868,14 @@ export default class ApplicationController extends Controller {
     }
   }
 
-  @action toRoute(route){
-    if(route){
-      if(route == 'overlay'){
+  @action toRoute(route) {
+    if (route) {
+      if (route == 'overlay') {
         let url = this.router.urlFor(route);
         window.open(url);
       } else {
         this.router.transitionTo(route);
-      }      
+      }
     }
   }
 

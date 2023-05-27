@@ -9,7 +9,7 @@ export default class PbStreamEditPendingComponent extends Component {
   @service queueHandler;
   @service store;
 
-  constructor(){
+  constructor() {
     super(...arguments);
     this.activeTab = 'pending';
   }
@@ -18,9 +18,9 @@ export default class PbStreamEditPendingComponent extends Component {
     super.willDestroy(...arguments);
     this.activeTab = 'pending';
   }
-    
+
   tabList = ['pending', 'played'];
-  
+
   @tracked activeTab = 'pending';
   get scrollPendingPosition() {
     this.queueHandler.lastsongrequest;
@@ -40,10 +40,10 @@ export default class PbStreamEditPendingComponent extends Component {
       Number(this.queueHandler.pendingSongs.length);
     return result;
   }
-  
-  get isRelative(){
+
+  get isRelative() {
     let result = false;
-    if(this.args.isStream){
+    if (this.args.isStream) {
       result = true;
     } else {
       result = this.args.toTop || false;
@@ -51,10 +51,10 @@ export default class PbStreamEditPendingComponent extends Component {
     // console.log('Is relative? '+result);
     return result;
   }
-  
-  @action tabSwitch(tab){
+
+  @action tabSwitch(tab) {
     // console.log(tab);
-    if(tab){
+    if (tab) {
       this.activeTab = tab;
     }
     // console.log(this.activeTab);

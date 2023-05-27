@@ -7,9 +7,9 @@ import PageItems from 'ember-cli-pagination/lib/page-items';
 
 export default class PageNumbersComponent extends PageNumbers {
   @tracked componentId = '';
-  
+
   @tracked numPagesToShow = 10;
-  
+
   constructor() {
     super(...arguments);
     this.visible = false;
@@ -17,9 +17,10 @@ export default class PageNumbersComponent extends PageNumbers {
     let elements = document.getElementsByClassName('pagination');
 
     let randomtext = Math.random().toString(36).slice(2, 7);
-    this.componentId = 'pgntr' + String(randomtext) + String((elements.length || 0) + 1);
+    this.componentId =
+      'pgntr' + String(randomtext) + String((elements.length || 0) + 1);
   }
-  
+
   get pageItemsObj() {
     let result = PageItems.create({
       parent: this,
@@ -34,31 +35,30 @@ export default class PageNumbersComponent extends PageNumbers {
     return result;
   }
 
-  get dynamicWidth(){
+  get dynamicWidth() {
     let width = 0;
     let elmnt = document.getElementById(this.componentId);
-    if(elmnt){
+    if (elmnt) {
       let parent = elmnt.parentElement;
-      if(parent){
+      if (parent) {
         width = parent.offsetWidth;
       }
     }
     return width;
   }
-  
-  @action updateBtnNr(){
-    if(this.dynamicWidth){
+
+  @action updateBtnNr() {
+    if (this.dynamicWidth) {
       let width = this.dynamicWidth;
       // 43 is the width of each button;
       let buttons = Math.ceil(width / 44);
-      if(!isNaN(buttons) && buttons > 2 && buttons <= 12){
+      if (!isNaN(buttons) && buttons > 2 && buttons <= 12) {
         // console.log('Number of buttons: '+ buttons);
         set(this, 'numPagesToShow', buttons - 2);
       }
     }
   }
-  
-  
+
   get contentLength() {
     return this.args.content.content.length;
   }

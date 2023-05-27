@@ -4,8 +4,7 @@ import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 
 export default class PbSongComponent extends Component {
-  
-  constructor(){
+  constructor() {
     super(...arguments);
     this.activeTab = 'main';
   }
@@ -14,16 +13,16 @@ export default class PbSongComponent extends Component {
     super.willDestroy(...arguments);
     this.activeTab = 'main';
   }
-  
+
   songTypes = ['original', 'cover'];
-  
+
   tabList = ['main', 'lyrics']; //, 'metrics'];
-  
+
   @tracked activeTab = 'main';
-  
-  @action tabSwitch(tab){
+
+  @action tabSwitch(tab) {
     console.log(tab);
-    if(tab){
+    if (tab) {
       this.activeTab = tab;
     }
     console.log(this.activeTab);

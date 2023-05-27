@@ -26,10 +26,10 @@ export default class ConfigModel extends Model {
   @attr('number', { defaultValue: 175 }) overlayHeight;
   @attr('number', { defaultValue: 0 }) overlayPosX;
   @attr('number', { defaultValue: 0 }) overlayPosY;
-  
+
   @belongsTo('overlay', { inverse: 'configs', async: true })
   defOverlay;
-  
+
   @attr('number', { defaultValue: 25 }) timerLines;
   @attr('number', { defaultValue: 1 }) timerTime;
 
@@ -88,24 +88,24 @@ export default class ConfigModel extends Model {
   @attr('string', { defaultValue: '' }) database;
   @attr('string', { defaultValue: '' }) username;
   @attr('string', { defaultValue: '' }) password;
-  @attr('boolean',{ defaultValue: false }) autoConnect;
-  
-  get cloudUrl(){
+  @attr('boolean', { defaultValue: false }) autoConnect;
+
+  get cloudUrl() {
     let dbUrl = '';
-    if(this.cloudType == 'cloudstation'){
-      dbUrl = 'https://my.cloudstation.com/'+this.database;
+    if (this.cloudType == 'cloudstation') {
+      dbUrl = 'https://my.cloudstation.com/' + this.database;
     }
-    if(this.cloudType == 'custom'){
+    if (this.cloudType == 'custom') {
       dbUrl = this.remoteUrl;
     }
     return dbUrl;
   }
-  
-  get isCloudDisabled(){
+
+  get isCloudDisabled() {
     return this.cloudType == 'disabled';
   }
 
-  get isCustomCloud(){
+  get isCustomCloud() {
     return this.cloudType == 'custom';
   }
 
@@ -116,18 +116,16 @@ export default class ConfigModel extends Model {
     return false;
   }
 
-  get canGetEvents(){
+  get canGetEvents() {
     if (this.externalevents && this.externaleventskey) {
       return true;
     }
     return false;
   }
 
-
   @readOnly('defOverlay.id') defOverlayId;
   @readOnly('defbotclient.id') defBotId;
   @readOnly('defchatclient.id') defChatId;
-
 
   @attr('string') rev;
 }

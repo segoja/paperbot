@@ -8,8 +8,8 @@ export default class CloudStateService extends Service {
   @tracked couchError = false;
   @tracked connectionError = false;
 
-  get isOnline(){
-    this.online;
+  get isOnline() {
+    return this.online;
   }
 
   get cloudError() {
@@ -19,11 +19,11 @@ export default class CloudStateService extends Service {
     return false;
   }
 
-  get isCouchError(){
+  get isCouchError() {
     return this.couchError;
   }
 
-  get isConnError(){
+  get isConnError() {
     return this.couchError;
   }
 
@@ -34,12 +34,12 @@ export default class CloudStateService extends Service {
   setPull(val) {
     this.cloudPull = val;
   }
-  
-  setOffline(){
+
+  setOffline() {
     this.cloudPush = false;
     this.cloudPull = false;
     this.online = false;
     this.couchError = true;
     this.connectionError = true;
-  }  
+  }
 }

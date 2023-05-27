@@ -7,7 +7,6 @@ import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
 import moment from 'moment';
 import { inject as service } from '@ember/service';
-import { later } from '@ember/runloop';
 
 export default class PbSongsComponent extends Component {
   @service currentUser;
@@ -15,10 +14,10 @@ export default class PbSongsComponent extends Component {
   @service twitchChat;
   @service globalConfig;
   @service store;
-  
+
   @tracked toTop = false;
 
-  constructor(){
+  constructor() {
     super(...arguments);
     this.toTop = true;
     this.sortString = 'title:asc';
@@ -31,7 +30,7 @@ export default class PbSongsComponent extends Component {
   }
 
   @tracked sortString = 'title:asc';
-  get songsSorting(){    
+  get songsSorting() {
     return Object.freeze(this.sortString.split(','));
   }
 
@@ -62,12 +61,12 @@ export default class PbSongsComponent extends Component {
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
   }
-  
-  @action clearSearch(){
+
+  @action clearSearch() {
     this.args.queryParamsObj.query = '';
     this.args.queryParamsObj.page = 1;
   }
-  
+
   @tracked importcontent;
 
   get isSetlist() {
@@ -76,58 +75,57 @@ export default class PbSongsComponent extends Component {
     }
     return false;
   }
-    
-  get dynamicHeight(){
+
+  get dynamicHeight() {
     let elmnt = document.getElementById('bodycontainer');
     let height = 0;
-    if(elmnt){
+    if (elmnt) {
       height = Number(elmnt.offsetHeight) || 0;
     }
     return height;
   }
-  
-  @action updateRowNr(){
-    if(this.dynamicHeight){
+
+  @action updateRowNr() {
+    if (this.dynamicHeight) {
       let height = this.dynamicHeight;
       let rows = Math.floor(height / 43);
-      if(!isNaN(rows) && rows > 1){
-        this.args.queryParamsObj.perPage = rows -1;
+      if (!isNaN(rows) && rows > 1) {
+        this.args.queryParamsObj.perPage = rows - 1;
         this.args.queryParamsObj.page = 1;
       }
     }
   }
-  
- 
-  @action sortColumn(attribute){
+
+  @action sortColumn(attribute) {
     let sortData = this.sortString.split(',');
     this.sortString = '';
-    if(attribute){
+    if (attribute) {
       let newSort = '';
-      let exist = sortData.filter(row => row.includes(attribute));
-      if(exist.length > 0){
-        if(exist.toString().includes(':asc')){
-          newSort = attribute+':desc,';
+      let exist = sortData.filter((row) => row.includes(attribute));
+      if (exist.length > 0) {
+        if (exist.toString().includes(':asc')) {
+          newSort = attribute + ':desc,';
         } else {
-          newSort = attribute+':asc,';
+          newSort = attribute + ':asc,';
         }
       } else {
-        newSort = attribute+':asc,';
+        newSort = attribute + ':asc,';
       }
-      if(sortData.length > 0){
-        let others = sortData.filter(row => !row.includes(attribute));
-        if(others.length > 0){
+      if (sortData.length > 0) {
+        let others = sortData.filter((row) => !row.includes(attribute));
+        if (others.length > 0) {
           newSort += others.join(',');
         }
       }
       this.sortString = newSort.toString();
     }
   }
-  
+
   @action toggleSetlist() {
     this.currentUser.showSetlist = !this.currentUser.showSetlist;
   }
 
-  @action songToQueue(song, toTop){
+  @action songToQueue(song, toTop) {
     this.queueHandler.songToQueue(song, toTop);
     this.toTop = toTop;
   }
@@ -223,5 +221,4 @@ export default class PbSongsComponent extends Component {
       this.currentUser.download(csvdata, filename, 'text/csv');
     }
   }
-
 }

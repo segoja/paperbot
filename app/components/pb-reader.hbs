@@ -11,7 +11,7 @@
             <div class="col">
               <div class="input-group">
                 <div class="col">
-                  <PowerSelect @searchEnabled={{true}} @search={{this.searchSong}} @searchMessage="" @options="" @searchPlaceholder="Type a song" @selected={{this.selected}}  @searchClass="form-control w-100" @triggerClass="rounded-end-0" id="selectReader" @allowClear={{false}} @onChange={{this.selectSong}} @placeholder={{this.currentSong}} @placeholderComponent="song-select-placeholder" as |song|>
+                  <PowerSelect @searchEnabled={{true}} @search={{this.searchSong}} @searchMessage="" @options="" @searchPlaceholder="Type a song" @selected={{this.selected}}  @searchClass="form-control w-100" @triggerClass="rounded-end-0" id="selectReader" @allowClear={{false}} @onChange={{this.selectSong}} @placeholder={{this.currentSong}} @placeholderComponent={{component "song-select-placeholder"}} as |song|>
                     <span class="overflow-hidden"><strong>{{song.title}}</strong> {{#if song.artist}}- <span class="text-secondary">{{song.artist}}</span>{{/if}}</span>
                   </PowerSelect>
                 </div>

@@ -23,10 +23,10 @@ export default class PbTimersComponent extends Component {
   }
 
   @tracked sortString = 'name:asc';
-  get timersSorting(){    
+  get timersSorting() {
     return Object.freeze(this.sortString.split(','));
   }
-  
+
   @sort('args.timers', 'timersSorting') arrangedContent;
 
   @computedFilterByQuery(
@@ -51,15 +51,15 @@ export default class PbTimersComponent extends Component {
   })
   pagedContent;
 
-  get dynamicHeight(){
+  get dynamicHeight() {
     let elmnt = document.getElementById('bodycontainer');
     let height = 0;
-    if(elmnt){
+    if (elmnt) {
       height = Number(elmnt.offsetHeight) || 0;
     }
     return height;
   }
-  
+
   @action wipeTimers() {
     this.args.queryParamsObj.page = 1;
     this.filteredContent.forEach((timer) => {
@@ -73,41 +73,41 @@ export default class PbTimersComponent extends Component {
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
   }
-  
-  @action clearSearch(){
+
+  @action clearSearch() {
     this.args.queryParamsObj.query = '';
     this.args.queryParamsObj.page = 1;
   }
-  
-  @action updateRowNr(){
-    if(this.dynamicHeight){
+
+  @action updateRowNr() {
+    if (this.dynamicHeight) {
       let height = this.dynamicHeight;
       let rows = Math.floor(height / 43);
-      if(!isNaN(rows) && rows > 1){
-        this.args.queryParamsObj.perPage = rows -1;
+      if (!isNaN(rows) && rows > 1) {
+        this.args.queryParamsObj.perPage = rows - 1;
         this.args.queryParamsObj.page = 1;
       }
     }
   }
 
-  @action sortColumn(attribute){
+  @action sortColumn(attribute) {
     let sortData = this.sortString.split(',');
     this.sortString = '';
-    if(attribute){
+    if (attribute) {
       let newSort = '';
-      let exist = sortData.filter(row => row.includes(attribute));
-      if(exist.length > 0){
-        if(exist.toString().includes(':asc')){
-          newSort = attribute+':desc,';
+      let exist = sortData.filter((row) => row.includes(attribute));
+      if (exist.length > 0) {
+        if (exist.toString().includes(':asc')) {
+          newSort = attribute + ':desc,';
         } else {
-          newSort = attribute+':asc,';
+          newSort = attribute + ':asc,';
         }
       } else {
-        newSort = attribute+':asc,';
+        newSort = attribute + ':asc,';
       }
-      if(sortData.length > 0){
-        let others = sortData.filter(row => !row.includes(attribute));
-        if(others.length > 0){
+      if (sortData.length > 0) {
+        let others = sortData.filter((row) => !row.includes(attribute));
+        if (others.length > 0) {
           newSort += others.join(',');
         }
       }

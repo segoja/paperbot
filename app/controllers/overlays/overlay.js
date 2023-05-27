@@ -37,7 +37,7 @@ export default class OverlayController extends Controller {
     await this.model.configs.slice().forEach((config) => {
       childrenList.push(config);
     });
-    
+
     var processed = all(childrenList);
     return processed;
   }

@@ -25,7 +25,7 @@ export default class PbCommandsComponent extends Component {
   }
 
   @tracked sortString = 'name:asc';
-  get commandsSorting(){    
+  get commandsSorting() {
     return Object.freeze(this.sortString.split(','));
   }
 
@@ -41,7 +41,7 @@ export default class PbCommandsComponent extends Component {
 
   @computedFilterByQuery(
     'filteredByType',
-    ['name','response'],
+    ['name', 'response'],
     'args.queryParamsObj.query',
     { conjunction: 'and', sort: false }
   )
@@ -67,50 +67,50 @@ export default class PbCommandsComponent extends Component {
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
   }
-  
-  @action clearSearch(){
+
+  @action clearSearch() {
     this.args.queryParamsObj.query = '';
     this.args.queryParamsObj.page = 1;
   }
-  
-  get dynamicHeight(){
+
+  get dynamicHeight() {
     let elmnt = document.getElementById('bodycontainer');
     let height = 0;
-    if(elmnt){
+    if (elmnt) {
       height = Number(elmnt.offsetHeight) || 0;
     }
     return height;
   }
-  
-  @action updateRowNr(){
-    if(this.dynamicHeight){
+
+  @action updateRowNr() {
+    if (this.dynamicHeight) {
       let height = this.dynamicHeight;
       let rows = Math.floor(height / 43);
-      if(!isNaN(rows) && rows > 1){
-        this.args.queryParamsObj.perPage = rows -1;
+      if (!isNaN(rows) && rows > 1) {
+        this.args.queryParamsObj.perPage = rows - 1;
         this.args.queryParamsObj.page = 1;
       }
     }
   }
 
-  @action sortColumn(attribute){
+  @action sortColumn(attribute) {
     let sortData = this.sortString.split(',');
     this.sortString = '';
-    if(attribute){
+    if (attribute) {
       let newSort = '';
-      let exist = sortData.filter(row => row.includes(attribute));
-      if(exist.length > 0){
-        if(exist.toString().includes(':asc')){
-          newSort = attribute+':desc,';
+      let exist = sortData.filter((row) => row.includes(attribute));
+      if (exist.length > 0) {
+        if (exist.toString().includes(':asc')) {
+          newSort = attribute + ':desc,';
         } else {
-          newSort = attribute+':asc,';
+          newSort = attribute + ':asc,';
         }
       } else {
-        newSort = attribute+':asc,';
+        newSort = attribute + ':asc,';
       }
-      if(sortData.length > 0){
-        let others = sortData.filter(row => !row.includes(attribute));
-        if(others.length > 0){
+      if (sortData.length > 0) {
+        let others = sortData.filter((row) => !row.includes(attribute));
+        if (others.length > 0) {
           newSort += others.join(',');
         }
       }

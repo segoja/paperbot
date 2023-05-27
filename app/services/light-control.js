@@ -13,7 +13,7 @@ export default class LightControlService extends Service {
       status = config.darkmode;
       let htmlElement = document.getElementsByTagName('html')[0];
       let themeMeta = document.querySelector('meta[name="theme-color"]');
-      
+
       if (status) {
         htmlElement.setAttribute('data-bs-theme', 'dark');
         themeMeta.setAttribute('content', '#212529');

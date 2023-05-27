@@ -13,7 +13,7 @@ export default class PbSettingsComponent extends Component {
   @service currentUser;
   @service session;
   @service store;
-  
+
   constructor() {
     super(...arguments);
     this.isViewing = false;
@@ -50,14 +50,14 @@ export default class PbSettingsComponent extends Component {
   }
 
   @action async setdefOverlay(overlay) {
-    let oldOverlay = await this.globalConfig.config.get('defOverlay');      
+    let oldOverlay = await this.globalConfig.config.get('defOverlay');
     this.globalConfig.config.defOverlay = overlay;
-    this.globalConfig.config.save().then(()=>{
-      if(overlay){
+    this.globalConfig.config.save().then(() => {
+      if (overlay) {
         overlay.save();
-      }      
-      if(oldOverlay){
-          oldOverlay.save();
+      }
+      if (oldOverlay) {
+        oldOverlay.save();
       }
     });
   }
@@ -65,12 +65,12 @@ export default class PbSettingsComponent extends Component {
   @action async setdefBot(client) {
     let oldClient = await this.globalConfig.config.get('defbotclient');
     this.globalConfig.config.defbotclient = client;
-    this.globalConfig.config.save().then(()=>{
-      if(client){
+    this.globalConfig.config.save().then(() => {
+      if (client) {
         client.save();
-      }      
-      if(oldClient){
-          oldClient.save();
+      }
+      if (oldClient) {
+        oldClient.save();
       }
     });
   }
@@ -78,12 +78,12 @@ export default class PbSettingsComponent extends Component {
   @action async setdefChat(client) {
     let oldClient = await this.globalConfig.config.get('defchatclient');
     this.globalConfig.config.defchatclient = client;
-    this.globalConfig.config.save().then(()=>{
-      if(client){
+    this.globalConfig.config.save().then(() => {
+      if (client) {
         client.save();
-      }      
-      if(oldClient){
-          oldClient.save();
+      }
+      if (oldClient) {
+        oldClient.save();
       }
     });
   }

@@ -1,17 +1,16 @@
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import { uniqBy } from '@ember/object/computed';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
 export default class SoundboardLoadingComponent extends Component {
   @service queueHandler;
-  
+
   constructor() {
     super(...arguments);
     this.showBar = false;
   }
-  
+
   @tracked activeSong = [];
 
   @action setActiveSong() {

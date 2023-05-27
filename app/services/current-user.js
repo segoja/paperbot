@@ -66,7 +66,7 @@ export default class CurrentUserService extends Service {
         quotes: false,
         quoteChar: '"',
         skipEmptyLines: true,
-        dynamicTyping: true
+        dynamicTyping: true,
       }).data;
       let csvfields = response.split('\r\n').slice(0, 1);
       console.debug(rows);
@@ -155,7 +155,7 @@ export default class CurrentUserService extends Service {
           url: 'reader',
           label: 'reader',
           title: 'Paperbot - Lyrics',
-          // parent: currentWindow, 
+          // parent: currentWindow,
           decorations: false,
           minWidth: 450,
           minHeight: 600,

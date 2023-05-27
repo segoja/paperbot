@@ -284,7 +284,7 @@ export default class AudioService extends Service {
    * @public
    * @method audioSwitch
    *
-   * @param {bool} the desired status the sound system.   
+   * @param {bool} the desired status the sound system.
    */
 
   @action audioSwitch(status) {
@@ -295,7 +295,6 @@ export default class AudioService extends Service {
       Howler.stop();
     }
   }
-
 
   /**
    * Removes a Sound instance by its id from the sounds register

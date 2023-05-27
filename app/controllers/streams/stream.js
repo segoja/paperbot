@@ -27,7 +27,7 @@ export default class StreamController extends Controller {
     this.isEditing = false;
     this.model.save();
   }
-  
+
   @action returnStream() {
     this.isEditing = false;
   }
@@ -39,12 +39,12 @@ export default class StreamController extends Controller {
   @action async setBotClient(client) {
     let oldClient = await this.model.get('botclient');
     this.model.botclient = client;
-    this.model.save().then(()=>{
-      if(client){
+    this.model.save().then(() => {
+      if (client) {
         client.save();
-      }      
-      if(oldClient){
-          oldClient.save();
+      }
+      if (oldClient) {
+        oldClient.save();
       }
     });
   }
@@ -52,11 +52,11 @@ export default class StreamController extends Controller {
   @action async setChatClient(client) {
     let oldClient = await this.model.get('chatclient');
     this.model.chatclient = client;
-    this.model.save().then(()=>{
-      if(client){
+    this.model.save().then(() => {
+      if (client) {
         client.save();
-      }      
-      if(oldClient){
+      }
+      if (oldClient) {
         oldClient.save();
       }
     });
@@ -72,34 +72,32 @@ export default class StreamController extends Controller {
     }
   }
 
-  @action async deleteStream() {    
+  @action async deleteStream() {
     let oldBotClient = '';
     let oldChatClient = '';
-    let mainBotId = '';
-    if(this.model.botName){
-      oldBotClient = await this.model.get('botclient') || false;
+    if (this.model.botName) {
+      oldBotClient = (await this.model.get('botclient')) || false;
     }
-    if(this.model.chatName){
-      oldChatClient = await this.model.get('chatclient') || false;
-      
+    if (this.model.chatName) {
+      oldChatClient = (await this.model.get('chatclient')) || false;
     }
-    
+
     this.model.destroyRecord().then(() => {
-      if(oldBotClient && oldChatClient){
-        if(oldBotClient.id != oldChatClient.id){          
+      if (oldBotClient && oldChatClient) {
+        if (oldBotClient.id != oldChatClient.id) {
           oldBotClient.save();
           oldChatClient.save();
-        } else {        
+        } else {
           oldBotClient.save();
         }
       } else {
-        if(oldBotClient){
+        if (oldBotClient) {
           oldBotClient.save();
         }
-        if(oldChatClient){
+        if (oldChatClient) {
           oldChatClient.save();
-        }        
-      }      
+        }
+      }
       this.currentUser.lastStream = null;
       this.currentUser.isViewing = false;
       this.isEditing = false;

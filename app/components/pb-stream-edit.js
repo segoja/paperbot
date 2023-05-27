@@ -50,7 +50,7 @@ export default class PbStreamEditComponent extends Component {
   /* get messages() {
     return this.msglist.slice(-45);
   }*/
-  
+
   // With this getter we limit the number of events displayed on screen.
   get events() {
     let events = [];
@@ -76,10 +76,12 @@ export default class PbStreamEditComponent extends Component {
     } else {
       this.eventlist = this.twitchChat.events;
     }
-    
+
     // this.queueHandler.songqueue = this.queueHandler.songqueue.slice();
-    this.queueHandler.scrollPlayedPosition = this.queueHandler.pendingSongs.length;
-    this.queueHandler.scrollPendingPosition = this.queueHandler.playedSongs.length;
+    this.queueHandler.scrollPlayedPosition =
+      this.queueHandler.pendingSongs.length;
+    this.queueHandler.scrollPendingPosition =
+      this.queueHandler.playedSongs.length;
   }
 
   @action moves(el, container, handle) {
@@ -108,9 +110,9 @@ export default class PbStreamEditComponent extends Component {
       this.eventsExternal.createClient();
     }
 
-    this.twitchChat.connector(this.optsbot, 'bot').then(()=>{
+    this.twitchChat.connector(this.optsbot, 'bot').then(() => {
       let opts = this.optchat || this.optsbot;
-      this.twitchChat.connector(opts, "chat");
+      this.twitchChat.connector(opts, 'chat');
     });
   }
 
@@ -243,7 +245,8 @@ export default class PbStreamEditComponent extends Component {
   }
 
   @action toggleSetlist() {
-    this.globalConfig.config.cpansetlist = !this.globalConfig.config.cpansetlist;
+    this.globalConfig.config.cpansetlist =
+      !this.globalConfig.config.cpansetlist;
     this.globalConfig.config.save();
   }
 

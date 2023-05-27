@@ -80,35 +80,33 @@ export default class StreamsController extends Controller {
 
   @action async gridDeleteStream(stream) {
     console.log(stream);
-    
+
     let oldBotClient = '';
     let oldChatClient = '';
-    let mainBotId = '';
-    if(stream.botName){
-      oldBotClient = await stream.get('botclient') || false;
+    if (stream.botName) {
+      oldBotClient = (await stream.get('botclient')) || false;
     }
-    if(stream.chatName){
-      oldChatClient = await stream.get('chatclient') || false;
-      
+    if (stream.chatName) {
+      oldChatClient = (await stream.get('chatclient')) || false;
     }
-    
+
     stream.destroyRecord().then(() => {
-      if(oldBotClient && oldChatClient){
-        if(oldBotClient.id != oldChatClient.id){          
+      if (oldBotClient && oldChatClient) {
+        if (oldBotClient.id != oldChatClient.id) {
           oldBotClient.save();
           oldChatClient.save();
-        } else {        
+        } else {
           oldBotClient.save();
         }
       } else {
-        if(oldBotClient){
+        if (oldBotClient) {
           oldBotClient.save();
         }
-        if(oldChatClient){
+        if (oldChatClient) {
           oldChatClient.save();
-        }        
+        }
       }
-      
+
       this.currentUser.isViewing = false;
       this.stream.isEditing = false;
       this.currentUser.lastStream = null;
