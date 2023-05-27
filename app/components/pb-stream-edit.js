@@ -247,58 +247,6 @@ export default class PbStreamEditComponent extends Component {
     this.globalConfig.config.save();
   }
 
-  @action toggleExtraPanRight() {
-    this.globalConfig.config.extraPanRight =
-      !this.globalConfig.config.extraPanRight;
-    if (this.globalConfig.config.extraPanRight) {
-      this.globalConfig.config.extraPanRightTop = true;
-      this.globalConfig.config.extraPanRightBottom = true;
-    }
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanRightTop() {
-    this.globalConfig.config.extraPanRightTop = !this.globalConfig.config.extraPanRightTop;
-    if(!this.globalConfig.config.extraPanRightBottom && !this.globalConfig.config.extraPanRightTop){
-      this.globalConfig.config.extraPanRight = false;
-    }  else  {
-      this.globalConfig.config.extraPanRight = true;
-    }   
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanRightBottom() {
-    this.globalConfig.config.extraPanRightBottom = !this.globalConfig.config.extraPanRightBottom;
-    if(!this.globalConfig.config.extraPanRightBottom && !this.globalConfig.config.extraPanRightTop){
-      this.globalConfig.config.extraPanRight = false;
-    }  else  {
-      this.globalConfig.config.extraPanRight = true;
-    }   
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanLeft() {
-    this.globalConfig.config.extraPanLeft =
-      !this.globalConfig.config.extraPanLeft;
-    if (this.globalConfig.config.extraPanLeft) {
-      this.globalConfig.config.extraPanLeftTop = true;
-      this.globalConfig.config.extraPanLeftBottom = true;
-    }
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanLeftTop() {
-    this.globalConfig.config.extraPanLeftTop =
-      !this.globalConfig.config.extraPanLeftTop;
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanLeftBottom() {
-    this.globalConfig.config.extraPanLeftBottom =
-      !this.globalConfig.config.extraPanLeftBottom;
-    this.globalConfig.config.save();
-  }
-
   @action queueWriter() {
     if (this.args.stream.requests) {
       this.twitchChat.takessongrequests = !this.twitchChat.takessongrequests;

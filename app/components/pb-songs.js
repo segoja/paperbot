@@ -7,6 +7,7 @@ import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
 import moment from 'moment';
 import { inject as service } from '@ember/service';
+import { later } from '@ember/runloop';
 
 export default class PbSongsComponent extends Component {
   @service currentUser;
@@ -20,14 +21,19 @@ export default class PbSongsComponent extends Component {
   constructor(){
     super(...arguments);
     this.toTop = true;
+    this.sortString = 'title:asc';
   }
 
   willDestroy() {
     super.willDestroy(...arguments);
     this.toTop = true;
+    this.sortString = 'title:asc';
   }
 
-  songsSorting = Object.freeze(['date_added:asc']);
+  @tracked sortString = 'title:asc';
+  get songsSorting(){    
+    return Object.freeze(this.sortString.split(','));
+  }
 
   @sort('args.songs', 'songsSorting') arrangedContent;
 
@@ -56,7 +62,12 @@ export default class PbSongsComponent extends Component {
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
   }
-
+  
+  @action clearSearch(){
+    this.args.queryParamsObj.query = '';
+    this.args.queryParamsObj.page = 1;
+  }
+  
   @tracked importcontent;
 
   get isSetlist() {
@@ -83,6 +94,32 @@ export default class PbSongsComponent extends Component {
         this.args.queryParamsObj.perPage = rows -1;
         this.args.queryParamsObj.page = 1;
       }
+    }
+  }
+  
+ 
+  @action sortColumn(attribute){
+    let sortData = this.sortString.split(',');
+    this.sortString = '';
+    if(attribute){
+      let newSort = '';
+      let exist = sortData.filter(row => row.includes(attribute));
+      if(exist.length > 0){
+        if(exist.toString().includes(':asc')){
+          newSort = attribute+':desc,';
+        } else {
+          newSort = attribute+':asc,';
+        }
+      } else {
+        newSort = attribute+':asc,';
+      }
+      if(sortData.length > 0){
+        let others = sortData.filter(row => !row.includes(attribute));
+        if(others.length > 0){
+          newSort += others.join(',');
+        }
+      }
+      this.sortString = newSort.toString();
     }
   }
   
@@ -186,4 +223,5 @@ export default class PbSongsComponent extends Component {
       this.currentUser.download(csvdata, filename, 'text/csv');
     }
   }
+
 }

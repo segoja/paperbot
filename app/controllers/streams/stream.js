@@ -72,18 +72,34 @@ export default class StreamController extends Controller {
     }
   }
 
-  @action async deleteStream() {
-    let oldBotClient = await this.model.get('botclient');
-    let oldChatClient = await this.model.get('chatclient');
+  @action async deleteStream() {    
+    let oldBotClient = '';
+    let oldChatClient = '';
+    let mainBotId = '';
+    if(this.model.botName){
+      oldBotClient = await this.model.get('botclient') || false;
+    }
+    if(this.model.chatName){
+      oldChatClient = await this.model.get('chatclient') || false;
+      
+    }
     
     this.model.destroyRecord().then(() => {
-      if(oldBotClient){
-        oldBotClient.save();
-      }
-      if(oldChatClient){
-        oldChatClient.save();
-      }
-      
+      if(oldBotClient && oldChatClient){
+        if(oldBotClient.id != oldChatClient.id){          
+          oldBotClient.save();
+          oldChatClient.save();
+        } else {        
+          oldBotClient.save();
+        }
+      } else {
+        if(oldBotClient){
+          oldBotClient.save();
+        }
+        if(oldChatClient){
+          oldChatClient.save();
+        }        
+      }      
       this.currentUser.lastStream = null;
       this.currentUser.isViewing = false;
       this.isEditing = false;

@@ -414,7 +414,6 @@ export default class ApplicationController extends Controller {
       const response = await file.readAsText();
       let adapter = this.store.adapterFor('application');
       let importable = Object.assign([], JSON.parse(response));
-      console.debug(importable);
       // importable.shift();
       /*adapter.db.bulkDocs(importable, {new_edits: false}, (...args) => {
         console.debug('DONE', args);
@@ -454,7 +453,7 @@ export default class ApplicationController extends Controller {
     });
   }
 
-  @action wipeConfig() {
+  @action async wipeConfig() {
     if (this.currentUser.isTauri) {
       getAll().forEach((item) => {
         if (item.label != 'Main') {
@@ -462,10 +461,51 @@ export default class ApplicationController extends Controller {
         }
       });
     }
-    var adapter = this.store.adapterFor('config');
-    adapter.wipeDatabase().then(() => {
-      console.debug('The config has been wiped.');
-      window.location.reload(true);
+    
+    let config = this.globalConfig.config;
+    
+    let oldBotClient = '';
+    let oldChatClient = '';
+    let oldOverlay = '';
+
+    if(config.defBotId){
+      oldBotClient = await config.get('defbotclient') || false;
+    }
+    
+    if(config.defChatId){
+      oldChatClient = await config.get('defchatclient') || false;
+    }
+    
+    if(config.defOverlayId){
+      oldOverlay = await config.get('defOverlay') || false;
+    }
+    
+    config.destroyRecord().then(async () => {
+      if(oldBotClient && oldChatClient){
+        if(oldBotClient.id != oldChatClient.id){          
+          await oldBotClient.save();
+          await oldChatClient.save();
+        } else {        
+          await oldBotClient.save();
+        }
+      } else {
+        if(oldBotClient){
+          await oldBotClient.save();
+        }
+        if(oldChatClient){
+          await oldChatClient.save();
+        }        
+      }
+      
+      if(oldOverlay){
+        await oldOverlay.save();
+      }
+      
+      var adapter = this.store.adapterFor('config');
+      adapter.wipeDatabase().then(() => {
+        console.debug('The config has been wiped.');
+        window.location.reload(true);
+      });
     });
   }
 
@@ -813,6 +853,17 @@ export default class ApplicationController extends Controller {
           );
         }
       });
+    }
+  }
+
+  @action toRoute(route){
+    if(route){
+      if(route == 'overlay'){
+        let url = this.router.urlFor(route);
+        window.open(url);
+      } else {
+        this.router.transitionTo(route);
+      }      
     }
   }
 

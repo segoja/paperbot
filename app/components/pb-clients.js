@@ -6,17 +6,31 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 import PapaParse from 'papaparse';
 import moment from 'moment';
 import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 
 export default class PbClientsComponent extends Component {
   @service currentUser;
 
-  clientsSorting = Object.freeze(['name']);
+  constructor() {
+    super(...arguments);
+    this.sortString = 'username:asc';
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.sortString = 'username:asc';
+  }
+
+  @tracked sortString = 'username:asc';
+  get clientsSorting(){    
+    return Object.freeze(this.sortString.split(','));
+  }
 
   @sort('args.clients', 'clientsSorting') arrangedContent;
 
   @computedFilterByQuery(
     'arrangedContent',
-    ['username'],
+    ['username','channel'],
     'args.queryParamsObj.query',
     { conjunction: 'and', sort: false }
   )
@@ -29,6 +43,11 @@ export default class PbClientsComponent extends Component {
   pagedContent;
 
   @action resetPage() {
+    this.args.queryParamsObj.page = 1;
+  }
+  
+  @action clearSearch(){
+    this.args.queryParamsObj.query = '';
     this.args.queryParamsObj.page = 1;
   }
 
@@ -49,6 +68,31 @@ export default class PbClientsComponent extends Component {
         this.args.queryParamsObj.perPage = rows -1;
         this.args.queryParamsObj.page = 1;
       }
+    }
+  }
+
+  @action sortColumn(attribute){
+    let sortData = this.sortString.split(',');
+    this.sortString = '';
+    if(attribute){
+      let newSort = '';
+      let exist = sortData.filter(row => row.includes(attribute));
+      if(exist.length > 0){
+        if(exist.toString().includes(':asc')){
+          newSort = attribute+':desc,';
+        } else {
+          newSort = attribute+':asc,';
+        }
+      } else {
+        newSort = attribute+':asc,';
+      }
+      if(sortData.length > 0){
+        let others = sortData.filter(row => !row.includes(attribute));
+        if(others.length > 0){
+          newSort += others.join(',');
+        }
+      }
+      this.sortString = newSort.toString();
     }
   }
 

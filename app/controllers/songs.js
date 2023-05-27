@@ -31,7 +31,7 @@ export default class SongsController extends Controller {
 
   @action createSong() {
     let newSong = this.store.createRecord('song');
-    newSong.set('date_added', moment().format());
+    newSong.set('date_added', new Date());
     newSong.save().then(() => {
       this.router.transitionTo('songs.song', newSong);
     });

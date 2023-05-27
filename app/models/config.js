@@ -1,5 +1,6 @@
 import { Model } from 'ember-pouch';
 import { attr, belongsTo } from '@ember-data/model';
+import { readOnly } from '@ember/object/computed';
 
 export default class ConfigModel extends Model {
   @attr('string', { defaultValue: '' }) name;
@@ -63,12 +64,6 @@ export default class ConfigModel extends Model {
   @attr('boolean', { defaultValue: false }) cpanplayed;
   @attr('boolean', { defaultValue: true }) cpanmessages;
   @attr('boolean', { defaultValue: true }) cpanevents;
-  @attr('boolean', { defaultValue: true }) extraPanRight;
-  @attr('boolean', { defaultValue: true }) extraPanRightTop;
-  @attr('boolean', { defaultValue: true }) extraPanRightBottom;
-  @attr('boolean', { defaultValue: true }) extraPanLeft;
-  @attr('boolean', { defaultValue: true }) extraPanLeftTop;
-  @attr('boolean', { defaultValue: true }) extraPanLeftBottom;
 
   get noPanels() {
     if (!this.extraPanLeft && !this.extraPanRight) {
@@ -78,7 +73,7 @@ export default class ConfigModel extends Model {
     }
   }
 
-  @attr('boolean', { defaultValue: false }) darkmode;
+  @attr('boolean', { defaultValue: true }) darkmode;
   @attr('boolean', { defaultValue: false }) soundOverlap;
   @attr('boolean', { defaultValue: false }) clearRequests;
   @attr('boolean', { defaultValue: false }) allowDuplicated;
@@ -127,6 +122,12 @@ export default class ConfigModel extends Model {
     }
     return false;
   }
+
+
+  @readOnly('defOverlay.id') defOverlayId;
+  @readOnly('defbotclient.id') defBotId;
+  @readOnly('defchatclient.id') defChatId;
+
 
   @attr('string') rev;
 }

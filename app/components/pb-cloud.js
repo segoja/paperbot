@@ -77,6 +77,9 @@ export default class PbCloudComponent extends Component {
   }
 
   get cloudText() {
+    if(!this.globalConfig.config.canConnect){
+      return 'Cloud settings | Status: Not configured';
+    }
     if (this.isOnline & this.isCloudSynced & this.isLocalSynced) {
       return 'Cloud settings | Status: Connected and synced';
     }

@@ -6,11 +6,25 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 import PapaParse from 'papaparse';
 import moment from 'moment';
 import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 
 export default class PbOverlaysComponent extends Component {
   @service currentUser;
 
-  overlaysSorting = Object.freeze(['name']);
+  constructor() {
+    super(...arguments);
+    this.sortString = 'name:asc';
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.sortString = 'name:asc';
+  }
+
+  @tracked sortString = 'name:asc';
+  get overlaysSorting(){    
+    return Object.freeze(this.sortString.split(','));
+  }
 
   @sort('args.overlays', 'overlaysSorting') arrangedContent;
 
@@ -31,6 +45,11 @@ export default class PbOverlaysComponent extends Component {
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
   }
+  
+  @action clearSearch(){
+    this.args.queryParamsObj.query = '';
+    this.args.queryParamsObj.page = 1;
+  }
 
   get dynamicHeight(){
     let elmnt = document.getElementById('bodycontainer');
@@ -49,6 +68,31 @@ export default class PbOverlaysComponent extends Component {
         this.args.queryParamsObj.perPage = rows -1;
         this.args.queryParamsObj.page = 1;
       }
+    }
+  }
+
+  @action sortColumn(attribute){
+    let sortData = this.sortString.split(',');
+    this.sortString = '';
+    if(attribute){
+      let newSort = '';
+      let exist = sortData.filter(row => row.includes(attribute));
+      if(exist.length > 0){
+        if(exist.toString().includes(':asc')){
+          newSort = attribute+':desc,';
+        } else {
+          newSort = attribute+':asc,';
+        }
+      } else {
+        newSort = attribute+':asc,';
+      }
+      if(sortData.length > 0){
+        let others = sortData.filter(row => !row.includes(attribute));
+        if(others.length > 0){
+          newSort += others.join(',');
+        }
+      }
+      this.sortString = newSort.toString();
     }
   }
 

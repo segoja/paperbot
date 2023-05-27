@@ -1,5 +1,5 @@
 <button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" {{on "click" this.toggleModal}} title="Local settings">
-  <FaIcon @icon="wrench" class="svg-shadow {{if this.cloudState.cloudError "blinkcolor" (if this.cloudState.online "connected")}}" />
+  <FaIcon @icon="wrench" />
 </button>
 
 {{#in-element this.modalWormhole insertBefore=null}}
@@ -210,35 +210,25 @@
             <label class="col-md-4 pb-2">Aditional settings</label>
           </div>
           <div class="form-group row">
-            <div class="col-md-4 col-lg-auto">
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Show lyrics on start" @formLayout="inline" class="form-check form-check-inline ps-0" @property="showLyrics" required />
-                </div>
-              </div> 
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Dark mode" @onChange={{this.lightControl.toggleMode}} @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />
-                </div>
+            <div class="form-group row">
+              <div class="col-md-6 col-lg">
+                <form.element @controlType="checkbox" @label="Show lyrics on start" @formLayout="inline" class="form-check form-check-inline ps-0" @property="showLyrics" required />
+              </div>
+              <div class="col-md-6 col-lg">
+                <form.element @controlType="checkbox" @label="Dark mode" @onChange={{this.lightControl.toggleMode}} @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />
               </div>
             </div>
-            <div class="col-md-4 col-lg">
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Clear requests/setlist on app restart" @formLayout="inline" class="form-check form-check-inline ps-0" @property="clearRequests" required />
-                </div>
+            <div class="form-group row">
+              <div class="col-md-6 col-lg">
+                <form.element @controlType="checkbox" @label="Clear requests/setlist on app restart" @formLayout="inline" class="form-check form-check-inline ps-0" @property="clearRequests" required />
               </div>
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Allow repeat song request" @formLayout="inline" class="form-check form-check-inline ps-0" @property="allowDuplicated" required />
-                </div>
+              <div class="col-md-6 col-lg">
+                <form.element @controlType="checkbox" @label="Allow repeat song request" @formLayout="inline" class="form-check form-check-inline ps-0" @property="allowDuplicated" required />
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Allow sound commands to overlap" @formLayout="inline" class="form-check form-check-inline ps-0" @property="soundOverlap" required />
-                </div>
+            <div class="form-group row">
+              <div class="col">
+                <form.element @controlType="checkbox" @label="Allow sound commands to overlap" @formLayout="inline" class="form-check form-check-inline ps-0" @property="soundOverlap" required />
               </div>
             </div>
           </div>

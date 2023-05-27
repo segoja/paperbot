@@ -105,28 +105,6 @@ $width-sizes: (
   bottom: 0px;
 }
 
-.sync-activity{
-  display: block;
-  width: inherit;
-  position: absolute;
-  top: 5px;
-  z-index: 999;
-  margin-left: 3px;
-  
-  span:first-child { margin-right: -5px; }
-  .blinkcolor {
-    -webkit-animation: warnblink 2s infinite;
-    animation: warnblink 2s infinite;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-  }
-}
-@keyframes warnblink {
-  0%   { color: var(--bs-black-text); }
-  50%  { color: var(--bs-info-text); }
-  100% { color: var(--bs-black-text); }
-}
-
 .connected {
   path{
     stroke: $success;
@@ -467,23 +445,96 @@ svg.setlist-icon {
 }
 
 .papermenu *{
-  align-items: bottom!important;
+  vertical-align: bottom!important;
   .navbar-toggler-icon { 
     width: 27px;
     height: 26px;
-    vertical-align: middle;
     background-position: bottom;
     background-size: 110%;
     &:hover{ filter: brightness(2); } 
   }
-  .dragger { cursor: pointer!important; align-items: bottom!important; }
+  .dragger { cursor: pointer!important; }
   svg.logo{
-   /*fill: gray;*/
-   height: 26px;
-   width: 27px;
-   vertical-align: bottom;
+    min-height: 26px;
+    min-width: 26px;
+    height: 26px;
+    width: 26px;
+    max-height: 26px;
+    max-width: 26px;
+    filter: drop-shadow(0px 0px 2px black);
   }
-  .nav-item:hover { background-color: #111519!important; }
+  .nav-item {
+    max-height: 100%;
+    min-height: 100%;
+    &:hover { 
+      background-color: #111519!important; 
+    }
+    .nav-link { 
+      vertical-align: middle!important;
+      padding-top: 0.2em;
+      padding-bottom: 0.2em;
+      min-height: 100%; 
+    }
+  }
+  
+  .btn-window {
+    align-items: flex-start;
+    writing-mode: horizontal-tb!important;
+    max-width: 30px;
+    min-width: 30px;
+    width: 30px;
+    
+    max-height: 30px;
+    min-height: 30px;
+    height: 30px;
+    
+    padding: 0px!important;
+    margin: 0px!important;
+    svg { 
+      vertical-align: text-bottom!important;
+      max-width: 16px;
+      min-width: 16px;
+      width: 16px;
+      
+      max-height: 16px;
+      min-height: 16px;
+      height: 16px;
+      filter: drop-shadow(-1px 1px 1px black)!important;
+      &.svg-cloud { 
+        max-width: 20px;
+        min-width: 20px;
+        max-height: 20px;
+        min-height: 20px;
+        margin-bottom: -2px;
+      }
+    } 
+    .sync-activity {
+      display: block;
+      width: inherit;
+      position: absolute;
+      top: 3px;
+      z-index: 999;
+      svg {
+        min-height: 1em!important; 
+        min-width: 1em!important;
+        max-height: 1em!important; 
+        max-width: 1em!important;
+      }
+      
+      span:first-child.blinkcolor { margin-right: -0.5em; }
+      .blinkcolor {
+        -webkit-animation: warnblink 2s infinite;
+        animation: warnblink 2s infinite;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+      }
+    }
+    @keyframes warnblink {
+      0%   { color: var(--bs-black-text); }
+      50%  { color: var(--bs-info-text); }
+      100% { color: var(--bs-black-text); }
+    }
+  }
 }
 
 .fixed-top {
@@ -626,20 +677,6 @@ svg.setlist-icon {
 }
 
 .spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
-
-.btn-window {
-  max-width: 32px;
-  min-width: 32px;
-  width: 32px;
-  
-  max-height: 32px;
-  min-height: 32px;
-  height: 32px;
-
-  svg.svg-shadow { 
-    filter: drop-shadow(-1px 1px 1px black)!important;
-  }  
-}
 
 .btn:focus {
   box-shadow: none;
