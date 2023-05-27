@@ -84,13 +84,14 @@ $width-sizes: (
 }
 
 .alert-secondary .handle {
-  color: var(--bs-secondary-text);
-  background-color: var(--bs-secondary-border-subtle);
+  color: var(--bs-secondary-text-emphasis);
+  background-color: var(--bs-secondary-bg-subtle);
+  filter: opacity(1) brightness(1) contrast(1.10);
 }
 .alert-info .handle {
-  color: var(--bs-info-text);
-  background-color: var(--bs-info-border-subtle);
-  filter: opacity(0.5);
+  color: var(--bs-info-text-emphasis);
+  background-color: var(--bs-info-bg-subtle);
+  filter: opacity(1) brightness(1) contrast(1.10);
 }
 
 .handle:active {
@@ -310,7 +311,7 @@ div.system{
   &.intable {
     height: calc(1.5em + 0.75rem + 4px) !important;
     border: 0px solid var(--bs-border-color);
-    background-color: var(--bs-form-control-bg);    
+    background-color: var(--bs-body-bg);    
     .ember-power-select-clear-btn { background-color: var(--bs-form-control-bg); }
     &.selected {
       .ember-basic-dropdown-trigger,

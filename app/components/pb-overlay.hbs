@@ -23,7 +23,7 @@
           <span role="button" id="q-info">
             <FaIcon @icon="question-circle" class="text-info" role="presentation" />
           </span>
-          <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @triggerElement="#q-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+          <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @triggerElement="#q-info" @autoPlacement={{false}} @placement="top"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
             <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
               <p class="my-0">Overlays are based on HTML5 and Bootstrap. If you want to learn how to customize or create your own overlay check <a href="https://getbootstrap.com/docs/5.3/content/tables/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>official Bootstrap documentation</a>.</p>
             </div>
@@ -37,7 +37,7 @@
             <span role="button" id="q-container-info">
               <FaIcon @icon="question-circle" class="text-info" role="presentation" />
             </span>
-            <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+            <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @autoPlacement={{false}} @placement="top"  @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
               <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
                 <p class="my-0">This is the code of the main container of the request queue. Queue items will be placed inside replacing <strong>$items</strong> in the code.</p>
               </div>
@@ -53,7 +53,7 @@
             <span role="button" id="q-items-info">
               <FaIcon @icon="question-circle" class="text-info" role="presentation" />
             </span>
-            <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @triggerElement="#q-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+            <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @autoPlacement={{false}} @placement="top" @triggerElement="#q-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
               <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
                 <p class="my-0">This is the code used to represent each one of the request in the queue. The information about each request can be included using: <strong>$title</strong>, <strong>$artist</strong>, <strong>$time</strong> and <strong>$user</strong>. They will be replaced by the actual data in the overlay window/file.</p>
               </div>
@@ -88,13 +88,13 @@
               overflow: hidden;
             }
             
-            {{#if this.globalConfig.config.defOverlay.font}}
+            {{#if @overlay.font}}
               .chroma * {
-                font-family: {{this.globalConfig.config.defOverlay.font}}!important;
+                font-family: {{@overlay.font}}!important;
               }
             {{/if}}
-            {{#if this.globalConfig.config.defOverlay.qCss}}
-              {{valid-css this.globalConfig.config.defOverlay.qCss}}
+            {{#if @overlay.qCss}}
+              {{valid-css @overlay.qCss}}
             {{/if}}
           </style>
           <div class="card mx-auto h-100 rounded-0 border-0 text-body chroma" data-bs-theme="light">

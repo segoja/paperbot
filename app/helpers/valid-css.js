@@ -14,8 +14,7 @@ export default class ValidCss extends Helper {
     const style = iframe.contentDocument.createElement('style');
     style.innerHTML = params[0];
     iframe.contentDocument.head.appendChild(style);
-    // const sheet = style.sheet,
-    const result = Array.from(style.sheet.cssRules)
+    const sheet = style.sheet, result = Array.from(style.sheet.cssRules)
       .map((rule) => rule.cssText || '')
       .join('\n');
     iframe.remove();
