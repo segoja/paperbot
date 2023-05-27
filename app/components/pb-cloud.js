@@ -2,7 +2,6 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
-import { dialog } from '@tauri-apps/api';
 import { inject as service } from '@ember/service';
 
 export default class PbCloudComponent extends Component {
@@ -30,7 +29,7 @@ export default class PbCloudComponent extends Component {
   get modalWormhole() {
     return document.getElementById('ember-bootstrap-wormhole');
   }
-  
+
   get isOnline() {
     return this.cloudState.online;
   }
@@ -66,7 +65,7 @@ export default class PbCloudComponent extends Component {
     if (this.cloudState.couchError) {
       return 'text-danger';
     }
-    return 'text-secondary';
+    return 'text-light';
   }
 
   get showArrows() {
@@ -77,25 +76,27 @@ export default class PbCloudComponent extends Component {
   }
 
   get cloudText() {
+    if (!this.globalConfig.config.canConnect) {
+      return 'Cloud settings | Status: Not configured';
+    }
     if (this.isOnline & this.isCloudSynced & this.isLocalSynced) {
-      return 'Connected and synced';
+      return 'Cloud settings | Status: Connected and synced';
     }
     if (this.isOnline) {
-      return 'Connected but not synced';
+      return 'Cloud settings | Status: Connected but not synced';
     }
-    return 'Offline';
+    return 'Cloud settings | Status: Offline';
   }
 
   get showUp() {
     return this.visible;
   }
 
-
   cloudTypes = Object.freeze(['disabled', 'cloudstation', 'custom']);
 
-  @action setCloudType(type){
+  @action setCloudType(type) {
     this.globalConfig.config.cloudType = type;
-    if(type == 'cloudstation'){
+    if (type == 'cloudstation') {
       this.globalConfig.config.remoteUrl = '';
     } else {
       this.globalConfig.config.database = '';
@@ -110,14 +111,17 @@ export default class PbCloudComponent extends Component {
     }*/
   }
 
-  @action reConnect(){
+  @action reConnect() {
     this.session.invalidate();
     if (!this.isOnline) {
       if (this.globalConfig.config.canConnect) {
         console.debug('Setting remote backup...');
-        this.store.adapterFor('application').configRemote().then(()=>{
-          this.store.adapterFor('application').connectRemote();          
-        });
+        this.store
+          .adapterFor('application')
+          .configRemote()
+          .then(() => {
+            this.store.adapterFor('application').connectRemote();
+          });
       }
     }
     later(
@@ -130,20 +134,22 @@ export default class PbCloudComponent extends Component {
         // this.visible = false;
       },
       500
-    )
+    );
   }
-  
-  @action toggleConnection(){
-    if(this.isOnline){
+
+  @action toggleConnection() {
+    if (this.isOnline) {
       console.log('Disconnecting...');
       this.globalConfig.config.autoConnect = false;
-      this.globalConfig.config.save().then(()=>{
-        
-        this.session.invalidate().then((success) => {          
-          console.log('Disconnected!');
-        }, (error) => {
-          console.log('Could not disconnect!');          
-        });
+      this.globalConfig.config.save().then(() => {
+        this.session.invalidate().then(
+          (success) => {
+            console.log('Disconnected!', success);
+          },
+          (error) => {
+            console.log('Could not disconnect!', error);
+          }
+        );
         // this.globalConfig.config.autoConnect = true;
         // this.globalConfig.config.save();
       });

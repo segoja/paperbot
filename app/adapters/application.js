@@ -8,7 +8,6 @@ import PouchDB from 'pouchdb-core';
 
 import { later } from '@ember/runloop';
 import { tracked } from '@glimmer/tracking';
-import { computed } from '@ember/object';
 
 /*
   // Pouchdb Modules and plugins loaded are shared in the app, so we only need to load plugins once.
@@ -32,7 +31,7 @@ export default class ApplicationAdapter extends Adapter {
   @tracked replicationToHandler = '';
   @tracked isRetrying = false;
   @tracked retryDelay = 0;
-  
+
   replicationOptions = {
     attachments: true,
     live: true,
@@ -82,24 +81,20 @@ export default class ApplicationAdapter extends Adapter {
 
     return this;
   }
-  @computed('session.isAuthenticated')
-  get sessReconnect(){
-    //if(this.session.isAuthenticated && !this.cloudState.online){
-    // return this.connectRemote();      
-    //}
-    console.debug('wooooowowowow');
-  }
 
   async configRemote() {
     console.debug('Trying to set remote couch replication...');
     // If we have specified a remote CouchDB instance, then replicate our local database to it
     if (this.globalConfig.config.canConnect) {
-      console.debug('Setting remote couch replication to:'+this.globalConfig.config.cloudUrl);  
+      console.debug(
+        'Setting remote couch replication to:' +
+          this.globalConfig.config.cloudUrl
+      );
       this.remoteDb = new PouchDB(this.globalConfig.config.cloudUrl, {
         fetch: function (url, opts) {
           opts.credentials = 'include';
           return PouchDB.fetch(url, opts);
-        }
+        },
       });
 
       this.replicationFromHandler = null;
@@ -180,7 +175,7 @@ export default class ApplicationAdapter extends Adapter {
             // yo, something changed!
             // console.debug(change);
             this.cloudState.setPush(change);
-            if(change){
+            if (change) {
               console.debug('Pushing changes to the cloud...');
             }
           })
@@ -228,7 +223,7 @@ export default class ApplicationAdapter extends Adapter {
                 this.retryDelay = this.retryDelay * 3;
               }
             }
-          }); 
+          });
       });
 
       this.remoteDb.on('loggedout', () => {
@@ -247,7 +242,7 @@ export default class ApplicationAdapter extends Adapter {
       });
       // const { target } = event;
       // event.preventDefault();
-      
+
       return true;
     } else {
       return false;
@@ -255,7 +250,7 @@ export default class ApplicationAdapter extends Adapter {
   }
 
   async connectRemote() {
-    console.debug('Connecting to: '+this.globalConfig.config.cloudUrl);    
+    console.debug('Connecting to: ' + this.globalConfig.config.cloudUrl);
     this.session
       .authenticate(
         'authenticator:pouch',

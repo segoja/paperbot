@@ -1,7 +1,7 @@
-<div class="offcanvas offcanvas-end pt-custom bg-secondary w-100 w-sm-50 h-100 flex-column flex-fill d-flex overflow-hidden rounded-0 shadow border-0 border-top border-secondary {{if @isVisible "show" "hiding"}}" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas" id={{this.popoverId}}>
+<div class="offcanvas offcanvas-end pt-offc-custom bg-secondary w-100 w-sm-50 h-100 flex-column flex-fill d-flex overflow-hidden rounded-0 shadow border-0 border-top border-secondary {{if @isVisible "show" "hiding"}}" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas" id={{this.popoverId}}>
     <div class="offcanvas-header bg-body border-start border-end">
       <h5 class="offcanvas-title" id="offcanvasRightLabel">Offcanvas right</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#{{this.popoverId}}" aria-label="Close" {{on "click" @toggleOffcanvas}}></button>
+      <button type="button" class="btn-close" title="Close" data-bs-dismiss="offcanvas" data-bs-target="#{{this.popoverId}}" aria-label="Close" {{on "click" @toggleOffcanvas}}></button>
     </div>
     <div class="offcanvas-body bg-body d-block h-100 overflow-hidden g-0 py-0 px-0 border-start border-end">      
       <div class="d-flex flex-column listframe-setlist h-100">

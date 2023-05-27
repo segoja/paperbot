@@ -50,7 +50,7 @@ export default class PbStreamEditComponent extends Component {
   /* get messages() {
     return this.msglist.slice(-45);
   }*/
-  
+
   // With this getter we limit the number of events displayed on screen.
   get events() {
     let events = [];
@@ -76,10 +76,12 @@ export default class PbStreamEditComponent extends Component {
     } else {
       this.eventlist = this.twitchChat.events;
     }
-    
+
     // this.queueHandler.songqueue = this.queueHandler.songqueue.slice();
-    this.queueHandler.scrollPlayedPosition = this.queueHandler.pendingSongs.length;
-    this.queueHandler.scrollPendingPosition = this.queueHandler.playedSongs.length;
+    this.queueHandler.scrollPlayedPosition =
+      this.queueHandler.pendingSongs.length;
+    this.queueHandler.scrollPendingPosition =
+      this.queueHandler.playedSongs.length;
   }
 
   @action moves(el, container, handle) {
@@ -108,9 +110,9 @@ export default class PbStreamEditComponent extends Component {
       this.eventsExternal.createClient();
     }
 
-    this.twitchChat.connector(this.optsbot, 'bot').then(()=>{
+    this.twitchChat.connector(this.optsbot, 'bot').then(() => {
       let opts = this.optchat || this.optsbot;
-      this.twitchChat.connector(opts, "chat");
+      this.twitchChat.connector(opts, 'chat');
     });
   }
 
@@ -243,59 +245,8 @@ export default class PbStreamEditComponent extends Component {
   }
 
   @action toggleSetlist() {
-    this.globalConfig.config.cpansetlist = !this.globalConfig.config.cpansetlist;
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanRight() {
-    this.globalConfig.config.extraPanRight =
-      !this.globalConfig.config.extraPanRight;
-    if (this.globalConfig.config.extraPanRight) {
-      this.globalConfig.config.extraPanRightTop = true;
-      this.globalConfig.config.extraPanRightBottom = true;
-    }
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanRightTop() {
-    this.globalConfig.config.extraPanRightTop = !this.globalConfig.config.extraPanRightTop;
-    if(!this.globalConfig.config.extraPanRightBottom && !this.globalConfig.config.extraPanRightTop){
-      this.globalConfig.config.extraPanRight = false;
-    }  else  {
-      this.globalConfig.config.extraPanRight = true;
-    }   
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanRightBottom() {
-    this.globalConfig.config.extraPanRightBottom = !this.globalConfig.config.extraPanRightBottom;
-    if(!this.globalConfig.config.extraPanRightBottom && !this.globalConfig.config.extraPanRightTop){
-      this.globalConfig.config.extraPanRight = false;
-    }  else  {
-      this.globalConfig.config.extraPanRight = true;
-    }   
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanLeft() {
-    this.globalConfig.config.extraPanLeft =
-      !this.globalConfig.config.extraPanLeft;
-    if (this.globalConfig.config.extraPanLeft) {
-      this.globalConfig.config.extraPanLeftTop = true;
-      this.globalConfig.config.extraPanLeftBottom = true;
-    }
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanLeftTop() {
-    this.globalConfig.config.extraPanLeftTop =
-      !this.globalConfig.config.extraPanLeftTop;
-    this.globalConfig.config.save();
-  }
-
-  @action toggleExtraPanLeftBottom() {
-    this.globalConfig.config.extraPanLeftBottom =
-      !this.globalConfig.config.extraPanLeftBottom;
+    this.globalConfig.config.cpansetlist =
+      !this.globalConfig.config.cpansetlist;
     this.globalConfig.config.save();
   }
 

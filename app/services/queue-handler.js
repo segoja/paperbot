@@ -2,7 +2,7 @@ import Service, { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { sort, uniqBy } from '@ember/object/computed';
-import { invoke } from "@tauri-apps/api";
+import { invoke } from '@tauri-apps/api';
 import moment from 'moment';
 import { TrackedArray } from 'tracked-built-ins';
 
@@ -83,14 +83,14 @@ export default class QueueHandlerService extends Service {
   @action async removePending(request) {
     await request.get('song').then(async (song) => {
       await request.destroyRecord().then(async () => {
-        if(song){
+        if (song) {
           let times = Number(song.times_requested || 0);
           if (song.times_requested) {
             times = times + Number(-1);
           }
           song.times_requested = times;
           await song.save();
-        } 
+        }
         let count = 0;
         this.pendingSongs.forEach((item) => {
           if (!item.isDeleted) {
@@ -100,7 +100,7 @@ export default class QueueHandlerService extends Service {
             });
             count = Number(count) + 1;
           }
-        });        
+        });
         this.fileContent(this.pendingSongs);
       });
     });
@@ -124,12 +124,12 @@ export default class QueueHandlerService extends Service {
   @action clearPending() {
     if (this.pendingSongs.length > 0) {
       this.uniquePending.forEach(async (item) => {
-        await item.get('song').then(async(song) => {
-          if(song){
+        await item.get('song').then(async (song) => {
+          if (song) {
             let requests = this.pendingSongs.filter(
               (request) => request.songId == song.get('id')
             );
-            
+
             let times = requests.length;
             song.times_requested = Number(song.times_requested) - Number(times);
             requests.forEach((request) => {
@@ -137,13 +137,13 @@ export default class QueueHandlerService extends Service {
             });
             await song.save().then(() => {
               console.debug(song.title + ' requests adjusted by -' + times);
-            });          
+            });
           }
         });
       });
     }
-    if(this.pendingSongs.length > 0){
-      this.pendingSongs.forEach((request) => request.destroyRecord());      
+    if (this.pendingSongs.length > 0) {
+      this.pendingSongs.forEach((request) => request.destroyRecord());
     }
     this.fileContent(this.pendingSongs);
   }
@@ -221,7 +221,7 @@ export default class QueueHandlerService extends Service {
       request.processed = !request.processed;
 
       await request.save().then(() => {
-        console.log('Updated request'+request.position);
+        console.log('Updated request' + request.position);
         if (request.processed && request.songId) {
           this.store
             .findRecord('song', request.song.get('id'))
@@ -279,7 +279,7 @@ export default class QueueHandlerService extends Service {
       // console.debug(selected.fullText+' added at position '+nextPosition);
       this.lastsongrequest = newRequest;
       this.scrollPendingPosition = 0;
-      this.scrollPlayedPosition = 0;      
+      this.scrollPlayedPosition = 0;
       this.fileContent(this.pendingSongs);
     });
     this.fileContent(this.pendingSongs);
@@ -302,7 +302,7 @@ export default class QueueHandlerService extends Service {
       firstRequest.position = 0;
       firstRequest.processed = true;
       firstRequest.save().then(() => {
-        if(!firstRequest.song.get('isDeleted')){
+        if (!firstRequest.song.get('isDeleted')) {
           this.store
             .findRecord('song', firstRequest.song.get('id'))
             .then(async (song) => {
@@ -349,13 +349,12 @@ export default class QueueHandlerService extends Service {
   }
 
   @action fileContent(pendingSongs, firstRun = false) {
-    
     let htmlEntries = '';
     let title = '';
     let user = '';
     let artist = '';
     let time = '';
-    
+
     let defaultEntry = `
           <tr>
             <td class="bg-transparent text-white">
@@ -370,7 +369,7 @@ export default class QueueHandlerService extends Service {
             </td>
           </tr>
             `;
-    
+
     let defaultOverlay = `
       <table class="table table-dark">
         <thead>
@@ -382,14 +381,14 @@ export default class QueueHandlerService extends Service {
           $items
         </tbody>
       </table>`;
-    
+
     if (
       this.globalConfig.config.overlayfolder != '' &&
       this.currentUser.isTauri
     ) {
       if (
         (this.globalConfig.config.overlayfolder != '' &&
-         this.globalConfig.config.overlayType === 'file') ||
+          this.globalConfig.config.overlayType === 'file') ||
         firstRun
       ) {
         let pathString = this.globalConfig.config.overlayfolder;
@@ -399,30 +398,34 @@ export default class QueueHandlerService extends Service {
           pathString = pathString + '\\queue.html';
         }
         if (pendingSongs.length > 0) {
-          let visible = pendingSongs.slice(0, this.globalConfig.config.get('overlayLength') || 5);
+          let visible = pendingSongs.slice(
+            0,
+            this.globalConfig.config.get('overlayLength') || 5
+          );
           visible.forEach((pendingsong) => {
             title = pendingsong.effectiveTitle;
             artist = pendingsong.effectiveArtist;
-            time = moment(pendingsong.timestamp).format(
-              'YYYY/MM/DD HH:mm:ss'
-            );
+            time = moment(pendingsong.timestamp).format('YYYY/MM/DD HH:mm:ss');
             user = pendingsong.user;
-            let entry = this.globalConfig.config.get('defOverlay.qItems') || defaultEntry;
-            entry = entry.replace('\$title', title);
-            entry = entry.replace('\$artist', artist);
-            entry = entry.replace('\$time', time);
-            entry = entry.replace('\$user', user);
-            
+            let entry =
+              this.globalConfig.config.get('defOverlay.qItems') || defaultEntry;
+            entry = entry.replace('$title', title);
+            entry = entry.replace('$artist', artist);
+            entry = entry.replace('$time', time);
+            entry = entry.replace('$user', user);
+
             htmlEntries = htmlEntries.concat(entry);
           });
         }
 
-        let htmlOverlay = this.globalConfig.config.get('defOverlay.qContainer') || defaultOverlay;        
-        htmlOverlay = htmlOverlay.replace('\$items', htmlEntries);
-        
+        let htmlOverlay =
+          this.globalConfig.config.get('defOverlay.qContainer') ||
+          defaultOverlay;
+        htmlOverlay = htmlOverlay.replace('$items', htmlEntries);
+
         let chroma = this.globalConfig.config.chromaColor;
         let styles = this.globalConfig.config.get('defOverlay.qCss') || '';
-        
+
         let htmlBase = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -458,7 +461,10 @@ export default class QueueHandlerService extends Service {
     } finally {
       //let text = unescape(encodeURIComponent(thisHtml));
       //let arrayBuff = new TextEncoder().encode(text);
-      invoke('file_writer', { filepath: pathString, filecontent: thisHtml}).then(()=>{
+      invoke('file_writer', {
+        filepath: pathString,
+        filecontent: thisHtml,
+      }).then(() => {
         console.debug('done!');
       });
     }

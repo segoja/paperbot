@@ -1,31 +1,46 @@
-<div class="row h-100 flex-fill m-0 p-0 bg-body">
+<div class="row h-100 flex-fill m-0 p-0 bg-body" {{did-resize this.updateRowNr}}>
   <div class={{if this.isSetlist "col-12 col-lg-8 h-100 flex-fill p-0 m-0 bg-body" "col-12 h-100 flex-fill p-0 m-0 bg-body"}}> 
       {{!-- song listing --}}
       <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill rounded-0"}}">
         <div class="card-header">
           <div class="row">
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-lg col-md-6 col-12 px-1" as |form|>
-              <form.element @controlType="text" class="w-100 my-0 mb-1" @property="query" {{on "keydown" this.resetPage}} as |el|>
-                <el.control
-                  placeholder="Filter by title"
-                  tabIndex={{5}}
-                  class="w-100 m-0"
-                />
-              </form.element>
-            </BsForm>
-            <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col-lg-auto col-md-6 col-12 px-1" as |form|>
-              <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@songTypes}} @onchange={{this.resetPage}} as |element| >
-                <element.control  @triggerClass="w-100 m-0" @allowClear={{true}} @placeholder="Filter by type" class="w-100" as |option|>
-                  <span class="w-100">{{option}}</span>
-                </element.control>
-              </form.element>
-            </BsForm>
+            <div class="col-lg col-md-6 col-12 px-1">
+              <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="w-100" as |form|>
+                <div class="row g-0 flex-nowrap">
+                  <form.element @controlType="text" class="col my-0 mb-1" @property="query" {{on "keydown" this.resetPage}} as |el|>
+                    <el.control
+                      placeholder="Search by song or artist"
+                      tabIndex={{5}}
+                      class="w-100 m-0 rounded-end-0"
+                    />
+                  </form.element>  
+                  <div class="col-auto">
+                    <BsButton @type="secondary rounded-start-0" @onClick={{this.clearSearch}} disabled={{not @queryParamsObj.query}} title="Clear search">
+                      <FaIcon @icon="cancel" />
+                    </BsButton>
+                  </div>
+                </div>
+              </BsForm>
+            </div>
+            <div class="col-lg-auto col-md-6 col-12 px-1">
+              <div class="row g-0">
+                <BsForm @model={{@queryParamsObj}} @formLayout="inline" class="col pe-2" as |form|>
+                  <form.element @controlType="power-select" @property="type" class="w-100 my-0 mb-1" @options={{@songTypes}} @onchange={{this.resetPage}} as |element| >
+                    <element.control  @triggerClass="w-100 m-0" @allowClear={{true}} @placeholder="Filter by type" class="w-100" as |option|>
+                      <span class="w-100">{{option}}</span>
+                    </element.control>
+                  </form.element>
+                </BsForm>
+                <div class="col-auto">
+                  <PbSongImport @songTypes={{@songTypes}} />
+                </div>
+              </div>
+            </div>
             <div class="col-lg-auto col px-1">
               <div class="d-block float-end">
-                <PbSongImport @songTypes={{@songTypes}} />
                 {{#let (file-queue name="uploadSongsCSV" onFileAdded=this.songImport) as |queue|}}
                   <label role="button" for="upload-csv" class="btn btn-secondary" title="Import songs by CSV">
-                    <FaIcon @icon="file-import" class="d-lg-none" /><span class="d-none d-lg-inline">Import</span>
+                    <FaIcon @icon="file-import" class="d-md-none" role="presentation"/><span class="d-none d-md-inline" role="presentation">Import</span>
                   </label>
                   <input
                     type="file"
@@ -37,51 +52,67 @@
                   >
                 {{/let}}
                 
-                <BsButton @type="secondary" @onClick={{this.songExportFiltered}} title="Export songs to CSV"><FaIcon @icon="file-export" class="d-lg-none" /><span class="d-none d-lg-inline">Export</span></BsButton>
-                <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @confirmDescription="Are you sure you want to delete all your filtered songs?" @targetAction={{this.wipeSongs}} @buttonTitle="Delete all listed songs" />
+                <BsButton @type="secondary" @onClick={{this.songExportFiltered}} title="Export songs to CSV"><FaIcon @icon="file-export" class="d-md-none" /><span class="d-none d-md-inline">Export</span></BsButton>
+                <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash-alt" @btnText="" @buttonTitle="Delete filtered songs" @confirmDescription="Are you sure you want to delete all your filtered songs?" @targetAction={{this.wipeSongs}} />
                 <BsButton @type="primary" @onClick={{@createSong}} title="Add new song">Add New</BsButton>
-                <BsButton @type="info m-0 p-0 position-relative" @onClick={{this.toggleSetlist}} title="Setlist/queue manager">
-                  <FaIcon @icon={{if this.isSetlist "angle-right" "angle-left"}} class="mx-1 align-middle" />
-                  <span class="setlist-btn-text position-relative">||||||</span>
-                  {{#unless this.isSetlist}}
-                    {{#if this.queueHandler.pendingSongs}}
-                      <span class="position-relative opacity-75">
-                        <small class="position-absolute top-0 start-100 translate-middle badge p-1 pt-0 bg-danger">
-                          {{this.queueHandler.pendingSongs.length}}
-                        </small>
-                      </span>
-                    {{/if}}
-                  {{/unless}}
+                <BsButton @type="info position-relative ps-1" @onClick={{this.toggleSetlist}} title="Queue/Setlist manager">
+                  <div class="row g-0">
+                    <div class="col-auto">
+                    {{svg-jar (if this.isSetlist "setlist-close" "setlist-open") class="setlist-icon align-middle ms-1" }}
+                    </div>
+                    <div class="col-auto">
+                      {{#unless this.isSetlist}}
+                        {{#if this.queueHandler.pendingSongs}}
+                          <span class="position-relative opacity-75">
+                            <small class="position-absolute top-0 start-100 translate-middle badge p-1 pt-0 bg-danger">
+                              {{this.queueHandler.pendingSongs.length}}
+                            </small>
+                          </span>
+                        {{/if}}
+                      {{/unless}}
+                    </div>
+                  </div>                  
+
                 </BsButton>
               </div>
             </div> 
           </div>
         </div>
-        <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
-          <div class="row mx-0 flex-fill listframe">
-            <table class="table table-hover table-condensed col-12 my-0 px-0">
+        <div class="card-body mx-0 p-0 h-100 overflow-hidden h-100" id="bodycontainer">
+          <div class="row g-0 mx-0 h-100 flex-fill listframe">
+            <table class="table table-hover table-condensed col-12 my-0 px-0 w-100">
               <thead class="listheader thead-light">
-                <tr class="col">
-                  <th scope="col" class="col-sm">Song</th>
-                  <th scope="col" class="d-none d-sm-table-cell col-sm">Artist</th>
+                <tr class="row g-0">
+                  <th scope="col" class="col align-top position-relative">
+                    <span role="button" class="position-absolute d-block text-truncate w-100" {{on "click" (fn this.sortColumn "title")}}>Song</span>
+                  </th>
+                  <th scope="col" class="d-none d-sm-table-cell col-3 align-top position-relative">
+                    <span role="button" class="position-absolute d-block w-100 text-truncate" {{on "click" (fn this.sortColumn "artist")}}>Artist</span>
+                  </th>
                   {{#unless this.isSetlist}}
-                    <th scope="col" class="d-none d-lg-table-cell col-md">Type</th>
-                    <th scope="col" class="d-none d-lg-table-cell col-md text-end">Played</th>
+                    <th scope="col" class="d-none d-lg-table-cell col-2 position-relative">
+                      <span role="button" class="position-absolute d-block w-100 text-truncate" {{on "click" (fn this.sortColumn "type")}}>Type</span>
+                    </th>
+                    <th scope="col" class="d-none d-lg-table-cell col-1 position-relative">
+                      <span role="button" class="position-absolute d-block w-100 text-truncate" {{on "click" (fn this.sortColumn "times_played")}}>Played</span>
+                    </th>
                   {{/unless}}
                   {{!-- <th scope="col" class="d-none d-lg-table-cell col-md">Last played</th> --}}
-                  <th scope="col" class="d-none d-lg-table-cell col-md text-end">Requested</th>
-                  {{!-- <th scope="col" class="d-none d-lg-table-cell col-md">Last request</th> --}}
-                  <th scope="col" class="col-sm"></th>
+                  <th scope="col" class="d-none d-lg-table-cell col-1 position-relative">
+                    <span role="button" class="position-absolute d-block w-100 text-truncate" {{on "click" (fn this.sortColumn "times_requested")}}>Requested</span>
+                  </th>
+                  {{!-- <th scope="col" class="d-none d-lg-table-cell col-1">Last request</th> --}}
+                  <th role="button" scope="col" class="col w-auto formcol song-ctrls">Actions</th>
                 </tr>
               </thead>
               <tbody id="preheight">
                 {{#each this.pagedContent as |song|}}
-                  <tr class={{if song.active "bg-success bg-opacity-10"}}>
-                    <td class="col-sm align-top"><span class="overflow-hidden">{{if song.title song.title "<unntitled>"}}</span></td>
-                    <td class="d-none d-sm-table-cell col-sm align-top"><span class="overflow-hidden">{{song.artist}}</span></td>
+                  <tr class="{{if song.active "bg-success bg-opacity-10"}} row g-0">
+                    <td class="col align-top position-relative"><span class="position-absolute d-block w-100 text-truncate">{{if song.title song.title "<unntitled>"}}</span></td>
+                    <td class="d-none d-sm-table-cell col-3 align-top position-relative"><span class="position-absolute d-block w-100 text-truncate">{{song.artist}}</span></td>
                     {{#unless this.isSetlist}}
-                      <td class="d-none d-lg-table-cell col-md align-top">{{song.type}}</td>
-                      <td class="d-none d-lg-table-cell col-md align-top text-end">{{song.times_played}}</td>
+                      <td class="d-none d-lg-table-cell col-2 align-top">{{song.type}}</td>
+                      <td class="d-none d-lg-table-cell col-1 align-top">{{song.times_played}}</td>
                     {{/unless}}
                     {{!-- <td class="d-none d-lg-table-cell col-md align-top">
                       {{#if song.last_played}}
@@ -90,7 +121,7 @@
                         Never
                       {{/if}}
                     </td> --}}
-                    <td class="d-none d-lg-table-cell col-md align-top text-end">{{song.times_requested}}</td>
+                    <td class="d-none d-lg-table-cell col-1 align-top">{{song.times_requested}}</td>
                     {{!-- <td class="d-none d-lg-table-cell col-md align-top">
                       {{#if song.last_requested}}
                         {{nicer-date song.last_requested format="DD/MM/YYYY"}}
@@ -98,25 +129,31 @@
                         Never
                       {{/if}}
                     </td>--}}
-                    <td class="col-auto py-0 pe-0 formcol">
-                      <div class="btn-group text-nowrap float-end text-end">
-                        <BsButton 
-                          @type={{if song.active "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
-                          class="rounded-0 col-auto border-top-0 border-bottom-0 border-end-0 px-0 py-2 m-0" 
-                          @onClick={{fn @gridActiveSong song}}
-                        >
-                          <FaIcon @icon={{if song.active "check-square" "square"}} />
-                        </BsButton>                          
-                        <button type="button" class="btn btn-outline-info alert alert-info rounded-0 col-auto border-top-0 border-bottom-0 border-end-0 px-0 py-1 m-0" {{on "click" (fn this.queueHandler.songToQueue song true)}} title="Add to top setlist/queue">
-                          {{svg-jar "add-to-top" class=(if this.globalConfig.config.darkmode "svg-queue svg-dark" "svg-queue svg-light")}}
-                        </button>
-                        
-                        <button type="button" class="btn btn-outline-info alert alert-info rounded-0 col-auto border-top-0 border-bottom-0 border-end-0 px-0 py-1 m-0" {{on "click" (fn this.queueHandler.songToQueue song false)}} title="Add to bottom setlist/queue">
-                          {{svg-jar "add-to-bottom" class=(if this.globalConfig.config.darkmode "svg-queue svg-dark" "svg-queue svg-light")}}
-                        </button>    
-                        
-                        <button type="button" class="col-auto btn btn-outline-warning alert alert-warning border-top-0 border-bottom-0 border-end-0 rounded-0 py-2 px-0 m-0" {{on "click" (fn @gridEditSong song)}}><FaIcon @icon="edit" title="Edit song" /></button>
-                        <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger border-top-0 border-bottom-0 rounded-0 py-2 px-0 col-auto m-0" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @targetAction={{fn @gridDeleteSong song}} />
+                    <td class="col py-0 pe-0 formcol song-ctrls text-end">
+                      <div class="btn-group">
+                        <div class="row g-0 buttons">
+                          <BsButton 
+                            @type={{if song.active "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
+                            class="rounded-0 col border-top-0 border-bottom-0 border-end-0 m-0" 
+                            @onClick={{fn @gridActiveSong song}}
+                            title={{if song.active "Disable song" "Enable song"}}
+                          >
+                            <FaIcon @icon={{if song.active "check-square" "square"}} />
+                          </BsButton>
+                          <div class="col-auto btn-double">
+                            <div class="row g-0">
+                              <button type="button" class="btn btn-outline-info alert alert-info rounded-0 col-12 col-md border-top-0 border-bottom-0 border-end-0 m-0" {{on "click" (fn this.songToQueue song true)}} title="Add to top setlist/queue">
+                                {{svg-jar "add-to-top" class=(if this.globalConfig.config.darkmode "svg-queue svg-dark" "svg-queue svg-light")}}
+                              </button>
+                              
+                              <button type="button" class="btn btn-outline-info alert alert-info rounded-0 col-12 col-md border-top-0 border-bottom-0 border-end-0 m-0" {{on "click" (fn this.songToQueue song false)}} title="Add to bottom setlist/queue">
+                                {{svg-jar "add-to-bottom" class=(if this.globalConfig.config.darkmode "svg-queue svg-dark" "svg-queue svg-light")}}
+                              </button>
+                            </div>
+                          </div>
+                          <button type="button" class="col btn btn-outline-warning alert alert-warning border-top-0 border-bottom-0 border-end-0 rounded-0 m-0" {{on "click" (fn @gridEditSong song)}} title="Edit song"><FaIcon @icon="edit" /></button>
+                          <ButtonConfirm @btnClass="btn btn-outline-danger alert alert-danger border-top-0 border-bottom-0 rounded-0 col m-0" @buttonTitle="Delete song" @btnIcon="trash" @btnText="" @confirmDescription="Are you sure you want to delete this song?" @targetAction={{fn @gridDeleteSong song}} />
+                        </div>
                       </div>
                     </td>
                   </tr>            
@@ -126,9 +163,6 @@
           </div>
         </div>
         <div class="card-footer py-0 my-0 px-0">
-          <div class="d-lg-none offcanvas {{if this.isSetlist "show" "hiding"}} offcanvas-end pt-custom border-0 bg-transparent w-100 w-sm-75 w-md-50" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
-            <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}}/>
-          </div> 
           <PageNumbers @content={{this.pagedContent}} @showTotal={{true}} />
         </div>
       </div>
@@ -138,6 +172,11 @@
     {{/if}}
   </div>
   <div class={{if this.isSetlist "col-lg-4 d-lg-block d-none h-100 flex-fill my-0 px-0" "d-none"}}>
-    <PbSongsSetlist />
+    <PbSongsSetlist @toTop={{this.toTop}} />
+  </div> 
+  <div class="d-lg-none offcanvas {{if this.isSetlist "show" "hiding"}} offcanvas-end pt-offc-custom border-0 bg-transparent w-100 w-sm-75 w-md-50 w-effects px-0" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
+    <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @toTop={{this.toTop}} @isSetlist={{this.isSetlist}} />
   </div> 
 </div>
+
+{{did-insert this.updateRowNr}}

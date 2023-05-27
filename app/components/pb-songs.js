@@ -15,7 +15,24 @@ export default class PbSongsComponent extends Component {
   @service globalConfig;
   @service store;
 
-  songsSorting = Object.freeze(['date_added:asc']);
+  @tracked toTop = false;
+
+  constructor() {
+    super(...arguments);
+    this.toTop = true;
+    this.sortString = 'title:asc';
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.toTop = true;
+    this.sortString = 'title:asc';
+  }
+
+  @tracked sortString = 'title:asc';
+  get songsSorting() {
+    return Object.freeze(this.sortString.split(','));
+  }
 
   @sort('args.songs', 'songsSorting') arrangedContent;
 
@@ -45,6 +62,11 @@ export default class PbSongsComponent extends Component {
     this.args.queryParamsObj.page = 1;
   }
 
+  @action clearSearch() {
+    this.args.queryParamsObj.query = '';
+    this.args.queryParamsObj.page = 1;
+  }
+
   @tracked importcontent;
 
   get isSetlist() {
@@ -54,8 +76,58 @@ export default class PbSongsComponent extends Component {
     return false;
   }
 
+  get dynamicHeight() {
+    let elmnt = document.getElementById('bodycontainer');
+    let height = 0;
+    if (elmnt) {
+      height = Number(elmnt.offsetHeight) || 0;
+    }
+    return height;
+  }
+
+  @action updateRowNr() {
+    if (this.dynamicHeight) {
+      let height = this.dynamicHeight;
+      let rows = Math.floor(height / 43);
+      if (!isNaN(rows) && rows > 1) {
+        this.args.queryParamsObj.perPage = rows - 1;
+        this.args.queryParamsObj.page = 1;
+      }
+    }
+  }
+
+  @action sortColumn(attribute) {
+    let sortData = this.sortString.split(',');
+    this.sortString = '';
+    if (attribute) {
+      let newSort = '';
+      let exist = sortData.filter((row) => row.includes(attribute));
+      if (exist.length > 0) {
+        if (exist.toString().includes(':asc')) {
+          newSort = attribute + ':desc,';
+        } else {
+          newSort = attribute + ':asc,';
+        }
+      } else {
+        newSort = attribute + ':asc,';
+      }
+      if (sortData.length > 0) {
+        let others = sortData.filter((row) => !row.includes(attribute));
+        if (others.length > 0) {
+          newSort += others.join(',');
+        }
+      }
+      this.sortString = newSort.toString();
+    }
+  }
+
   @action toggleSetlist() {
     this.currentUser.showSetlist = !this.currentUser.showSetlist;
+  }
+
+  @action songToQueue(song, toTop) {
+    this.queueHandler.songToQueue(song, toTop);
+    this.toTop = toTop;
   }
 
   @action wipeSongs() {

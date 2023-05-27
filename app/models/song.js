@@ -19,8 +19,7 @@ export default class SongModel extends Model {
   @attr('date', { defaultValue: '' }) date_added;
   @attr('date', { defaultValue: '' }) last_requested;
   @attr('date', { defaultValue: '' }) last_played;
-  
-  
+
   @attr('number', { defaultValue: 0.85 }) zoomLevel;
   @attr('number', { defaultValue: 0 }) transSteps;
   @attr('number', { defaultValue: 3 }) columns;
@@ -30,7 +29,7 @@ export default class SongModel extends Model {
 
   @attr('number', { defaultValue: 0 }) times_requested;
   @attr('number', { defaultValue: 0 }) times_played;
-  
+
   @attr('string', { defaultValue: '' }) account;
 
   @attr('string', { defaultValue: '' }) remoteid;

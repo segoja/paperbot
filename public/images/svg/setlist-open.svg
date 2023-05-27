@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 852 736"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="setlist-open.svg"
+   width="852"
+   height="736"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.0029297"
+     inkscape:cx="387.86368"
+     inkscape:cy="180.96981"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="1072"
+     inkscape:window-y="461"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+  <path
+     id="path2-6"
+     d="m 380,0 c -13.3,0 -24,10.7 -24,24 v 48 c 0,13.3 10.7,24 24,24 h 48 c 13.3,0 24,-10.7 24,-24 V 24 C 452,10.7 441.3,0 428,0 Z m 152,16 c -17.7,0 -32,14.3 -32,32 0,17.7 14.3,32 32,32 h 288 c 17.7,0 32,-14.3 32,-32 0,-17.7 -14.3,-32 -32,-32 z m 0,160 c -17.7,0 -32,14.3 -32,32 0,17.7 14.3,32 32,32 h 288 c 17.7,0 32,-14.3 32,-32 0,-17.7 -14.3,-32 -32,-32 z m -176,8 v 48 c 0,13.3 10.7,24 24,24 h 48 c 13.3,0 24,-10.7 24,-24 v -48 c 0,-13.3 -10.7,-24 -24,-24 h -48 c -13.3,0 -24,10.7 -24,24 z m 24,136 c -13.3,0 -24,10.7 -24,24 v 48 c 0,13.3 10.7,24 24,24 h 48 c 13.3,0 24,-10.7 24,-24 v -48 c 0,-13.3 -10.7,-24 -24,-24 z m 152,16 c -17.7,0 -32,14.3 -32,32 0,17.7 14.3,32 32,32 h 288 c 17.7,0 32,-14.3 32,-32 0,-17.7 -14.3,-32 -32,-32 z m 0,160 c -17.7,0 -32,14.3 -32,32 0,17.7 14.3,32 32,32 h 288 c 17.7,0 32,-14.3 32,-32 0,-17.7 -14.3,-32 -32,-32 z m 0,160 c -17.7,0 -32,14.3 -32,32 0,17.7 14.3,32 32,32 h 288 c 17.7,0 32,-14.3 32,-32 0,-17.7 -14.3,-32 -32,-32 z M 356,504 v 48 c 0,13.3 10.7,24 24,24 h 48 c 13.3,0 24,-10.7 24,-24 v -48 c 0,-13.3 -10.7,-24 -24,-24 h -48 c -13.3,0 -24,10.7 -24,24 z m 24,136 c -13.3,0 -24,10.7 -24,24 v 48 c 0,13.3 10.7,24 24,24 h 48 c 13.3,0 24,-10.7 24,-24 v -48 c 0,-13.3 -10.7,-24 -24,-24 z" />
+  <path
+     d="m 9.375,345.4 c -12.5,12.5 -12.5,32.8 0,45.3 l 160,160 c 12.5,12.5 32.8,12.5 45.3,0 12.5,-12.5 12.5,-32.8 0,-45.3 L 77.275,368 214.575,230.6 c 12.5,-12.5 12.5,-32.8 0,-45.3 -12.5,-12.5 -32.8,-12.5 -45.3,0 l -160,160 z"
+     id="path401" />
+</svg>

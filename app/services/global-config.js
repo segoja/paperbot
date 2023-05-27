@@ -7,6 +7,8 @@ export default class GlobalConfigService extends Service {
   // Tooltip hide delay
   @tracked ttdelay = 1000;
 
+  popoverevents = ('click', 'hover', 'mouseover');
+
   get defbotclient() {
     if (this.config != '') {
       if (this.config.get('defbotclient.id')) {

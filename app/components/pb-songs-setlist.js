@@ -10,7 +10,7 @@ export default class PbStreamEditPendingComponent extends Component {
   @service queueHandler;
   @service store;
 
-  constructor(){
+  constructor() {
     super(...arguments);
     this.activeTab = 'pending';
   }
@@ -19,21 +19,35 @@ export default class PbStreamEditPendingComponent extends Component {
     super.willDestroy(...arguments);
     this.activeTab = 'pending';
   }
-    
+
   tabList = ['pending', 'played'];
-  
+
   @tracked activeTab = 'pending';
 
-  queueAscSorting = Object.freeze(['processed:desc','position:asc', 'timestamp:desc']);
+  queueAscSorting = Object.freeze([
+    'processed:desc',
+    'position:asc',
+    'timestamp:desc',
+  ]);
   @sort('queueHandler.songqueue', 'queueAscSorting') arrangedAscQueue;
 
   get setlistSongs() {
-    if(this.currentUser.showPlayed){
+    if (this.currentUser.showPlayed) {
       return this.arrangedAscQueue;
     }
     return this.arrangedAscQueue.filter((request) => !request.processed);
   }
 
+  get isRelative() {
+    let result = false;
+    if (this.args.isStream) {
+      result = true;
+    } else {
+      result = this.args.toTop || false;
+    }
+    // console.log('Is relative? '+result);
+    return result;
+  }
 
   get scrollPendingPosition() {
     this.queueHandler.lastsongrequest;
@@ -42,11 +56,11 @@ export default class PbStreamEditPendingComponent extends Component {
     }
     return 0;
   }
-  
+
   get scrollPlayedPosition() {
     return this.playedSongs.length;
   }
-  
+
   get playedSongs() {
     return this.queueHandler.playedSongs.reverse();
   }
@@ -60,12 +74,12 @@ export default class PbStreamEditPendingComponent extends Component {
 
   @tracked showPlayed = false;
 
-  @action tabSwitch(tab){
-    console.log(tab);
-    if(tab){
+  @action tabSwitch(tab) {
+    // console.log(tab);
+    if (tab) {
       this.activeTab = tab;
     }
-    console.log(this.activeTab);
+    // console.log(this.activeTab);
   }
 
   @action togglePlayed() {
@@ -79,7 +93,7 @@ export default class PbStreamEditPendingComponent extends Component {
       if (item.position != count) {
         item.position = count;
         item.save().then(() => {
-          console.debug(item.position+'. '+item.title);
+          console.debug(item.position + '. ' + item.title);
         });
       } else {
         console.debug(

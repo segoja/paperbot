@@ -10,7 +10,7 @@ export default class PbReaderComponent extends Component {
   constructor() {
     super(...arguments);
   }
-  
+
   requestSorting = Object.freeze(['position:asc', 'timestamp:desc']);
   @sort('args.requests', 'requestSorting') arrangedContent;
 
@@ -26,15 +26,14 @@ export default class PbReaderComponent extends Component {
       }
     });
   }
-  
-  
-  get overlayContent(){
+
+  get overlayContent() {
     let htmlEntries = '';
     let title = '';
     let user = '';
     let artist = '';
     let time = '';
-    
+
     let defaultEntry = `
           <tr class="item">
             <td class="bg-transparent text-white">
@@ -49,7 +48,7 @@ export default class PbReaderComponent extends Component {
             </td>
           </tr>
             `;
-    
+
     let defaultOverlay = `
       <table class="table">
         <thead>
@@ -61,30 +60,33 @@ export default class PbReaderComponent extends Component {
           $items
         </tbody>
       </table>`;
-    
-      if (this.pendingRequests.length > 0) {
-        let visible = this.pendingRequests.slice(0, this.globalConfig.config.get('overlayLength') || 5);
-        visible.forEach((pendingsong) => {
-          title = pendingsong.effectiveTitle;
-          console.debug(pendingsong.effectiveArtist);
-          artist = pendingsong.effectiveArtist;
-          time = moment(pendingsong.timestamp).format(
-            'YYYY/MM/DD HH:mm:ss'
-          );
-          user = pendingsong.user || 'bot';
-          let entry = this.globalConfig.config.get('defOverlay.qItems') || defaultEntry;
-          entry = entry.replace('\$title', title);
-          entry = entry.replace('\$artist', artist);
-          entry = entry.replace('\$time', time);
-          entry = entry.replace('\$user', user);
-          
-          htmlEntries = htmlEntries.concat(entry);
-        });
-      }
 
-      let htmlOverlay = this.globalConfig.config.get('defOverlay.qContainer') || defaultOverlay;        
-      htmlOverlay = htmlOverlay.replace('\$items', htmlEntries);
-      
-      return htmlSafe(htmlOverlay);
+    if (this.pendingRequests.length > 0) {
+      let visible = this.pendingRequests.slice(
+        0,
+        this.globalConfig.config.get('overlayLength') || 5
+      );
+      visible.forEach((pendingsong) => {
+        title = pendingsong.effectiveTitle;
+        console.debug(pendingsong.effectiveArtist);
+        artist = pendingsong.effectiveArtist;
+        time = moment(pendingsong.timestamp).format('YYYY/MM/DD HH:mm:ss');
+        user = pendingsong.user || 'bot';
+        let entry =
+          this.globalConfig.config.get('defOverlay.qItems') || defaultEntry;
+        entry = entry.replace('$title', title);
+        entry = entry.replace('$artist', artist);
+        entry = entry.replace('$time', time);
+        entry = entry.replace('$user', user);
+
+        htmlEntries = htmlEntries.concat(entry);
+      });
+    }
+
+    let htmlOverlay =
+      this.globalConfig.config.get('defOverlay.qContainer') || defaultOverlay;
+    htmlOverlay = htmlOverlay.replace('$items', htmlEntries);
+
+    return htmlSafe(htmlOverlay);
   }
 }

@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
 export default class bsOffcanvasComponent extends Component {
@@ -13,7 +12,8 @@ export default class bsOffcanvasComponent extends Component {
     let elements = document.getElementsByClassName('offcanvas');
 
     let randomtext = Math.random().toString(36).slice(2, 7);
-    this.popoverId = 'OffC' + String(randomtext) + String((elements.length || 0) + 1);
+    this.popoverId =
+      'OffC' + String(randomtext) + String((elements.length || 0) + 1);
   }
 
   willDestroy() {

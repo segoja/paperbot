@@ -53,7 +53,7 @@ export default class SongController extends Controller {
     this.model.destroyRecord().then(() => {
       if (requestList.length > 0) {
         requestList.map((request) => {
-          request.save();      
+          request.save();
         });
       }
       this.currentUser.isViewing = false;

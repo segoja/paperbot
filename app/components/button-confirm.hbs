@@ -1,11 +1,17 @@
-<BsButton @type={{ @btnClass}} @onClick={{this.toggleModal}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} /><span class="d-none d-md-inline"> {{@btnText}}</span></BsButton>
+<BsButton @type={{ @btnClass}} @onClick={{this.toggleModal}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} />
+  {{#if @notCompact}}
+    <span class="d-inline"> {{@btnText}}</span>
+  {{else}}
+    <span class="d-none d-md-inline"> {{@btnText}}</span>
+  {{/if}}
+</BsButton>
 
-<BsModal @size="md" @open={{this.isViewing}} as |Modal|>
+<BsModal @size="md" @open={{this.isViewing}} @onHide={{this.toggleModal}} as |Modal|>
   <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
     <div class="row g-0 w-100">
       <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i>Confirm action</span></div>
       <div class="col-auto">
-        <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}}><FaIcon @icon="times" /></button>
+        <button type="button" title="Close" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}}><FaIcon @icon="times" /></button>
       </div>
     </div>
   </Modal.header>
@@ -17,7 +23,7 @@
     </div>
   </Modal.body>
   <Modal.footer class="py-2">
-    <BsButton @onClick={{this.confirmModal}} @type="danger">Yes</BsButton>
-    <BsButton @onClick={{this.toggleModal}} @type="secondary">No</BsButton>
+    <BsButton @onClick={{this.confirmModal}} @type="danger" title="Yes">Yes</BsButton>
+    <BsButton @onClick={{this.toggleModal}} @type="secondary" title="No">No</BsButton>
   </Modal.footer>
 </BsModal>

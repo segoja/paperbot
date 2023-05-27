@@ -1,33 +1,37 @@
-<BsButton @type="btn btn-outline-info text-black p-0 border-0 rounded-0 btn-window px-0" @onClick={{this.toggleModal}} title={{this.cloudText}} >
-  <span class={{this.cloudColor}}><FaIcon @icon="cloud"  @size="lg" /></span>
-  <div class="sync-activity mx-0">
-    {{#unless this.showArrows}}
-      <span class={{unless this.isCloudSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-up" @size="sm" /></span>
-      <span class={{unless this.isLocalSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-down" @size="sm" /></span>
-    {{/unless}}
-  </div>
+<BsButton @type="btn btn-outline-secondary text-black p-0 border-0 rounded-0 btn-window" @onClick={{this.toggleModal}} title={{this.cloudText}} >
+  <span class={{this.cloudColor}}><FaIcon @icon="cloud" class="svg-cloud" @size="lg" /></span>
+    <div class="sync-activity mx-0">
+      {{#if this.globalConfig.config.canConnect}}
+        {{#unless this.showArrows}}
+          <span class={{unless this.isCloudSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-up" @size="sm" /></span>
+          <span class={{unless this.isLocalSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-down" @size="sm" /></span>
+        {{/unless}}
+      {{else}} 
+        <span class=""><FaIcon @icon="cancel" @size="sm" /></span>
+      {{/if}}
+    </div> 
 </BsButton>
 
 {{#in-element this.modalWormhole insertBefore=null}}
   {{#if this.globalConfig.config}}
-    <BsModal @size="lg" @open={{this.visible}} as |Modal|>
+    <BsModal @size="lg" @open={{this.visible}} @onHide={{this.toggleModal}} as |Modal|>
       <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
         <div class="row g-0 w-100">
-          <div class="col py-1 ps-3"><span class="h5 text-white">Cloud settings</span></div>
+          <div class="col py-1 ps-3"><span class="h5 text-white">Cloud Settings</span></div>
           <div class="col-auto">
-            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}}><FaIcon @icon="times" /></button>
+            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}} title="Close"><FaIcon @icon="times" /></button>
           </div>
         </div>
       </Modal.header>
       <Modal.body>
-        <p>You can sync Paperbot among different devices using a self hosted or third-party CouchDb database like <a href="https://www.cloudstation.com/en" target="_blank">CloudStation</a>
+        <p>You can sync Paperbot among different devices using a self hosted or free third-party CouchDb database like <a href="https://www.cloudstation.com/en" target="_blank" rel="noopener noreferrer">CloudStation</a>
           <span role="button" id="remote-couch-info">
             <FaIcon @icon="question-circle" class="text-info" role="presentation" />
           </span>
-          <BsPopover @triggerEvents="click" @triggerElement="#remote-couch-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+          <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="bottom" @triggerElement="#remote-couch-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
             <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
               <p>Songs, requests, commands, streams, clients and overlays will be synced, but not the bot settings, wich will stay in your device/browser only.</p>
-              <p>If you use CloudStation make sure you uncheck the "Publicly accessible" checkbox when creating your database.</p>
+              <p class="text-danger">If you use CloudStation make sure you uncheck the "Publicly accessible" checkbox when creating your database.</p>
             </div>
           </BsPopover>
         </p>
@@ -50,7 +54,7 @@
               </div>
             </div> 
           {{/if}}
-          {{#if (not this.globalConfig.config.isCustomCloud)}}
+          {{#unless this.globalConfig.config.isCustomCloud}}
             <div class="row pb-3">
               <div class="col">
                 <div class="input-group input-group-sm">
@@ -59,7 +63,7 @@
                 </div>
               </div>
             </div> 
-          {{/if}}
+          {{/unless}}
           <div class="row pb-3">
             <div class="col">
               <div class="input-group input-group-sm">
@@ -93,10 +97,10 @@
           {{/if}}
         </BsForm>
       </Modal.body>
-      <Modal.footer class="py-2 row g-0">
+      <Modal.footer class="py-2 row g-0 flex-nowrap">
         <div class="col">
           
-          <BsButton @type={{if this.isOnline "danger" "secondary"}} class="btn-sm" @onClick={{this.toggleConnection}}> 
+          <BsButton @type={{if this.isOnline "danger" "secondary"}} class="btn-sm" @onClick={{this.toggleConnection}} title={{if this.isOnline "Disconnect from cloud" "Connect to cloud"}}> 
             {{#if this.isOnline}}
               <span><FaIcon @icon="toggle-on" /> Disconnect</span>
             {{else}}
@@ -105,7 +109,7 @@
           </BsButton>
         </div>
         <div class="col-auto">
-          <BsButton @type="success" @onClick={{this.doneEditing}}> 
+          <BsButton @type="success" @onClick={{this.doneEditing}} title={{if this.saving "Saving..." "Save"}}> 
             {{#if this.saving}}
               <span><FaIcon @icon="spinner" class="spin" /> Saving...</span>
             {{else}}

@@ -12,7 +12,22 @@ export default class PbCommandsComponent extends Component {
   @service currentUser;
   @service audio;
 
-  commandsSorting = Object.freeze(['date:desc']);
+  constructor() {
+    super(...arguments);
+    this.toTop = true;
+    this.sortString = 'name:asc';
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.toTop = true;
+    this.sortString = 'name:asc';
+  }
+
+  @tracked sortString = 'name:asc';
+  get commandsSorting() {
+    return Object.freeze(this.sortString.split(','));
+  }
 
   @sort('args.commands', 'commandsSorting') arrangedContent;
 
@@ -26,16 +41,7 @@ export default class PbCommandsComponent extends Component {
 
   @computedFilterByQuery(
     'filteredByType',
-    [
-      'name',
-      'type',
-      'active',
-      'cooldown',
-      'timer',
-      'response',
-      'soundfile',
-      'volume',
-    ],
+    ['name', 'response'],
     'args.queryParamsObj.query',
     { conjunction: 'and', sort: false }
   )
@@ -46,10 +52,6 @@ export default class PbCommandsComponent extends Component {
     perPage: alias('parent.args.queryParamsObj.perPage'),
   })
   pagedContent;
-
-  constructor() {
-    super(...arguments);
-  }
 
   @action wipeCommands() {
     this.args.queryParamsObj.page = 1;
@@ -64,6 +66,56 @@ export default class PbCommandsComponent extends Component {
 
   @action resetPage() {
     this.args.queryParamsObj.page = 1;
+  }
+
+  @action clearSearch() {
+    this.args.queryParamsObj.query = '';
+    this.args.queryParamsObj.page = 1;
+  }
+
+  get dynamicHeight() {
+    let elmnt = document.getElementById('bodycontainer');
+    let height = 0;
+    if (elmnt) {
+      height = Number(elmnt.offsetHeight) || 0;
+    }
+    return height;
+  }
+
+  @action updateRowNr() {
+    if (this.dynamicHeight) {
+      let height = this.dynamicHeight;
+      let rows = Math.floor(height / 43);
+      if (!isNaN(rows) && rows > 1) {
+        this.args.queryParamsObj.perPage = rows - 1;
+        this.args.queryParamsObj.page = 1;
+      }
+    }
+  }
+
+  @action sortColumn(attribute) {
+    let sortData = this.sortString.split(',');
+    this.sortString = '';
+    if (attribute) {
+      let newSort = '';
+      let exist = sortData.filter((row) => row.includes(attribute));
+      if (exist.length > 0) {
+        if (exist.toString().includes(':asc')) {
+          newSort = attribute + ':desc,';
+        } else {
+          newSort = attribute + ':asc,';
+        }
+      } else {
+        newSort = attribute + ':asc,';
+      }
+      if (sortData.length > 0) {
+        let others = sortData.filter((row) => !row.includes(attribute));
+        if (others.length > 0) {
+          newSort += others.join(',');
+        }
+      }
+      this.sortString = newSort.toString();
+    }
   }
 
   @action selectType(type) {

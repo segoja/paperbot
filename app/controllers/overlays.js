@@ -35,12 +35,12 @@ export default class OverlaysController extends Controller {
   @action importOverlays(overlay) {
     let newOverlay = this.store.createRecord('overlay');
     newOverlay.set('name', overlay.name);
-    
+
     // Queue overlay parts:
     newOverlay.set('qContainer', overlay.qContainer);
     newOverlay.set('qHeader', overlay.qHeader);
     newOverlay.set('qItems', overlay.qItems);
-    
+
     // Notifications overlay parts:
     newOverlay.set('nContainer', overlay.nContainer);
     newOverlay.set('nHeader', overlay.nHeader);

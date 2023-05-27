@@ -1,14 +1,14 @@
-<button type="button" class="btn btn-outline-info p-0 border-0 rounded-0 btn-window" {{on "click" this.toggleModal}}>
-  <FaIcon @icon="wrench" @class={{if this.cloudState.cloudError "blinkcolor" (if this.cloudState.online "connected")}} />
+<button type="button" class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window" {{on "click" this.toggleModal}} title="Local settings">
+  <FaIcon @icon="wrench" />
 </button>
 
 {{#in-element this.modalWormhole insertBefore=null}}
-    <BsModal @open={{this.isViewing}} @scrollable={{true}} @backdrop={{true}} @size="lg" as |Modal|>
+    <BsModal @open={{this.isViewing}} @scrollable={{true}} @onHide={{this.toggleModal}} @backdrop={{true}} @size="xl" as |Modal|>
       <Modal.header @closeButton={{false}} class="p-0 m-0 w-100 border-0 border-bottom rounded-top">
         <div class="row g-0 w-100 bg-dark border-0 rounded-top">
-          <div class="col py-1 ps-3"><span class="h5 text-white">Settings</span></div>
+          <div class="col py-1 ps-3"><span class="h5 text-white">Local Settings</span></div>
           <div class="col-auto">
-            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}}><FaIcon @icon="times" /></button>
+            <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" this.toggleModal}} title="Close"><FaIcon @icon="times" /></button>
           </div>
         </div>
       </Modal.header>
@@ -22,7 +22,7 @@
               <span role="button" id="external-api-info">
                 <FaIcon @icon="question-circle" class="text-info" role="presentation" />
               </span>
-              <BsPopover @triggerEvents="click" @triggerElement="#external-api-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+              <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="top" @triggerElement="#external-api-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
                 <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
                   <p class="my-0">Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>StreamElements</a></p>
                 </div>
@@ -54,9 +54,9 @@
               <span role="button" id="clients-info">
                 <FaIcon @icon="question-circle" class="text-info" role="presentation" />
               </span>
-              <BsPopover @triggerEvents="click" @triggerElement="#clients-info"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+              <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="top" @triggerElement="#clients-info"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
                 <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                  <p class="my-0">To set a client you need to add clients <LinkTo @route="clients.index" {{on "click" po.close}}>here</LinkTo></p>
+                  <p class="my-0">You need to have clients in order to set a default one. You can add new clients <LinkTo @route="clients.index" {{on "click" po.close}}>here</LinkTo>.</p>
                 </div>
               </BsPopover>
             </div>
@@ -67,13 +67,17 @@
               </form.element>
           </div>
           <div class="row pb-2">
-            <label class="control-label col-form-label col-md-4">
-              Default Chat client 
-              <span role="btn">
-                <FaIcon @icon="question-circle" class="text-info" />
-                <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>To set a client you need to add clients <LinkTo @route="clients.index">here</LinkTo></BsTooltip>
+            <div class="col-form-label col-md-4">
+              <label class="control-label">Default Chat client</label>
+              <span role="button" id="clients-info2">
+                <FaIcon @icon="question-circle" class="text-info" role="presentation" />
               </span>
-            </label>
+              <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="top" @triggerElement="#clients-info2"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+                <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
+                  <p class="my-0">You need to have clients in order to set a default one. You can add new clients <LinkTo @route="clients.index" {{on "click" po.close}}>here</LinkTo>.</p>
+                </div>
+              </BsPopover>
+            </div>            
             <form.element @controlType="power-select" @property="defchatclient" @onChange={{this.setdefChat}} @formLayout="inline" class="col-md-8 border-light" @options={{@clients}} required as |client|>
               <client.control @allowClear={{true}} @placeholder="Select the default Chat Client for new streams" as |option|>
                 {{option.username}}
@@ -116,7 +120,7 @@
                   <div class="input-group">
                     <el.control disabled class="border-form-control text-secondary" />
                     <div class="input-group-append">
-                      <BsButton @type="secondary rounded-0 rounded-end" @onClick={{fn this.opendialogfiles this.globalConfig.config}} >Select folder</BsButton>
+                      <BsButton @type="secondary rounded-0 rounded-end" @onClick={{fn this.opendialogfiles this.globalConfig.config}} title="Opens folder selector">Select folder</BsButton>
                     </div>
                   </div>
                 </form.element>
@@ -186,7 +190,7 @@
             <div class="col-sm">
               <div class="input-group border rounded">
                 <Input @type="range" min="1" max="100" aria-label="Time between" @value={{this.globalConfig.config.timerLines}} class="form-control btn-secondary slider w-75 border-0" />
-                <Input @type="text" @value={{this.globalConfig.config.timerLines}} aria-label="Chat lines between" class="form-control w-25 border-0" />
+                <Input @type="text" @value={{this.globalConfig.config.timerLines}} aria-label="Chat lines between" class="form-control w-25 border-0 border-start" />
               </div>
             </div>
           </div>
@@ -195,7 +199,7 @@
             <div class="col-sm">
               <div class="input-group border rounded">
                 <Input @type="range" min="1" max="100" aria-label="Time between" @value={{this.globalConfig.config.timerTime}} class="form-control btn-secondary slider w-75 border-0" />
-                <Input @type="text" @value={{this.globalConfig.config.timerTime}} aria-label="Time between" class="form-control w-25 border-0" />
+                <Input @type="text" @value={{this.globalConfig.config.timerTime}} aria-label="Time between" class="form-control w-25 border-0 border-start" />
               </div>
             </div>
           </div>          
@@ -206,45 +210,41 @@
             <label class="col-md-4 pb-2">Aditional settings</label>
           </div>
           <div class="form-group row">
-            <div class="col-md-4 col-lg-auto">
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Show lyrics on start" @formLayout="inline" class="form-check form-check-inline ps-0" @property="showLyrics" required />
-                </div>
-              </div> 
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Dark mode" @onChange={{this.lightControl.toggleMode}} @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />
-                </div>
+            <div class="form-group row">
+              <div class="col-md-6 col-lg">
+                <form.element @controlType="checkbox" @label="Show lyrics on start" @formLayout="inline" class="form-check form-check-inline ps-0" @property="showLyrics" required />
+              </div>
+              <div class="col-md-6 col-lg">
+                <form.element @controlType="checkbox" @label="Dark mode" @onChange={{this.lightControl.toggleMode}} @formLayout="inline" class="form-check form-check-inline ps-0" @property="darkmode" required />
               </div>
             </div>
-            <div class="col-md-4 col-lg">
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Clear requests/setlist on app restart" @formLayout="inline" class="form-check form-check-inline ps-0" @property="clearRequests" required />
-                </div>
+            <div class="form-group row">
+              <div class="col-md-6 col-lg">
+                <form.element @controlType="checkbox" @label="Clear requests/setlist on app restart" @formLayout="inline" class="form-check form-check-inline ps-0" @property="clearRequests" required />
               </div>
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Allow repeat song request" @formLayout="inline" class="form-check form-check-inline ps-0" @property="allowDuplicated" required />
-                </div>
+              <div class="col-md-6 col-lg">
+                <form.element @controlType="checkbox" @label="Allow repeat song request" @formLayout="inline" class="form-check form-check-inline ps-0" @property="allowDuplicated" required />
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="form-group row">
-                <div class="col-sm">
-                  <form.element @controlType="checkbox" @label="Allow sound commands to overlap" @formLayout="inline" class="form-check form-check-inline ps-0" @property="soundOverlap" required />
-                </div>
+            <div class="form-group row">
+              <div class="col">
+                <form.element @controlType="checkbox" @label="Allow sound commands to overlap" @formLayout="inline" class="form-check form-check-inline ps-0" @property="soundOverlap" required />
               </div>
             </div>
           </div>
         </BsForm>
       </Modal.body>
-      <Modal.footer class="py-2 row g-0">
+      <Modal.footer class="py-2 row g-0 flex-nowrap">
         <div class="col">
-          <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}}>Export DB</button>
+          <button class="btn btn-sm btn-secondary" type="button" {{on "click" @handleExport}} title="Export database">
+            <FaIcon @icon="file-export" class="d-sm-none"/>
+            <span class="d-none d-sm-inline">Export</span> DB
+          </button>
           {{#let (file-queue name="uploadfile" onFileAdded=@handleImport) as |queue|}}
-            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary">Import DB</label>  
+            <label role="button" for="upload-backup" class="btn btn-sm btn-secondary" title="Import database">
+              <FaIcon @icon="file-import" class="d-sm-none" role="presentation"/>
+              <span class="d-none d-sm-inline" role="presentation">Import</span> DB
+            </label>  
             <input
               type="file"
               id="upload-backup"
@@ -255,11 +255,11 @@
               {{queue.selectFile}}
             >
           {{/let}}
-          <button class="btn btn-sm btn-danger" type="button" {{on "click" @wipeDatabase}}>Wipe DB</button>
-          <button class="btn btn-sm btn-danger" type="button" {{on "click" @wipeConfig}}>Wipe Config</button>          
+          <ButtonConfirm @btnClass="btn btn-sm btn-danger" @btnIcon="trash-alt" @buttonTitle="Wipe database" @notCompact={{true}} @btnText="DB" @confirmDescription="Are you sure you want to wipe the database?" @targetAction={{@wipeDatabase}} />
+          <ButtonConfirm @btnClass="btn btn-sm btn-danger" @btnIcon="trash-alt" @buttonTitle="Wipe local config" @notCompact={{true}} @btnText="Config" @confirmDescription="Are you sure you want wipe the local config?" @targetAction={{@wipeConfig}} />
         </div>
         <div class="col-auto">
-          <BsButton @type="success" @onClick={{this.doneEditing}}> 
+          <BsButton @type="success" @onClick={{this.doneEditing}} title="Save local config"> 
             {{#if this.saving}}
               <span><FaIcon @icon="spinner" class="spin" /> Saving...</span>
             {{else}}

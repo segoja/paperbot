@@ -1,11 +1,11 @@
 <div class="card {{unless @isEditing "h-100" "mh-100"}} flex-fill mb-0 rounded-0 border-0">
-  <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-0">
+  <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-0 stream-menu">
     <div class="row g-0">
       <div class="col align-self-center pe-0 ps-3 text-truncate"><h5 class="my-0 text-white text-truncate"><span class="d-none d-lg-inline">Stream: </span>{{#if @stream.channel}} #{{@stream.channel}} - {{/if}}{{@stream.title}} <small class="muted">({{format-date @stream.date}})</small></h5></div>
       <div class="col-auto float-end">
         <BsButtonGroup class="px-0 rounded float-end" as |bg|>
           {{#unless @isEditing}}
-            <PbModal @btnClass="btn btn-dark text-white rounded-0 border-0 {{if @stream.finished "d-none"}}" @buttonTitle="Keyboard Shortcuts" @btnIcon="question-circle" @btnText="">
+            <PbModal @btnClass="btn btn-dark text-info rounded-0 border-0 {{if @stream.finished "d-none"}}" @buttonTitle="Keyboard Shortcuts" @btnIcon="question-circle" @btnText="">
               <div class="row">
                 <div class="col">
                   <p class="text-start">
@@ -19,10 +19,10 @@
                 </div>
               </div>
             </PbModal>
-            <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.reloadStream}}><FaIcon @icon="redo-alt" /></bg.button>
+            <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.reloadStream}} title="Reload stream UI"><FaIcon @icon="redo-alt" /></bg.button>
           {{/unless}}
-          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.queueHandler.exportQueue}} ><FaIcon @icon="file-download" /></bg.button>
-          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{@closeStream}}><FaIcon @icon="xmark" /></bg.button>
+          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{this.queueHandler.exportQueue}} title="Download setlist/queue"><FaIcon @icon="file-download" /></bg.button>
+          <bg.button @type="dark" class="rounded-0 border-0" @onClick={{@closeStream}} title="Close"><FaIcon @icon="xmark" /></bg.button>
         </BsButtonGroup>
       </div>
     </div>
@@ -100,7 +100,6 @@
                 </div>
               {{/if}}
             </div>
-            
           </div>
         </div>
       </div>

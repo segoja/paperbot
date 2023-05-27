@@ -1,8 +1,3 @@
-import Service, { inject as service } from '@ember/service';
-import { isEmpty } from '@ember/utils';
-import moment from 'moment';
+import Service from '@ember/service';
 
-export default class FontsService extends Service {
-
-
-}
+export default class FontsService extends Service {}

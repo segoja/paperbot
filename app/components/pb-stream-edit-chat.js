@@ -5,24 +5,24 @@ import { inject as service } from '@ember/service';
 export default class PbStreamEditChatComponent extends Component {
   @service globalConfig;
   @service twitchChat;
-  
+
   constructor() {
     super(...arguments);
   }
 
   scrollPosition = 0;
-  
+
   get messages() {
     return this.twitchChat.msglist.slice(-45) || [];
   }
 
   // With this getter we enable/disable the chat input box according to the chat client status.
-  get inputDisabled(){
-    if(!this.twitchChat.chatConnected){
+  get inputDisabled() {
+    if (!this.twitchChat.chatConnected) {
       return true;
     } else {
       return false;
-    }  
+    }
   }
 
   get embedChatUrl() {
@@ -33,7 +33,7 @@ export default class PbStreamEditChatComponent extends Component {
       darkmode = '&darkpopout';
     }
 
-    console.debug('The hostname is: '+hostname);
+    console.debug('The hostname is: ' + hostname);
     return (
       'https://www.twitch.tv/embed/' +
       channel +
