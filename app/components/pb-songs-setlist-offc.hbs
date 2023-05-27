@@ -51,7 +51,7 @@
           <BsButton @type="info ps-1" @onClick={{@toggleSetlist}} title="Setlist/queue manager">
             <div class="row g-0">
               <div class="col-auto">
-              {{svg-jar (if this.isSetlist "setlist-close" "setlist-open") class="setlist-icon align-middle ms-1" }}
+              {{svg-jar (if @isSetlist "setlist-close" "setlist-open") class="setlist-icon align-middle ms-1" }}
               </div>
             </div>  
           </BsButton>
