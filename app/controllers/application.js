@@ -92,7 +92,7 @@ export default class ApplicationController extends Controller {
               this.globalConfig.config.showLyrics &&
               this.router.currentURL != '/reader'
             ) {
-              // this.currentUser.showLyrics();
+              this.currentUser.showLyrics();
             }
           }
         }

@@ -60,7 +60,7 @@
         <div class="col-sm">
           <div class="input-group border rounded">
             <Input @type="range" min="1" max="100" aria-label="Volume" @value={{@command.volume}} {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control btn-secondary slider w-75 border-0" />
-            <Input @type="text" @value={{@command.volume}} aria-label="Volume" {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control w-25" />
+            <Input @type="text" @value={{@command.volume}} aria-label="Volume" {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control w-25 border-0 border-start" />
           </div>
         </div>
       </div>

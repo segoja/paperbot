@@ -139,11 +139,11 @@ $width-sizes: (
 svg.add-to-top, svg.add-to-bottom { min-width: 1em; }
 
 svg.svg-queue {
-  fill: var(--bs-info-text);
+  fill: var(--bs-info-text-emphasis);
   width: 24px; 
   height: 24px;
   margin: 0px 0.75rem;
-  &.svg-dark  { filter: invert(20%); }
+  &.svg-dark  { filter: invert(0%); }
   &.svg-light { filter: invert(0%); }
 }
 
@@ -363,12 +363,17 @@ div.system{
 .ember-basic-dropdown-content{
   background-color: var(--bs-form-control-bg);
 }
+.ember-power-select-option[aria-selected=false], .ember-power-select-option{
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
 .ember-power-select-option[aria-selected=true]{
   background-color: var(--bs-secondary);
-  color: var(--bs-gray-300);
+  color: var(--bs-gray-100);
 }
 .ember-power-select-option[aria-current=true]{
   background-color: var(--bs-primary);
+  color: var(--bs-gray-100);
 }
 
 .border-form-control{
@@ -376,7 +381,7 @@ div.system{
 }
 
 .ember-power-select-placeholder {
-    color: var(--bs-body-color);
+  color: var(--bs-body-color);
 }
 
 .ember-power-select-search-input, .ember-power-select-search{
@@ -684,19 +689,19 @@ svg.setlist-icon {
 }
 
 .pt-custom {
-  padding-top: 2.3rem !important;
+  padding-top: 2.1rem !important;
 }
 
 .pt-offc-custom {
   /* padding-top: 2.4rem !important; */
-  padding-top: 2.3rem !important;
+  padding-top: 2.2rem !important;
   &.hiding .shadow { box-shadow: none!important; }
 }
 
 .pt-offc-custom-stream {
-  padding-top: 6.7rem;
+  padding-top: 6.55rem;
   &.hiding .shadow { box-shadow: none!important; }
-  @include media-breakpoint-down(sm) { padding-top: 8.65rem!important; }
+  @include media-breakpoint-down(sm) { padding-top: 8.50rem!important; }
 }
 
 .stream-menu {
@@ -833,7 +838,7 @@ span.deleted {
 }
 
 main {
-  cursor: initial;
+  cursor: initial!important;
 }
 
 html *, body *, main * {
