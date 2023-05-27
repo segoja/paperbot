@@ -242,8 +242,8 @@
           </button>
           {{#let (file-queue name="uploadfile" onFileAdded=@handleImport) as |queue|}}
             <label role="button" for="upload-backup" class="btn btn-sm btn-secondary" title="Import database">
-              <FaIcon @icon="file-import" class="d-sm-none"/>
-              <span class="d-none d-sm-inline">Import</span> DB
+              <FaIcon @icon="file-import" class="d-sm-none" role="presentation"/>
+              <span class="d-none d-sm-inline" role="presentation">Import</span> DB
             </label>  
             <input
               type="file"

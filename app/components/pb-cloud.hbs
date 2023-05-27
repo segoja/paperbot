@@ -24,7 +24,7 @@
         </div>
       </Modal.header>
       <Modal.body>
-        <p>You can sync Paperbot among different devices using a self hosted or free third-party CouchDb database like <a href="https://www.cloudstation.com/en" target="_blank">CloudStation</a>
+        <p>You can sync Paperbot among different devices using a self hosted or free third-party CouchDb database like <a href="https://www.cloudstation.com/en" target="_blank" rel="noopener noreferrer">CloudStation</a>
           <span role="button" id="remote-couch-info">
             <FaIcon @icon="question-circle" class="text-info" role="presentation" />
           </span>
@@ -54,7 +54,7 @@
               </div>
             </div> 
           {{/if}}
-          {{#if (not this.globalConfig.config.isCustomCloud)}}
+          {{#unless this.globalConfig.config.isCustomCloud}}
             <div class="row pb-3">
               <div class="col">
                 <div class="input-group input-group-sm">
@@ -63,7 +63,7 @@
                 </div>
               </div>
             </div> 
-          {{/if}}
+          {{/unless}}
           <div class="row pb-3">
             <div class="col">
               <div class="input-group input-group-sm">

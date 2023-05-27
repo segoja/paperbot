@@ -832,6 +832,10 @@ span.deleted {
   top: 2.85em;
 }
 
+main {
+  cursor: initial;
+}
+
 html *, body *, main * {
   scrollbar-width: thin;
   scrollbar-color: var(--bs-border-color);
