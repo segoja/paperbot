@@ -134,28 +134,26 @@ export default class CurrentUserService extends Service {
       }
     }
   }
-
+  
+  
+  @tracked creatingReader = false;
   @action async showLyrics() {
-    if (this.isTauri) {
+    if (this.isTauri && !this.creatingReader) {
+      console.debug('Creating reader window...');
       let readerWindow = '';
-      let currentWindow = getCurrent();
-
-      /*getAll().forEach((windowItem) => {
-        if (windowItem.label === 'reader') {
-          readerWindow = windowItem;
-        }
-      });*/
+      let currentWindow = await getCurrent();
+ 
+      readerWindow = WebviewWindow.getByLabel('reader');
+      console.debug('readerWindow', readerWindow);
 
       if (
-        //readerWindow === '' &&
-        currentWindow.label != 'overlay' &&
-        currentWindow.label != 'reader'
+        readerWindow == null && 
+        !this.creatingReader &&
+        currentWindow.label == 'Main'
       ) {
         let options = {
           url: 'reader',
-          label: 'reader',
-          title: 'Paperbot - Lyrics',
-          // parent: currentWindow,
+          title: 'Paperbot - Reader',
           decorations: false,
           minWidth: 450,
           minHeight: 600,
@@ -166,38 +164,46 @@ export default class CurrentUserService extends Service {
           y: Number(this.globalConfig.config.readerPosY),
         };
         console.debug('Creating reader window...');
+        this.creatingReader = true;        
         readerWindow = new WebviewWindow('reader', options);
-
-        readerWindow.once('tauri://window-created', function () {
+        if(await readerWindow){
           // webview window successfully created
-          console.debug('Reader ready!');
-        });
+          console.debug('Reader ready!',readerWindow);
+          this.creatingReader = false;          
+        }        
+        // readerWindow.once('tauri://created', function () {});
       } else {
-        // readerWindow.close();
-      }
-    }
-  }
-
-  @action async toggleOverlay() {
-    if (this.isTauri) {
-      let overlayWindow = '';
-      let currentWindow = getCurrent();
-
-      getAll().forEach((windowItem) => {
-        if (windowItem.label === 'overlay') {
-          overlayWindow = windowItem;
+        console.debug('Reader already open, closing!');
+        this.creatingReader = false;
+        if(readerWindow){
+          readerWindow.close();
+        } else {
+          console.debug('No Reader to close...');          
         }
-      });
+      }
+    } else {
+      console.debug('It\'s not tauri or it\'s already creating the Reader window...');          
+    }
+  }  
+  
+  @tracked creatingOverlay = false;
+  @action async toggleOverlay() {
+    if (this.isTauri && !this.creatingOverlay) {
+      console.debug('Creating overlay window...');
+      let overlayWindow = '';
+      let currentWindow = await getCurrent();
+
+      overlayWindow = WebviewWindow.getByLabel('overlay');
+      console.debug('overlayWindow', overlayWindow);
+      
       if (
-        overlayWindow === '' &&
-        currentWindow.label != 'overlay' &&
-        currentWindow.label != 'reader'
+        overlayWindow == null && 
+        !this.creatingOverlay &&
+        currentWindow.label == 'Main'
       ) {
         let options = {
           url: 'overlay',
-          label: 'overlay',
           title: 'Paperbot - Overlay',
-          /* parent:  currentWindow, */
           decorations: false,
           minWidth: 312,
           minHeight: 103,
@@ -206,15 +212,26 @@ export default class CurrentUserService extends Service {
           x: Number(this.globalConfig.config.overlayPosX),
           y: Number(this.globalConfig.config.overlayPosY),
         };
+        
+        this.creatingOverlay = true;
         overlayWindow = new WebviewWindow('overlay', options);
-
-        overlayWindow.once('tauri://window-created', function () {
+        if(await overlayWindow){
           // webview window successfully created
-          console.debug('Overlay ready!');
-        });
+          console.debug('Overlay ready!', overlayWindow);
+          this.creatingOverlay = false; 
+        }
+        // overlayWindow.once('tauri://created', function () {});
       } else {
-        // overlayWindow.close();
+        console.debug('Overlay already open, closing!');
+        this.creatingOverlay = false;
+        if(overlayWindow){
+          overlayWindow.close();
+        } else {
+          console.debug('No Overlay to close...');          
+        }
       }
+    } else {
+      console.debug('It\'s not tauri or it\'s already creating the Overlay window...');          
     }
   }
 }
