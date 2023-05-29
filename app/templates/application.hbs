@@ -10,7 +10,7 @@
 <HeadLayout />
 {{#if this.currentUser.hideMenu}}
   {{#unless this.isOverlay}}
-    <header class="m-0 p-0" id="headerA" aria-label="overlay only header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} >
+    <header class="m-0 p-0" id="headerA" aria-label="overlay only header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} data-tauri-drag-region={{true}} >
       <BsNavbar
         @type="dark"
         class="px-0 my-0 py-0 border-0 border-bottom border-secondary papermenu"
@@ -87,7 +87,7 @@
     </header>
   {{/unless}}
 {{else}}
-  <header class="m-0 p-0" id="headerB" aria-label="regular header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
+  <header class="m-0 p-0" id="headerB" aria-label="regular header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} data-tauri-drag-region={{true}}>
     <BsNavbar
       @type="dark"
       class="px-0 my-0 py-0 border-0 border-bottom border-secondary papermenu"
@@ -223,10 +223,10 @@
     .chroma { background-color: {{this.globalConfig.config.chromaColor}}!important; }
     html, body { overflow: hidden!important; }
   </style>
-  <main class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} title="Press alt+F4 if you want to close this window." id="mainA" role="button">
-    <BsTooltip @delayHide="0" role="presentation">
-      Press alt+F4 if you want to close this window.
-    </BsTooltip>
+  {{!-- <BsTooltip @delayHide="0" @triggerElement="#mainA" role="presentation" @renderInPlace={{true}} @autoPlacement={{false}} @placement="left" class="position-absolute m-0">
+    <div class="position-absolute d-block alert alert-dark text-nowrap ms-3 mt-0">Press alt+F4 if you want<br> to close this window.</div>
+  </BsTooltip> --}}
+  <main class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma position-relative" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} title="Press alt+F4 if you want to close this window." id="mainA" role="button" data-tauri-drag-region={{true}}>
     {{outlet}}
   </main>
 {{else}}

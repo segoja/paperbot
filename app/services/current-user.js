@@ -139,7 +139,6 @@ export default class CurrentUserService extends Service {
   @tracked creatingReader = false;
   @action async showLyrics() {
     if (this.isTauri && !this.creatingReader) {
-      console.debug('Creating reader window...');
       let readerWindow = '';
       let currentWindow = await getCurrent();
  
@@ -151,6 +150,7 @@ export default class CurrentUserService extends Service {
         !this.creatingReader &&
         currentWindow.label == 'Main'
       ) {
+        console.debug('Creating reader window...');
         let options = {
           url: 'reader',
           title: 'Paperbot - Reader',
@@ -163,7 +163,6 @@ export default class CurrentUserService extends Service {
           x: Number(this.globalConfig.config.readerPosX),
           y: Number(this.globalConfig.config.readerPosY),
         };
-        console.debug('Creating reader window...');
         this.creatingReader = true;        
         readerWindow = new WebviewWindow('reader', options);
         if(await readerWindow){
@@ -189,7 +188,6 @@ export default class CurrentUserService extends Service {
   @tracked creatingOverlay = false;
   @action async toggleOverlay() {
     if (this.isTauri && !this.creatingOverlay) {
-      console.debug('Creating overlay window...');
       let overlayWindow = '';
       let currentWindow = await getCurrent();
 
@@ -201,6 +199,7 @@ export default class CurrentUserService extends Service {
         !this.creatingOverlay &&
         currentWindow.label == 'Main'
       ) {
+        console.debug('Creating overlay window...');
         let options = {
           url: 'overlay',
           title: 'Paperbot - Overlay',

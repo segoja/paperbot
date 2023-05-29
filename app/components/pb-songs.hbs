@@ -174,9 +174,7 @@
   <div class={{if this.isSetlist "col-lg-4 d-lg-block d-none h-100 flex-fill my-0 px-0" "d-none"}}>
     <PbSongsSetlist @toTop={{this.toTop}} />
   </div> 
-  <div class="d-lg-none offcanvas {{if this.isSetlist "show" "hiding"}} offcanvas-end pt-offc-custom border-0 bg-transparent w-100 w-sm-75 w-md-50 w-effects px-0" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
-    <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @toTop={{this.toTop}} @isSetlist={{this.isSetlist}} />
-  </div> 
+  <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @toTop={{this.toTop}} @isSetlist={{this.isSetlist}} @offcClass="d-lg-none pt-offc-custom border-0 bg-transparent px-0" />
 </div>
 
 {{did-insert this.updateRowNr}}

@@ -180,17 +180,17 @@ button svg.stream-status {
 }
 
 .h-effects {
-  -moz-transition: height 0.5s ease;
-  -webkit-transition: height 0.5s ease;
-  -o-transition: height 0.5s ease;
-  transition: height 0.5s ease;
+  -moz-transition: height 0.3s ease, transform 0.3s ease-in-out;
+  -webkit-transition: height 0.3s ease, transform 0.3s ease-in-out;
+  -o-transition: height 0.3s ease, transform 0.3s ease-in-out;
+  transition: height 0.3s ease, transform 0.3s ease-in-out;
 }
 
 .w-effects {
-  -moz-transition: width 0.5s ease;
-  -webkit-transition: width 0.5s ease;
-  -o-transition: width 0.5s ease;
-  transition: width 0.5s ease;
+  -moz-transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  -webkit-transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  -o-transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 @media (min-width: 576px){
