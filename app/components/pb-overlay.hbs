@@ -23,7 +23,7 @@
           <span role="button" id="q-info">
             <FaIcon @icon="question-circle" class="text-info" role="presentation" />
           </span>
-          <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @triggerElement="#q-info" @autoPlacement={{false}} @placement="top"  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+          <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @triggerElement="#q-info" @autoPlacement={{true}}  @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
             <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
               <p class="my-0">Overlays are based on HTML5 and Bootstrap. If you want to learn how to customize or create your own overlay check <a href="https://getbootstrap.com/docs/5.3/content/tables/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>official Bootstrap documentation</a>.</p>
             </div>
@@ -37,14 +37,15 @@
             <span role="button" id="q-container-info">
               <FaIcon @icon="question-circle" class="text-info" role="presentation" />
             </span>
-            <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @autoPlacement={{false}} @placement="top"  @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+            <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @autoPlacement={{true}} @triggerElement="#q-container-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
               <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
                 <p class="my-0">This is the code of the main container of the request queue. Queue items will be placed inside replacing <strong>$items</strong> in the code.</p>
               </div>
             </BsPopover>
+            <ButtonConfirm @btnClass="btn btn-outline-secondary btn-sm float-end rounded-0 rounded-top border-bottom-0 border-secondary-subtle" @buttonTitle="Paste default container code" @btnIcon="paste" @btnText="" @confirmDescription="Are you sure you want to overwrite the current code?" @targetAction={{this.loadDefaultContainer}} />
           </div>
           <div class="d-block">
-            <Textarea @value={{@overlay.qContainer}} rows="8" aria-label="Container" placeholder="Type the code of the container" class="form-control"/>
+            <Textarea @value={{@overlay.qContainer}} rows="8" aria-label="Container" placeholder="Type the code of the container" class="form-control rounded-0 rounded-bottom rounded-start"/>
           </div>
         </div>
         <div class="col-12 col-md">
@@ -53,14 +54,15 @@
             <span role="button" id="q-items-info">
               <FaIcon @icon="question-circle" class="text-info" role="presentation" />
             </span>
-            <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @autoPlacement={{false}} @placement="top" @triggerElement="#q-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+            <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @autoPlacement={{true}} @triggerElement="#q-items-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
               <div role="dialog" class="px-3 py-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
                 <p class="my-0">This is the code used to represent each one of the request in the queue. The information about each request can be included using: <strong>$title</strong>, <strong>$artist</strong>, <strong>$time</strong> and <strong>$user</strong>. They will be replaced by the actual data in the overlay window/file.</p>
               </div>
             </BsPopover>
+            <ButtonConfirm @btnClass="btn btn-outline-secondary btn-sm float-end rounded-0 rounded-top border-bottom-0 border-secondary-subtle" @buttonTitle="Paste default items code" @btnIcon="paste" @btnText="" @confirmDescription="Are you sure you want to overwrite the current code?" @targetAction={{this.loadDefaultItem}} />
           </div>
           <div class="d-block">
-            <Textarea @value={{@overlay.qItems}} rows="8" aria-label="Items" placeholder="Type the code of the items" class="form-control"/>
+            <Textarea @value={{@overlay.qItems}} rows="8" aria-label="Items" placeholder="Type the code of the items" class="form-control rounded-0 rounded-bottom rounded-start"/>
           </div>
         </div>
       </div>        
@@ -69,36 +71,33 @@
       </div>        
       <div class="form-group row">
         <div class="col">Custom CSS
-          {{#unless (valid-css this.globalConfig.config.defOverlay.qCss)}}
-            <small class="text-warning">No valid CSS applied.</small>
-          {{/unless}}
+          <CssValidator @content={{@overlay.qCss}} />
         </div>
       </div>
       <div class="form-group row">
         <div class="col-12 col-lg">
           <Textarea @value={{@overlay.qCss}} rows="8" aria-label="Custom CSS" placeholder="Add some custom CSS rules" class="form-control h-100"/>
         </div>
-        <div class="col-12 col-lg pt-3 pt-lg-0">    
-          <style>
-          
-            .chroma { 
-              background-color: {{this.globalConfig.config.chromaColor}}!important; 
-              max-width: {{this.globalConfig.config.overlayWidth}}px !important; 
-              max-height: {{this.globalConfig.config.overlayHeight}}px !important; 
-              overflow: hidden;
-            }
-            
-            {{#if @overlay.font}}
-              .chroma * {
-                font-family: {{@overlay.font}}!important;
-              }
-            {{/if}}
-            {{#if @overlay.qCss}}
-              {{valid-css @overlay.qCss}}
-            {{/if}}
-          </style>
-          <div class="card mx-auto h-100 rounded-0 border-0 text-body chroma" data-bs-theme="light">
-            <div class="card-body h-100 p-0">              
+        <div class="col-12 col-lg pt-3 pt-lg-0"> 
+          <div class="card mx-auto h-100 rounded-0 border-0 text-body chroma" data-bs-theme="light" id="OlPeview">
+            <div class="card-body h-100 p-0"> 
+              <style>              
+                .chroma { 
+                  background-color: {{this.globalConfig.config.chromaColor}}!important; 
+                  max-width: {{this.globalConfig.config.overlayWidth}}px !important; 
+                  max-height: {{this.globalConfig.config.overlayHeight}}px !important; 
+                  overflow: hidden;
+                }
+                
+                {{#if @overlay.font}}
+                  .chroma * {
+                    font-family: {{@overlay.font}}!important;
+                  }
+                {{/if}}
+                {{#if @overlay.qCss}}
+                  {{valid-css @overlay.qCss preview=true}}
+                {{/if}}
+              </style>            
               {{valid-html this.overlayContent}}
             </div>
           </div>

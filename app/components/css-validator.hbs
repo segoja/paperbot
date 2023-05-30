@@ -1,0 +1,28 @@
+<span role="button" id={{this.componentId}} class="PbValidator {{if this.output "text-danger" (if @content "text-success" "text-info")}}" title={{unless this.output "All good"}}>
+  <FaIcon @icon={{if this.output "exclamation-circle" (if @content "check" "circle-question")}} role="presentation" />
+</span>
+{{#if this.output}}
+  <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @autoPlacement={{true}} @triggerElement="#{{this.componentId}}" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+    <div role="dialog" class="px-3 py-2 alert alert-danger alert-dismissible m-0" {{on "mouseleave" po.close}}>
+      {{#each this.output as |error|}}
+        <div class="d-block">
+          <strong>Line {{error.line}}: </strong>
+          <span>{{error.message}}</span>
+        </div>
+      {{/each}}
+    </div>
+  </BsPopover>
+{{else}}
+  {{#unless @content}}
+    <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @autoPlacement={{true}} @triggerElement="#{{this.componentId}}" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
+      <div role="dialog" class="px-3 py-2 alert alert-info alert-dismissible m-0" {{on "mouseleave" po.close}}>
+        <div class="d-block">
+          <span>Add your custom CSS to your overlay. <a href="https://www.w3schools.com/css/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Learn css</a></span>
+        </div>
+      </div>
+    </BsPopover>
+  {{/unless}}
+{{/if}}
+
+
+

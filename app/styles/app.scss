@@ -140,17 +140,9 @@ $width-sizes: (
 svg.add-to-top, svg.add-to-bottom { min-width: 1em; }
 
 svg.svg-queue {
-  fill: var(--bs-info-text-emphasis);
   width: 24px; 
   height: 24px;
   margin: 0px 0.75rem;
-  &.svg-dark  { filter: invert(0%); }
-  &.svg-light { filter: invert(0%); }
-}
-
-button:hover > svg.svg-queue {
-  fill: initial!important;
-  filter: invert(0%);
 }
 
 button svg.stream-status {
@@ -797,6 +789,10 @@ span.deleted {
       max-width: 176px!important;
     }    
     .btn-double { 
+      button {
+        svg { fill: var(--bs-info-text-emphasis); }
+        &:hover svg { filter: brightness(0%); }
+      }
       @include media-breakpoint-down(md) {
         min-width: 44px!important;
         max-width: 44px!important;

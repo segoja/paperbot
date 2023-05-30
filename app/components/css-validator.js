@@ -1,7 +1,7 @@
-import Helper from '@ember/component/helper';
-import { isEmpty } from '@ember/utils';
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 import { lexer, parse, walk, property as propertyName } from 'css-tree';
-
 const syntax = lexer;
 
 function isTargetError(error) {
@@ -215,41 +215,31 @@ function validate(css, filename) {
   return errors;
 }
 
-export default class ValidCss extends Helper {
-  compute(params, hash) {
-    if (isEmpty(params[0])) {
-      return;
-    }
+export default class cssValidatorComponent extends Component {
+  @service globalConfig;
+  @tracked componentId = '';
 
-    let preview = false;
-    if (hash.preview) {
-      preview = true;
-    }
+  constructor() {
+    super(...arguments);
+    this.visible = false;
 
-    let csscontent = params[0];
-    let result = validate(csscontent);
+    let elements = document.getElementsByClassName('PbValidator');
+
+    let randomtext = Math.random().toString(36).slice(2, 7);
+    this.componentId =
+      'Importer' + String(randomtext) + String((elements.length || 0) + 1);
+  }
+
+  get output() {
+    if (!this.args.content) {
+      return '';
+    }
+    let content = this.args.content;
+    let result = validate(content);
     if (result.length > 0) {
-      return;
+      return result;
+    } else {
+      return '';
     }
-
-    let phase1 = csscontent.split('}');
-    let rules = [];
-    phase1.forEach((rule) => {
-      if (rule.trim()) {
-        if (preview) {
-          rule = '#OlPeview ' + rule.trim() + '}';
-        } else {
-          rule = rule.trim() + '}';
-        }
-        rules.push(rule.replace(/\r?\n|\r/g, ''));
-      } else {
-        if (rule) {
-          rules.push(rule);
-        }
-      }
-    });
-
-    // console.log(rules);
-    return rules.join('\n');
   }
 }

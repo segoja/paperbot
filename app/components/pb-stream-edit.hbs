@@ -81,8 +81,8 @@
                 {{svg-jar (if this.globalConfig.config.cpansetlist "setlist-close" "setlist-open") class="setlist-icon align-middle" }}
                 {{#unless this.globalConfig.config.cpansetlist}}
                   {{#if (and this.queueHandler.pendingSongs this.twitchChat.botConnected)}}
-                    <span class="position-relative placeholder-glow">
-                      <small class="position-absolute top-0 start-100 translate-middle badge p-1 pt-0 bg-danger placeholder">
+                    <span class="position-relative opacity-75">
+                      <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
                         {{this.queueHandler.pendingSongs.length}}
                       </small>
                     </span>
