@@ -68,7 +68,7 @@ export default class ApplicationController extends Controller {
         if (this.currentUser.isTauri) {
           let currentWindow = getCurrent();
           if (currentWindow.label === 'Main') {
-            console.debug('The window label is:',currentWindow.label);
+            console.debug('The window label is:', currentWindow.label);
             //if(!this.globalConfig.config.mainMax){
             //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
             let position = new PhysicalPosition(
@@ -92,8 +92,8 @@ export default class ApplicationController extends Controller {
             if (
               this.globalConfig.config.showLyrics &&
               this.router.currentURL != '/reader' &&
-              currentWindow.label != 'reader' && 
-              currentWindow.label != 'overlay' 
+              currentWindow.label != 'reader' &&
+              currentWindow.label != 'overlay'
             ) {
               this.currentUser.showLyrics();
             }
@@ -112,7 +112,7 @@ export default class ApplicationController extends Controller {
         } else {
           if (this.currentUser.isTauri) {
             let currentWindow = getCurrent();
-            console.debug('The window label is:',currentWindow.label);
+            console.debug('The window label is:', currentWindow.label);
             if (currentWindow.label === 'Main') {
               //if(!this.globalConfig.config.mainMax){
               //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
@@ -137,8 +137,8 @@ export default class ApplicationController extends Controller {
               if (
                 this.globalConfig.config.showLyrics &&
                 this.router.currentURL != '/reader' &&
-                currentWindow.label != 'reader' && 
-                currentWindow.label != 'overlay' 
+                currentWindow.label != 'reader' &&
+                currentWindow.label != 'overlay'
               ) {
                 this.currentUser.showLyrics();
               }

@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - next
   pull_request: {}
 
 concurrency:

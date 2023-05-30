@@ -5,16 +5,16 @@ import { tracked } from '@glimmer/tracking';
 
 export default class PbSongComponent extends Component {
   @service globalConfig;
-  
+
   @tracked version = '';
 
   constructor() {
     super(...arguments);
-    
+
     this.version = this.globalConfig.appVersion();
   }
 
-  get currentVersion(){
+  get currentVersion() {
     return this.version;
   }
 

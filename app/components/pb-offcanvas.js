@@ -21,9 +21,9 @@ export default class PbOffcanvasComponent extends Component {
   willDestroy() {
     super.willDestroy(...arguments);
   }
-    
-  @action updateStatus(){
-    if(this.args.isVisible){
+
+  @action updateStatus() {
+    if (this.args.isVisible) {
       let offcanvas = document.getElementById(this.offcId);
       console.debug('Opening offcanvas...');
       offcanvas.classList.add('showing');

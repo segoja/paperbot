@@ -1,7 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { WebviewWindow, getCurrent, getAll } from '@tauri-apps/api/window';
+import { WebviewWindow, getCurrent } from '@tauri-apps/api/window';
 import { alias } from '@ember/object/computed';
 import { dialog, invoke } from '@tauri-apps/api';
 import PapaParse from 'papaparse';
@@ -134,19 +134,18 @@ export default class CurrentUserService extends Service {
       }
     }
   }
-  
-  
+
   @tracked creatingReader = false;
   @action async showLyrics() {
     if (this.isTauri && !this.creatingReader) {
       let readerWindow = '';
       let currentWindow = await getCurrent();
- 
+
       readerWindow = WebviewWindow.getByLabel('reader');
       console.debug('readerWindow', readerWindow);
 
       if (
-        readerWindow == null && 
+        readerWindow == null &&
         !this.creatingReader &&
         currentWindow.label == 'Main'
       ) {
@@ -163,28 +162,30 @@ export default class CurrentUserService extends Service {
           x: Number(this.globalConfig.config.readerPosX),
           y: Number(this.globalConfig.config.readerPosY),
         };
-        this.creatingReader = true;        
+        this.creatingReader = true;
         readerWindow = new WebviewWindow('reader', options);
-        if(await readerWindow){
+        if (await readerWindow) {
           // webview window successfully created
-          console.debug('Reader ready!',readerWindow);
-          this.creatingReader = false;          
-        }        
+          console.debug('Reader ready!', readerWindow);
+          this.creatingReader = false;
+        }
         // readerWindow.once('tauri://created', function () {});
       } else {
         console.debug('Reader already open, closing!');
         this.creatingReader = false;
-        if(readerWindow){
+        if (readerWindow) {
           readerWindow.close();
         } else {
-          console.debug('No Reader to close...');          
+          console.debug('No Reader to close...');
         }
       }
     } else {
-      console.debug('It\'s not tauri or it\'s already creating the Reader window...');          
+      console.debug(
+        "It's not tauri or it's already creating the Reader window..."
+      );
     }
-  }  
-  
+  }
+
   @tracked creatingOverlay = false;
   @action async toggleOverlay() {
     if (this.isTauri && !this.creatingOverlay) {
@@ -193,9 +194,9 @@ export default class CurrentUserService extends Service {
 
       overlayWindow = WebviewWindow.getByLabel('overlay');
       console.debug('overlayWindow', overlayWindow);
-      
+
       if (
-        overlayWindow == null && 
+        overlayWindow == null &&
         !this.creatingOverlay &&
         currentWindow.label == 'Main'
       ) {
@@ -211,26 +212,28 @@ export default class CurrentUserService extends Service {
           x: Number(this.globalConfig.config.overlayPosX),
           y: Number(this.globalConfig.config.overlayPosY),
         };
-        
+
         this.creatingOverlay = true;
         overlayWindow = new WebviewWindow('overlay', options);
-        if(await overlayWindow){
+        if (await overlayWindow) {
           // webview window successfully created
           console.debug('Overlay ready!', overlayWindow);
-          this.creatingOverlay = false; 
+          this.creatingOverlay = false;
         }
         // overlayWindow.once('tauri://created', function () {});
       } else {
         console.debug('Overlay already open, closing!');
         this.creatingOverlay = false;
-        if(overlayWindow){
+        if (overlayWindow) {
           overlayWindow.close();
         } else {
-          console.debug('No Overlay to close...');          
+          console.debug('No Overlay to close...');
         }
       }
     } else {
-      console.debug('It\'s not tauri or it\'s already creating the Overlay window...');          
+      console.debug(
+        "It's not tauri or it's already creating the Overlay window..."
+      );
     }
   }
 }

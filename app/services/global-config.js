@@ -50,7 +50,6 @@ export default class GlobalConfigService extends Service {
       return null;
     }
   }
-  
 
   appVersion() {
     let hash = {};
