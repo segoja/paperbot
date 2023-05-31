@@ -282,9 +282,7 @@ export default class PbOverlayComponent extends Component {
     }
   }
 
-  get overlayContent() {
-    let defaultEntry = `
-          <tr class="item">
+  defaultItem = `<tr class="item">
             <td class="bg-transparent text-white">
               <div class="row g-0">
                 <strong class="col">$title</strong>
@@ -297,19 +295,17 @@ export default class PbOverlayComponent extends Component {
             </td>
           </tr>
             `;
-
-    let defaultOverlay = `
-      <table class="table table-dark">
-        <thead>
-          <tr>
-            <th class="bg-transparent text-white"><span class="d-inline-block float-start">Title</span> <span class="d-inline-block float-end">Requested by</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          $items
-        </tbody>
-      </table>`;
-
+  defaultContainer = `<table class="table table-dark">
+          <thead>
+            <tr>
+              <th class="bg-transparent text-white"><span class="d-inline-block float-start">Title</span> <span class="d-inline-block float-end">Requested by</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            $items
+          </tbody>
+        </table>`;
+  get overlayContent() {
     let htmlEntries = '';
 
     if (this.pendingRequests.length > 0) {
@@ -318,7 +314,7 @@ export default class PbOverlayComponent extends Component {
         this.globalConfig.config.get('overlayLength') || 5
       );
       visible.forEach((request) => {
-        let entry = this.args.overlay.qItems || defaultEntry;
+        let entry = this.args.overlay.qItems || this.defaultItem;
         entry = entry.replace('$title', request.title);
         entry = entry.replace('$artist', request.artist);
         entry = entry.replace('$time', request.time);
@@ -328,9 +324,17 @@ export default class PbOverlayComponent extends Component {
       });
     }
 
-    let htmlOverlay = this.args.overlay.qContainer || defaultOverlay;
+    let htmlOverlay = this.args.overlay.qContainer || this.defaultContainer;
     htmlOverlay = htmlOverlay.replace('$items', htmlEntries);
 
     return htmlSafe(htmlOverlay);
+  }
+
+  @action loadDefaultContainer() {
+    this.args.overlay.qContainer = this.defaultContainer;
+  }
+
+  @action loadDefaultItem() {
+    this.args.overlay.qItems = this.defaultItem;
   }
 }

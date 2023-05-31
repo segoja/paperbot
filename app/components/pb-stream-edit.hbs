@@ -7,11 +7,11 @@
       <div class="form-group row pb-2">
         <label class="col-md-4">Stream Monitoring</label>
         <div class="col-sm">
-          <form.element @controlType="checkbox" @label="Chat Logging" @formLayout="inline" @property="savechat" class="form-check form-check-inline ps-0"  />
-          <form.element @controlType="checkbox" @label="Event Logging" @formLayout="inline" @property="events"class="form-check form-check-inline" as |checkbox|>
+          <form.element @controlType="checkbox" @label="Chat Logging" @formLayout="inline" @property="savechat" class="form-check-inline ps-0"  />
+          <form.element @controlType="checkbox" @label="Event Logging" @formLayout="inline" @property="events"class="form-check-inline ps-0" as |checkbox|>
             <checkbox.control disabled={{this.globalCOnfig.config.canGetEvents}} />
           </form.element>
-          <form.element @controlType="checkbox" @label="Song Request System" @formLayout="inline" @property="requests" class="form-check form-check-inline"  />
+          <form.element @controlType="checkbox" @label="Song Request System" @formLayout="inline" @property="requests" class="form-check-inline ps-0"  />
         </div>
       </div>    
       <form.element @controlType="power-select" class="pb-2" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{@setBotClient}} required as |client|>
@@ -81,8 +81,8 @@
                 {{svg-jar (if this.globalConfig.config.cpansetlist "setlist-close" "setlist-open") class="setlist-icon align-middle" }}
                 {{#unless this.globalConfig.config.cpansetlist}}
                   {{#if (and this.queueHandler.pendingSongs this.twitchChat.botConnected)}}
-                    <span class="position-relative placeholder-glow">
-                      <small class="position-absolute top-0 start-100 translate-middle badge p-1 pt-0 bg-danger placeholder">
+                    <span class="position-relative opacity-75">
+                      <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
                         {{this.queueHandler.pendingSongs.length}}
                       </small>
                     </span>
@@ -126,9 +126,8 @@
             <div class={{if this.globalConfig.config.cpansetlist "d-none d-md-block col-md-6 col-lg-4 h-100 border m-0 p-0 w-effects" "d-none w-effects"}}>
               <PbSongsSetlist @isStream={{true}} />
             </div>
-            <div class="d-md-none offcanvas {{if this.globalConfig.config.cpansetlist "show" "hiding"}} offcanvas-end pt-offc-custom-stream border-0 bg-transparent w-100 w-sm-75 w-md-50 w-effects px-0" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
-              <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @isStream={{true}} />
-            </div>
+            <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @isStream={{true}} @isSetlist={{this.globalConfig.config.cpansetlist}} @offcClass="d-md-none pt-offc-custom-stream border-0 bg-transparent px-0" />
+
           {{/if}}
         </div>
       </div>

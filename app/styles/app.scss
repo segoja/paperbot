@@ -84,13 +84,14 @@ $width-sizes: (
 }
 
 .alert-secondary .handle {
-  color: var(--bs-secondary-text);
-  background-color: var(--bs-secondary-border-subtle);
+  color: var(--bs-secondary-text-emphasis);
+  background-color: var(--bs-secondary-bg-subtle);
+  filter: opacity(1) brightness(1) contrast(1.10);
 }
 .alert-info .handle {
-  color: var(--bs-info-text);
-  background-color: var(--bs-info-border-subtle);
-  filter: opacity(0.5);
+  color: var(--bs-info-text-emphasis);
+  background-color: var(--bs-info-bg-subtle);
+  filter: opacity(1) brightness(1) contrast(1.10);
 }
 
 .handle:active {
@@ -139,17 +140,9 @@ $width-sizes: (
 svg.add-to-top, svg.add-to-bottom { min-width: 1em; }
 
 svg.svg-queue {
-  fill: var(--bs-info-text-emphasis);
   width: 24px; 
   height: 24px;
   margin: 0px 0.75rem;
-  &.svg-dark  { filter: invert(0%); }
-  &.svg-light { filter: invert(0%); }
-}
-
-button:hover > svg.svg-queue {
-  fill: initial!important;
-  filter: invert(0%);
 }
 
 button svg.stream-status {
@@ -179,17 +172,17 @@ button svg.stream-status {
 }
 
 .h-effects {
-  -moz-transition: height 0.5s ease;
-  -webkit-transition: height 0.5s ease;
-  -o-transition: height 0.5s ease;
-  transition: height 0.5s ease;
+  -moz-transition: height 0.3s ease, transform 0.3s ease-in-out;
+  -webkit-transition: height 0.3s ease, transform 0.3s ease-in-out;
+  -o-transition: height 0.3s ease, transform 0.3s ease-in-out;
+  transition: height 0.3s ease, transform 0.3s ease-in-out;
 }
 
 .w-effects {
-  -moz-transition: width 0.5s ease;
-  -webkit-transition: width 0.5s ease;
-  -o-transition: width 0.5s ease;
-  transition: width 0.5s ease;
+  -moz-transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  -webkit-transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  -o-transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 @media (min-width: 576px){
@@ -233,9 +226,33 @@ button svg.stream-status {
 #eventlist > div:first-child,
 #songqueue > div:first-child,
 #songqueueofc > div:first-child {
-  filter: drop-shadow(0px 1px 2px);
-  /* margin-top: 0.75em !important; */
+  filter: drop-shadow(0px 0.125em 2px);
+  border-width: 0.125em!important;
   margin-bottom: 0.6em !important;
+}
+#eventlist > div:first-child{
+  padding-top: 0.6em !important;
+  padding-bottom: 0.6em !important;
+  margin-bottom: 0.75em !important;
+	/* animation: pulseFirst 2s infinite;
+	transform: scale(1); */
+}
+
+@keyframes pulseFirst {
+	0% {
+		transform: scale(0.995);
+		box-shadow: 0 0 0 0 var(--bs-border-color-translucent);
+	}
+
+	70% {
+		transform: scale(1);
+		box-shadow: 0 0 0 5px rgba(0, 0, 0, 0);
+	}
+
+	100% {
+		transform: scale(0.995);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
 }
 
 .eventsframe::-webkit-scrollbar {
@@ -310,7 +327,7 @@ div.system{
   &.intable {
     height: calc(1.5em + 0.75rem + 4px) !important;
     border: 0px solid var(--bs-border-color);
-    background-color: var(--bs-form-control-bg);    
+    background-color: var(--bs-body-bg);    
     .ember-power-select-clear-btn { background-color: var(--bs-form-control-bg); }
     &.selected {
       .ember-basic-dropdown-trigger,
@@ -796,6 +813,10 @@ span.deleted {
       max-width: 176px!important;
     }    
     .btn-double { 
+      button {
+        svg { fill: var(--bs-info-text-emphasis); }
+        &:hover svg { filter: brightness(0%); }
+      }
       @include media-breakpoint-down(md) {
         min-width: 44px!important;
         max-width: 44px!important;

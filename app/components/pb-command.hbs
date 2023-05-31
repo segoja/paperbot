@@ -28,20 +28,11 @@
       <div class="form-group row pb-2">
         <label class="col-md-4">Active</label>
         <div class="col-sm">
-          <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check form-check-inline ps-0" @property="active" />
+          <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check-inline ps-0" @property="active" />
         </div>
       </div>
       {{!-- <form.element @controlType="text" @label="Cooldown" class="pb-2" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
       {{!-- <form.element @controlType="number" @label="Timer (miliseconds)" class="pb-2" placeholder="Time in miliseconds" @property="timer" required /> --}}
-      <div class="form-group row pb-2">
-        <label class="col-md-4">Permissions</label>
-        <div class="col-sm">
-          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check form-check-inline ps-0" @property="admin" />
-          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check form-check-inline ps-0" @property="mod" />
-          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check form-check-inline ps-0" @property="sub" />
-          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check form-check-inline ps-0" @property="vip" />
-        </div>
-      </div>
       <div class="form-group row pb-2">
         <label class="col-md-4">Response:</label>    
         <div class="col-sm">
@@ -62,6 +53,15 @@
             <Input @type="range" min="1" max="100" aria-label="Volume" @value={{@command.volume}} {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control btn-secondary slider w-75 border-0" />
             <Input @type="text" @value={{@command.volume}} aria-label="Volume" {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control w-25 border-0 border-start" />
           </div>
+        </div>
+      </div>
+      <div class="form-group row pb-2">
+        <label class="col-md-4">Permissions</label>
+        <div class="col-sm">
+          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check-inline ps-0" @property="admin" />
+          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check-inline ps-0" @property="mod" />
+          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check-inline ps-0" @property="sub" />
+          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check-inline ps-0" @property="vip" />
         </div>
       </div>
     </BsForm>

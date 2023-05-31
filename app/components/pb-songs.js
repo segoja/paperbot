@@ -134,9 +134,9 @@ export default class PbSongsComponent extends Component {
     this.args.queryParamsObj.page = 1;
     this.filteredContent.forEach((song) => {
       let requestList = [];
-      song.requests.slice().forEach((request) => requestList.push(request));
+      song.requests.forEach((request) => requestList.push(request));
       if (requestList.length > 0) {
-        requestList.map((request) => request.destroyRecord());
+        requestList.forEach((request) => request.destroyRecord());
       }
       song.destroyRecord().then(() => {
         console.debug('Song wiped.');

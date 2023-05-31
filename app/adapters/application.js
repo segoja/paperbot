@@ -1,7 +1,7 @@
-import config from '../config/environment';
+// import config from '../config/environment';
 import { Adapter } from 'ember-pouch';
-import { assert } from '@ember/debug';
-import { isEmpty } from '@ember/utils';
+// import { assert } from '@ember/debug';
+// import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
 
 import PouchDB from 'pouchdb-core';
@@ -48,38 +48,77 @@ export default class ApplicationAdapter extends Adapter {
   constructor() {
     super(...arguments);
 
-    this.localDb = config.local_couch || 'i-paperbot';
-
-    assert('local_couch must be set', !isEmpty(this.localDb));
+    // this.localDb = config.local_couch || 'i-paperbot';
+    // assert('local_couch must be set', !isEmpty(this.localDb));
 
     // this.olddb = new PouchDB('paperbot', { adapter: 'idb', attachments: true });
 
+    // Uncomment the next two lines if you want to use indexeddb:
     // this.db = new PouchDB('i-paperbot', { adapter: 'indexeddb', attachments: true, live: true, });
+    // this.wipePrevDbs();
+
+    // Comment the following declaration if you want to use indexeddb:
     this.db = new PouchDB('paperbot', {
       adapter: 'idb',
       attachments: true,
       live: true,
     });
+
+    // Comment the following declaration if you want to use indexeddb:
     this.isRetrying = false;
     this.retryDelay = 0;
-    /*
-    this.olddb.replicate.to(this.db, { live: false, retry: false, attachments: true }).on('error', async (err) => {
-      console.debug('Application: Something exploded while copying');
-      console.debug(await err.error); 
-    }).on('complete', async (info) => { 
-      if(info.ok){
-        console.debug('Application: Replication from old idb is complete, now deleting...');
-        this.olddb.destroy().then(function (response) {
-          console.debug('Application: Deleted old idb database.');
-        }).catch(function (err) {
-          console.debug(err);
-        });
-      }
-    }); */
 
-    this.configRemote();
+    // Uncomment and place the next line at the end of wipePrevDbs function.
+    // this.configRemote();
 
     return this;
+  }
+
+  async wipePrevDbs() {
+    const dbs = await window.indexedDB.databases();
+    let databases = dbs.filter(
+      (db) =>
+        db.name.includes('_pouch_') &&
+        db.name.includes('paperbot') &&
+        !db.name.includes('paperbot-config')
+    );
+    if (databases.length > 0) {
+      databases.forEach(async (oldPouch) => {
+        let oldDb = new PouchDB(oldPouch.name);
+        let dnInfo = await oldDb.info();
+        if (dnInfo.adapter == 'idb') {
+          oldDb.replicate
+            .to(this.db, { live: false, retry: false, attachments: true })
+            .on('error', async (err) => {
+              console.debug('Application: Something exploded while copying');
+              console.debug(await err.error);
+            })
+            .on('complete', async (info) => {
+              if (info.ok) {
+                console.debug(
+                  'Application: Replication from old idb is complete, now deleting...'
+                );
+                oldDb
+                  .destroy()
+                  .then(function (response) {
+                    console.debug(
+                      'Application: Deleted old idb database.',
+                      response
+                    );
+                  })
+                  .catch(function (err) {
+                    console.debug(err);
+                  });
+              }
+            });
+        }
+      });
+    }
+    /*if(){
+            console.log(dbInfo.adapter);
+            //this.olddb = new PouchDB(db.name, { adapter: 'idb', attachments: true });            
+            //window.indexedDB.deleteDatabase(db.name);
+          }*/
   }
 
   async configRemote() {

@@ -64,7 +64,7 @@
                       {{#unless this.isSetlist}}
                         {{#if this.queueHandler.pendingSongs}}
                           <span class="position-relative opacity-75">
-                            <small class="position-absolute top-0 start-100 translate-middle badge p-1 pt-0 bg-danger">
+                            <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
                               {{this.queueHandler.pendingSongs.length}}
                             </small>
                           </span>
@@ -143,11 +143,11 @@
                           <div class="col-auto btn-double">
                             <div class="row g-0">
                               <button type="button" class="btn btn-outline-info alert alert-info rounded-0 col-12 col-md border-top-0 border-bottom-0 border-end-0 m-0" {{on "click" (fn this.songToQueue song true)}} title="Add to top setlist/queue">
-                                {{svg-jar "add-to-top" class=(if this.globalConfig.config.darkmode "svg-queue svg-dark" "svg-queue svg-light")}}
+                                {{svg-jar "add-to-top" class="svg-queue"}}
                               </button>
                               
                               <button type="button" class="btn btn-outline-info alert alert-info rounded-0 col-12 col-md border-top-0 border-bottom-0 border-end-0 m-0" {{on "click" (fn this.songToQueue song false)}} title="Add to bottom setlist/queue">
-                                {{svg-jar "add-to-bottom" class=(if this.globalConfig.config.darkmode "svg-queue svg-dark" "svg-queue svg-light")}}
+                                {{svg-jar "add-to-bottom" class="svg-queue"}}
                               </button>
                             </div>
                           </div>
@@ -174,9 +174,7 @@
   <div class={{if this.isSetlist "col-lg-4 d-lg-block d-none h-100 flex-fill my-0 px-0" "d-none"}}>
     <PbSongsSetlist @toTop={{this.toTop}} />
   </div> 
-  <div class="d-lg-none offcanvas {{if this.isSetlist "show" "hiding"}} offcanvas-end pt-offc-custom border-0 bg-transparent w-100 w-sm-75 w-md-50 w-effects px-0" data-bs-backdrop="true" data-bs-scroll="true" data-bs-toggle="offcanvas">
-    <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @toTop={{this.toTop}} @isSetlist={{this.isSetlist}} />
-  </div> 
+  <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @toTop={{this.toTop}} @isSetlist={{this.isSetlist}} @offcClass="d-lg-none pt-offc-custom border-0 bg-transparent px-0" />
 </div>
 
 {{did-insert this.updateRowNr}}

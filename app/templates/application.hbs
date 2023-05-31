@@ -10,7 +10,7 @@
 <HeadLayout />
 {{#if this.currentUser.hideMenu}}
   {{#unless this.isOverlay}}
-    <header class="m-0 p-0" id="headerA" aria-label="overlay only header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} >
+    <header class="m-0 p-0" id="headerA" aria-label="overlay only header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} data-tauri-drag-region={{true}} >
       <BsNavbar
         @type="dark"
         class="px-0 my-0 py-0 border-0 border-bottom border-secondary papermenu"
@@ -87,7 +87,7 @@
     </header>
   {{/unless}}
 {{else}}
-  <header class="m-0 p-0" id="headerB" aria-label="regular header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}}>
+  <header class="m-0 p-0" id="headerB" aria-label="regular header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} data-tauri-drag-region={{true}}>
     <BsNavbar
       @type="dark"
       class="px-0 my-0 py-0 border-0 border-bottom border-secondary papermenu"
@@ -174,7 +174,7 @@
               </nav.item>              
             {{/unless}}
             <nav.item class="px-lg-0 px-3">
-              <PbFirstRun {{on "click" this.toggleMenu}} />
+              <PbInfo {{on "click" this.toggleMenu}} />
             </nav.item>
           </navbar.nav>
         </navbar.content>
@@ -223,12 +223,10 @@
     .chroma { background-color: {{this.globalConfig.config.chromaColor}}!important; }
     html, body { overflow: hidden!important; }
   </style>
-  <main class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} title="Press alt+F4 if you want to close this window." id="mainA" role="button">
-    <BsTooltip @delayHide="0" role="presentation">
-      Press alt+F4 if you want to close this window.
-    </BsTooltip>
+  <main class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma position-absolute w-100 h-100">
     {{outlet}}
   </main>
+  <div class="position-relative bg-transparent m-3 mh-100 w-100" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} title="Press alt+F4 if you want to close this window." id="mainA" role="button" data-tauri-drag-region={{true}}></div>
 {{else}}
   <main class="container-fluid pt-custom px-0 alert-secondary border-0 border-top-1 border-secondary bg-secondary" id="mainB" role="button" {{on "mouseover" this.closeMenu}}>
     {{outlet}}

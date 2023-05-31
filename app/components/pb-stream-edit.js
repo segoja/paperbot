@@ -84,10 +84,6 @@ export default class PbStreamEditComponent extends Component {
       this.queueHandler.playedSongs.length;
   }
 
-  @action moves(el, container, handle) {
-    return handle.classList.contains('dragula-handle');
-  }
-
   // Bot and Chat related actions:
 
   @action connectBot() {
