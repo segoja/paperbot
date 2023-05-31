@@ -174,7 +174,7 @@
               </nav.item>              
             {{/unless}}
             <nav.item class="px-lg-0 px-3">
-              <PbFirstRun {{on "click" this.toggleMenu}} />
+              <PbInfo {{on "click" this.toggleMenu}} />
             </nav.item>
           </navbar.nav>
         </navbar.content>
@@ -223,12 +223,10 @@
     .chroma { background-color: {{this.globalConfig.config.chromaColor}}!important; }
     html, body { overflow: hidden!important; }
   </style>
-  {{!-- <BsTooltip @delayHide="0" @triggerElement="#mainA" role="presentation" @renderInPlace={{true}} @autoPlacement={{false}} @placement="left" class="position-absolute m-0">
-    <div class="position-absolute d-block alert alert-dark text-nowrap ms-3 mt-0">Press alt+F4 if you want<br> to close this window.</div>
-  </BsTooltip> --}}
-  <main class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma position-relative" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} title="Press alt+F4 if you want to close this window." id="mainA" role="button" data-tauri-drag-region={{true}}>
+  <main class="container-fluid px-0 border border-0 border-transparent bg-secondary chroma position-absolute w-100 h-100">
     {{outlet}}
   </main>
+  <div class="position-relative bg-transparent m-3 mh-100 w-100" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} title="Press alt+F4 if you want to close this window." id="mainA" role="button" data-tauri-drag-region={{true}}></div>
 {{else}}
   <main class="container-fluid pt-custom px-0 alert-secondary border-0 border-top-1 border-secondary bg-secondary" id="mainB" role="button" {{on "mouseover" this.closeMenu}}>
     {{outlet}}

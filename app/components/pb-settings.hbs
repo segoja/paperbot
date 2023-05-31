@@ -90,7 +90,7 @@
             </div>
             <form.element @controlType="power-select" @property="defOverlay" @onChange={{this.setdefOverlay}} @formLayout="inline" class="col-md-8 border-light" @invisibleLabel={{true}} @options={{@overlays}} required as |overlay|>
               <overlay.control @allowClear={{true}} @placeholder="Select the default overlay template" as |option|>
-                {{option.name}}
+                {{if option.name option.name "<Unnamed>"}}
               </overlay.control>
             </form.element>
           </div>

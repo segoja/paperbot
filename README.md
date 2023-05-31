@@ -1,3 +1,8 @@
+![GitHub package.json version](https://img.shields.io/github/package-json/v/segoja/paperbot)
+[![This project uses GitHub Actions for continuous integration.](https://github.com/segoja/paperbot/workflows/CI/badge.svg)](https://github.com/segoja/paperbot/actions?query=workflow%3ACI)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d2bb5481-d9a3-4b53-b7c0-63160fa2c41a/deploy-status)](https://app.netlify.com/sites/paperbot/deploys)
+![GitHub](https://img.shields.io/github/license/segoja/paperbot)
+
 # Paperbot
 
 A chat bot for music streamers made with [Ember](https://emberjs.com/), [PouchDB](https://pouchdb.com/), [Tmi.js](https://tmijs.com/) and [Tauri](https://tauri.app/).
@@ -17,4 +22,9 @@ A chat bot for music streamers made with [Ember](https://emberjs.com/), [PouchDB
 
 * Windows 10/11 (desktop version) or any browser.
 * A twitch account
+* A [Streamlabs](https://streamlabs.com) or [Streamelements](https://streamelements.com) account (optional) for stream event tracking.
 * A [Cloudstation](https://www.cloudstation.com) account (optional).
+
+## Web App version
+
+[Check the web app version of Paperbot](https://paperbot.netlify.app/). 

@@ -81,28 +81,27 @@ export default class QueueHandlerService extends Service {
 
   // Buttons
   @action async removePending(request) {
-    await request.get('song').then(async (song) => {
-      await request.destroyRecord().then(async () => {
-        if (song) {
-          let times = Number(song.times_requested || 0);
-          if (song.times_requested) {
-            times = times + Number(-1);
-          }
-          song.times_requested = times;
-          await song.save();
+    let song = await request.get('song');
+    await request.destroyRecord().then(async () => {
+      if (song) {
+        let times = Number(song.times_requested || 0);
+        if (song.times_requested) {
+          times = times + Number(-1);
         }
-        let count = 0;
-        this.pendingSongs.forEach((item) => {
-          if (!item.isDeleted) {
-            item.position = count;
-            item.save().then(() => {
-              console.debug(item.position + '. ' + item.effectiveTitle);
-            });
-            count = Number(count) + 1;
-          }
-        });
-        this.fileContent(this.pendingSongs);
+        song.times_requested = times;
+        await song.save();
+      }
+      let count = 0;
+      this.pendingSongs.forEach((item) => {
+        if (!item.isDeleted) {
+          item.position = count;
+          item.save().then(() => {
+            console.debug(item.position + '. ' + item.effectiveTitle);
+          });
+          count = Number(count) + 1;
+        }
       });
+      this.fileContent(this.pendingSongs);
     });
   }
 
@@ -124,22 +123,21 @@ export default class QueueHandlerService extends Service {
   @action clearPending() {
     if (this.pendingSongs.length > 0) {
       this.uniquePending.forEach(async (item) => {
-        await item.get('song').then(async (song) => {
-          if (song) {
-            let requests = this.pendingSongs.filter(
-              (request) => request.songId == song.get('id')
-            );
+        let song = await item.get('song');
+        if (song) {
+          let requests = this.pendingSongs.filter(
+            (request) => request.songId == song.get('id')
+          );
 
-            let times = requests.length;
-            song.times_requested = Number(song.times_requested) - Number(times);
-            requests.forEach((request) => {
-              request.destroyRecord();
-            });
-            await song.save().then(() => {
-              console.debug(song.title + ' requests adjusted by -' + times);
-            });
-          }
-        });
+          let times = requests.length;
+          song.times_requested = Number(song.times_requested) - Number(times);
+          requests.forEach((request) => {
+            request.destroyRecord();
+          });
+          await song.save().then(() => {
+            console.debug(song.title + ' requests adjusted by -' + times);
+          });
+        }
       });
     }
     if (this.pendingSongs.length > 0) {

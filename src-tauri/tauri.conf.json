@@ -9,7 +9,7 @@
   },
   "package": {
     "productName": "Paperbot",
-    "version": "0.8.9"
+    "version": "0.9.1"
   },
   "tauri": {
     "allowlist": {
@@ -19,7 +19,7 @@
       "active": true,
       "category": "Utility",
       "identifier": "com.Segoja.Paperbot",
-      "copyright": "",
+      "copyright": "MIT",
       "deb": {
         "depends": []
       },

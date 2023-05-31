@@ -461,10 +461,16 @@ export default class ApplicationController extends Controller {
         }
       });
     }
-    var adapter = this.store.adapterFor('application');
-    adapter.wipeDatabase().then(() => {
-      console.debug('The database has been wiped.');
-      window.location.reload(true);
+
+    this.globalConfig.config.defOverlay = null;
+    this.globalConfig.config.defbotclient = null;
+    this.globalConfig.config.defchatclient = null;
+    this.globalConfig.config.save().then(() => {
+      var adapter = this.store.adapterFor('application');
+      adapter.wipeDatabase().then(() => {
+        console.debug('The database has been wiped.');
+        window.location.reload(true);
+      });
     });
   }
 

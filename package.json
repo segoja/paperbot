@@ -1,11 +1,29 @@
 {
   "name": "paperbot",
-  "version": "0.8.9",
+  "version": "0.9.1",
   "private": true,
-  "description": "A bot for twitch musicians",
-  "repository": "",
+  "description": "A simple chat bot for Twitch musicians",
+  "keywords": [
+    "Ember",
+    "PouchDB",
+    "Tauri",
+    "Twitch",
+    "tmi.js",
+    "Bot",    
+    "Musicians",
+    "Streamers",
+    "Song manager",
+    "Lyrics"
+  ],
+  "bugs": {
+    "url": "https://github.com/segoja/paperbot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/segoja/paperbot.git"
+  },
   "license": "MIT",
-  "author": "segoja",
+  "author": "Javier Sevilla",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -42,7 +60,6 @@
     "bootstrap": "^5.3.0-alpha3",
     "broccoli-asset-rev": "^3.0.0",
     "chord-transposer": "^3.0.1",
-    "chordictionary": "^0.1.0-beta.4",
     "concurrently": "^7.6.0",
     "crypto-js": "^4.1.1",
     "css-tree": "^2.3.1",
@@ -119,7 +136,6 @@
     "tmi-emote-parse": "^2.0.0",
     "tmi.js": "^1.8.5",
     "tracked-built-ins": "^3.1.1",
-    "vexchords": "^1.2.0",
     "webpack": "^5.84.1"
   },
   "engines": {

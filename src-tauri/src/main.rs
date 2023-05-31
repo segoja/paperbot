@@ -12,6 +12,7 @@ fn main() {
     .expect("error while running tauri application");
 }
 
+#[allow(unused_must_use)]
 #[tauri::command]
 async fn file_writer(filepath: String, filecontent: String) -> Result<(), String> {  
   std::fs::write(&filepath, &filecontent).map_err(|e| e.to_string());    
