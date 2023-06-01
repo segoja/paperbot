@@ -75,47 +75,44 @@ export default class GlobalConfigService extends Service {
     if (shaOnly) {
       match = version.match(shaRegExp); // 4jds75hf
     }
-    if(!this.currentUser.isTauri){
+    if (!this.currentUser.isTauri) {
       this.checkLatestVersion(version);
     }
     return match ? match[0] : version;
   }
-  
-  
+
   // Assuming we use version tags.
   checkLatestVersion(localV) {
     // We get repo tags
-    var url = "https://api.github.com/repos/segoja/paperbot/tags";
+    var url = 'https://api.github.com/repos/segoja/paperbot/tags';
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, false);
+    xhr.open('GET', url, false);
     xhr.send();
     var tags = JSON.parse(xhr.responseText);
     let remoteV = 0;
-    if(tags.length > 0){
+    if (tags.length > 0) {
       // Sort tags descending
-      tags.sort(function(a, b) {
-        return compareVersions(b.name, a.name);
+      tags.sort(function (a, b) {
+        return this.compareVersions(b.name, a.name);
       });
       // Return the first one
-      
+
       remoteV = tags[0].name;
       let update = this.compareVersions(localV, remoteV);
-      if(update == -1){
+      if (update == -1) {
         let origin = window.location.origin;
-        window.location.replace(
-          origin
-        );
+        window.location.replace(origin);
       }
     }
     return remoteV;
   }
 
-  // Función auxiliar para comparar dos versiones
+  // Funciï¿½n auxiliar para comparar dos versiones
   compareVersions(v1, v2) {
     // Separar las versiones por puntos
-    var parts1 = v1.split(".");
-    var parts2 = v2.split(".");
-    // Comparar cada parte numérica
+    var parts1 = v1.split('.');
+    var parts2 = v2.split('.');
+    // Comparar cada parte numï¿½rica
     for (var i = 0; i < Math.min(parts1.length, parts2.length); i++) {
       var n1 = parseInt(parts1[i]);
       var n2 = parseInt(parts2[i]);
@@ -123,10 +120,10 @@ export default class GlobalConfigService extends Service {
       if (n1 > n2) return 1;
       if (n1 < n2) return -1;
     }
-    // Si una versión tiene más partes que la otra, devolver el resultado
+    // Si una versiï¿½n tiene mï¿½s partes que la otra, devolver el resultado
     if (parts1.length > parts2.length) return 1;
     if (parts1.length < parts2.length) return -1;
     // Si las versiones son iguales, devolver cero
     return 0;
-  }  
+  }
 }
