@@ -5,7 +5,7 @@
 
 # Paperbot
 
-A chat bot for music streamers made with [Ember](https://emberjs.com/), [PouchDB](https://pouchdb.com/), [Tmi.js](https://tmijs.com/) and [Tauri](https://tauri.app/).
+A Twitch.tv chat bot for music streamers made with [Ember](https://emberjs.com/), [PouchDB](https://pouchdb.com/), [Tmi.js](https://tmijs.com/) and [Tauri](https://tauri.app/).
 
 ## Features
 
@@ -21,7 +21,7 @@ A chat bot for music streamers made with [Ember](https://emberjs.com/), [PouchDB
 ## Requirements
 
 * Windows 10/11 (desktop version) or any browser.
-* A twitch account
+* A Twitch.tv account
 * A [Streamlabs](https://streamlabs.com) or [Streamelements](https://streamelements.com) account (optional) for stream event tracking.
 * A [Cloudstation](https://www.cloudstation.com) account (optional).
 
