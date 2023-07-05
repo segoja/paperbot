@@ -7,6 +7,8 @@
 
 A Twitch.tv chat bot for music streamers made with [Ember](https://emberjs.com/), [PouchDB](https://pouchdb.com/), [Tmi.js](https://tmijs.com/) and [Tauri](https://tauri.app/).
 
+![paperbot](https://github.com/segoja/paperbot/assets/51286289/4560ab20-7599-4e82-a30c-e664136be58a)
+
 ## Features
 
 * Request system: Allows audience to request songs from the chat.
