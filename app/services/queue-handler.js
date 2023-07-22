@@ -291,7 +291,7 @@ export default class QueueHandlerService extends Service {
       let oldPlayed = this.playedSongs;
       let count = 0;
       oldPlayed.forEach((played) => {
-        count = Number(count) - 1;
+        count = Number(count) + 1;
         played.position = count;
         played.save();
         //console.debug(played.position+'. '+played.effectiveTitle);
@@ -319,7 +319,7 @@ export default class QueueHandlerService extends Service {
     this.fileContent(this.pendingSongs);
   }
 
-  @action prevSong() {
+  @action async prevSong() {
     if (this.playedSongs.length > 0) {
       // For selecting the first element of the array:
 
@@ -332,15 +332,17 @@ export default class QueueHandlerService extends Service {
         //console.debug(pending.position+'. '+pending.effectiveTitle);
       });
 
-      let firstRequest = this.playedSongs[0];
-      firstRequest.position = 0;
-      firstRequest.processed = false;
-
-      firstRequest.save().then(() => {
-        this.scrollPlayedPosition = 0;
-        this.scrollPendingPosition = 0;
-        this.fileContent(this.pendingSongs);
-      });
+      let lastPlayed = this.playedSongs[0];
+      if(lastPlayed){
+        console.log(lastPlayed);
+        lastPlayed.position = 0;
+        lastPlayed.processed = false;
+        lastPlayed.save().then(() => {
+          this.scrollPlayedPosition = 0;
+          this.scrollPendingPosition = 0;
+          this.fileContent(this.pendingSongs);
+        });
+      }
     }
 
     this.fileContent(this.pendingSongs);

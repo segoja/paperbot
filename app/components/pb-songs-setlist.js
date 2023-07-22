@@ -62,7 +62,7 @@ export default class PbStreamEditPendingComponent extends Component {
   }
 
   get playedSongs() {
-    return this.queueHandler.playedSongs.reverse();
+    return this.queueHandler.playedSongs;
   }
 
   get total() {
