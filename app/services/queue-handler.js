@@ -333,8 +333,7 @@ export default class QueueHandlerService extends Service {
       });
 
       let lastPlayed = this.playedSongs[0];
-      if(lastPlayed){
-        console.log(lastPlayed);
+      if (lastPlayed) {
         lastPlayed.position = 0;
         lastPlayed.processed = false;
         lastPlayed.save().then(() => {
