@@ -21,6 +21,29 @@
                   </BsButton>
                 </div>
                 <div class="col-auto">
+                  <PbModal @btnClass="info col-auto mx-1" @buttonTitle="Keyboard Shortcuts" @btnIcon="question-circle" @btnText="">
+                    <div class="row">
+                      <div class="col">
+                        <p class="text-start">
+                          Next. Song: "Ctrl"+"."<br>
+                          Prev. Song: "Ctrl"+","<br>
+                          <br>  
+                          Edit Song: "Shift"+"Ctrl"+"E"<br>
+                          Save Song: "Shift"+"Ctrl"+"S"<br>
+                          Auto adjust: "Ctrl"+"M"<br>
+                          <br>
+                          Zoom In: "Ctrl"+"Arrow Up"<br>
+                          Zoom Out: "Ctrl"+"Arrow Down"<br>
+                          More Columns: "Ctrl"+"Arrow Right"<br>
+                          Less Columns: "Ctrl"+"Arrow Left"<br>
+                          Transpose Up: "Shift"+"Arrow Up"<br>
+                          Transpose Down: "Shift"+"Arrow Down"<br>
+                        </p>                
+                      </div>
+                    </div>
+                  </PbModal>
+                </div>
+                <div class="col-auto">
                   <button type="button" class="btn btn-secondary col-auto ms-1" {{on "click" this.toggleEdit}} disabled={{not this.currentSong}} title="Edit lyrics"><FaIcon @icon={{if this.isEditing "eye" "pen"}} /></button>
                 </div>
               </div>
@@ -132,5 +155,14 @@
 </div>
 {{on-key "ctrl+Period" this.queueHandler.nextSong}}
 {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
+{{on-key "shift+ctrl+KeyE" this.toggleEdit}}
+{{on-key "shift+ctrl+KeyS" this.doneEditing}}
+{{on-key "ctrl+KeyM" this.autoAdjust}}
+{{on-key "ctrl+ArrowUp" this.addZoom}}
+{{on-key "ctrl+ArrowDown" this.subZoom}}
+{{on-key "shift+ArrowUp" this.upKey}}
+{{on-key "shift+ArrowDown" this.downKey}}
+{{on-key "ctrl+ArrowLeft" this.lessColumn}}
+{{on-key "ctrl+ArrowRight" this.moreColumn}}
 {{on-key "ctrl+KeyQ" this.queueHandler.modPressed event="keypress"}} 
 {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}

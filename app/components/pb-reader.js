@@ -217,6 +217,7 @@ export default class PbReaderComponent extends Component {
   @tracked saving = false;
   @action doneEditing() {
     if (this.currentSong) {
+      this.isEditing = false;
       this.currentSong.save();
       this.saving = true;
       later(() => {

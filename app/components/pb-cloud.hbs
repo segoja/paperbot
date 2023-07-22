@@ -54,16 +54,6 @@
               </div>
             </div> 
           {{/if}}
-          {{#unless this.globalConfig.config.isCustomCloud}}
-            <div class="row pb-3">
-              <div class="col">
-                <div class="input-group input-group-sm">
-                  <div class="input-group-text border-default"><FaIcon @icon="database" @size="sm" /></div>
-                  <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.database}} aria-label="Database name" @type="text" placeholder="Enter database name" autocomplete="database" disabled={{this.globalConfig.config.isCloudDisabled}}  />
-                </div>
-              </div>
-            </div> 
-          {{/unless}}
           <div class="row pb-3">
             <div class="col">
               <div class="input-group input-group-sm">
@@ -78,6 +68,16 @@
               </div>
             </div>
           </div>
+          {{#unless this.globalConfig.config.isCustomCloud}}
+            <div class="row pb-3">
+              <div class="col">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-text border-default"><FaIcon @icon="database" @size="sm" /></div>
+                  <Input class={{if this.cloudState.isCloudError "form-control is-invalid" "form-control"}} @value={{this.globalConfig.config.database}} aria-label="Database name" @type="text" placeholder="Enter database name" autocomplete="database" disabled={{this.globalConfig.config.isCloudDisabled}}  />
+                </div>
+              </div>
+            </div> 
+          {{/unless}}
           <div class="row">
             <div class="col">
               <form.element @controlType="checkbox" @label="Auto-connect" @formLayout="inline" class="form-check form-check-inline ps-0 mb-0 pt-2" @property="autoConnect" required />
