@@ -92,7 +92,7 @@ export default class GlobalConfigService extends Service {
     let remoteV = 0;
     if (tags.length > 0) {
       // Sort tags descending
-      tags.sort(function (a, b) {
+      tags.sort((a, b) => {
         return this.compareVersions(b.name, a.name);
       });
       // Return the first one
@@ -107,23 +107,23 @@ export default class GlobalConfigService extends Service {
     return remoteV;
   }
 
-  // Funci�n auxiliar para comparar dos versiones
+  // To compare versions
   compareVersions(v1, v2) {
-    // Separar las versiones por puntos
+    // Separate version numbers by dots:
     var parts1 = v1.split('.');
     var parts2 = v2.split('.');
-    // Comparar cada parte num�rica
+    // Compare each numeric part:
     for (var i = 0; i < Math.min(parts1.length, parts2.length); i++) {
       var n1 = parseInt(parts1[i]);
       var n2 = parseInt(parts2[i]);
-      // Si una parte es mayor que la otra, devolver el resultado
+      // If one part is bigger than the other return the result
       if (n1 > n2) return 1;
       if (n1 < n2) return -1;
     }
-    // Si una versi�n tiene m�s partes que la otra, devolver el resultado
+    // If one version has more pars than the other one, return the result
     if (parts1.length > parts2.length) return 1;
     if (parts1.length < parts2.length) return -1;
-    // Si las versiones son iguales, devolver cero
+    // If both versions are the same, return 0
     return 0;
   }
 }
