@@ -121,7 +121,7 @@
             </div>
           </div>
         {{else}}         
-          <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer">
+          <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer" {{on "touchstart" this.swipeQueue}} {{on "touchend" this.swipeQueue}}>
             <div class="row m-0 flex-fill mh-100 listframe-reader">
                 {{#if this.restore}}
                   {{#if this.currentSong}}
@@ -155,8 +155,10 @@
 </div>
 {{on-key "ctrl+Period" this.queueHandler.nextSong}}
 {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
+
 {{on-key "ctrl+shift+KeyE" this.toggleEdit}}
 {{on-key "ctrl+alt+KeyS" this.doneEditing}}
+
 {{on-key "alt+ArrowUp" this.upKey}}
 {{on-key "alt+ArrowDown" this.downKey}}
 {{on-key "ctrl+KeyM" this.autoAdjust}}
