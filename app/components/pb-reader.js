@@ -226,6 +226,37 @@ export default class PbReaderComponent extends Component {
     }
   }
 
+  @tracked swipping = false;
+  @tracked swipex = 0;
+  @tracked swipey = 0;
+  @action swipeQueue(event) {
+    let threshold = 150; //required min distance traveled to be considered swipe
+    if (event.type === 'touchstart' && !this.swipping) {
+      this.swipping = true;
+      this.swipex = event.changedTouches[0].pageX;
+      this.swipey = event.changedTouches[0].pageY;
+    }
+    if (event.type === 'touchend' && this.swipping) {
+      let destx = event.changedTouches[0].pageX;
+      let swipedist = destx - this.swipex;
+      let isHorizontal =
+        Math.abs(event.changedTouches[0].pageY - this.swipey) <= 100;
+      if (isHorizontal) {
+        if (Math.abs(swipedist) > threshold) {
+          if (destx > this.swipex) {
+            this.queueHandler.prevSong();
+          }
+          if (destx < this.swipex) {
+            this.queueHandler.nextSong();
+          }
+        }
+      }
+      this.swipping = false;
+      this.swipex = 0;
+      this.swipey = 0;
+    }
+  }
+
   get btnState() {
     let btnClass = 'secondary';
     if (this.currentSong.hasDirtyAttributes) {
