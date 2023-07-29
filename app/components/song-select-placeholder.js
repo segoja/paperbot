@@ -12,12 +12,16 @@ export default class SoundboardLoadingComponent extends Component {
   }
 
   @tracked activeSong = [];
-
+  @tracked isPremium = false;
+  @tracked donationFormatted = '';
+  
   @action setActiveSong() {
     let requests = this.queueHandler.pendingSongs;
     if (requests.length > 0) {
       let first = requests.find((item) => item !== undefined);
       if (first) {
+        this.isPremium = first.isPremium;
+        this.donationFormatted = first.donationFormatted || '';
         first.get('song').then((song) => {
           if (song) {
             this.activeSong = song;

@@ -8,8 +8,10 @@ export default class ConfigModel extends Model {
 
   @attr('string', { defaultValue: '' }) externalevents;
   @attr('string', { defaultValue: '' }) externaleventskey;
-
+  
+  @attr('boolean', { defaultValue: false }) premiumRequests;
   @attr('number', { defaultValue: 5 }) premiumThreshold;
+  @attr('boolean', { defaultValue: false }) premiumSorting;
 
   @attr songQueue;
 

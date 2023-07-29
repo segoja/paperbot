@@ -88,21 +88,23 @@ $width-sizes: (
   background-color: var(--bs-secondary-bg-subtle);
   filter: opacity(1) brightness(1) contrast(1.10);
 }
-.alert-secondary.premium {
-  background-color: var(--bs-warning-bg-subtle); 
-}
-
 .alert-info .handle {
   color: var(--bs-info-text-emphasis);
   background-color: var(--bs-info-bg-subtle);
   filter: opacity(1) brightness(1) contrast(1.10);
 }
 
+.alert-secondary.premium, .alert-secondary.premium button {
+  background-color: var(--bs-warning-bg-subtle);
+  filter: opacity(1) brightness(1) contrast(1) saturate(0.60);
+}
 .alert-warning.premium .handle {
   color: var(--bs-warning-text-emphasis);
   background-color: var(--bs-warning-bg-subtle);
   filter: opacity(1) brightness(1) contrast(1.10);
 }
+
+
 
 .handle:active {
   cursor: grabbing;

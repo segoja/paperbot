@@ -24,13 +24,16 @@ export default class PbReaderComponent extends Component {
   constructor() {
     super(...arguments);
     this.isEditing = false;
+    this.isSetlist = false;
   }
 
   willDestroy() {
     super.willDestroy(...arguments);
     this.isEditing = false;
+    this.isSetlist = false;
   }
 
+  @tracked isSetlist = false;
   @tracked isEditing = false;
 
   songsSorting = Object.freeze(['date_added:asc']);
@@ -45,6 +48,10 @@ export default class PbReaderComponent extends Component {
 
   get currentSong() {
     return this.activeSong;
+  }
+
+  @action toggleSetlist() {
+    this.isSetlist = !this.isSetlist;
   }
 
   @action clearSelect() {

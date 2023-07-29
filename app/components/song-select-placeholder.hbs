@@ -2,7 +2,10 @@
 {{did-update this.setActiveSong this.queueHandler.pendingSongs}}
 
 {{#if this.activeSong}}
-  <span class="px-2" title="This song is a request"><strong class="text-info">{{this.activeSong.title}}</strong></span>
+  <span title="This song is a request" class={{if this.isPremium "px-2 text-warning" "px-2 text-info"}}>
+    <strong>{{this.activeSong.title}}</strong>
+    {{#if this.donationFormatted}} - {{this.donationFormatted}}{{/if}}
+  </span>
 {{else}}
   <span class="px-2">Select a song</span>
 {{/if}}

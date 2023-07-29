@@ -60,6 +60,16 @@ export default class PbStreamEditPendingComponent extends Component {
     // console.log(this.activeTab);
   }
 
+  @action togglePremium(){
+    this.globalConfig.config.premiumRequests = !this.globalConfig.config.premiumRequests;
+    this.globalConfig.config.save();
+  }
+
+  @action toggleSorting(){
+    this.globalConfig.config.premiumSorting = !this.globalConfig.config.premiumSorting;
+    this.globalConfig.config.save();
+  }
+  
   @action togglePlayed() {
     this.currentUser.showPlayed = !this.currentUser.showPlayed;
   }

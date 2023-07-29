@@ -24,20 +24,6 @@ export default class PbStreamEditPendingComponent extends Component {
 
   @tracked activeTab = 'pending';
 
-  queueAscSorting = Object.freeze([
-    'processed:desc',
-    'position:asc',
-    'timestamp:desc',
-  ]);
-  @sort('queueHandler.songqueue', 'queueAscSorting') arrangedAscQueue;
-
-  get setlistSongs() {
-    if (this.currentUser.showPlayed) {
-      return this.arrangedAscQueue;
-    }
-    return this.arrangedAscQueue.filter((request) => !request.processed);
-  }
-
   get isRelative() {
     let result = false;
     if (this.args.isStream) {
@@ -82,6 +68,16 @@ export default class PbStreamEditPendingComponent extends Component {
     // console.log(this.activeTab);
   }
 
+  @action togglePremium(){
+    this.globalConfig.config.premiumRequests = !this.globalConfig.config.premiumRequests;
+    this.globalConfig.config.save();
+  }
+
+  @action toggleSorting(){
+    this.globalConfig.config.premiumSorting = !this.globalConfig.config.premiumSorting;
+    this.globalConfig.config.save();
+  }
+  
   @action togglePlayed() {
     this.currentUser.showPlayed = !this.currentUser.showPlayed;
   }

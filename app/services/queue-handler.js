@@ -44,11 +44,18 @@ export default class QueueHandlerService extends Service {
     return this.requests.filter((request) => !request.isDeleted);
   }
 
-  queueAscSorting = Object.freeze(['position:asc', 'timestamp:desc']);
-  @sort('songqueue', 'queueAscSorting') arrangedAscQueue;
+  get queueAscSorting(){
+    let sortArray = Object.freeze(['position:asc', 'timestamp:desc']);
+    if(this.globalConfig.config.premiumSorting){
+      sortArray = Object.freeze(['isPremium:desc','donation:desc','position:asc']);
+    }
+    return sortArray;
+  }
 
-  queueDescSorting = Object.freeze(['position:desc', 'timestamp:desc']);
-  @sort('songqueue', 'queueDescSorting') arrangedDescQueue;
+  @sort('songqueue', 'queueAscSorting') arrangedAscQueue;
+  
+  queueAscSortingDef = Object.freeze(['position:asc', 'timestamp:desc']);
+  @sort('songqueue', 'queueAscSortingDef') arrangedAscQueueDef;
 
   get pendingSongs() {
     return this.arrangedAscQueue.filter((request) => !request.processed);
@@ -71,7 +78,7 @@ export default class QueueHandlerService extends Service {
   }
 
   get playedSongs() {
-    return this.arrangedAscQueue.filter((request) => request.processed);
+    return this.arrangedAscQueueDef.filter((request) => request.processed);
   }
 
   get songList() {
@@ -257,8 +264,8 @@ export default class QueueHandlerService extends Service {
   }
   
   @action async externalToQueue(event){
-    if(event.amount >= this.globalConfig.config.premiumThreshold){
-      event.message = '!sr one with the numbers';
+    if(event.amount >= this.globalConfig.config.premiumThreshold &&  this.globalConfig.config.premiumRequests){
+      event.message = '!sr un pepino mandarino';
       event.from = 'Papercat the mongoloid'
       if(event.message.startsWith('!sr ')){
         var song = event.message.replace(/!sr /g, '');
@@ -269,17 +276,9 @@ export default class QueueHandlerService extends Service {
         //console.log(event.from+' paid '+event.formatted_amount+' to request the song '+song);
         this.requestpattern = song;
         //if (this.filteredSongs.length > 0) {
-          let bestmatch = await this.filteredSongs.shift();
+            let bestmatch = await this.filteredSongs.shift();
           //if(bestmatch){
             let nextPosition = this.nextPosition();
-
-            this.pendingSongs.forEach((request) => {
-              request.position = request.position + 1;
-              request.save().then(() => {
-                // console.debug(request.fullText+' moved to position '+request.position+' in queue.');
-              });
-            });
-            nextPosition = 0;
 
             let newRequest = this.store.createRecord('request');
             newRequest.chatid = 'songExt';

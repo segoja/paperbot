@@ -75,6 +75,24 @@
                 <BsButton @type="{{this.btnState}} btn-sm col-auto" disabled={{not this.currentSong.hasDirtyAttributes}} @onClick={{this.doneEditing}} title="Save song">
                   <FaIcon @icon="save" @pulse={{this.saving}} />
                 </BsButton>
+                <BsButton @type="info btn-sm col-auto ms-1 ps-1" @onClick={{this.toggleSetlist}} title="Queue/Setlist manager">
+                  <div class="row g-0">
+                    <div class="col-auto">
+                    {{svg-jar (if this.isSetlist "setlist-close" "setlist-open") class="setlist-icon align-middle ms-1" }}
+                    </div>
+                    <div class="col-auto">
+                      {{#unless this.isSetlist}}
+                        {{#if this.queueHandler.pendingSongs}}
+                          <span class="position-relative opacity-75">
+                            <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
+                              {{this.queueHandler.pendingSongs.length}}
+                            </small>
+                          </span>
+                        {{/if}}
+                      {{/unless}}
+                    </div>
+                  </div> 
+                </BsButton>              
               </div>
             </div>            
             <div class="d-none d-lg-block col-lg-auto">
@@ -103,6 +121,24 @@
                 </div>
                 <BsButton @type="{{this.btnState}}  col-auto" @class={{this.currentSong.hasDirtyAttributes "btn-warning pulse"}} disabled={{not this.currentSong.hasDirtyAttributes}} @onClick={{this.doneEditing}} title="Save song">
                   <FaIcon @icon="save" @pulse={{this.saving}} />
+                </BsButton>
+                <BsButton @type="info col-auto ms-1 ps-1" @onClick={{this.toggleSetlist}} title="Queue/Setlist manager">
+                  <div class="row g-0">
+                    <div class="col-auto">
+                    {{svg-jar (if this.isSetlist "setlist-close" "setlist-open") class="setlist-icon align-middle ms-1" }}
+                    </div>
+                    <div class="col-auto">
+                      {{#unless this.isSetlist}}
+                        {{#if this.queueHandler.pendingSongs}}
+                          <span class="position-relative opacity-75">
+                            <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
+                              {{this.queueHandler.pendingSongs.length}}
+                            </small>
+                          </span>
+                        {{/if}}
+                      {{/unless}}
+                    </div>
+                  </div> 
                 </BsButton>
               </div>
             </div>
@@ -153,6 +189,12 @@
       </div>
   </div>
 </div>
+<PbSongsSetlistOffc 
+  @toggleSetlist={{this.toggleSetlist}}
+  @isSetlist={{this.isSetlist}}
+  @isReader={{true}}
+  @offcClass="pt-offc-custom border-0 bg-transparent px-0"
+/>
 {{on-key "ctrl+Period" this.queueHandler.nextSong}}
 {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
 
