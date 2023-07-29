@@ -17,6 +17,7 @@ export default class RequestModel extends Model {
   @attr('number', { defaultValue: 0 }) donation;
   @attr('string', { defaultValue: '' }) donationFormatted;
   @attr('boolean', { defaultValue: false }) isPremium;
+  @attr('boolean', { defaultValue: false }) isPlaying;
   
   @attr('boolean', { defaultValue: false }) processed;
 

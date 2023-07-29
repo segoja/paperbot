@@ -12,17 +12,11 @@ export default class PbStreamEditPendingComponent extends Component {
 
   constructor() {
     super(...arguments);
-    this.activeTab = 'pending';
   }
 
   willDestroy() {
     super.willDestroy(...arguments);
-    this.activeTab = 'pending';
   }
-
-  tabList = ['pending', 'played'];
-
-  @tracked activeTab = 'pending';
 
   get isRelative() {
     let result = false;
@@ -63,9 +57,9 @@ export default class PbStreamEditPendingComponent extends Component {
   @action tabSwitch(tab) {
     // console.log(tab);
     if (tab) {
-      this.activeTab = tab;
+      this.queueHandler.activeTab = tab;
     }
-    // console.log(this.activeTab);
+    // console.log(this.queueHandler.activeTab);
   }
 
   @action togglePremium(){

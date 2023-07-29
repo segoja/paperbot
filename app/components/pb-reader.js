@@ -59,6 +59,7 @@ export default class PbReaderComponent extends Component {
   }
 
   @tracked activeSong = [];
+  @tracked activeRequest = [];
   @action setActiveSong() {
     if (this.selected) {
       this.activeSong = this.selected;
@@ -68,6 +69,7 @@ export default class PbReaderComponent extends Component {
       if (requests.length > 0) {
         let first = requests.find((item) => item !== undefined);
         if (first) {
+          this.activeRequest = first;
           first.get('song').then((song) => {
             if (song) {
               this.activeSong = song;
@@ -84,29 +86,21 @@ export default class PbReaderComponent extends Component {
         console.debug('No requests pending...');
       }
     }
-    /*
-    later(this,()=>{
-      let readerHeader = document.getElementById('readerTitle');
-      let separator = document.getElementById('readerTitleSeparator');
-      if(readerHeader && separator){
-        if(this.currentSong != undefined && this.currentSong != '' && this.currentSong != null && readerHeader != null  && separator != null ){
-          if(this.selected){
-            readerHeader.className = 'd-inline-block pe-3 text-secondary';
-          } else {
-            readerHeader.className = 'd-inline-block pe-3 text-info';
-          }
-          readerHeader.innerHTML = this.currentSong.title;
-          readerHeader.style.display = "inline!important";
-          separator.innerHTML = ' - ';
-          separator.style.display = "inline!important";
+  }
+  
+  @action togglePlaying(){
+    if(this.activeRequest){
+      this.queueHandler.arrangedAscQueue.map((request)=>{
+        if(request.id === this.activeRequest.id){
+          request.isPlaying = !request.isPlaying;
         } else {
-          readerHeader.innerHTML = '';
-          readerHeader.style.display = "none!important";
-          separator.innerHTML = '';
-          separator.style.display = "none!important";
+          request.isPlaying = false;
         }
-      }
-    }, 150);*/
+        if(request.hasDirtyAttributes){ 
+          request.save();
+        }
+      });
+    }
   }
 
   @action searchSong(query) {

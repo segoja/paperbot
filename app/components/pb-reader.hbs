@@ -185,6 +185,7 @@
           </div>
         {{/if}}
         <div class="card-footer py-0 my-0 px-2">
+          <button class={{if this.selected "d-none" "btn btn-warning"}} {{on "click" this.togglePlaying}}>Lock Song <FaIcon @icon={{if this.activeRequest.isPlaying "lock" "unlock"}} /></button>
         </div>
       </div>
   </div>
@@ -193,6 +194,7 @@
   @toggleSetlist={{this.toggleSetlist}}
   @isSetlist={{this.isSetlist}}
   @isReader={{true}}
+  @isStream={{true}}
   @offcClass="pt-offc-custom border-0 bg-transparent px-0"
 />
 {{on-key "ctrl+Period" this.queueHandler.nextSong}}

@@ -17,6 +17,8 @@ export default class QueueHandlerService extends Service {
   @tracked lastStream = '';
   @tracked scrollPlayedPosition = 0;
   @tracked scrollPendingPosition = 0;
+  tabList = ['pending', 'played'];
+  @tracked activeTab = 'pending';
   @tracked oldHtml = '';
   @tracked lastsongrequest;
   // We use this property to track if a key is pressed or not using ember-keyboard helpers.
@@ -45,9 +47,9 @@ export default class QueueHandlerService extends Service {
   }
 
   get queueAscSorting(){
-    let sortArray = Object.freeze(['position:asc', 'timestamp:desc']);
+    let sortArray = Object.freeze(['isPlaying:desc','position:asc', 'timestamp:desc']);
     if(this.globalConfig.config.premiumSorting){
-      sortArray = Object.freeze(['isPremium:desc','donation:desc','position:asc']);
+      sortArray = Object.freeze(['isPlaying:desc','isPremium:desc','donation:desc','position:asc']);
     }
     return sortArray;
   }
@@ -212,37 +214,33 @@ export default class QueueHandlerService extends Service {
     }
   }
 
+  get updatingQueue(){
+    let updating = this.arrangedAscQueue.filter(request => request.isSaving || request.isLoading );
+    if(updating.length > 0){
+      return true;
+    }
+    return false;
+  }
+
   @action async requestStatus(request) {
     // We use set in order to make sure the context updates properly.
-    if (!request.isDeleted) {
+    if (!request.isDeleted && !this.updatingQueue) {
       request.position = 0;
+      let oldSiblings = [];
       if (request.processed === true) {
         // Next line makes the element to get back in the pending list but in the last position:
-        let oldPending = this.pendingSongs.filter(
-          (item) => item.id != request.id
-        );
-        let count = 0;
-        oldPending.forEach(async (pending) => {
-          count = Number(count) + 1;
-          pending.position = count;
-          await pending.save();
-          //console.debug(pending.position+'. '+pending.effectiveTitle);
-        });
+        oldSiblings = this.pendingSongs.filter((item) => item.id != request.id);
       } else {
-        let oldPlayed = this.playedSongs;
-        let count = 0;
-        oldPlayed.forEach(async (played) => {
-          count = Number(count) + 1;
-          played.position = count;
-          await played.save();
-          //console.debug(played.position+'. '+played.effectiveTitle);
-        });
+        oldSiblings = this.playedSongs;
       }
 
       request.processed = !request.processed;
-
-      await request.save().then(() => {
-        console.log('Updated request' + request.position);
+      if(request.processed){
+        request.isPlaying = false;
+      }
+      
+      await request.save().then(async () => {
+        console.log('Updated request' + request.position);        
         if (request.processed && request.songId) {
           this.store
             .findRecord('song', request.song.get('id'))
@@ -254,6 +252,14 @@ export default class QueueHandlerService extends Service {
               }
             });
         }
+        
+        let count = 0;
+        await oldSiblings.forEach(async (sibling) => {
+          count = Number(count) + 1;
+          sibling.position = count;
+          await sibling.save();
+          //sibling.debug(played.position+'. '+played.effectiveTitle);
+        });
 
         this.scrollPlayedPosition = 0;
         this.scrollPendingPosition = 0;
@@ -320,50 +326,52 @@ export default class QueueHandlerService extends Service {
   }
 
   @action async songToQueue(selected, toTop = false) {
-    let nextPosition = await this.nextPosition();
+    if(!this.updatingQueue){
+      let nextPosition = await this.nextPosition();
 
-    if (toTop) {
-      this.pendingSongs.forEach((request) => {
-        request.position = request.position + 1;
-        request.save().then(() => {
-          // console.debug(request.fullText+' moved to position '+request.position+' in queue.');
+      if (toTop) {
+        this.pendingSongs.forEach((request) => {
+          request.position = request.position + 1;
+          request.save().then(() => {
+            // console.debug(request.fullText+' moved to position '+request.position+' in queue.');
+          });
         });
+        nextPosition = 0;
+      }
+
+      let newRequest = this.store.createRecord('request');
+      newRequest.chatid = 'songsys';
+      newRequest.timestamp = new Date();
+      newRequest.type = 'setlist';
+      newRequest.song = selected;
+      newRequest.user = this.twitchChat.botUsername;
+      if (this.globalConfig.config.defbotclient) {
+        newRequest.user = this.globalConfig.config.defbotclient.get('username');
+      } else {
+        newRequest.displayname = 'setlist';
+      }
+      newRequest.processed = false;
+      newRequest.position = nextPosition;
+      newRequest.title = selected.title || '';
+      newRequest.artist = selected.artist || '';
+
+      newRequest.save().then(async () => {
+        // Song statistics:
+        selected.times_requested = Number(selected.times_requested) + 1;
+        await selected.save();
+
+        // console.debug(selected.fullText+' added at position '+nextPosition);
+        this.lastsongrequest = newRequest;
+        this.scrollPendingPosition = 0;
+        this.scrollPlayedPosition = 0;
+        this.fileContent(this.pendingSongs);
       });
-      nextPosition = 0;
-    }
-
-    let newRequest = this.store.createRecord('request');
-    newRequest.chatid = 'songsys';
-    newRequest.timestamp = new Date();
-    newRequest.type = 'setlist';
-    newRequest.song = selected;
-    newRequest.user = this.twitchChat.botUsername;
-    if (this.globalConfig.config.defbotclient) {
-      newRequest.user = this.globalConfig.config.defbotclient.get('username');
-    } else {
-      newRequest.displayname = 'setlist';
-    }
-    newRequest.processed = false;
-    newRequest.position = nextPosition;
-    newRequest.title = selected.title || '';
-    newRequest.artist = selected.artist || '';
-
-    newRequest.save().then(async () => {
-      // Song statistics:
-      selected.times_requested = Number(selected.times_requested) + 1;
-      await selected.save();
-
-      // console.debug(selected.fullText+' added at position '+nextPosition);
-      this.lastsongrequest = newRequest;
-      this.scrollPendingPosition = 0;
-      this.scrollPlayedPosition = 0;
       this.fileContent(this.pendingSongs);
-    });
-    this.fileContent(this.pendingSongs);
+    }
   }
 
   @action nextSong() {
-    if (this.pendingSongs.length > 0) {
+    if (this.pendingSongs.length > 0 && !this.updatingQueue) {
       // For selecting the last element of the array:
       let firstRequest = this.pendingSongs[0];
 
@@ -372,12 +380,14 @@ export default class QueueHandlerService extends Service {
       oldPlayed.forEach((played) => {
         count = Number(count) + 1;
         played.position = count;
+        played.isPlaying = false;
         played.save();
         //console.debug(played.position+'. '+played.effectiveTitle);
       });
 
       firstRequest.position = 0;
       firstRequest.processed = true;
+      firstRequest.isPlaying = true;
       firstRequest.save().then(() => {
         if (!firstRequest.song.get('isDeleted')) {
           this.store
@@ -399,7 +409,7 @@ export default class QueueHandlerService extends Service {
   }
 
   @action async prevSong() {
-    if (this.playedSongs.length > 0) {
+    if (this.playedSongs.length > 0 && !this.updatingQueue) {
       // For selecting the first element of the array:
 
       let oldPending = this.pendingSongs;
@@ -407,6 +417,7 @@ export default class QueueHandlerService extends Service {
       oldPending.forEach((pending) => {
         count = Number(count) + 1;
         pending.position = count;
+        pending.isPlaying = false;
         pending.save();
         //console.debug(pending.position+'. '+pending.effectiveTitle);
       });
@@ -415,6 +426,7 @@ export default class QueueHandlerService extends Service {
       if (lastPlayed) {
         lastPlayed.position = 0;
         lastPlayed.processed = false;
+        lastPlayed.isPlaying = true;
         lastPlayed.save().then(() => {
           this.scrollPlayedPosition = 0;
           this.scrollPendingPosition = 0;

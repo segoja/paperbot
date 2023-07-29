@@ -104,7 +104,9 @@ $width-sizes: (
   filter: opacity(1) brightness(1) contrast(1.10);
 }
 
-
+.alert.playing{
+  border-style: dashed!important;
+} 
 
 .handle:active {
   cursor: grabbing;
@@ -214,6 +216,21 @@ button svg.stream-status {
   max-height: 100% !important;
   overflow-y: auto;
   overflow-x: hidden;
+}
+.listframe-setlist {
+  user-select: none;
+}
+.listframe-setlist.disabled{
+  pointer-events: none;
+  filter: brightness(65%);
+  animation-name: updating;
+  animation-duration: 2s;
+  animation-iteration-count: infinite
+}
+
+@keyframes updating {
+  from { filter: brightness(0.4); }
+  to { filter: brightness(1); }
 }
 
 .listheader tr th {
