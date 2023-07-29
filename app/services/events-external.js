@@ -7,6 +7,7 @@ import { sort } from '@ember/object/computed';
 
 export default class EventsExternalService extends Service {
   @service globalConfig;
+  @service queueHandler;
   @service store;
 
   @tracked type = null;
@@ -457,12 +458,13 @@ export default class EventsExternalService extends Service {
                 break;
               }
               case 'donation': {
-                outputmessage =
-                  event.from + ' donated ' + event.formatted_amount + '!';
+                outputmessage = event.from + ' donated ' + event.formatted_amount + '!';
+                console.log(event);
+                if(event.amount > 0){
+                  this.queueHandler.externalToQueue(event)
+                }
                 if (event.message) {
-                  outputmessage = outputmessage.concat(
-                    ' Message: ' + event.message
-                  );
+                  outputmessage = outputmessage.concat(' Message: ' + event.message);
                 }
                 type = 'donation';
                 this.eventHandler(outputmessage, type);

@@ -13,7 +13,11 @@ export default class RequestModel extends Model {
   @attr('string', { defaultValue: '' }) emotes;
 
   @attr('number', { defaultValue: 0 }) position;
-
+  
+  @attr('number', { defaultValue: 0 }) donation;
+  @attr('string', { defaultValue: '' }) donationFormatted;
+  @attr('boolean', { defaultValue: false }) isPremium;
+  
   @attr('boolean', { defaultValue: false }) processed;
 
   @attr('string', { defaultValue: '' }) title;

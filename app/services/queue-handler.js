@@ -5,6 +5,7 @@ import { sort, uniqBy } from '@ember/object/computed';
 import { invoke } from '@tauri-apps/api';
 import moment from 'moment';
 import { TrackedArray } from 'tracked-built-ins';
+import computedFilterByQuery from 'ember-cli-filter-by-query';
 
 export default class QueueHandlerService extends Service {
   @service globalConfig;
@@ -23,6 +24,21 @@ export default class QueueHandlerService extends Service {
 
   @tracked songs = new TrackedArray();
   @tracked requests = new TrackedArray();
+
+
+  get songListExt(){
+    return this.store.findAll('song').then((list)=>{
+      return list.filter(item => item.active === true);
+    });
+  }
+  
+  @tracked requestpattern = '';
+  @computedFilterByQuery(
+    'songList',
+    ['title', 'artist', 'keywords'],
+    'requestpattern',
+    { conjunction: 'and', sort: false }
+  ) filteredSongs;
 
   get songqueue() {
     return this.requests.filter((request) => !request.isDeleted);
@@ -238,6 +254,70 @@ export default class QueueHandlerService extends Service {
         this.fileContent(this.pendingSongs);
       });
     }
+  }
+  
+  @action async externalToQueue(event){
+    if(event.amount >= this.globalConfig.config.premiumThreshold){
+      event.message = '!sr one with the numbers';
+      event.from = 'Papercat the mongoloid'
+      if(event.message.startsWith('!sr ')){
+        var song = event.message.replace(/!sr /g, '');
+        song = song.replace(/&/g, ' ');
+        song = song.replace(/\//g, ' ');
+        song = song.replace(/-/g, ' ');
+        song = song.replace(/[^a-zA-Z0-9'?! ]/g, '');
+        //console.log(event.from+' paid '+event.formatted_amount+' to request the song '+song);
+        this.requestpattern = song;
+        //if (this.filteredSongs.length > 0) {
+          let bestmatch = await this.filteredSongs.shift();
+          //if(bestmatch){
+            let nextPosition = this.nextPosition();
+
+            this.pendingSongs.forEach((request) => {
+              request.position = request.position + 1;
+              request.save().then(() => {
+                // console.debug(request.fullText+' moved to position '+request.position+' in queue.');
+              });
+            });
+            nextPosition = 0;
+
+            let newRequest = this.store.createRecord('request');
+            newRequest.chatid = 'songExt';
+            newRequest.timestamp = new Date();
+            newRequest.type = 'setlist';
+            newRequest.user = event.from || event.name;
+            newRequest.displayname = event.from;            
+            newRequest.processed = false;
+            newRequest.donation = event.amount;
+            newRequest.donationFormatted = event.formatted_amount;
+            newRequest.isPremium = true;
+            newRequest.position = nextPosition;
+            if(bestmatch){
+              newRequest.song = bestmatch;
+              newRequest.title = bestmatch.title || event.message;
+              newRequest.artist = bestmatch.artist || '';
+            } else {
+              newRequest.song = ''; 
+              newRequest.title = song;
+              newRequest.artist = '';
+            }
+            newRequest.save().then(async () => {
+              // Song statistics:
+              if(bestmatch){
+                bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
+                await bestmatch.save();
+              }
+              // console.debug(bestmatch.fullText+' added at position '+nextPosition);
+              this.lastsongrequest = newRequest;
+              this.scrollPendingPosition = 0;
+              this.scrollPlayedPosition = 0;
+              this.fileContent(this.pendingSongs);
+            });
+            this.fileContent(this.pendingSongs);
+          //}
+        //}
+      }
+    }    
   }
 
   @action async songToQueue(selected, toTop = false) {
