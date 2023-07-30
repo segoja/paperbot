@@ -269,58 +269,64 @@ export default class QueueHandlerService extends Service {
     }
   }
   
-  @action async externalToQueue(event){
-    if(event.amount >= this.globalConfig.config.premiumThreshold &&  this.globalConfig.config.premiumRequests){
-      event.message = '!sr un pepino mandarino';
-      event.from = 'Papercat the mongoloid'
-      if(event.message.startsWith('!sr ')){
-        var song = event.message.replace(/!sr /g, '');
-        song = song.replace(/&/g, ' ');
-        song = song.replace(/\//g, ' ');
-        song = song.replace(/-/g, ' ');
-        song = song.replace(/[^a-zA-Z0-9'?! ]/g, '');
-        //console.log(event.from+' paid '+event.formatted_amount+' to request the song '+song);
-        this.requestpattern = song;
-        //if (this.filteredSongs.length > 0) {
-            let bestmatch = await this.filteredSongs.shift();
-          //if(bestmatch){
-            let nextPosition = this.nextPosition();
+  @action async externalToQueue(donodata){
+    if(donodata.amount >= this.globalConfig.config.premiumThreshold &&  this.globalConfig.config.premiumRequests){
+      //donodata.message = '!sr fury heart';
+      //donodata.fullname = 'Papercat the mongoloid'
+      if(donodata.message.startsWith('!sr ')){
+        this.store.query('request', {
+          filter: { externalId: donodata.id },
+        }).then(async (exist)=>{
+          if(exist.length == 0){
+            var song = donodata.message.replace(/!sr /g, '');
+            song = song.replace(/&/g, ' ');
+            song = song.replace(/\//g, ' ');
+            song = song.replace(/-/g, ' ');
+            song = song.replace(/[^a-zA-Z0-9'?! ]/g, '');
+            //console.log(donodata.fullname+' paid '+donodata.formattedAmount+' to request the song '+song);
+            this.requestpattern = song;
+            //if (this.filteredSongs.length > 0) {
+                let bestmatch = await this.filteredSongs.shift();
+              //if(bestmatch){
+                let nextPosition = this.nextPosition();
 
-            let newRequest = this.store.createRecord('request');
-            newRequest.chatid = 'songExt';
-            newRequest.timestamp = new Date();
-            newRequest.type = 'setlist';
-            newRequest.user = event.from || event.name;
-            newRequest.displayname = event.from;            
-            newRequest.processed = false;
-            newRequest.donation = event.amount;
-            newRequest.donationFormatted = event.formatted_amount;
-            newRequest.isPremium = true;
-            newRequest.position = nextPosition;
-            if(bestmatch){
-              newRequest.song = bestmatch;
-              newRequest.title = bestmatch.title || event.message;
-              newRequest.artist = bestmatch.artist || '';
-            } else {
-              newRequest.song = ''; 
-              newRequest.title = song;
-              newRequest.artist = '';
-            }
-            newRequest.save().then(async () => {
-              // Song statistics:
-              if(bestmatch){
-                bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
-                await bestmatch.save();
-              }
-              // console.debug(bestmatch.fullText+' added at position '+nextPosition);
-              this.lastsongrequest = newRequest;
-              this.scrollPendingPosition = 0;
-              this.scrollPlayedPosition = 0;
-              this.fileContent(this.pendingSongs);
-            });
-            this.fileContent(this.pendingSongs);
-          //}
-        //}
+                let newRequest = this.store.createRecord('request');
+                newRequest.chatid = 'songExt';
+                newRequest.timestamp = new Date();
+                newRequest.type = 'setlist';
+                newRequest.user = donodata.fullname || donodata.user;
+                newRequest.displayname = donodata.fullname;            
+                newRequest.processed = false;
+                newRequest.donation = donodata.amount;
+                newRequest.donationFormatted = donodata.formattedAmount;
+                newRequest.isPremium = true;
+                newRequest.position = nextPosition;
+                if(bestmatch){
+                  newRequest.song = bestmatch;
+                  newRequest.title = bestmatch.title || donodata.message;
+                  newRequest.artist = bestmatch.artist || '';
+                } else {
+                  newRequest.song = ''; 
+                  newRequest.title = song;
+                  newRequest.artist = '';
+                }
+                newRequest.save().then(async () => {
+                  // Song statistics:
+                  if(bestmatch){
+                    bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
+                    await bestmatch.save();
+                  }
+                  // console.debug(bestmatch.fullText+' added at position '+nextPosition);
+                  this.lastsongrequest = newRequest;
+                  this.scrollPendingPosition = 0;
+                  this.scrollPlayedPosition = 0;
+                  this.fileContent(this.pendingSongs);
+                });
+                this.fileContent(this.pendingSongs);
+              //}
+            //}
+          }
+        });
       }
     }    
   }

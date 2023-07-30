@@ -5,6 +5,7 @@ import { readOnly } from '@ember/object/computed';
 export default class RequestModel extends Model {
   @attr('date', { defaultValue: '' }) timestamp;
   @attr('string', { defaultValue: '' }) chatid;
+  @attr('string', { defaultValue: '' }) externalId;
   @attr('string', { defaultValue: '' }) type;
   @attr('string', { defaultValue: '' }) user;
   @attr('string', { defaultValue: '' }) displayname;

@@ -388,17 +388,19 @@ export default class EventsExternalService extends Service {
     });
 
     client.on('event', (data) => {
-      // console.debug(event);
+      console.debug(data);
       try {
         if (Array.isArray(data.message)) {
           data.message.forEach((event) => {
+            //console.log(event);
             var outputmessage = '';
             var type = '';
+            let extId = data.event_id;
             switch (data.type) {
               case 'follow': {
                 outputmessage = event.name + ' has followed.';
                 type = 'follow';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, extId,'labs');
                 break;
               }
               case 'subscription': {
@@ -417,7 +419,7 @@ export default class EventsExternalService extends Service {
                 }
                 outputmessage = event.name + ' has subscribed (' + tier + ').';
                 type = 'sub';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, extId,'labs');
                 break;
               }
               case 'resub': {
@@ -454,20 +456,18 @@ export default class EventsExternalService extends Service {
                     ' months!';
                 }
                 type = 'resub';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, extId,'labs');
                 break;
               }
               case 'donation': {
                 outputmessage = event.from + ' donated ' + event.formatted_amount + '!';
-                console.log(event);
-                if(event.amount > 0){
-                  this.queueHandler.externalToQueue(event)
-                }
+                // console.log(event);
                 if (event.message) {
                   outputmessage = outputmessage.concat(' Message: ' + event.message);
                 }
                 type = 'donation';
-                this.eventHandler(outputmessage, type);
+                
+                this.eventHandler(outputmessage, type, event, extId,'labs');
                 break;
               }
               case 'merch': {
@@ -478,7 +478,7 @@ export default class EventsExternalService extends Service {
                   );
                 }
                 type = 'merch';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, extId,'labs');
                 break;
               }
 
@@ -497,7 +497,7 @@ export default class EventsExternalService extends Service {
                     ' viewer!';
                 }
                 type = 'host';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, extId,'labs');
                 break;
               }
 
@@ -516,7 +516,7 @@ export default class EventsExternalService extends Service {
                     ' raider!';
                 }
                 type = 'raid';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, extId,'labs');
                 break;
               }
 
@@ -529,7 +529,7 @@ export default class EventsExternalService extends Service {
                   );
                 }
                 type = 'cheer';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, extId,'labs');
                 break;
               }
               default: {
@@ -560,28 +560,49 @@ export default class EventsExternalService extends Service {
   }
 
   @tracked lastevent = '';
-  @action eventHandler(event, type) {
-    let nextEvent = this.store.createRecord('event');
+  @action eventHandler(outputmessage, type, event, extId, provider) {    
+    this.store.query('event', {
+      filter: { externalId: extId },
+    }).then((exist)=>{
+      if(exist.length == 0){
+        let nextEvent = this.store.createRecord('event');
 
-    nextEvent.eventId = 'event';
-    nextEvent.timestamp = new Date();
-    nextEvent.parsedbody = this.parseMessage(event, []).toString();
-    nextEvent.user = 'event';
-    nextEvent.displayname = 'event';
-    (nextEvent.color = '#cccccc'),
-      (nextEvent.csscolor = htmlSafe('color = #cccccc'));
-    nextEvent.badges = null;
-    nextEvent.htmlbadges = '';
-    if (type) {
-      nextEvent.type = 'event-' + type.toString();
-    } else {
-      nextEvent.type = 'event';
-    }
-    nextEvent.usertype = null;
-    nextEvent.reward = false;
-    nextEvent.emotes = null;
+        nextEvent.eventId = 'event';
+        nextEvent.timestamp = new Date();
+        nextEvent.parsedbody = this.parseMessage(outputmessage, []).toString();
+        nextEvent.user = 'event';
+        nextEvent.displayname = 'event';
+        //nextEvent.color = '#cccccc';
+        //nextEvent.csscolor = htmlSafe('color = #cccccc');
+        nextEvent.badges = null;
+        nextEvent.htmlbadges = '';
+        if (type) {
+          nextEvent.type = 'event-' + type.toString();
+        } else {
+          nextEvent.type = 'event';
+        }
+        nextEvent.usertype = null;
+        nextEvent.reward = false;
+        nextEvent.emotes = null;
 
-    nextEvent.save();
+        nextEvent.save();
+        
+        if(type == 'donation'){
+          if(event.amount > 0 && provider == 'labs'){
+            let donodata = {
+              id: extId,
+              user: event.name,
+              fullname: event.from,
+              amount: event.amount,
+              formattedAmount: event.formatted_amount,
+              message: event.message
+            }
+            
+            this.queueHandler.externalToQueue(donodata)
+          }
+        }
+      } 
+    });  
   }
 
   @action parseMessage(text, emotes) {

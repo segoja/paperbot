@@ -3,6 +3,7 @@ import { attr } from '@ember-data/model';
 
 export default class EventModel extends Model {
   @attr('string', { defaultValue: '' }) eventId;
+  @attr('string', { defaultValue: '' }) externalId;
   @attr('date', { defaultValue: '' }) timestamp;
   @attr('string', { defaultValue: '' }) parsedbody;
   @attr('string', { defaultValue: '' }) user;
