@@ -270,6 +270,7 @@ export default class QueueHandlerService extends Service {
   }
   
   @action async externalToQueue(donodata){
+    // console.debug('Premium request: ', donodata);
     if(donodata.amount >= this.globalConfig.config.premiumThreshold &&  this.globalConfig.config.premiumRequests){
       //donodata.message = '!sr fury heart';
       //donodata.fullname = 'Papercat the mongoloid'
@@ -292,6 +293,8 @@ export default class QueueHandlerService extends Service {
 
                 let newRequest = this.store.createRecord('request');
                 newRequest.chatid = 'songExt';
+                newRequest.externalId = donodata.id;
+                newRequest.platform = donodata.platform;
                 newRequest.timestamp = new Date();
                 newRequest.type = 'setlist';
                 newRequest.user = donodata.fullname || donodata.user;

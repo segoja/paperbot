@@ -60,6 +60,18 @@ export default class PbReaderComponent extends Component {
 
   @tracked activeSong = [];
   @tracked activeRequest = [];
+  
+  get isLocked (){
+    if(
+      this.activeRequest.isPlaying ||
+      this.selected    
+    ){      
+      return true;
+    }    
+    return false;
+  }
+  
+  
   @action setActiveSong() {
     if (this.selected) {
       this.activeSong = this.selected;

@@ -13,16 +13,10 @@ export default class EventsExternalService extends Service {
   @tracked type = null;
   @tracked token = null;
   @tracked client = null;
-
+  
   // @tracked connected = false;
 
-  get connected() {
-    if (this.client != null) {
-      return !this.client.disconnected;
-    } else {
-      return false;
-    }
-  }
+  @tracked connected = false;
 
   @action createClient() {
     if (
@@ -54,7 +48,7 @@ export default class EventsExternalService extends Service {
   }
 
   @action streamElementEvents(client, token) {
-    client.on('connect', function () {
+    client.on('connect', () => {
       console.debug('Successfully connected to the websocket');
       client.emit('authenticate', {
         method: 'jwt',
@@ -63,17 +57,18 @@ export default class EventsExternalService extends Service {
     });
 
     // Socket got disconnected
-    client.on('disconnect', function () {
+    client.on('disconnect', () => {
       console.debug('Disconnected from websocket');
+      this.connected = false;
       //this.set('connected', false);
       // Reconnect
     });
 
     // Socket is authenticated
-    client.on('authenticated', function (data) {
+    client.on('authenticated', (data) => {
       var { channelId } = data;
       //this.set('connected', true);
-      console.debug(this.connected);
+      this.connected = true;
       console.debug(`Successfully connected to channel ${channelId}`);
     });
 
@@ -374,33 +369,44 @@ export default class EventsExternalService extends Service {
 
   @action streamLabsEvents(client) {
     console.debug('Connecting to streamlabs...');
-    client.on('connect', function () {
+    client.on('connect', () => {
       console.debug('Successfully connected to the websocket');
+      this.connected = client.connected;
     });
 
-    client.on('disconnect', function (err) {
+    client.on('disconnect', (err) => {
       console.debug('Disconnected from websocket');
+      this.connected = false;
       console.debug(err);
     });
 
-    client.on('error', function (err) {
+    client.on('error', (err) => {
       console.debug(err);
     });
-
+    
     client.on('event', (data) => {
-      console.debug(data);
+      //console.debug(data);
       try {
         if (Array.isArray(data.message)) {
           data.message.forEach((event) => {
             //console.log(event);
             var outputmessage = '';
             var type = '';
-            let extId = data.event_id;
+            event.id = data.event_id;
+            
+            if(data.for.includes('youtube')){
+              event.platform = 'youtube';
+            } else if(data.for.includes('twitch')){
+              event.platform = 'twitch';
+            } else {
+              event.platform = data.for || 'paperbot';
+            }
+            
             switch (data.type) {
               case 'follow': {
                 outputmessage = event.name + ' has followed.';
                 type = 'follow';
-                this.eventHandler(outputmessage, type, event, extId,'labs');
+                this.eventHandler(outputmessage, type, event,'labs');
                 break;
               }
               case 'subscription': {
@@ -419,7 +425,7 @@ export default class EventsExternalService extends Service {
                 }
                 outputmessage = event.name + ' has subscribed (' + tier + ').';
                 type = 'sub';
-                this.eventHandler(outputmessage, type, event, extId,'labs');
+                this.eventHandler(outputmessage, type, event,'labs');
                 break;
               }
               case 'resub': {
@@ -456,7 +462,7 @@ export default class EventsExternalService extends Service {
                     ' months!';
                 }
                 type = 'resub';
-                this.eventHandler(outputmessage, type, event, extId,'labs');
+                this.eventHandler(outputmessage, type, event,'labs');
                 break;
               }
               case 'donation': {
@@ -467,7 +473,7 @@ export default class EventsExternalService extends Service {
                 }
                 type = 'donation';
                 
-                this.eventHandler(outputmessage, type, event, extId,'labs');
+                this.eventHandler(outputmessage, type, event,'labs');
                 break;
               }
               case 'merch': {
@@ -478,7 +484,7 @@ export default class EventsExternalService extends Service {
                   );
                 }
                 type = 'merch';
-                this.eventHandler(outputmessage, type, event, extId,'labs');
+                this.eventHandler(outputmessage, type, event,'labs');
                 break;
               }
 
@@ -497,7 +503,7 @@ export default class EventsExternalService extends Service {
                     ' viewer!';
                 }
                 type = 'host';
-                this.eventHandler(outputmessage, type, event, extId,'labs');
+                this.eventHandler(outputmessage, type, event,'labs');
                 break;
               }
 
@@ -516,7 +522,7 @@ export default class EventsExternalService extends Service {
                     ' raider!';
                 }
                 type = 'raid';
-                this.eventHandler(outputmessage, type, event, extId,'labs');
+                this.eventHandler(outputmessage, type, event,'labs');
                 break;
               }
 
@@ -529,7 +535,21 @@ export default class EventsExternalService extends Service {
                   );
                 }
                 type = 'cheer';
-                this.eventHandler(outputmessage, type, event, extId,'labs');
+                this.eventHandler(outputmessage, type, event,'labs');
+                break;
+              }
+              
+              // Youtube events:
+              
+              case 'superchat': {
+                outputmessage = event.name + ' sent a ' + event.displayString + ' super chat!';
+                // console.log(event);
+                if (event.comment) {
+                  outputmessage = outputmessage.concat(' Message: ' + event.comment);
+                }
+                type = 'superchat';
+                
+                this.eventHandler(outputmessage, type, event,'labs');
                 break;
               }
               default: {
@@ -560,11 +580,12 @@ export default class EventsExternalService extends Service {
   }
 
   @tracked lastevent = '';
-  @action eventHandler(outputmessage, type, event, extId, provider) {    
+  @action eventHandler(outputmessage, type, event, provider) {
     this.store.query('event', {
-      filter: { externalId: extId },
+      filter: { externalId: event.id },
     }).then((exist)=>{
       if(exist.length == 0){
+        // console.debug('Event: ', event);
         let nextEvent = this.store.createRecord('event');
 
         nextEvent.eventId = 'event';
@@ -572,8 +593,8 @@ export default class EventsExternalService extends Service {
         nextEvent.parsedbody = this.parseMessage(outputmessage, []).toString();
         nextEvent.user = 'event';
         nextEvent.displayname = 'event';
-        //nextEvent.color = '#cccccc';
-        //nextEvent.csscolor = htmlSafe('color = #cccccc');
+        nextEvent.color = '#cccccc';
+        nextEvent.csscolor = htmlSafe('color = #cccccc');
         nextEvent.badges = null;
         nextEvent.htmlbadges = '';
         if (type) {
@@ -584,23 +605,41 @@ export default class EventsExternalService extends Service {
         nextEvent.usertype = null;
         nextEvent.reward = false;
         nextEvent.emotes = null;
-
-        nextEvent.save();
+        nextEvent.externalId = event.id;
+        nextEvent.platform = event.platform;
         
+        // nextEvent.save();
+        // If there is money involved we send an external song request
         if(type == 'donation'){
           if(event.amount > 0 && provider == 'labs'){
             let donodata = {
-              id: extId,
+              id: event.id,
               user: event.name,
               fullname: event.from,
               amount: event.amount,
               formattedAmount: event.formatted_amount,
-              message: event.message
+              message: event.message,
+              platform: event.platform
             }
             
             this.queueHandler.externalToQueue(donodata)
           }
         }
+        if(type == 'superchat'){
+          if(event.amount > 0 && provider == 'labs'){
+            let donodata = {
+              id: event.id,
+              user: event.name,
+              fullname: event.name,
+              amount: event.amount,
+              formattedAmount: event.displayString,
+              message: event.comment,
+              patform: event.patform
+            }
+            
+            this.queueHandler.externalToQueue(donodata)
+          }
+        }        
       } 
     });  
   }
@@ -615,7 +654,7 @@ export default class EventsExternalService extends Service {
           mote = mote.split('-');
           mote = [parseInt(mote[0]), parseInt(mote[1])];
           var length = mote[1] - mote[0],
-            empty = Array.apply(null, new Array(length + 1)).map(function () {
+            empty = Array.apply(null, new Array(length + 1)).map(() => {
               return '';
             });
           splitText = splitText

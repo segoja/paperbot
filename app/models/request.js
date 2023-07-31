@@ -6,6 +6,7 @@ export default class RequestModel extends Model {
   @attr('date', { defaultValue: '' }) timestamp;
   @attr('string', { defaultValue: '' }) chatid;
   @attr('string', { defaultValue: '' }) externalId;
+  @attr('string', { defaultValue: '' }) platform;
   @attr('string', { defaultValue: '' }) type;
   @attr('string', { defaultValue: '' }) user;
   @attr('string', { defaultValue: '' }) displayname;

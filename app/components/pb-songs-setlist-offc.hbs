@@ -146,11 +146,12 @@
     <div class="card-footer py-1 my-0 px-2 border rounded-0">
       <div class="row">
         <div class="col align-self-center">
-          <button type="button" {{on "click" this.togglePremium}} class={{if this.globalConfig.config.premiumRequests "btn btn-sm btn-warning my-0" "btn btn-sm btn-secondary my-0"}}>
+          <button type="button" {{on "click" this.togglePremium}} class="btn btn-sm border-0 my-0 py-0 pe-0">
+          <FaIcon @icon={{if this.globalConfig.config.premiumRequests "square-check" "square"}} @size="1x" @prefix="far" class={{if this.globalConfig.config.premiumRequests "pe-1 text-warning" "pe-1"}} /> 
           Premium requests
           </button>
           <button type="button" {{on "click" this.toggleSorting}} class="btn btn-sm border-0 my-0 py-0 pe-0">
-            <FaIcon @icon={{if this.globalConfig.config.premiumSorting "square-check" "square"}} @size="1x" @prefix="far" class="pe-1" /> Premium Sort
+            <FaIcon @icon={{if this.globalConfig.config.premiumSorting "square-check" "square"}} @size="1x" @prefix="far" class={{if this.globalConfig.config.premiumSorting "pe-1 text-warning" "pe-1"}} /> Premium Sort
           </button>
           <span class="text-secondary float-end d-inline-block pt-1"><small>Total: {{this.total}}</small></span>
         </div>

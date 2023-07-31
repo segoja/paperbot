@@ -11,8 +11,17 @@ export default class SoundboardLoadingComponent extends Component {
     this.showBar = false;
   }
 
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.activeSong = [];
+    this.sPremium = false;
+    this.isPlaying = false;
+  }
+  
   @tracked activeSong = [];
   @tracked isPremium = false;
+  @tracked isPlaying = false;
+  
   @tracked donationFormatted = '';
   
   @action setActiveSong() {
@@ -21,6 +30,7 @@ export default class SoundboardLoadingComponent extends Component {
       let first = requests.find((item) => item !== undefined);
       if (first) {
         this.isPremium = first.isPremium;
+        this.isPlaying = first.isPlaying;
         this.donationFormatted = first.donationFormatted || '';
         first.get('song').then((song) => {
           if (song) {

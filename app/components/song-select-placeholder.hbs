@@ -3,6 +3,7 @@
 
 {{#if this.activeSong}}
   <span title="This song is a request" class={{if this.isPremium "px-2 text-warning" "px-2 text-info"}}>
+    {{#if this.isPlaying}}<FaIcon @icon="lock" />{{/if}}
     <strong>{{this.activeSong.title}}</strong>
     {{#if this.donationFormatted}} - {{this.donationFormatted}}{{/if}}
   </span>

@@ -1,0 +1,19 @@
+<BsButton id="lockbutton" draggable={{true}}  @type="warning" title="Lock song"
+ {{on "touchstart" this.moveBtn}}
+ {{on "touchmove" this.moveBtn}}
+ {{on "touchend" this.moveBtn}}
+ {{on "mousedown" this.moveBtn}}
+ {{on "mousemove" this.moveBtn}}
+ {{on "mouseup" this.moveBtn}}
+ {{on "click" this.handleClick}}
+>
+  <FaIcon @icon={{if @isLocked "lock" "unlock"}} />
+  <span class="d-inline">{{if @isLocked "Lock" "Unlock"}} Song</span>  
+</BsButton>
+<style>
+  #lockbutton {
+    position: absolute;
+    top: {{this.top}}px; 
+    left: {{this.left}}px; 
+  }
+</style>

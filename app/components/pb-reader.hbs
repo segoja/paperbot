@@ -27,6 +27,7 @@
                         <p class="text-start">
                           Next. Song: "Ctrl"+"."<br>
                           Prev. Song: "Ctrl"+","<br>
+                          Lock Song: "Ctrl"+"L"<br>
                           <br>  
                           Edit Song: "Ctrl"+"Shift"+"E"<br>
                           Save Song: "Ctrl"+"Alt"+"S"<br>
@@ -145,7 +146,7 @@
           </div>
         </div>
         {{#if this.isEditing}}
-          <div class="card-body mx-0 p-0 flex-fill">
+          <div class="card-body mx-0 p-0 flex-fill" id="bodycontainer">
             <div class="row flex-fill h-100">
               <div class="col-12 flex-fill px-4">
                 <div class="form-group row py-2 flex-fill h-100">            
@@ -156,8 +157,8 @@
               </div>
             </div>
           </div>
-        {{else}}         
-          <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer" {{on "touchstart" this.swipeQueue}} {{on "touchend" this.swipeQueue}}>
+        {{else}}
+          <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden {{if this.isLocked "locked"}} {{if this.selected "selected" "request"}} {{if this.activeRequest.isPremium "premium"}}" id="bodycontainer" {{on "touchstart" this.swipeQueue}} {{on "touchend" this.swipeQueue}}>
             <div class="row m-0 flex-fill mh-100 listframe-reader">
                 {{#if this.restore}}
                   {{#if this.currentSong}}
@@ -185,7 +186,7 @@
           </div>
         {{/if}}
         <div class="card-footer py-0 my-0 px-2">
-          <button class={{if this.selected "d-none" "btn btn-warning"}} {{on "click" this.togglePlaying}}>Lock Song <FaIcon @icon={{if this.activeRequest.isPlaying "lock" "unlock"}} /></button>
+          <LockButton @lockFunction={{this.togglePlaying}} @isLocked={{this.activeRequest.isPlaying}} />
         </div>
       </div>
   </div>
@@ -194,11 +195,12 @@
   @toggleSetlist={{this.toggleSetlist}}
   @isSetlist={{this.isSetlist}}
   @isReader={{true}}
-  @isStream={{true}}
+  @isStream={{false}}
   @offcClass="pt-offc-custom border-0 bg-transparent px-0"
 />
 {{on-key "ctrl+Period" this.queueHandler.nextSong}}
 {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
+{{on-key "ctrl+KeyL" this.togglePlaying}}
 
 {{on-key "ctrl+shift+KeyE" this.toggleEdit}}
 {{on-key "ctrl+alt+KeyS" this.doneEditing}}

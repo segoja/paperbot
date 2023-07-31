@@ -68,6 +68,22 @@ $width-sizes: (
 
 .card-body {
   min-height: auto!important;
+  &.locked { 
+    border-style: dashed!important;
+    border-color: var(--bs-primary-border-subtle)!important;
+    border-width: 0px 0px 3px 0px!important;
+    box-shadow: 0px 0px var(--bs-primary-border-subtle), 0em 0 .9em var(--bs-primary-border-subtle);
+    &.request{
+      box-shadow: 0px 0px var(--bs-info-border-subtle), 0em 0 .9em var(--bs-info-border-subtle);
+      border-color: var(--bs-info-border-subtle)!important;
+      border-width: 0px 0px 3px 0px!important;
+    }
+    &.premium {
+      box-shadow: 0px 0px var(--bs-warning-border-subtle), 0em 0 .9em var(--bs-warning-border-subtle)!important;
+      border-color: var(--bs-warning-border-subtle)!important;
+      border-width: 0px 0px 3px 0px!important;
+    }
+  }
 }
 
 .dragpanel{
@@ -107,6 +123,18 @@ $width-sizes: (
 .alert.playing{
   border-style: dashed!important;
 } 
+
+.event-platform, .alert.request {
+  height: 1em!important;
+  width: 1em;
+  fill: red;
+  color: red;
+  &.streamelements { fill: var(--pb-dark-purple-text); }
+  &.youtube { fill: var(--bs-danger); }
+  &.twitch { fill: var(--pb-purple-text); }
+  &.streamlabs { fill: var(--pb-green-text); }
+  &.paperbot { fill: var(--pb-secondary-text); }
+}
 
 .handle:active {
   cursor: grabbing;

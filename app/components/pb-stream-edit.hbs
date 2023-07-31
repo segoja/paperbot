@@ -59,28 +59,28 @@
             <FaIcon @icon={{if @stream.requests (if this.currentUser.updateQueueOverlay "file-alt" "file") "file"}} /> Requests
           </BsButton>          
           {{#if this.disableBotButton}}
-            <BsButton class="btn-sm col-12 col-sm border rounded-0 text-truncate" @type={{if this.twitchChat.botConnected "primary" "secondary"}} disabled={{this.disableBotButton}} title={{if this.twitchChat.botConnected "Disconnect bot" "Connect bot"}}><FaIcon @icon="play" /> {{if this.twitchChat.botConnected "Disconnect" "Connect"}}</BsButton>
+            <BsButton class="btn-sm col-12 col-sm border rounded-0 text-truncate" @type={{if this.isConnected "primary" "secondary"}} disabled={{this.disableBotButton}} title={{if this.isConnected "Disconnect bot" "Connect bot"}}><FaIcon @icon="play" /> {{if this.isConnected "Disconnect" "Connect"}}</BsButton>
           {{else}}      
-            <BsButton class="btn-sm col-12 col-sm border rounded-0 text-truncate" disabled={{unless (or this.optsbot this.twitchChat.botConnected) true}} @type={{if this.twitchChat.botConnected "primary" "secondary"}} @onClick={{fn (if this.twitchChat.botConnected this.disconnectClients this.connectBot)}} title={{if this.twitchChat.botConnected "Disconnect" "Connect"}}>
-              <FaIcon @icon={{if this.twitchChat.botConnected "stop" "play"}} /> {{if this.twitchChat.botConnected "Disconnect" "Connect"}}
+            <BsButton class="btn-sm col-12 col-sm border rounded-0 text-truncate" disabled={{not this.canConnect}} @type={{if this.isConnected "primary" "secondary"}} @onClick={{fn (if this.isConnected this.disconnectClients this.connectBot)}} title={{if this.isConnected "Disconnect" "Connect"}}>
+              <FaIcon @icon={{if this.isConnected "stop" "play"}} /> {{if this.isConnected "Disconnect" "Connect"}}
             </BsButton>
           {{/if}}
         </div>
       </div>
       <div class="col">
         <div class="row g-0"> 
-          <BsButton class="btn-sm col-12 col-sm text-truncate border rounded-0" @type="danger" @onClick={{this.finishStream}} disabled={{if this.twitchChat.botConnected false (if @stream.finished this.disconnectButton true)}} title="Stop & save"><FaIcon @icon="flag-checkered" /> Stop & Save</BsButton>
+          <BsButton class="btn-sm col-12 col-sm text-truncate border rounded-0" @type="danger" @onClick={{this.finishStream}} disabled={{if this.isConnected false (if @stream.finished this.disconnectButton true)}} title="Stop & save"><FaIcon @icon="flag-checkered" /> Stop & Save</BsButton>
           <BsButton class="btn-sm col col-sm text-editstream text-truncate border rounded-0" @type="warning" @onClick={{@editStream}} title="Edit stream"><FaIcon @icon="edit" /> Edit Stream</BsButton>
         </div>
       </div>
       <div class="col-auto">
         <div class="row g-0 h-100">
-          <BsButton class="btn-sm col-12 col-sm border rounded-0 h-100 ps-2 pe-3" @type={{if this.globalConfig.config.cpansetlist "info" "secondary"}} @onClick={{this.toggleSetlist}} title={{if this.globalConfig.config.cpansetlist "Hide setlist/queue" "Show setlist/queue"}} disabled={{not (and this.twitchChat.botConnected @stream.requests)}}>
+          <BsButton class="btn-sm col-12 col-sm border rounded-0 h-100 ps-2 pe-3" @type={{if this.globalConfig.config.cpansetlist "info" "secondary"}} @onClick={{this.toggleSetlist}} title={{if this.globalConfig.config.cpansetlist "Hide setlist/queue" "Show setlist/queue"}} disabled={{not (and this.isConnected @stream.requests)}}>
             <div class="row g-0">
               <div class="col-auto">
                 {{svg-jar (if this.globalConfig.config.cpansetlist "setlist-close" "setlist-open") class="setlist-icon align-middle" }}
                 {{#unless this.globalConfig.config.cpansetlist}}
-                  {{#if (and this.queueHandler.pendingSongs this.twitchChat.botConnected)}}
+                  {{#if (and this.queueHandler.pendingSongs this.isConnected)}}
                     <span class="position-relative opacity-75">
                       <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
                         {{this.queueHandler.pendingSongs.length}}
@@ -101,20 +101,22 @@
     {{/unless}}
   </div>
   {{#unless @stream.finished}}
-    {{#if this.twitchChat.botConnected}}
+    {{#if this.isConnected}}
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <div class="row flex-fill d-flex h-100 g-0 overflow-hidden">
           <div class="col h-100 border-0 border-top m-0 p-0 position-relative w-effects">
-            <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents (if this.globalConfig.config.cpanmessages "h-35" "h-full-events")) "d-none"}} border h-effects">
+            <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents (if this.globalConfig.config.cpanmessages (if this.twitchChat.botConnected "h-35" "h-100") "h-full-events")) "d-none"}} border h-effects">
               <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
                 <PbStreamEditEvents @stream={{@stream}} />
               </div>
             </div>
-            <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents "h-65" "h-full-chat") "h-100"}} border h-effects">
-              <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
-                <PbStreamEditChat @stream={{@stream}} />
+            {{#if this.twitchChat.botConnected}}
+              <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents "h-65" "h-full-chat") "h-100"}} border h-effects">
+                <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
+                  <PbStreamEditChat @stream={{@stream}} />
+                </div>
               </div>
-            </div>
+            {{/if}}
           </div>
           {{#if @stream.requests}}
             {{on-key "ctrl+Period" this.queueHandler.nextSong}}
