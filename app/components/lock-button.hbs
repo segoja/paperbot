@@ -1,19 +1,20 @@
-<BsButton id="lockbutton" draggable={{true}}  @type="warning" title="Lock song"
- {{on "touchstart" this.moveBtn}}
- {{on "touchmove" this.moveBtn}}
- {{on "touchend" this.moveBtn}}
- {{on "mousedown" this.moveBtn}}
- {{on "mousemove" this.moveBtn}}
- {{on "mouseup" this.moveBtn}}
- {{on "click" this.handleClick}}
+<BsButton id="lockbutton" @type="secondary btn-small" title="Double click for Lock/Unlock a song" id="lockbutton" class="d-inline"
+  {{on "pointerdown" this.handleMouseDown}}
+  {{on "pointermove" this.handleMouseMove}}
+  {{on "pointerup" this.handleMouseUp}}
+  {{on "touchstart" this.handleMouseDown}}
+  {{on "touchmove" this.handleMouseMove}}
+  {{on "touchend" this.handleMouseUp}}
+  {{on "dblclick" @lockFunction}}  
 >
   <FaIcon @icon={{if @isLocked "lock" "unlock"}} />
-  <span class="d-inline">{{if @isLocked "Lock" "Unlock"}} Song</span>  
-</BsButton>
+  <span class="d-inline">{{if @isLocked "Unlock" "Lock"}} Song</span>  
+</BsButton> 
+
 <style>
-  #lockbutton {
+   #lockbutton {
     position: absolute;
-    top: {{this.top}}px; 
-    left: {{this.left}}px; 
+    bottom: 20px;
+    left: 20px;
   }
 </style>

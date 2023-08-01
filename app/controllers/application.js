@@ -100,15 +100,29 @@ export default class ApplicationController extends Controller {
           }
         }
 
-        if (this.globalConfig.config.canConnect) {
-          await this.store
-            .adapterFor('application')
-            .configRemote()
-            .then(async () => {
-              if (this.globalConfig.config.autoConnect) {
-                await this.store.adapterFor('application').connectRemote();
-              }
-            });
+        if (this.globalConfig.config.canConnect) {          
+          if(this.currentUser.isTauri){
+            let currentWindow = getCurrent();
+            if(currentWindow.label == 'Main'){
+              await this.store
+                .adapterFor('application')
+                .configRemote()
+                .then(async () => {
+                  if (this.globalConfig.config.autoConnect) {
+                    await this.store.adapterFor('application').connectRemote();
+                  }
+                });
+            }
+          } else {
+            await this.store
+              .adapterFor('application')
+              .configRemote()
+              .then(async () => {
+                if (this.globalConfig.config.autoConnect) {
+                  await this.store.adapterFor('application').connectRemote();
+                }
+              });
+          }
         } else {
           if (this.currentUser.isTauri) {
             let currentWindow = getCurrent();

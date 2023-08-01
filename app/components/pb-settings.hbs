@@ -206,7 +206,7 @@
             <div class="col"><hr></div>
           </div>
           <div class="d-block pb-2 h-5">Premium request settings:</div>
-          <form.element @controlType="text" @label="Money threshold" placeholder="Amount" @property="premiumThreshold" autocomplete="cost" required />
+          <form.element @controlType="text" @label="Money threshold for premium" placeholder="Amount (only number)" @property="premiumThreshold" autocomplete="cost" required />
           <form.element @controlType="checkbox" @label="Allow premium requests" @property="premiumRequests" required @formLayout="inline" class="p-0 m-0 d-block" />
           <form.element @controlType="checkbox" @label="Premium sorting" @property="premiumSorting" required @formLayout="inline" class="p-0 m-0 d-block" />   
           <div class="form-group row">
@@ -217,14 +217,13 @@
           </div>
           <div class="form-group row">
             <div class="col-12 col-md">
-              <form.element @controlType="checkbox" @label="Show lyrics on start" @formLayout="horizontal" class="p-0 m-0 d-block" @property="showLyrics" required />
+              <form.element @controlType="checkbox" @label="Show lyrics on start" @formLayout="inline" class="p-0 m-0 d-block" @property="showLyrics" required />
               <form.element @controlType="checkbox" @label="Dark mode" @onChange={{this.lightControl.toggleMode}} @formLayout="inline" class="p-0 m-0 d-block" @property="darkmode" required />
               <form.element @controlType="checkbox" @label="Clear requests/setlist on app restart" @formLayout="inline" class="p-0 m-0 d-block" @property="clearRequests" required />
             </div>
             <div class="col-12 col-md">
               <form.element @controlType="checkbox" @label="Allow repeat song request" @formLayout="inline" class="p-0 m-0 d-block" @property="allowDuplicated" required />
               <form.element @controlType="checkbox" @label="Allow sound commands to overlap" @formLayout="inline" class="p-0 m-0 d-block" @property="soundOverlap" required />
-              <form.element @controlType="checkbox" @label="Allow premium requests" @formLayout="inline" class="p-0 m-0 d-block" @property="premiumRequests" required />
             </div>
           </div>
         </BsForm>

@@ -612,12 +612,14 @@ export default class EventsExternalService extends Service {
         // If there is money involved we send an external song request
         if(type == 'donation'){
           if(event.amount > 0 && provider == 'labs'){
+            let amount = event.formatted_amount.substring(1);
+            let dspA = event.formatted_amount.replace(/(\.[0-9]*[1-9])0+$|\.0*$/,'$1');
             let donodata = {
               id: event.id,
               user: event.name,
               fullname: event.from,
-              amount: event.amount,
-              formattedAmount: event.formatted_amount,
+              amount: amount,
+              formattedAmount: dspA,
               message: event.message,
               platform: event.platform
             }
@@ -627,14 +629,16 @@ export default class EventsExternalService extends Service {
         }
         if(type == 'superchat'){
           if(event.amount > 0 && provider == 'labs'){
+            let amount = event.displayString.substring(1);
+            let dspA = event.displayString.replace(/(\.[0-9]*[1-9])0+$|\.0*$/,'$1');
             let donodata = {
               id: event.id,
               user: event.name,
               fullname: event.name,
-              amount: event.amount,
-              formattedAmount: event.displayString,
+              amount: amount,
+              formattedAmount: dspA,
               message: event.comment,
-              patform: event.patform
+              platform: event.platform
             }
             
             this.queueHandler.externalToQueue(donodata)

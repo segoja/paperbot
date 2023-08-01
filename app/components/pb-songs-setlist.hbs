@@ -56,7 +56,12 @@
           <div id={{playedsong.id}} class="alert {{if playedsong.isPremium "premium"}} alert-secondary w-100 text-decoration-none py-0 ps-2 pe-0 my-1 text-start row g-0 rounded-1">
             <button class="col border-0 text-start text-reset bg-transparent text-decoration-none" title="Click here to mark it as pending" type="button" {{on "click" (fn this.queueHandler.requestStatus playedsong)}} >
               <div class="row g-0" role="presentation">
-                <div class="col"><small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
+                <div class="col">
+                  {{#if playedsong.platform}}
+                    {{svg-jar playedsong.platform class=(concat "request-platform align-middle "  playedsong.platform)}}
+                  {{/if}}
+                  <small>{{nicer-date playedsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small>
+                </div>
                 <div class="col-auto">
                   <small class="pe-1">
                     {{#if playedsong.isPremium}}
@@ -102,7 +107,12 @@
             <button type="button" class="col border-0 text-start text-reset bg-transparent text-decoration-none" title="Click here to mark it as played" {{on "click" (fn this.queueHandler.requestStatus pendingsong)}} disabled={{pendingsong.hasDirtyAttributes}}>
               <div class="col ps-2">
                 <div class="row g-0">
-                  <div class="col"><small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small></div>
+                  <div class="col">
+                    {{#if pendingsong.platform}}
+                      {{svg-jar pendingsong.platform class=(concat "request-platform align-middle "  pendingsong.platform)}}
+                    {{/if}}
+                    <small>{{nicer-date pendingsong.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small>
+                  </div>
                   <div class="col-auto">
                     <small class="pe-1">
                       {{#if pendingsong.isPremium}}

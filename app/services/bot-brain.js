@@ -76,7 +76,7 @@ export default class BotBrainService extends Service {
     return false;
   }
 
-  @tracked takessongrequests = false;
+  @tracked takesSongRequests = false;
 
   @action async timersLauncher() {
     let count = 1;

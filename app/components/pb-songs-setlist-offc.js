@@ -38,7 +38,7 @@ export default class PbStreamEditPendingComponent extends Component {
 
   get isRelative() {
     let result = false;
-    if (this.args.isStream) {
+    if (this.args.isStream || this.args.isReader) {
       result = true;
     } else {
       result = this.args.toTop || false;

@@ -274,7 +274,7 @@ export default class PbStreamEditComponent extends Component {
 
   @action queueWriter() {
     if (this.args.stream.requests) {
-      this.twitchChat.takessongrequests = !this.twitchChat.takessongrequests;
+      this.queueHandler.takesSongRequests = !this.queueHandler.takesSongRequests;
     }
     if (this.globalConfig.config.overlayType === 'file') {
       if (
