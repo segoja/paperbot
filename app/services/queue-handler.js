@@ -275,8 +275,8 @@ export default class QueueHandlerService extends Service {
     if(this.takesSongRequests){
       if(this.globalConfig.config.premiumRequests){
         if(donodata.amount >= this.globalConfig.config.premiumThreshold){
-          donodata.message = '!sr fury heart';
-          donodata.fullname = 'Papercat the mongoloid'
+          // donodata.message = '!sr fury heart';
+          // donodata.fullname = 'Papercat the mongoloid'
           if(donodata.message.startsWith('!sr ')){
             this.store.query('request', {
               filter: { externalId: donodata.id },
