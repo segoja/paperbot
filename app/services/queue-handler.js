@@ -283,7 +283,7 @@ export default class QueueHandlerService extends Service {
   }
 
   @action async externalToQueue(donodata) {
-    // console.debug('Premium request: ', donodata);
+    console.debug('Premium request: ', donodata);
     if (this.takesSongRequests) {
       if (this.globalConfig.config.premiumRequests) {
         if (donodata.amount >= this.globalConfig.config.premiumThreshold) {

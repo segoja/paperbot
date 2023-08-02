@@ -37,6 +37,7 @@ export default class SoundboardLoadingComponent extends Component {
             this.activeSong = song;
             console.debug('First request active...');
           } else {
+            this.activeSong = '';
             console.debug(
               'The first pending request in queue has no lyrics available.'
             );

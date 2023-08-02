@@ -44,7 +44,7 @@ export default class PbStreamEditComponent extends Component {
   }
 
   get isConnected() {
-    console.log('Events external: ', this.eventsExternal.client);
+    // console.log('Events external: ', this.eventsExternal.client);
     if (this.eventsExternal.connected || this.twitchChat.botConnected) {
       return true;
     }

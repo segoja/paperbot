@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { sort } from '@ember/object/computed';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
@@ -36,14 +35,12 @@ export default class PbReaderComponent extends Component {
   @tracked isSetlist = false;
   @tracked isEditing = false;
 
-  songsSorting = Object.freeze(['date_added:asc']);
-  @sort('args.songs', 'songsSorting') arrangedContent;
-
-  @computedFilterByQuery('arrangedContent', ['title', 'artist'], 'songQuery', {
-    conjunction: 'and',
-    sort: false,
-    limit: 20,
-  })
+  @computedFilterByQuery(
+    'queueHandler.songList',
+    ['title', 'artist', 'keywords'],
+    'songQuery',
+    { conjunction: 'and', sort: false, limit: 20 }
+  )
   filteredSongs;
 
   get currentSong() {
@@ -83,6 +80,7 @@ export default class PbReaderComponent extends Component {
               this.activeSong = song;
               console.debug('First request active...');
             } else {
+              this.activeSong = '';
               console.debug(
                 'The first pending request in queue has no lyrics available.'
               );

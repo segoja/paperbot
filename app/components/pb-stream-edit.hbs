@@ -75,19 +75,15 @@
       </div>
       <div class="col-auto">
         <div class="row g-0 h-100">
-          <BsButton class="btn-sm col-12 col-sm border rounded-0 h-100 ps-2 pe-3" @type={{if this.globalConfig.config.cpansetlist "info" "secondary"}} @onClick={{this.toggleSetlist}} title={{if this.globalConfig.config.cpansetlist "Hide setlist/queue" "Show setlist/queue"}} disabled={{not (and this.isConnected @stream.requests)}}>
+          <BsButton class="btn-sm col-12 col-sm border rounded-0 h-100 ps-2 pe-3" @type={{if this.globalConfig.config.cpansetlist "info" "secondary"}} @onClick={{this.toggleSetlist}} title={{if this.globalConfig.config.cpansetlist "Hide setlist/queue" "Show setlist/queue"}}>
             <div class="row g-0">
               <div class="col-auto">
                 {{svg-jar (if this.globalConfig.config.cpansetlist "setlist-close" "setlist-open") class="setlist-icon align-middle" }}
-                {{#unless this.globalConfig.config.cpansetlist}}
-                  {{#if (and this.queueHandler.pendingSongs this.isConnected)}}
-                    <span class="position-relative opacity-75">
-                      <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
-                        {{this.queueHandler.pendingSongs.length}}
-                      </small>
-                    </span>
-                  {{/if}}
-                {{/unless}}
+                <span class="position-relative opacity-75">
+                  <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
+                    {{this.queueHandler.pendingSongs.length}}
+                  </small>
+                </span>
               </div>
             </div>  
           </BsButton>
@@ -100,39 +96,36 @@
       {{/if}}
     {{/unless}}
   </div>
-  {{#unless @stream.finished}}
-    {{#if this.isConnected}}
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <div class="row flex-fill d-flex h-100 g-0 overflow-hidden">
           <div class="col h-100 border-0 border-top m-0 p-0 position-relative w-effects">
-            <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents (if this.globalConfig.config.cpanmessages (if this.twitchChat.botConnected "h-35" "h-100") "h-full-events")) "d-none"}} border h-effects">
-              <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
-                <PbStreamEditEvents @stream={{@stream}} />
-              </div>
-            </div>
-            {{#if this.twitchChat.botConnected}}
-              <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents "h-65" "h-full-chat") "h-100"}} border h-effects">
+          {{#unless @stream.finished}}
+            {{#if this.isConnected}}
+              <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents (if this.globalConfig.config.cpanmessages (if this.twitchChat.botConnected "h-35" "h-100") "h-full-events")) "d-none"}} border h-effects">
                 <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
-                  <PbStreamEditChat @stream={{@stream}} />
+                  <PbStreamEditEvents @stream={{@stream}} />
                 </div>
               </div>
+              {{#if this.twitchChat.botConnected}}
+                <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents "h-65" "h-full-chat") "h-100"}} border h-effects">
+                  <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
+                    <PbStreamEditChat @stream={{@stream}} />
+                  </div>
+                </div>
+              {{/if}}
+              {{#if @stream.requests}}
+                {{on-key "ctrl+Period" this.queueHandler.nextSong}}
+                {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
+                {{on-key "ctrl+KeyQ" this.queueHandler.modPressed event="keypress"}} 
+                {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}
+              {{/if}}
             {{/if}}
+          {{/unless}}
           </div>
-          {{#if @stream.requests}}
-            {{on-key "ctrl+Period" this.queueHandler.nextSong}}
-            {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
-            {{on-key "ctrl+KeyQ" this.queueHandler.modPressed event="keypress"}} 
-            {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}
-          {{/if}}
-          {{#if @stream.requests}}
-            <div class={{if this.globalConfig.config.cpansetlist "d-none d-md-block col-md-6 col-lg-4 h-100 border m-0 p-0 w-effects" "d-none w-effects"}}>
-              <PbSongsSetlist @isStream={{true}} />
-            </div>
-            <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @isStream={{true}} @isSetlist={{this.globalConfig.config.cpansetlist}} @offcClass="d-md-none pt-offc-custom-stream border-0 bg-transparent px-0" />
-
-          {{/if}}
+          <div class={{if this.globalConfig.config.cpansetlist "d-none d-md-block col-md-6 col-lg-4 h-100 border m-0 p-0 w-effects" "d-none w-effects"}}>
+            <PbSongsSetlist @isStream={{true}} />
+          </div>
+          <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @isStream={{true}} @isSetlist={{this.globalConfig.config.cpansetlist}} @offcClass="d-md-none pt-offc-custom-stream border-0 bg-transparent px-0" />
         </div>
       </div>
-    {{/if}}
-  {{/unless}}
 {{/if}}

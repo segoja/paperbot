@@ -385,7 +385,7 @@ export default class EventsExternalService extends Service {
     });
 
     client.on('event', (data) => {
-      //console.debug(data);
+      console.debug('SLAB Data: ', data);
       try {
         if (Array.isArray(data.message)) {
           data.message.forEach((event) => {
@@ -393,13 +393,16 @@ export default class EventsExternalService extends Service {
             var outputmessage = '';
             var type = '';
             event.id = data.event_id;
-
-            if (data.for.includes('youtube')) {
-              event.platform = 'youtube';
-            } else if (data.for.includes('twitch')) {
-              event.platform = 'twitch';
+            if (data.for) {
+              if (data.for.includes('youtube')) {
+                event.platform = 'youtube';
+              } else if (data.for.includes('twitch')) {
+                event.platform = 'twitch';
+              } else {
+                event.platform = data.for || 'streamlabs';
+              }
             } else {
-              event.platform = data.for || 'paperbot';
+              event.platform = 'streamlabs';
             }
 
             switch (data.type) {

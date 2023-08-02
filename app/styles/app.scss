@@ -140,7 +140,8 @@ $width-sizes: (
   height: 0.8em!important;
   width: 0.8em;
   fill: var(--bs-alert-color);
-  color: var(--bs-alert-color);
+  color: var(--bs-alert-color); 
+  filter: opacity(0.35);
   &.streamelements { fill: var(--pb-dark-purple-text); }
   &.youtube { fill: var(--bs-danger); }
   &.twitch { fill: var(--pb-purple-text); }
