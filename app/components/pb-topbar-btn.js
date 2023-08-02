@@ -16,13 +16,13 @@ export default class pbTopbarBtnComponent extends Component {
   }
 
   get topbarWormholeSmall() {
-    return  document.getElementById('topbar-wormhole-small');    
+    return document.getElementById('topbar-wormhole-small');
   }
-  
+
   get topbarWormholeFull() {
     return document.getElementById('topbar-wormhole-full');
   }
-  
+
   get modalWormhole() {
     return document.getElementById('ember-bootstrap-wormhole');
   }

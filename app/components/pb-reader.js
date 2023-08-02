@@ -60,18 +60,14 @@ export default class PbReaderComponent extends Component {
 
   @tracked activeSong = [];
   @tracked activeRequest = [];
-  
-  get isLocked (){
-    if(
-      this.activeRequest.isPlaying ||
-      this.selected    
-    ){      
+
+  get isLocked() {
+    if (this.activeRequest.isPlaying || this.selected) {
       return true;
-    }    
+    }
     return false;
   }
-  
-  
+
   @action setActiveSong() {
     if (this.selected) {
       this.activeSong = this.selected;
@@ -99,16 +95,16 @@ export default class PbReaderComponent extends Component {
       }
     }
   }
-  
-  @action togglePlaying(){
-    if(this.activeRequest){
-      this.queueHandler.arrangedAscQueue.map((request)=>{
-        if(request.id === this.activeRequest.id){
+
+  @action togglePlaying() {
+    if (this.activeRequest) {
+      this.queueHandler.arrangedAscQueue.map((request) => {
+        if (request.id === this.activeRequest.id) {
           request.isPlaying = !request.isPlaying;
         } else {
           request.isPlaying = false;
         }
-        if(request.hasDirtyAttributes){ 
+        if (request.hasDirtyAttributes) {
           request.save();
         }
       });
@@ -243,7 +239,7 @@ export default class PbReaderComponent extends Component {
   @tracked swipex = 0;
   @tracked swipey = 0;
   @action swipeQueue(event) {
-    if(!this.selected && this.selected != null){
+    if (!this.selected && this.selected != null) {
       let threshold = 100; //required min distance traveled to be considered swipe
       if (event.type === 'touchstart' && !this.swipping) {
         this.swipping = true;

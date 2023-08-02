@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
@@ -55,16 +54,18 @@ export default class PbStreamEditPendingComponent extends Component {
     // console.log(this.queueHandler.activeTab);
   }
 
-  @action togglePremium(){
-    this.globalConfig.config.premiumRequests = !this.globalConfig.config.premiumRequests;
+  @action togglePremium() {
+    this.globalConfig.config.premiumRequests =
+      !this.globalConfig.config.premiumRequests;
     this.globalConfig.config.save();
   }
 
-  @action toggleSorting(){
-    this.globalConfig.config.premiumSorting = !this.globalConfig.config.premiumSorting;
+  @action toggleSorting() {
+    this.globalConfig.config.premiumSorting =
+      !this.globalConfig.config.premiumSorting;
     this.globalConfig.config.save();
   }
-  
+
   @action togglePlayed() {
     this.currentUser.showPlayed = !this.currentUser.showPlayed;
   }

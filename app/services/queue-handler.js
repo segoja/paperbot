@@ -29,34 +29,44 @@ export default class QueueHandlerService extends Service {
 
   @tracked takesSongRequests = false;
 
-  get songListExt(){
-    return this.store.findAll('song').then((list)=>{
-      return list.filter(item => item.active === true);
+  get songListExt() {
+    return this.store.findAll('song').then((list) => {
+      return list.filter((item) => item.active === true);
     });
   }
-  
+
   @tracked requestpattern = '';
   @computedFilterByQuery(
     'songList',
     ['title', 'artist', 'keywords'],
     'requestpattern',
     { conjunction: 'and', sort: false }
-  ) filteredSongs;
+  )
+  filteredSongs;
 
   get songqueue() {
     return this.requests.filter((request) => !request.isDeleted);
   }
 
-  get queueAscSorting(){
-    let sortArray = Object.freeze(['isPlaying:desc','position:asc', 'timestamp:desc']);
-    if(this.globalConfig.config.premiumSorting){
-      sortArray = Object.freeze(['isPlaying:desc','isPremium:desc','donation:desc','position:asc']);
+  get queueAscSorting() {
+    let sortArray = Object.freeze([
+      'isPlaying:desc',
+      'position:asc',
+      'timestamp:desc',
+    ]);
+    if (this.globalConfig.config.premiumSorting) {
+      sortArray = Object.freeze([
+        'isPlaying:desc',
+        'isPremium:desc',
+        'donation:desc',
+        'position:asc',
+      ]);
     }
     return sortArray;
   }
 
   @sort('songqueue', 'queueAscSorting') arrangedAscQueue;
-  
+
   queueAscSortingDef = Object.freeze(['position:asc', 'timestamp:desc']);
   @sort('songqueue', 'queueAscSortingDef') arrangedAscQueueDef;
 
@@ -215,9 +225,11 @@ export default class QueueHandlerService extends Service {
     }
   }
 
-  get updatingQueue(){
-    let updating = this.arrangedAscQueue.filter(request => request.isSaving || request.isLoading );
-    if(updating.length > 0){
+  get updatingQueue() {
+    let updating = this.arrangedAscQueue.filter(
+      (request) => request.isSaving || request.isLoading
+    );
+    if (updating.length > 0) {
       return true;
     }
     return false;
@@ -236,12 +248,12 @@ export default class QueueHandlerService extends Service {
       }
 
       request.processed = !request.processed;
-      if(request.processed){
+      if (request.processed) {
         request.isPlaying = false;
       }
-      
+
       await request.save().then(async () => {
-        console.log('Updated request' + request.position);        
+        console.log('Updated request' + request.position);
         if (request.processed && request.songId) {
           this.store
             .findRecord('song', request.song.get('id'))
@@ -253,7 +265,7 @@ export default class QueueHandlerService extends Service {
               }
             });
         }
-        
+
         let count = 0;
         await oldSiblings.forEach(async (sibling) => {
           count = Number(count) + 1;
@@ -269,70 +281,73 @@ export default class QueueHandlerService extends Service {
       });
     }
   }
-  
-  @action async externalToQueue(donodata){
+
+  @action async externalToQueue(donodata) {
     // console.debug('Premium request: ', donodata);
-    if(this.takesSongRequests){
-      if(this.globalConfig.config.premiumRequests){
-        if(donodata.amount >= this.globalConfig.config.premiumThreshold){
+    if (this.takesSongRequests) {
+      if (this.globalConfig.config.premiumRequests) {
+        if (donodata.amount >= this.globalConfig.config.premiumThreshold) {
           // donodata.message = '!sr fury heart';
           // donodata.fullname = 'Papercat the mongoloid'
-          if(donodata.message.startsWith('!sr ')){
-            this.store.query('request', {
-              filter: { externalId: donodata.id },
-            }).then(async (exist)=>{
-              if(exist.length == 0){
-                var song = donodata.message.replace(/!sr /g, '');
-                song = song.replace(/&/g, ' ');
-                song = song.replace(/\//g, ' ');
-                song = song.replace(/-/g, ' ');
-                song = song.replace(/[^a-zA-Z0-9'?! ]/g, '');
-                //console.log(donodata.fullname+' paid '+donodata.formattedAmount+' to request the song '+song);
-                this.requestpattern = song;
-                //if (this.filteredSongs.length > 0) {
-                    let bestmatch = await this.filteredSongs.shift();
+          if (donodata.message.startsWith('!sr ')) {
+            this.store
+              .query('request', {
+                filter: { externalId: donodata.id },
+              })
+              .then(async (exist) => {
+                if (exist.length == 0) {
+                  var song = donodata.message.replace(/!sr /g, '');
+                  song = song.replace(/&/g, ' ');
+                  song = song.replace(/\//g, ' ');
+                  song = song.replace(/-/g, ' ');
+                  song = song.replace(/[^a-zA-Z0-9'?! ]/g, '');
+                  //console.log(donodata.fullname+' paid '+donodata.formattedAmount+' to request the song '+song);
+                  this.requestpattern = song;
+                  //if (this.filteredSongs.length > 0) {
+                  let bestmatch = await this.filteredSongs.shift();
                   //if(bestmatch){
-                    let nextPosition = this.nextPosition();
+                  let nextPosition = this.nextPosition();
 
-                    let newRequest = this.store.createRecord('request');
-                    newRequest.chatid = 'songExt';
-                    newRequest.externalId = donodata.id;
-                    newRequest.platform = donodata.platform;
-                    newRequest.timestamp = new Date();
-                    newRequest.type = 'setlist';
-                    newRequest.user = donodata.fullname || donodata.user;
-                    newRequest.displayname = donodata.fullname;            
-                    newRequest.processed = false;
-                    newRequest.donation = donodata.amount;
-                    newRequest.donationFormatted = donodata.formattedAmount;
-                    newRequest.isPremium = true;
-                    newRequest.position = nextPosition;
-                    if(bestmatch){
-                      newRequest.song = bestmatch;
-                      newRequest.title = bestmatch.title || donodata.message;
-                      newRequest.artist = bestmatch.artist || '';
-                    } else {
-                      newRequest.song = ''; 
-                      newRequest.title = song;
-                      newRequest.artist = '';
+                  let newRequest = this.store.createRecord('request');
+                  newRequest.chatid = 'songExt';
+                  newRequest.externalId = donodata.id;
+                  newRequest.platform = donodata.platform;
+                  newRequest.timestamp = new Date();
+                  newRequest.type = 'setlist';
+                  newRequest.user = donodata.fullname || donodata.user;
+                  newRequest.displayname = donodata.fullname;
+                  newRequest.processed = false;
+                  newRequest.donation = donodata.amount;
+                  newRequest.donationFormatted = donodata.formattedAmount;
+                  newRequest.isPremium = true;
+                  newRequest.position = nextPosition;
+                  if (bestmatch) {
+                    newRequest.song = bestmatch;
+                    newRequest.title = bestmatch.title || donodata.message;
+                    newRequest.artist = bestmatch.artist || '';
+                  } else {
+                    newRequest.song = '';
+                    newRequest.title = song;
+                    newRequest.artist = '';
+                  }
+                  newRequest.save().then(async () => {
+                    // Song statistics:
+                    if (bestmatch) {
+                      bestmatch.times_requested =
+                        Number(bestmatch.times_requested) + 1;
+                      await bestmatch.save();
                     }
-                    newRequest.save().then(async () => {
-                      // Song statistics:
-                      if(bestmatch){
-                        bestmatch.times_requested = Number(bestmatch.times_requested) + 1;
-                        await bestmatch.save();
-                      }
-                      // console.debug(bestmatch.fullText+' added at position '+nextPosition);
-                      this.lastsongrequest = newRequest;
-                      this.scrollPendingPosition = 0;
-                      this.scrollPlayedPosition = 0;
-                      this.fileContent(this.pendingSongs);
-                    });
+                    // console.debug(bestmatch.fullText+' added at position '+nextPosition);
+                    this.lastsongrequest = newRequest;
+                    this.scrollPendingPosition = 0;
+                    this.scrollPlayedPosition = 0;
                     this.fileContent(this.pendingSongs);
+                  });
+                  this.fileContent(this.pendingSongs);
                   //}
-                //}
-              }
-            });
+                  //}
+                }
+              });
           }
         }
       }
@@ -340,7 +355,7 @@ export default class QueueHandlerService extends Service {
   }
 
   @action async songToQueue(selected, toTop = false) {
-    if(!this.updatingQueue){
+    if (!this.updatingQueue) {
       let nextPosition = await this.nextPosition();
 
       if (toTop) {

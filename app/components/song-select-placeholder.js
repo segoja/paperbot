@@ -17,13 +17,13 @@ export default class SoundboardLoadingComponent extends Component {
     this.sPremium = false;
     this.isPlaying = false;
   }
-  
+
   @tracked activeSong = [];
   @tracked isPremium = false;
   @tracked isPlaying = false;
-  
+
   @tracked donationFormatted = '';
-  
+
   @action setActiveSong() {
     let requests = this.queueHandler.pendingSongs;
     if (requests.length > 0) {

@@ -26,36 +26,40 @@ export default class PbStreamEditComponent extends Component {
   @tracked message = '';
   @tracked msglist = [];
 
-  get canEvents(){
-    if(
+  get canEvents() {
+    if (
       this.globalConfig.config.externaleventskey &&
       this.globalConfig.config.externalevents
-    ){
+    ) {
       return true;
     }
     return false;
   }
 
-  get canConnect(){
-    if(this.optsbot || this.canEvents){
+  get canConnect() {
+    if (this.optsbot || this.canEvents) {
       return true;
     }
     return false;
   }
 
-  get isConnected(){
-    console.log('Events external: ',this.eventsExternal.client)
-    if(this.eventsExternal.connected || this.twitchChat.botConnected){
-      return true
+  get isConnected() {
+    console.log('Events external: ', this.eventsExternal.client);
+    if (this.eventsExternal.connected || this.twitchChat.botConnected) {
+      return true;
     }
-    return false
+    return false;
   }
 
   get disableBotButton() {
-    if (this.args.stream.finished === true){
+    if (this.args.stream.finished === true) {
       return true;
     }
-    if(this.args.stream.botclient === '' && this.args.stream.channel === '' && !this.canEvents){
+    if (
+      this.args.stream.botclient === '' &&
+      this.args.stream.channel === '' &&
+      !this.canEvents
+    ) {
       return true;
     }
     return false;
@@ -110,7 +114,7 @@ export default class PbStreamEditComponent extends Component {
   // Bot and Chat related actions:
 
   @action connectBot() {
-    if(this.optsbot){
+    if (this.optsbot) {
       if (this.args.stream.channel != '') {
         // this.optsbot.channels = [this.args.stream.channel];
         this.twitchChat.channel = this.args.stream.channel;
@@ -119,7 +123,7 @@ export default class PbStreamEditComponent extends Component {
 
       this.twitchChat.botUsername = this.args.stream.botName || '';
       this.twitchChat.chatUsername = this.args.stream.chatName || '';
-      
+
       this.twitchChat.connector(this.optsbot, 'bot').then(() => {
         let opts = this.optchat || this.optsbot;
         this.twitchChat.connector(opts, 'chat');
@@ -274,7 +278,8 @@ export default class PbStreamEditComponent extends Component {
 
   @action queueWriter() {
     if (this.args.stream.requests) {
-      this.queueHandler.takesSongRequests = !this.queueHandler.takesSongRequests;
+      this.queueHandler.takesSongRequests =
+        !this.queueHandler.takesSongRequests;
     }
     if (this.globalConfig.config.overlayType === 'file') {
       if (

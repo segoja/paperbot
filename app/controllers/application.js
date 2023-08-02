@@ -100,10 +100,10 @@ export default class ApplicationController extends Controller {
           }
         }
 
-        if (this.globalConfig.config.canConnect) {          
-          if(this.currentUser.isTauri){
+        if (this.globalConfig.config.canConnect) {
+          if (this.currentUser.isTauri) {
             let currentWindow = getCurrent();
-            if(currentWindow.label == 'Main'){
+            if (currentWindow.label == 'Main') {
               await this.store
                 .adapterFor('application')
                 .configRemote()
