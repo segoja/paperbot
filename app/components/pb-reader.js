@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { sort } from '@ember/object/computed';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
@@ -24,27 +23,32 @@ export default class PbReaderComponent extends Component {
   constructor() {
     super(...arguments);
     this.isEditing = false;
+    this.isSetlist = false;
   }
 
   willDestroy() {
     super.willDestroy(...arguments);
     this.isEditing = false;
+    this.isSetlist = false;
   }
 
+  @tracked isSetlist = false;
   @tracked isEditing = false;
 
-  songsSorting = Object.freeze(['date_added:asc']);
-  @sort('args.songs', 'songsSorting') arrangedContent;
-
-  @computedFilterByQuery('arrangedContent', ['title', 'artist'], 'songQuery', {
-    conjunction: 'and',
-    sort: false,
-    limit: 20,
-  })
+  @computedFilterByQuery(
+    'queueHandler.songList',
+    ['title', 'artist', 'keywords'],
+    'songQuery',
+    { conjunction: 'and', sort: false, limit: 20 }
+  )
   filteredSongs;
 
   get currentSong() {
     return this.activeSong;
+  }
+
+  @action toggleSetlist() {
+    this.isSetlist = !this.isSetlist;
   }
 
   @action clearSelect() {
@@ -52,6 +56,15 @@ export default class PbReaderComponent extends Component {
   }
 
   @tracked activeSong = [];
+  @tracked activeRequest = [];
+
+  get isLocked() {
+    if (this.activeRequest.isPlaying || this.selected) {
+      return true;
+    }
+    return false;
+  }
+
   @action setActiveSong() {
     if (this.selected) {
       this.activeSong = this.selected;
@@ -61,11 +74,13 @@ export default class PbReaderComponent extends Component {
       if (requests.length > 0) {
         let first = requests.find((item) => item !== undefined);
         if (first) {
+          this.activeRequest = first;
           first.get('song').then((song) => {
             if (song) {
               this.activeSong = song;
               console.debug('First request active...');
             } else {
+              this.activeSong = '';
               console.debug(
                 'The first pending request in queue has no lyrics available.'
               );
@@ -77,29 +92,21 @@ export default class PbReaderComponent extends Component {
         console.debug('No requests pending...');
       }
     }
-    /*
-    later(this,()=>{
-      let readerHeader = document.getElementById('readerTitle');
-      let separator = document.getElementById('readerTitleSeparator');
-      if(readerHeader && separator){
-        if(this.currentSong != undefined && this.currentSong != '' && this.currentSong != null && readerHeader != null  && separator != null ){
-          if(this.selected){
-            readerHeader.className = 'd-inline-block pe-3 text-secondary';
-          } else {
-            readerHeader.className = 'd-inline-block pe-3 text-info';
-          }
-          readerHeader.innerHTML = this.currentSong.title;
-          readerHeader.style.display = "inline!important";
-          separator.innerHTML = ' - ';
-          separator.style.display = "inline!important";
+  }
+
+  @action togglePlaying() {
+    if (this.activeRequest) {
+      this.queueHandler.arrangedAscQueue.map((request) => {
+        if (request.id === this.activeRequest.id) {
+          request.isPlaying = !request.isPlaying;
         } else {
-          readerHeader.innerHTML = '';
-          readerHeader.style.display = "none!important";
-          separator.innerHTML = '';
-          separator.style.display = "none!important";
+          request.isPlaying = false;
         }
-      }
-    }, 150);*/
+        if (request.hasDirtyAttributes) {
+          request.save();
+        }
+      });
+    }
   }
 
   @action searchSong(query) {
@@ -230,30 +237,32 @@ export default class PbReaderComponent extends Component {
   @tracked swipex = 0;
   @tracked swipey = 0;
   @action swipeQueue(event) {
-    let threshold = 150; //required min distance traveled to be considered swipe
-    if (event.type === 'touchstart' && !this.swipping) {
-      this.swipping = true;
-      this.swipex = event.changedTouches[0].pageX;
-      this.swipey = event.changedTouches[0].pageY;
-    }
-    if (event.type === 'touchend' && this.swipping) {
-      let destx = event.changedTouches[0].pageX;
-      let swipedist = destx - this.swipex;
-      let isHorizontal =
-        Math.abs(event.changedTouches[0].pageY - this.swipey) <= 100;
-      if (isHorizontal) {
-        if (Math.abs(swipedist) > threshold) {
-          if (destx > this.swipex) {
-            this.queueHandler.prevSong();
-          }
-          if (destx < this.swipex) {
-            this.queueHandler.nextSong();
+    if (!this.selected && this.selected != null) {
+      let threshold = 100; //required min distance traveled to be considered swipe
+      if (event.type === 'touchstart' && !this.swipping) {
+        this.swipping = true;
+        this.swipex = event.changedTouches[0].pageX;
+        this.swipey = event.changedTouches[0].pageY;
+      }
+      if (event.type === 'touchend' && this.swipping) {
+        let destx = event.changedTouches[0].pageX;
+        let swipedist = destx - this.swipex;
+        let isHorizontal =
+          Math.abs(event.changedTouches[0].pageY - this.swipey) <= 100;
+        if (isHorizontal) {
+          if (Math.abs(swipedist) > threshold) {
+            if (destx > this.swipex) {
+              this.queueHandler.prevSong();
+            }
+            if (destx < this.swipex) {
+              this.queueHandler.nextSong();
+            }
           }
         }
+        this.swipping = false;
+        this.swipex = 0;
+        this.swipey = 0;
       }
-      this.swipping = false;
-      this.swipex = 0;
-      this.swipey = 0;
     }
   }
 

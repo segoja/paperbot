@@ -5,6 +5,8 @@ import { readOnly } from '@ember/object/computed';
 export default class RequestModel extends Model {
   @attr('date', { defaultValue: '' }) timestamp;
   @attr('string', { defaultValue: '' }) chatid;
+  @attr('string', { defaultValue: '' }) externalId;
+  @attr('string', { defaultValue: '' }) platform;
   @attr('string', { defaultValue: '' }) type;
   @attr('string', { defaultValue: '' }) user;
   @attr('string', { defaultValue: '' }) displayname;
@@ -13,6 +15,11 @@ export default class RequestModel extends Model {
   @attr('string', { defaultValue: '' }) emotes;
 
   @attr('number', { defaultValue: 0 }) position;
+
+  @attr('number', { defaultValue: 0 }) donation;
+  @attr('string', { defaultValue: '' }) donationFormatted;
+  @attr('boolean', { defaultValue: false }) isPremium;
+  @attr('boolean', { defaultValue: false }) isPlaying;
 
   @attr('boolean', { defaultValue: false }) processed;
 

@@ -26,20 +26,47 @@ export default class PbStreamEditComponent extends Component {
   @tracked message = '';
   @tracked msglist = [];
 
-  get disableBotButton() {
+  get canEvents() {
     if (
-      this.args.stream.finished === true ||
-      this.args.stream.botclient === '' ||
-      this.args.stream.channel === ''
+      this.globalConfig.config.externaleventskey &&
+      this.globalConfig.config.externalevents
     ) {
       return true;
-    } else {
-      return false;
     }
+    return false;
+  }
+
+  get canConnect() {
+    if (this.optsbot || this.canEvents) {
+      return true;
+    }
+    return false;
+  }
+
+  get isConnected() {
+    // console.log('Events external: ', this.eventsExternal.client);
+    if (this.eventsExternal.connected || this.twitchChat.botConnected) {
+      return true;
+    }
+    return false;
+  }
+
+  get disableBotButton() {
+    if (this.args.stream.finished === true) {
+      return true;
+    }
+    if (
+      this.args.stream.botclient === '' &&
+      this.args.stream.channel === '' &&
+      !this.canEvents
+    ) {
+      return true;
+    }
+    return false;
   }
 
   get disconnectButton() {
-    if (this.twitchChat.botConnected === false) {
+    if (!this.twitchChat.botConnected && !this.eventsExternal.connected) {
       return true;
     } else {
       return false;
@@ -87,15 +114,21 @@ export default class PbStreamEditComponent extends Component {
   // Bot and Chat related actions:
 
   @action connectBot() {
-    if (this.args.stream.channel != '') {
-      // this.optsbot.channels = [this.args.stream.channel];
-      this.twitchChat.channel = this.args.stream.channel;
+    if (this.optsbot) {
+      if (this.args.stream.channel != '') {
+        // this.optsbot.channels = [this.args.stream.channel];
+        this.twitchChat.channel = this.args.stream.channel;
+      }
+      this.twitchChat.savechat = this.args.stream.savechat;
+
+      this.twitchChat.botUsername = this.args.stream.botName || '';
+      this.twitchChat.chatUsername = this.args.stream.chatName || '';
+
+      this.twitchChat.connector(this.optsbot, 'bot').then(() => {
+        let opts = this.optchat || this.optsbot;
+        this.twitchChat.connector(opts, 'chat');
+      });
     }
-    this.twitchChat.savechat = this.args.stream.savechat;
-
-    this.twitchChat.botUsername = this.args.stream.botName || '';
-    this.twitchChat.chatUsername = this.args.stream.chatName || '';
-
     if (
       this.args.stream.events &&
       this.globalConfig.config.externaleventskey &&
@@ -105,11 +138,6 @@ export default class PbStreamEditComponent extends Component {
       this.eventsExternal.type = this.globalConfig.config.externalevents;
       this.eventsExternal.createClient();
     }
-
-    this.twitchChat.connector(this.optsbot, 'bot').then(() => {
-      let opts = this.optchat || this.optsbot;
-      this.twitchChat.connector(opts, 'chat');
-    });
   }
 
   @action disconnectClients() {
@@ -163,6 +191,8 @@ export default class PbStreamEditComponent extends Component {
         if (this.eventsExternal.arrangedEvents.length > 0) {
           this.eventsExternal.arrangedEvents.forEach(async (event) => {
             let entry = {
+              id: event.externalId,
+              platform: event.platform,
               type: event.type,
               timestamp: event.timestamp,
               parsedbody: event.parsedbody,
@@ -248,7 +278,8 @@ export default class PbStreamEditComponent extends Component {
 
   @action queueWriter() {
     if (this.args.stream.requests) {
-      this.twitchChat.takessongrequests = !this.twitchChat.takessongrequests;
+      this.queueHandler.takesSongRequests =
+        !this.queueHandler.takesSongRequests;
     }
     if (this.globalConfig.config.overlayType === 'file') {
       if (

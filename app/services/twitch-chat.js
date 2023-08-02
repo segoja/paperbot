@@ -103,8 +103,6 @@ export default class TwitchChatService extends Service {
     return false;
   }
 
-  @tracked takessongrequests = false;
-
   @tracked channelBadges = [];
   @tracked globalBadges = [];
   get allbadges() {
@@ -429,7 +427,7 @@ export default class TwitchChatService extends Service {
     if (tags['message-type'] != 'whisper') {
       if (
         tags['custom-reward-id'] &&
-        this.takessongrequests &&
+        this.queueHandler.takesSongRequests &&
         this.currentUser.updateQueueOverlay &&
         this.currentUser.lastStream.requests &&
         String(msg).startsWith('!sr ')
@@ -570,7 +568,7 @@ export default class TwitchChatService extends Service {
       // If the command is known, let's execute it
       if (String(commandName).startsWith('!sr ')) {
         if (
-          this.takessongrequests &&
+          this.queueHandler.takesSongRequests &&
           this.currentUser.updateQueueOverlay &&
           this.currentUser.lastStream.requests
         ) {
@@ -727,7 +725,7 @@ export default class TwitchChatService extends Service {
           }
           // !random adds a random non played/requested song to the queue:
         } else if (
-          this.takessongrequests &&
+          this.queueHandler.takesSongRequests &&
           this.currentUser.updateQueueOverlay &&
           this.currentUser.lastStream.requests &&
           String(commandName).startsWith('!random')

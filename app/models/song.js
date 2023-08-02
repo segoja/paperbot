@@ -22,7 +22,7 @@ export default class SongModel extends Model {
 
   @attr('number', { defaultValue: 0.85 }) zoomLevel;
   @attr('number', { defaultValue: 0 }) transSteps;
-  @attr('number', { defaultValue: 3 }) columns;
+  @attr('number', { defaultValue: 1 }) columns;
   @attr('boolean', { defaultValue: true }) viewMode;
 
   @hasMany('request', { async: true, inverse: 'song' }) requests;

@@ -1,7 +1,5 @@
-<span role="button" class="btn border-0 p-0 rounded-0 btn-window d-none d-lg-inline-block" {{on "click" this.toggleModal}} title="Help"><FaIcon @icon="question-circle" class="text-info" role="presentation" /></span>
-
-<div role="button" class="nav-link border-0 p-0 pt-1 rounded-0 d-inline-block d-lg-none" title="Help" {{on "click" this.toggleModal}}>
-  <span class="d-inline-block d-lg-none">Help</span>
+<div role="button" class="nav-link border-0 rounded-0 d-inline-block" title="Help" {{on "click" this.toggleModal}}>
+  <span class="d-inline-block">Help</span>
 </div>
 
 {{#in-element this.bootstrapWormhole insertBefore=null}}

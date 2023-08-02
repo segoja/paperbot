@@ -68,6 +68,22 @@ $width-sizes: (
 
 .card-body {
   min-height: auto!important;
+  &.locked { 
+    border-style: dashed!important;
+    border-color: var(--bs-primary-border-subtle)!important;
+    border-width: 0px 0px 3px 0px!important;
+    box-shadow: 0 0 .9em var(--bs-primary-border-subtle);
+    &.request{
+      box-shadow: 0 0 .9em var(--bs-info-border-subtle);
+      border-color: var(--bs-info-border-subtle)!important;
+      border-width: 0px 0px 3px 0px!important;
+    }
+    &.premium {
+      box-shadow: 0 0 .9em var(--bs-warning-border-subtle)!important;
+      border-color: var(--bs-warning-border-subtle)!important;
+      border-width: 0px 0px 3px 0px!important;
+    }
+  }
 }
 
 .dragpanel{
@@ -92,6 +108,45 @@ $width-sizes: (
   color: var(--bs-info-text-emphasis);
   background-color: var(--bs-info-bg-subtle);
   filter: opacity(1) brightness(1) contrast(1.10);
+}
+
+.alert-secondary.premium, .alert-secondary.premium button {
+  background-color: var(--bs-warning-bg-subtle);
+  filter: opacity(1) brightness(1) contrast(1) saturate(0.60);
+}
+.alert-warning.premium .handle {
+  color: var(--bs-warning-text-emphasis);
+  background-color: var(--bs-warning-bg-subtle);
+  filter: opacity(1) brightness(1) contrast(1.10);
+}
+
+.alert.playing{
+  border-style: dashed!important;
+} 
+
+.event-platform {
+  height: 1em!important;
+  width: 1em;
+  fill: var(--bs-alert-color);
+  color: var(--bs-alert-color);
+  &.streamelements { fill: var(--pb-dark-purple-text); }
+  &.youtube { fill: var(--bs-danger); }
+  &.twitch { fill: var(--pb-purple-text); }
+  &.streamlabs { fill: var(--pb-green-text); }
+  &.paperbot { fill: var(--pb-secondary-text); }
+}
+
+.request-platform {
+  height: 0.8em!important;
+  width: 0.8em;
+  fill: var(--bs-alert-color);
+  color: var(--bs-alert-color); 
+  filter: opacity(0.35);
+  &.streamelements { fill: var(--pb-dark-purple-text); }
+  &.youtube { fill: var(--bs-danger); }
+  &.twitch { fill: var(--pb-purple-text); }
+  &.streamlabs { fill: var(--pb-green-text); }
+  &.paperbot { fill: var(--pb-secondary-text); }
 }
 
 .handle:active {
@@ -202,6 +257,21 @@ button svg.stream-status {
   max-height: 100% !important;
   overflow-y: auto;
   overflow-x: hidden;
+}
+.listframe-setlist {
+  user-select: none;
+}
+.listframe-setlist.disabled{
+  pointer-events: none;
+  filter: brightness(65%);
+  animation-name: updating;
+  animation-duration: 2s;
+  animation-iteration-count: infinite
+}
+
+@keyframes updating {
+  from { filter: brightness(0.4); }
+  to { filter: brightness(1); }
 }
 
 .listheader tr th {

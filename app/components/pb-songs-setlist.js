@@ -2,7 +2,6 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { sort } from '@ember/object/computed';
 
 export default class PbStreamEditPendingComponent extends Component {
   @service globalConfig;
@@ -12,30 +11,10 @@ export default class PbStreamEditPendingComponent extends Component {
 
   constructor() {
     super(...arguments);
-    this.activeTab = 'pending';
   }
 
   willDestroy() {
     super.willDestroy(...arguments);
-    this.activeTab = 'pending';
-  }
-
-  tabList = ['pending', 'played'];
-
-  @tracked activeTab = 'pending';
-
-  queueAscSorting = Object.freeze([
-    'processed:desc',
-    'position:asc',
-    'timestamp:desc',
-  ]);
-  @sort('queueHandler.songqueue', 'queueAscSorting') arrangedAscQueue;
-
-  get setlistSongs() {
-    if (this.currentUser.showPlayed) {
-      return this.arrangedAscQueue;
-    }
-    return this.arrangedAscQueue.filter((request) => !request.processed);
   }
 
   get isRelative() {
@@ -77,9 +56,21 @@ export default class PbStreamEditPendingComponent extends Component {
   @action tabSwitch(tab) {
     // console.log(tab);
     if (tab) {
-      this.activeTab = tab;
+      this.queueHandler.activeTab = tab;
     }
-    // console.log(this.activeTab);
+    // console.log(this.queueHandler.activeTab);
+  }
+
+  @action togglePremium() {
+    this.globalConfig.config.premiumRequests =
+      !this.globalConfig.config.premiumRequests;
+    this.globalConfig.config.save();
+  }
+
+  @action toggleSorting() {
+    this.globalConfig.config.premiumSorting =
+      !this.globalConfig.config.premiumSorting;
+    this.globalConfig.config.save();
   }
 
   @action togglePlayed() {

@@ -2,6 +2,29 @@
 {{did-update this.setActiveSong this.queueHandler.pendingSongs}}
 {{did-update this.setActiveSong this.selected}}
 
+<PbTopbarBtn @type="outline-secondary text-info" @buttonTitle="Keyboard Shortcuts" @btnIcon="question-circle" @btnText="">
+  <div class="row">
+    <div class="col">
+      <p class="text-start">
+        Next. Song: "Ctrl"+"."<br>
+        Prev. Song: "Ctrl"+","<br>
+        Lock Song: "Ctrl"+"L"<br>
+        <br>  
+        Edit Song: "Ctrl"+"Shift"+"E"<br>
+        Save Song: "Ctrl"+"Alt"+"S"<br>
+        Auto adjust: "Ctrl"+"M"<br>
+        <br>
+        Zoom In: "Ctrl"+"Arrow Up"<br>
+        Zoom Out: "Ctrl"+"Arrow Down"<br>
+        More Columns: "Ctrl"+"Arrow Right"<br>
+        Less Columns: "Ctrl"+"Arrow Left"<br>
+        Transpose Up: "Alt"+"Arrow Up"<br>
+        Transpose Down: "Alt"+"Arrow Down"<br>
+      </p>                
+    </div>
+  </div>
+</PbTopbarBtn>
+
 <div class="row h-100 flex-fill m-0 p-0">
   <div class="col-12 h-100 flex-fill p-0 m-0"> 
       {{!-- song listing --}}
@@ -9,39 +32,21 @@
         <div class="card-header px-2">
           <div class="row g-1">
             <div class="col">
-              <div class="input-group">
+              <div class="input-group g-0">
                 <div class="col">
                   <PowerSelect @searchEnabled={{true}} @search={{this.searchSong}} @searchMessage="" @options="" @searchPlaceholder="Type a song" @selected={{this.selected}}  @searchClass="form-control w-100" @triggerClass="rounded-end-0" id="selectReader" @allowClear={{false}} @onChange={{this.selectSong}} @placeholder={{this.currentSong}} @placeholderComponent={{component "song-select-placeholder"}} as |song|>
                     <span class="overflow-hidden"><strong>{{song.title}}</strong> {{#if song.artist}}- <span class="text-secondary">{{song.artist}}</span>{{/if}}</span>
                   </PowerSelect>
                 </div>
                 <div class="col-auto">
-                  <BsButton @type="secondary rounded-start-0" @onClick={{this.clearSelect}} disabled={{not this.selected}} title="Clear selection">
+                  <BsButton @type="secondary rounded-0" @onClick={{this.clearSelect}} disabled={{not this.selected}} title="Clear selection">
                     <FaIcon @icon="cancel" />
                   </BsButton>
                 </div>
                 <div class="col-auto">
-                  <PbModal @btnClass="outline-secondary col-auto mx-1" @buttonTitle="Keyboard Shortcuts" @btnIcon="question-circle" @btnText="">
-                    <div class="row">
-                      <div class="col">
-                        <p class="text-start">
-                          Next. Song: "Ctrl"+"."<br>
-                          Prev. Song: "Ctrl"+","<br>
-                          <br>  
-                          Edit Song: "Ctrl"+"Shift"+"E"<br>
-                          Save Song: "Ctrl"+"Alt"+"S"<br>
-                          Auto adjust: "Ctrl"+"M"<br>
-                          <br>
-                          Zoom In: "Ctrl"+"Arrow Up"<br>
-                          Zoom Out: "Ctrl"+"Arrow Down"<br>
-                          More Columns: "Ctrl"+"Arrow Right"<br>
-                          Less Columns: "Ctrl"+"Arrow Left"<br>
-                          Transpose Up: "Alt"+"Arrow Up"<br>
-                          Transpose Down: "Alt"+"Arrow Down"<br>
-                        </p>                
-                      </div>
-                    </div>
-                  </PbModal>
+                  <BsButton @type="secondary rounded-start-0" @onClick={{this.togglePlaying}} disabled={{this.selected}} title="Lock/Unlock song">
+                    <FaIcon @icon={{if this.activeRequest.isPlaying "lock" "unlock"}} />
+                  </BsButton>                  
                 </div>
                 <div class="col-auto">
                   <button type="button" class="btn btn-secondary col-auto ms-1" {{on "click" this.toggleEdit}} disabled={{not this.currentSong}} title="Edit lyrics"><FaIcon @icon={{if this.isEditing "eye" "pen"}} /></button>
@@ -75,6 +80,24 @@
                 <BsButton @type="{{this.btnState}} btn-sm col-auto" disabled={{not this.currentSong.hasDirtyAttributes}} @onClick={{this.doneEditing}} title="Save song">
                   <FaIcon @icon="save" @pulse={{this.saving}} />
                 </BsButton>
+                <BsButton @type="info btn-sm col-auto ms-1 ps-1" @onClick={{this.toggleSetlist}} title="Queue/Setlist manager">
+                  <div class="row g-0">
+                    <div class="col-auto">
+                    {{svg-jar (if this.isSetlist "setlist-close" "setlist-open") class="setlist-icon align-middle ms-1" }}
+                    </div>
+                    <div class="col-auto">
+                      {{#unless this.isSetlist}}
+                        {{#if this.queueHandler.pendingSongs}}
+                          <span class="position-relative opacity-75">
+                            <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
+                              {{this.queueHandler.pendingSongs.length}}
+                            </small>
+                          </span>
+                        {{/if}}
+                      {{/unless}}
+                    </div>
+                  </div> 
+                </BsButton>              
               </div>
             </div>            
             <div class="d-none d-lg-block col-lg-auto">
@@ -104,12 +127,30 @@
                 <BsButton @type="{{this.btnState}}  col-auto" @class={{this.currentSong.hasDirtyAttributes "btn-warning pulse"}} disabled={{not this.currentSong.hasDirtyAttributes}} @onClick={{this.doneEditing}} title="Save song">
                   <FaIcon @icon="save" @pulse={{this.saving}} />
                 </BsButton>
+                <BsButton @type="info col-auto ms-1 ps-1" @onClick={{this.toggleSetlist}} title="Queue/Setlist manager">
+                  <div class="row g-0">
+                    <div class="col-auto">
+                    {{svg-jar (if this.isSetlist "setlist-close" "setlist-open") class="setlist-icon align-middle ms-1" }}
+                    </div>
+                    <div class="col-auto">
+                      {{#unless this.isSetlist}}
+                        {{#if this.queueHandler.pendingSongs}}
+                          <span class="position-relative opacity-75">
+                            <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
+                              {{this.queueHandler.pendingSongs.length}}
+                            </small>
+                          </span>
+                        {{/if}}
+                      {{/unless}}
+                    </div>
+                  </div> 
+                </BsButton>
               </div>
             </div>
           </div>
         </div>
         {{#if this.isEditing}}
-          <div class="card-body mx-0 p-0 flex-fill">
+          <div class="card-body mx-0 p-0 flex-fill" id="bodycontainer">
             <div class="row flex-fill h-100">
               <div class="col-12 flex-fill px-4">
                 <div class="form-group row py-2 flex-fill h-100">            
@@ -120,8 +161,8 @@
               </div>
             </div>
           </div>
-        {{else}}         
-          <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden" id="bodycontainer" {{on "touchstart" this.swipeQueue}} {{on "touchend" this.swipeQueue}}>
+        {{else}}
+          <div class="card-body mx-0 p-0 flex-fill h-100 overflow-hidden {{if this.isLocked "locked"}} {{if this.selected "selected" "request"}} {{if this.activeRequest.isPremium "premium"}}" id="bodycontainer" {{on "touchstart" this.swipeQueue}} {{on "touchend" this.swipeQueue}}>
             <div class="row m-0 flex-fill mh-100 listframe-reader">
                 {{#if this.restore}}
                   {{#if this.currentSong}}
@@ -153,8 +194,17 @@
       </div>
   </div>
 </div>
+<PbSongsSetlistOffc 
+  @toggleSetlist={{this.toggleSetlist}}
+  @isSetlist={{this.isSetlist}}
+  @isReader={{true}}
+  @isStream={{false}}
+  @offcClass="pt-offc-custom border-0 bg-transparent px-0"
+/>
+
 {{on-key "ctrl+Period" this.queueHandler.nextSong}}
 {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
+{{on-key "ctrl+KeyL" this.togglePlaying}}
 
 {{on-key "ctrl+shift+KeyE" this.toggleEdit}}
 {{on-key "ctrl+alt+KeyS" this.doneEditing}}

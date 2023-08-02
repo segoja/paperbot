@@ -24,7 +24,7 @@
               </span>
               <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @placement="top" @triggerElement="#external-api-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
                 <div role="dialog" class="p-2 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-                  <p class="my-0">Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/apisettings" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>StreamElements</a></p>
+                  <p class="my-0">Get your Socket API Token from <a href="https://streamlabs.com/dashboard#/settings/api-settings" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Streamlabs</a> or <a href="https://streamelements.com/dashboard/account/channels"  target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>StreamElements</a></p>
                 </div>
               </BsPopover>
             </div>
@@ -179,14 +179,13 @@
                 <form.element @controlType="number" @formLayout="inline" class="w-100" @label="Number of elements" placeholder="5" @property="overlayLength" required />
               {{/if}}
             </div>
-          </div>
-          
+          </div>          
           <div class="form-group row">
             <div class="col"><hr></div>
           </div>
           <div class="d-block pb-2 h-5">Timers settings:</div>
           <div class="form-group row pb-2">
-            <label class="col-md-4">Chat lines between:</label>    
+            <label class="col-md-4">Chat lines between</label>    
             <div class="col-sm">
               <div class="input-group border rounded">
                 <Input @type="range" min="1" max="100" aria-label="Time between" @value={{this.globalConfig.config.timerLines}} class="form-control btn-secondary slider w-75 border-0" />
@@ -195,14 +194,21 @@
             </div>
           </div>
           <div class="form-group row pb-2">
-            <label class="col-md-4">Time between (minutes):</label>    
+            <label class="col-md-4">Time between (minutes)</label>    
             <div class="col-sm">
               <div class="input-group border rounded">
                 <Input @type="range" min="1" max="100" aria-label="Time between" @value={{this.globalConfig.config.timerTime}} class="form-control btn-secondary slider w-75 border-0" />
                 <Input @type="text" @value={{this.globalConfig.config.timerTime}} aria-label="Time between" class="form-control w-25 border-0 border-start" />
               </div>
             </div>
-          </div>          
+          </div>
+          <div class="form-group row">
+            <div class="col"><hr></div>
+          </div>
+          <div class="d-block pb-2 h-5">Premium request settings:</div>
+          <form.element @controlType="text" @label="Money threshold for premium" placeholder="Amount (only number)" @property="premiumThreshold" autocomplete="cost" required />
+          <form.element @controlType="checkbox" @label="Allow premium requests" @property="premiumRequests" required @formLayout="inline" class="p-0 m-0 d-block" />
+          <form.element @controlType="checkbox" @label="Premium sorting" @property="premiumSorting" required @formLayout="inline" class="p-0 m-0 d-block" />   
           <div class="form-group row">
             <div class="col"><hr></div>
           </div>

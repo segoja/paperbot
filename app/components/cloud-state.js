@@ -1,8 +1,12 @@
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 
-export default class CloudStateComponent extends Component {
+export default class PbCloudComponent extends Component {
   @service cloudState;
+  @service globalConfig;
+  @service currentUser;
+  @service session;
+  @service store;
 
   get isOnline() {
     return this.cloudState.online;
@@ -50,12 +54,21 @@ export default class CloudStateComponent extends Component {
   }
 
   get cloudText() {
+    if (!this.globalConfig.config.canConnect) {
+      return 'Cloud settings | Status: Not configured';
+    }
     if (this.isOnline & this.isCloudSynced & this.isLocalSynced) {
-      return 'Connected and synced';
+      return 'Cloud settings | Status: Connected and synced';
     }
     if (this.isOnline) {
-      return 'Connected but not synced';
+      return 'Cloud settings | Status: Connected but not synced';
     }
-    return 'Offline';
+    return 'Cloud settings | Status: Offline';
   }
+
+  get showUp() {
+    return this.visible;
+  }
+
+  cloudTypes = Object.freeze(['disabled', 'cloudstation', 'custom']);
 }

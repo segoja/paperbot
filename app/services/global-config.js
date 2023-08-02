@@ -75,9 +75,11 @@ export default class GlobalConfigService extends Service {
     if (shaOnly) {
       match = version.match(shaRegExp); // 4jds75hf
     }
+    /*
+    // No need for now.
     if (!this.currentUser.isTauri) {
       this.checkLatestVersion(version);
-    }
+    }*/
     return match ? match[0] : version;
   }
 
@@ -98,6 +100,7 @@ export default class GlobalConfigService extends Service {
       // Return the first one
 
       remoteV = tags[0].name;
+      // The following lines create reload loops sometimes, so disabled for now.
       let update = this.compareVersions(localV, remoteV);
       if (update == -1) {
         let origin = window.location.origin;

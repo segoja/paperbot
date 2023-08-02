@@ -9,6 +9,10 @@ export default class ConfigModel extends Model {
   @attr('string', { defaultValue: '' }) externalevents;
   @attr('string', { defaultValue: '' }) externaleventskey;
 
+  @attr('boolean', { defaultValue: true }) premiumRequests;
+  @attr('number', { defaultValue: 5 }) premiumThreshold;
+  @attr('boolean', { defaultValue: false }) premiumSorting;
+
   @attr songQueue;
 
   @attr('string', { defaultValue: '' }) lastPlayed;

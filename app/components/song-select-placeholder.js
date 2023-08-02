@@ -11,18 +11,33 @@ export default class SoundboardLoadingComponent extends Component {
     this.showBar = false;
   }
 
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.activeSong = [];
+    this.sPremium = false;
+    this.isPlaying = false;
+  }
+
   @tracked activeSong = [];
+  @tracked isPremium = false;
+  @tracked isPlaying = false;
+
+  @tracked donationFormatted = '';
 
   @action setActiveSong() {
     let requests = this.queueHandler.pendingSongs;
     if (requests.length > 0) {
       let first = requests.find((item) => item !== undefined);
       if (first) {
+        this.isPremium = first.isPremium;
+        this.isPlaying = first.isPlaying;
+        this.donationFormatted = first.donationFormatted || '';
         first.get('song').then((song) => {
           if (song) {
             this.activeSong = song;
             console.debug('First request active...');
           } else {
+            this.activeSong = '';
             console.debug(
               'The first pending request in queue has no lyrics available.'
             );

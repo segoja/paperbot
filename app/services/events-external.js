@@ -7,6 +7,7 @@ import { sort } from '@ember/object/computed';
 
 export default class EventsExternalService extends Service {
   @service globalConfig;
+  @service queueHandler;
   @service store;
 
   @tracked type = null;
@@ -15,13 +16,7 @@ export default class EventsExternalService extends Service {
 
   // @tracked connected = false;
 
-  get connected() {
-    if (this.client != null) {
-      return !this.client.disconnected;
-    } else {
-      return false;
-    }
-  }
+  @tracked connected = false;
 
   @action createClient() {
     if (
@@ -53,7 +48,7 @@ export default class EventsExternalService extends Service {
   }
 
   @action streamElementEvents(client, token) {
-    client.on('connect', function () {
+    client.on('connect', () => {
       console.debug('Successfully connected to the websocket');
       client.emit('authenticate', {
         method: 'jwt',
@@ -62,17 +57,18 @@ export default class EventsExternalService extends Service {
     });
 
     // Socket got disconnected
-    client.on('disconnect', function () {
+    client.on('disconnect', () => {
       console.debug('Disconnected from websocket');
+      this.connected = false;
       //this.set('connected', false);
       // Reconnect
     });
 
     // Socket is authenticated
-    client.on('authenticated', function (data) {
+    client.on('authenticated', (data) => {
       var { channelId } = data;
       //this.set('connected', true);
-      console.debug(this.connected);
+      this.connected = true;
       console.debug(`Successfully connected to channel ${channelId}`);
     });
 
@@ -373,31 +369,47 @@ export default class EventsExternalService extends Service {
 
   @action streamLabsEvents(client) {
     console.debug('Connecting to streamlabs...');
-    client.on('connect', function () {
+    client.on('connect', () => {
       console.debug('Successfully connected to the websocket');
+      this.connected = client.connected;
     });
 
-    client.on('disconnect', function (err) {
+    client.on('disconnect', (err) => {
       console.debug('Disconnected from websocket');
+      this.connected = false;
       console.debug(err);
     });
 
-    client.on('error', function (err) {
+    client.on('error', (err) => {
       console.debug(err);
     });
 
     client.on('event', (data) => {
-      // console.debug(event);
+      console.debug('SLAB Data: ', data);
       try {
         if (Array.isArray(data.message)) {
           data.message.forEach((event) => {
+            //console.log(event);
             var outputmessage = '';
             var type = '';
+            event.id = data.event_id;
+            if (data.for) {
+              if (data.for.includes('youtube')) {
+                event.platform = 'youtube';
+              } else if (data.for.includes('twitch')) {
+                event.platform = 'twitch';
+              } else {
+                event.platform = data.for || 'streamlabs';
+              }
+            } else {
+              event.platform = 'streamlabs';
+            }
+
             switch (data.type) {
               case 'follow': {
                 outputmessage = event.name + ' has followed.';
                 type = 'follow';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, 'labs');
                 break;
               }
               case 'subscription': {
@@ -416,7 +428,7 @@ export default class EventsExternalService extends Service {
                 }
                 outputmessage = event.name + ' has subscribed (' + tier + ').';
                 type = 'sub';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, 'labs');
                 break;
               }
               case 'resub': {
@@ -453,19 +465,21 @@ export default class EventsExternalService extends Service {
                     ' months!';
                 }
                 type = 'resub';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, 'labs');
                 break;
               }
               case 'donation': {
                 outputmessage =
                   event.from + ' donated ' + event.formatted_amount + '!';
+                // console.log(event);
                 if (event.message) {
                   outputmessage = outputmessage.concat(
                     ' Message: ' + event.message
                   );
                 }
                 type = 'donation';
-                this.eventHandler(outputmessage, type);
+
+                this.eventHandler(outputmessage, type, event, 'labs');
                 break;
               }
               case 'merch': {
@@ -476,7 +490,7 @@ export default class EventsExternalService extends Service {
                   );
                 }
                 type = 'merch';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, 'labs');
                 break;
               }
 
@@ -495,7 +509,7 @@ export default class EventsExternalService extends Service {
                     ' viewer!';
                 }
                 type = 'host';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, 'labs');
                 break;
               }
 
@@ -514,7 +528,7 @@ export default class EventsExternalService extends Service {
                     ' raider!';
                 }
                 type = 'raid';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, 'labs');
                 break;
               }
 
@@ -527,7 +541,27 @@ export default class EventsExternalService extends Service {
                   );
                 }
                 type = 'cheer';
-                this.eventHandler(outputmessage, type);
+                this.eventHandler(outputmessage, type, event, 'labs');
+                break;
+              }
+
+              // Youtube events:
+
+              case 'superchat': {
+                outputmessage =
+                  event.name +
+                  ' sent a ' +
+                  event.displayString +
+                  ' super chat!';
+                // console.log(event);
+                if (event.comment) {
+                  outputmessage = outputmessage.concat(
+                    ' Message: ' + event.comment
+                  );
+                }
+                type = 'superchat';
+
+                this.eventHandler(outputmessage, type, event, 'labs');
                 break;
               }
               default: {
@@ -558,28 +592,83 @@ export default class EventsExternalService extends Service {
   }
 
   @tracked lastevent = '';
-  @action eventHandler(event, type) {
-    let nextEvent = this.store.createRecord('event');
+  @action eventHandler(outputmessage, type, event, provider) {
+    this.store
+      .query('event', {
+        filter: { externalId: event.id },
+      })
+      .then((exist) => {
+        if (exist.length == 0) {
+          // console.debug('Event: ', event);
+          let nextEvent = this.store.createRecord('event');
 
-    nextEvent.eventId = 'event';
-    nextEvent.timestamp = new Date();
-    nextEvent.parsedbody = this.parseMessage(event, []).toString();
-    nextEvent.user = 'event';
-    nextEvent.displayname = 'event';
-    (nextEvent.color = '#cccccc'),
-      (nextEvent.csscolor = htmlSafe('color = #cccccc'));
-    nextEvent.badges = null;
-    nextEvent.htmlbadges = '';
-    if (type) {
-      nextEvent.type = 'event-' + type.toString();
-    } else {
-      nextEvent.type = 'event';
-    }
-    nextEvent.usertype = null;
-    nextEvent.reward = false;
-    nextEvent.emotes = null;
+          nextEvent.eventId = 'event';
+          nextEvent.timestamp = new Date();
+          nextEvent.parsedbody = this.parseMessage(
+            outputmessage,
+            []
+          ).toString();
+          nextEvent.user = 'event';
+          nextEvent.displayname = 'event';
+          nextEvent.color = '#cccccc';
+          nextEvent.csscolor = htmlSafe('color = #cccccc');
+          nextEvent.badges = null;
+          nextEvent.htmlbadges = '';
+          if (type) {
+            nextEvent.type = 'event-' + type.toString();
+          } else {
+            nextEvent.type = 'event';
+          }
+          nextEvent.usertype = null;
+          nextEvent.reward = false;
+          nextEvent.emotes = null;
+          nextEvent.externalId = event.id;
+          nextEvent.platform = event.platform;
 
-    nextEvent.save();
+          // nextEvent.save();
+          // If there is money involved we send an external song request
+          if (type == 'donation') {
+            if (event.amount > 0 && provider == 'labs') {
+              let amount = event.formatted_amount.substring(1);
+              let dspA = event.formatted_amount.replace(
+                /(\.[0-9]*[1-9])0+$|\.0*$/,
+                '$1'
+              );
+              let donodata = {
+                id: event.id,
+                user: event.name,
+                fullname: event.from,
+                amount: amount,
+                formattedAmount: dspA,
+                message: event.message,
+                platform: event.platform,
+              };
+
+              this.queueHandler.externalToQueue(donodata);
+            }
+          }
+          if (type == 'superchat') {
+            if (event.amount > 0 && provider == 'labs') {
+              let amount = event.displayString.substring(1);
+              let dspA = event.displayString.replace(
+                /(\.[0-9]*[1-9])0+$|\.0*$/,
+                '$1'
+              );
+              let donodata = {
+                id: event.id,
+                user: event.name,
+                fullname: event.name,
+                amount: amount,
+                formattedAmount: dspA,
+                message: event.comment,
+                platform: event.platform,
+              };
+
+              this.queueHandler.externalToQueue(donodata);
+            }
+          }
+        }
+      });
   }
 
   @action parseMessage(text, emotes) {
@@ -592,7 +681,7 @@ export default class EventsExternalService extends Service {
           mote = mote.split('-');
           mote = [parseInt(mote[0]), parseInt(mote[1])];
           var length = mote[1] - mote[0],
-            empty = Array.apply(null, new Array(length + 1)).map(function () {
+            empty = Array.apply(null, new Array(length + 1)).map(() => {
               return '';
             });
           splitText = splitText

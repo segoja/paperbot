@@ -6,6 +6,7 @@ import moment from 'moment';
 
 export default class PbReaderComponent extends Component {
   @service globalConfig;
+  @service queueHandler;
 
   constructor() {
     super(...arguments);
@@ -16,7 +17,7 @@ export default class PbReaderComponent extends Component {
 
   get pendingRequests() {
     let count = 0;
-    return this.arrangedContent.filter((request) => {
+    return this.queueHandler.pendingSongs.filter((request) => {
       if (
         !request.processed &&
         count < this.globalConfig.config.overlayLength
