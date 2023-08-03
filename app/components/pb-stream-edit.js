@@ -202,7 +202,6 @@ export default class PbStreamEditComponent extends Component {
               platform: event.platform,
               type: event.type,
               timestamp: event.timestamp,
-              platform: event.platform,
               parsedbody: event.parsedbody,
             };
             this.args.stream.eventlog.push(entry);

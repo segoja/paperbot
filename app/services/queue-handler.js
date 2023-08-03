@@ -129,8 +129,8 @@ export default class QueueHandlerService extends Service {
         }
       });
     }
-  }  
-  
+  }
+
   @action async removePending(request) {
     let song = await request.get('song');
     await request.destroyRecord().then(async () => {
