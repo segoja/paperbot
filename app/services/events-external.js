@@ -625,7 +625,7 @@ export default class EventsExternalService extends Service {
           nextEvent.externalId = event.id;
           nextEvent.platform = event.platform;
 
-          // nextEvent.save();
+          nextEvent.save();
           // If there is money involved we send an external song request
           if (type == 'donation') {
             if (event.amount > 0 && provider == 'labs') {

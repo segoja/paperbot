@@ -75,7 +75,7 @@
       </div>
       <div class="col-auto">
         <div class="row g-0 h-100">
-          <BsButton class="btn-sm col-12 col-sm border rounded-0 h-100 ps-2 pe-3" @type={{if this.globalConfig.config.cpansetlist "info" "secondary"}} @onClick={{this.toggleSetlist}} title={{if this.globalConfig.config.cpansetlist "Hide setlist/queue" "Show setlist/queue"}}>
+          <BsButton class="btn-sm col-12 col-sm border rounded-0 h-100 ps-2 pe-3" @type={{if this.globalConfig.config.cpansetlist "info" "secondary"}} @onClick={{this.toggleSetlist}} title={{if this.globalConfig.config.cpansetlist "Hide setlist/queue" "Show setlist/queue"}} disabled={{if (or (not this.isConnected) @stream.finished) true}}>
             <div class="row g-0">
               <div class="col-auto">
                 {{svg-jar (if this.globalConfig.config.cpansetlist "setlist-close" "setlist-open") class="setlist-icon align-middle" }}
@@ -96,11 +96,11 @@
       {{/if}}
     {{/unless}}
   </div>
+  {{#unless @stream.finished}}
+    {{#if this.isConnected}}
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <div class="row flex-fill d-flex h-100 g-0 overflow-hidden">
           <div class="col h-100 border-0 border-top m-0 p-0 position-relative w-effects">
-          {{#unless @stream.finished}}
-            {{#if this.isConnected}}
               <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents (if this.globalConfig.config.cpanmessages (if this.twitchChat.botConnected "h-35" "h-100") "h-full-events")) "d-none"}} border h-effects">
                 <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
                   <PbStreamEditEvents @stream={{@stream}} />
@@ -119,8 +119,6 @@
                 {{on-key "ctrl+KeyQ" this.queueHandler.modPressed event="keypress"}} 
                 {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}
               {{/if}}
-            {{/if}}
-          {{/unless}}
           </div>
           <div class={{if this.globalConfig.config.cpansetlist "d-none d-md-block col-md-6 col-lg-4 h-100 border m-0 p-0 w-effects" "d-none w-effects"}}>
             <PbSongsSetlist @isStream={{true}} />
@@ -128,4 +126,6 @@
           <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @isStream={{true}} @isSetlist={{this.globalConfig.config.cpansetlist}} @offcClass="d-md-none pt-offc-custom-stream border-0 bg-transparent px-0" />
         </div>
       </div>
+    {{/if}}
+  {{/unless}}
 {{/if}}
