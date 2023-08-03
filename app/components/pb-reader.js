@@ -4,6 +4,7 @@ import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import { later } from '@ember/runloop';
+import { sort } from '@ember/object/computed';
 import * as Transposer from 'chord-transposer';
 
 export default class PbReaderComponent extends Component {
@@ -35,8 +36,11 @@ export default class PbReaderComponent extends Component {
   @tracked isSetlist = false;
   @tracked isEditing = false;
 
+  songsSorting = Object.freeze(['date_added:asc']);
+  @sort('args.songs', 'songsSorting') arrangedContent;
+
   @computedFilterByQuery(
-    'queueHandler.songList',
+    'arrangedContent',
     ['title', 'artist', 'keywords'],
     'songQuery',
     { conjunction: 'and', sort: false, limit: 20 }

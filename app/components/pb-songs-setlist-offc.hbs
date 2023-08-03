@@ -155,11 +155,9 @@
                     </button>
                   </div>
                   <div class="row g-0">
-                    <div class="col text-center">
-                      {{#if pendingsong.platform}}
-                        {{svg-jar pendingsong.platform class=(concat "request-platform align-middle " pendingsong.platform)}}
-                      {{/if}}
-                    </div>
+                    <button type="button" class="col btn btn-sm handle border-0 my-1 {{if pendingsong.isPlaying "unlock" "lock"}} bg-transparent" title="Lock/Unlock request" {{on "click" (fn this.queueHandler.togglePlaying pendingsong)}}>
+                      <FaIcon @icon={{if pendingsong.isPlaying "lock" "unlock"}} @size="1x" class="d-block" />
+                    </button>
                   </div>
                 </div>                 
               </div> 

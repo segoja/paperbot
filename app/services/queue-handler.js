@@ -116,6 +116,21 @@ export default class QueueHandlerService extends Service {
   }
 
   // Buttons
+  @action togglePlaying(request) {
+    if (request) {
+      this.arrangedAscQueue.map((item) => {
+        if (item.id === request.id) {
+          item.isPlaying = !item.isPlaying;
+        } else {
+          item.isPlaying = false;
+        }
+        if (item.hasDirtyAttributes) {
+          item.save();
+        }
+      });
+    }
+  }
+
   @action async removePending(request) {
     let song = await request.get('song');
     await request.destroyRecord().then(async () => {

@@ -103,21 +103,48 @@ $width-sizes: (
   color: var(--bs-secondary-text-emphasis);
   background-color: var(--bs-secondary-bg-subtle);
   filter: opacity(1) brightness(1) contrast(1.10);
+  &.lock { filter: opacity(0.45) }
+  &.unlock { filter: opacity(1) }
 }
 .alert-info .handle {
   color: var(--bs-info-text-emphasis);
   background-color: var(--bs-info-bg-subtle);
   filter: opacity(1) brightness(1) contrast(1.10);
+  &.lock { filter: opacity(0.45) }
+  &.unlock { filter: opacity(1) }
 }
 
 .alert-secondary.premium, .alert-secondary.premium button {
   background-color: var(--bs-warning-bg-subtle);
   filter: opacity(1) brightness(1) contrast(1) saturate(0.60);
+  &.lock { filter: opacity(0.45) }
+  &.unlock { filter: opacity(1) }
 }
+
 .alert-warning.premium .handle {
   color: var(--bs-warning-text-emphasis);
   background-color: var(--bs-warning-bg-subtle);
   filter: opacity(1) brightness(1) contrast(1.10);
+  &.lock { filter: opacity(0.45) }
+  &.unlock { filter: opacity(1) }
+}
+
+.alert-light.premium {
+  background-color: var(--bs-warning-bg-subtle);
+  color: var(--bs-warning-text-emphasis);
+  filter: opacity(1) brightness(1) contrast(1) saturate(0.60);
+  &.lock { filter: opacity(0.45) }
+  &.unlock { filter: opacity(1) }
+}
+
+.alert-info.premium, .alert-secondary.premium {
+  color: var(--bs-warning-text-emphasis);
+  background-color: var(--bs-warning-bg-subtle);
+  border-color: var(--bs-warning-border-subtle);
+}
+
+.alert.nonplayed{
+  filter: opacity(1) saturate(0.5) ;
 }
 
 .alert.playing{

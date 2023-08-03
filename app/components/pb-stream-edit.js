@@ -58,7 +58,8 @@ export default class PbStreamEditComponent extends Component {
     if (
       this.args.stream.botclient === '' &&
       this.args.stream.channel === '' &&
-      !this.canEvents
+      !this.canEvents &&
+      !this.isConnected
     ) {
       return true;
     }
@@ -168,6 +169,9 @@ export default class PbStreamEditComponent extends Component {
             timestamp: request.timestamp,
             song: request.fullText,
             user: request.user,
+            premium: request.isPremium,
+            donation: request.donationFormatted,
+            platform: request.platform,
             processed: request.processed,
           };
           this.args.stream.songqueue.push(entry);
@@ -179,6 +183,9 @@ export default class PbStreamEditComponent extends Component {
             timestamp: request.timestamp,
             song: request.fullText,
             user: request.user,
+            premium: request.isPremium,
+            donation: request.donationFormatted,
+            platform: request.platform,
             processed: request.processed,
           };
           this.args.stream.songqueue.push(entry);
