@@ -55,6 +55,13 @@ export default class PbReaderComponent extends Component {
     this.isSetlist = !this.isSetlist;
   }
 
+  @action closeSetlist() {
+    if (this.isSetlist) {
+      this.isSetlist = false;
+      console.debug('Closing setlist...');
+    }
+  }
+
   @action clearSelect() {
     this.selected = null;
   }

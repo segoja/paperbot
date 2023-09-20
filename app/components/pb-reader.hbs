@@ -155,7 +155,7 @@
               <div class="col-12 flex-fill px-4">
                 <div class="form-group row py-2 flex-fill h-100">            
                   <div class="col-sm">   
-                    <Textarea @value={{this.currentSong.lyrics}} aria-label="Lyrics/tab" class="form-control h-100" placeholder="Write/paste your lyrics/tab here." rows="1" />
+                    <Textarea @value={{this.currentSong.lyrics}} aria-label="Lyrics/tab" class="form-control h-100 lyrics-editor" placeholder="Write/paste your lyrics/tab here." rows="1" />
                   </div>
                 </div>
               </div>
@@ -200,6 +200,7 @@
   @isReader={{true}}
   @isStream={{false}}
   @offcClass="pt-offc-custom border-0 bg-transparent px-0"
+  @closeSetlist={{this.closeSetlist}}
 />
 
 {{on-key "ctrl+Period" this.queueHandler.nextSong}}

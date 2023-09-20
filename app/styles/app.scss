@@ -745,7 +745,6 @@ svg.setlist-icon {
   /* max-height: 75%!important; */
   column-gap: 40px;
   white-space: normal;
-  font-family: var(--bs-font-monospace);
   direction: ltr /* rtl:ignore */;
   /* white-space: pre-wrap; */
   word-break: break-word;
@@ -753,7 +752,8 @@ svg.setlist-icon {
   margin: 1em 0px;
   hr { visibility: hidden; }
   strong { color: #09f; }
-  
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: var(--bs-font-monospace);
   .phrase .chords-row, .chords-row { display: inline-block;  width: 100%; line-break: strict; white-space: break-spaces; word-break: break-word; ::after { } }
   .phrase .lyrics-row, .lyrics-row { display: inline-block;  width: 100%; line-break: strict; white-space: break-spaces; word-break: break-word; }
   
@@ -794,6 +794,10 @@ svg.setlist-icon {
   margin: 1em 0px;
   @include media-breakpoint-down(xl) { column-count: 2; }  
   @include media-breakpoint-down(lg) { column-count: 1; } 
+}
+
+.lyrics-editor {
+  font-family: var(--bs-font-monospace)!important;  
 }
 
 .spinner { padding-top: 2px; margin-left: 8px; margin-right: 8px; }
