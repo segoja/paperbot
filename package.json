@@ -1,6 +1,6 @@
 {
   "name": "paperbot",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "private": true,
   "description": "A simple chat bot for Twitch musicians",
   "keywords": [
@@ -80,6 +80,7 @@
     "ember-cli-sass": "^11.0.1",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-terser": "^4.0.2",
+    "ember-click-outside": "^6.0.1",
     "ember-concurrency": "^2.3.7",
     "ember-cp-validations": "^5.0.0",
     "ember-data": "~4.8.8",
