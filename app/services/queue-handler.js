@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { sort, uniqBy } from '@ember/object/computed';
 import { invoke } from '@tauri-apps/api';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { TrackedArray } from 'tracked-built-ins';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 
@@ -221,7 +221,7 @@ export default class QueueHandlerService extends Service {
         setlist = setlist + '- ' + request.effectiveTitle + '\n';
       });
 
-      let filename = moment().format('YYYYMMDD-HHmmss') + '-setlist.txt';
+      let filename = dayjs().format('YYYYMMDD-HHmmss') + '-setlist.txt';
 
       this.currentUser.download(setlist, filename, 'text/plain');
     }
@@ -539,7 +539,7 @@ export default class QueueHandlerService extends Service {
           visible.forEach((pendingsong) => {
             title = pendingsong.effectiveTitle;
             artist = pendingsong.effectiveArtist;
-            time = moment(pendingsong.timestamp).format('YYYY/MM/DD HH:mm:ss');
+            time = dayjs(pendingsong.timestamp).format('YYYY/MM/DD HH:mm:ss');
             user = pendingsong.user;
             let entry =
               this.globalConfig.config.get('defOverlay.qItems') || defaultEntry;

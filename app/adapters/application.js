@@ -1,5 +1,5 @@
 // import config from '../config/environment';
-import { Adapter } from 'ember-pouch';
+import Adapter from './pouch';
 // import { assert } from '@ember/debug';
 // import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';

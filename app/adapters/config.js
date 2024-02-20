@@ -1,4 +1,4 @@
-import { Adapter } from 'ember-pouch';
+import Adapter from './pouch';
 import { inject as service } from '@ember/service';
 
 import PouchDB from 'pouchdb-core';

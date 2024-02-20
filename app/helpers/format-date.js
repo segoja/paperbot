@@ -1,6 +1,6 @@
 import { helper } from '@ember/component/helper';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default helper(function ([value]) {
-  return moment(value).format('DD/MM/YY hh:mm:ss');
+  return dayjs(value).format('DD/MM/YY hh:mm:ss');
 });

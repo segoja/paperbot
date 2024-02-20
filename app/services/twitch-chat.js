@@ -2,8 +2,7 @@ import Service, { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { htmlSafe } from '@ember/template';
 import { action } from '@ember/object';
-import { assign } from '@ember/polyfills';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import tmi from 'tmi.js';
 import emoteParser from 'tmi-emote-parse';
@@ -110,7 +109,7 @@ export default class TwitchChatService extends Service {
     // console.debug(this.globalBadges);
     // console.debug(this.channelBadges);
     if (this.channelBadges > 0) {
-      pack = assign(this.globalBadges, this.channelBadges);
+      pack = Object.assign(this.globalBadges, this.channelBadges);
     }
     return pack;
   }
@@ -396,7 +395,7 @@ export default class TwitchChatService extends Service {
 
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
-      timestamp: moment().format(),
+      timestamp: dayjs().format(),
       body: msg ? msg.toString() : null,
       parsedbody: this.parseMessage(msg.toString(), tags['emotes']).toString(),
       user: tags['username'] ? tags['username'].toString() : this.botUsername,
@@ -1679,7 +1678,7 @@ export default class TwitchChatService extends Service {
   @action chateventHandler(notice) {
     this.lastmessage = {
       id: 'system',
-      timestamp: moment().format(),
+      timestamp: dayjs().format(),
       body: null,
       parsedbody: this.parseMessage(notice, []).toString(),
       user: '[Info]',
@@ -1700,7 +1699,7 @@ export default class TwitchChatService extends Service {
   @action eventHandler(event, type) {
     this.lastevent = {
       id: 'event',
-      timestamp: moment().format(),
+      timestamp: dayjs().format(),
       parsedbody: this.parseMessage(event, []).toString(),
       user: 'event',
       displayname: 'event',

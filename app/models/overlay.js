@@ -1,5 +1,4 @@
-import { Model } from 'ember-pouch';
-import { attr, hasMany } from '@ember-data/model';
+import Model, { attr, hasMany } from '@ember-data/model';
 
 export default class OverlayModel extends Model {
   @attr('string', { defaultValue: '' }) name;

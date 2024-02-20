@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {
   appWindow,
   getCurrent,
@@ -418,7 +418,7 @@ export default class ApplicationController extends Controller {
   }
 
   @action handleExport() {
-    let filename = moment().format('YYYYMMDD-HHmmss') + '-paperbot-backup.json';
+    let filename = dayjs().format('YYYYMMDD-HHmmss') + '-paperbot-backup.json';
     let type = 'application/json';
     let adapter = this.store.adapterFor('application');
     adapter.db.allDocs(

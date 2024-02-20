@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 import { sort } from '@ember/object/computed';
 import { htmlSafe } from '@ember/template';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default class PbReaderComponent extends Component {
   @service globalConfig;
@@ -71,7 +71,7 @@ export default class PbReaderComponent extends Component {
         title = pendingsong.effectiveTitle;
         console.debug(pendingsong.effectiveArtist);
         artist = pendingsong.effectiveArtist;
-        time = moment(pendingsong.timestamp).format('YYYY/MM/DD HH:mm:ss');
+        time = dayjs(pendingsong.timestamp).format('YYYY/MM/DD HH:mm:ss');
         user = pendingsong.user || 'bot';
         let entry =
           this.globalConfig.config.get('defOverlay.qItems') || defaultEntry;

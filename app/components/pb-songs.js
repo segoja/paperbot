@@ -5,7 +5,7 @@ import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { inject as service } from '@ember/service';
 
 export default class PbSongsComponent extends Component {
@@ -216,7 +216,7 @@ export default class PbSongsComponent extends Component {
         quotes: true,
         quoteChar: '"',
       });
-      let filename = moment().format('YYYYMMDD-HHmmss') + '-songs.csv';
+      let filename = dayjs().format('YYYYMMDD-HHmmss') + '-songs.csv';
 
       this.currentUser.download(csvdata, filename, 'text/csv');
     }

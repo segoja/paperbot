@@ -4,7 +4,7 @@ import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import PapaParse from 'papaparse';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
@@ -152,7 +152,7 @@ export default class PbOverlaysComponent extends Component {
         quotes: true,
         quoteChar: '"',
       });
-      let filename = moment().format('YYYYMMDD-HHmmss') + '-overlays.csv';
+      let filename = dayjs().format('YYYYMMDD-HHmmss') + '-overlays.csv';
 
       this.currentUser.download(csvdata, filename, 'text/csv');
     }

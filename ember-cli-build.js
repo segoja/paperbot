@@ -6,21 +6,21 @@ module.exports = function (defaults) {
   let config = process.env.EMBER_ENV || 'development';
   let app = new EmberApp(defaults, {
     // Add options here
+    autoImport: {
+      webpack: {
+        node: {
+          global: true,
+        },
+      },
+    },    
     'ember-service-worker': {
       versionStrategy: 'every-build',
       enabled: config == 'production',
     },
-    outputPaths: {
-      app: {
-        css: {
-          app: 'assets/paperbot.css', // FOR LIGHT THEME => app.scss
-        },
-      },
-    },
     SRI: {
       // crossorigin: 'anonymous',
       // This fix the tauri build blocking, but I have to check a better solution messing with cors.
-      enabled: true,
+      // enabled: true,
     },
     // Exclude .png favicons from being fingerprinted
     // Origin and prepend are only for the webapp, disable them on desktop app building.
@@ -68,9 +68,6 @@ module.exports = function (defaults) {
   // modules that you would like to import into your application
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
-  app.import('node_modules/moment/moment.js', {
-    using: [{ transformation: 'amd', as: 'moment' }],
-  });
 
   return app.toTree();
 };

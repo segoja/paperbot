@@ -5,7 +5,7 @@ import { tracked } from '@glimmer/tracking';
 import { later } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { htmlSafe } from '@ember/template';
 
 export default class PbOverlayComponent extends Component {
@@ -18,37 +18,37 @@ export default class PbOverlayComponent extends Component {
       {
         title: 'Dummy song number one',
         artist: 'Dummy Musician',
-        time: moment().add(1, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
+        time: dayjs().add(1, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
         user: 'Paperbot',
       },
       {
         title: 'Number two',
         artist: 'Mr Dummy',
-        time: moment().add(4, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
+        time: dayjs().add(4, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
         user: 'Tinfoilbot',
       },
       {
         title: 'Song number one',
         artist: 'Audiodummy',
-        time: moment().add(8, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
+        time: dayjs().add(8, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
         user: 'Anonymous',
       },
       {
         title: 'Dummy song number four',
         artist: 'Anonymous Singer',
-        time: moment().add(13, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
+        time: dayjs().add(13, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
         user: 'Baaabot',
       },
       {
         title: 'Dummy number five',
         artist: 'Dummy Cold Sauce Cucumbers',
-        time: moment().add(18, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
+        time: dayjs().add(18, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
         user: 'Dumuser',
       },
       {
         title: 'The last placeholder',
         artist: 'Mr Dummy',
-        time: moment().add(22, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
+        time: dayjs().add(22, 'minutes').format('YYYY/MM/DD HH:mm:ss'),
         user: 'UsEr4l',
       },
     ];
