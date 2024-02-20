@@ -18,10 +18,10 @@ export default class IndexRoute extends Route {
           this.router.transitionTo('overlay');
           break;
         default:
-          this.router.transitionTo('streams.index');
+          this.router.transitionTo('songs.index');
       }
     } else {
-      this.router.transitionTo('streams.index');
+      this.router.transitionTo('songs.index');
     }
   }
 }

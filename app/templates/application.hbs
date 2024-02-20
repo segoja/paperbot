@@ -155,6 +155,9 @@
         <navbar.content class="px-0 pb-2 pb-lg-0" {{on "click" this.closeMenu}} {{on "mouseleave" this.closeMenu}} {{on "focusout" this.closeMenu}}>
           <navbar.nav class="col" as |nav|>
             <nav.item class="px-lg-0 px-3">
+              <nav.link-to @route="songs.index" >Songs</nav.link-to>
+            </nav.item>
+            <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="streams.index" >Streams</nav.link-to>
             </nav.item>
             <nav.item class="px-lg-0 px-3">
@@ -163,9 +166,6 @@
             <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="timers.index" >Timers</nav.link-to>
             </nav.item> 
-            <nav.item class="px-lg-0 px-3">
-              <nav.link-to @route="songs.index" >Songs</nav.link-to>
-            </nav.item>
             <nav.item class="px-lg-0 px-3">
               <nav.link-to @route="clients.index" >Clients</nav.link-to>
             </nav.item>
