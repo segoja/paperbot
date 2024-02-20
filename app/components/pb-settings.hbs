@@ -129,7 +129,7 @@
                     <div class="input-group form-row">
                       <div role="button" class="input-group-text rounded rounded-0 rounded-start col-auto btn btn-secondary">Pick Chroma Color
                         <BsTooltip class="d-inline colorpicker" @triggerEvents="click" role="presentation" as |tt|>
-                          <Picker
+                        {{!--   <Picker
                             role="presentation"
                             @color={{this.globalConfig.config.chromaColor}}
                             @onDone={{fn this.changeColor tt.close}}
@@ -137,7 +137,7 @@
                             @popup={{false}}
                             @editor={{true}}
                             class="d-inline"
-                           />                
+                           /> --}}                
                         </BsTooltip>
                       </div>
                       <div class="px-3 pickedColor rounded-0 col-auto"></div> 

@@ -1,4 +1,4 @@
-<div class="row h-100 flex-fill m-0 p-0 bg-body" {{did-resize this.updateRowNr}}>
+<div class="row h-100 flex-fill m-0 p-0 bg-body" {{did-resize this.updateRowNr}} {{did-insert this.updateRowNr}}>
   <div class={{if this.isSetlist "col-12 col-lg-8 h-100 flex-fill p-0 m-0 bg-body" "col-12 h-100 flex-fill p-0 m-0 bg-body"}}> 
       {{!-- song listing --}}
       <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill rounded-0"}}">
@@ -176,5 +176,3 @@
   </div> 
   <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @toTop={{this.toTop}} @isSetlist={{this.isSetlist}} @offcClass="d-lg-none pt-offc-custom border-0 bg-transparent px-0" />
 </div>
-
-{{did-insert this.updateRowNr}}

@@ -1,4 +1,4 @@
-<div class="row h-100 flex-fill m-0 p-0 bg-body" {{did-resize this.updateRowNr}}>
+<div class="row h-100 flex-fill m-0 p-0 bg-body" {{did-resize this.updateRowNr}} {{did-insert this.updateRowNr}}>
   <div class="col-12 h-100 flex-fill p-0 m-0 bg-body"> 
       {{!-- timer listing --}}
       <div class="{{if this.currentUser.isViewing "d-none" "card h-100 flex-fill rounded-0"}}">
@@ -116,4 +116,3 @@
     {{/if}}
   </div>
 </div>
-{{did-insert this.updateRowNr}}

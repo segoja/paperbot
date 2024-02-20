@@ -64,6 +64,7 @@ export default class ApplicationAdapter extends Adapter {
       live: true,
     });
 
+    this.db.setMaxListeners(50); 
     // Comment the following declaration if you want to use indexeddb:
     this.isRetrying = false;
     this.retryDelay = 0;

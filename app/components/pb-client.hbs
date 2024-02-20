@@ -24,9 +24,10 @@
           </BsPopover>
         </div>
         <div class="col-md-8">
-          <div class="input-group">
+          <div class="input-group"
             {{did-insert this.setOauth}}
-            {{did-update this.setOauth @client}}
+            {{did-update this.setOauth @client}}          
+          >
             <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{this.oauth}} autocomplete="current-oauth" class="form-control" disabled={{this.isMasked}} placeholder="Paste your Oauth here including Oauth: "/>
             <button type="button" class="btn btn-outline-secondary" {{on "click" this.toggleMask}} title="Show password"><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
           </div>

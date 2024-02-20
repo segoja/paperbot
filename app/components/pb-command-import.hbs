@@ -1,4 +1,4 @@
-<BsButton @type="warning" @onClick={{this.toggleModal}} title="Generate commands"><FaIcon @icon="file-import" />Generate</BsButton>
+<BsButton @type="warning" @onClick={{this.toggleModal}} title="Generate commands" ><FaIcon @icon="file-import" />Generate<span {{did-insert this.updateRowNr}}></span></BsButton>
 {{#in-element this.bootstrapWormhole insertBefore=null}}
   <BsModal @onSubmit={{this.generateCommands}} @onHide={{this.toggleModal}} id={{this.componentId}} @open={{this.isViewing}} @scrollable={{true}} @fullscreen={{false}} @size="xl" as |Modal|>
     <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
@@ -91,4 +91,3 @@
     </Modal.footer>
   </BsModal>
 {{/in-element}}
-{{did-insert this.updateRowNr}}

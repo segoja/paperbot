@@ -1,4 +1,8 @@
-<div class="row g-0 flex-nowrap" id={{this.componentId}} {{did-resize this.updateBtnNr}}>
+<div class="row g-0 flex-nowrap" id={{this.componentId}} 
+  {{did-resize this.updateBtnNr}}
+  {{did-insert this.updateBtnNr}}
+  {{did-update this.updateBtnNr this.contentLength}}
+>
   <div class="col">
     <div class="pagination-centered d-inline-block">
       <ul class="pagination my-0 {{if @fullBorder "border-top border-bottom"}}">
@@ -47,5 +51,3 @@
     </div>
   {{/if}}
 </div>
-{{did-insert this.updateBtnNr}}
-{{did-update this.updateBtnNr this.contentLength}}

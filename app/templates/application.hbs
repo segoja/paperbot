@@ -1,13 +1,15 @@
-{{did-insert this.updateCommandList}}
-{{did-insert this.updateTimerList}}
-{{did-insert this.updateSongList}}
-{{did-insert this.updateRequestList}}
-{{did-update this.updateCommandList this.commands}}
-{{did-update this.updateTimerList this.timers}}
-{{did-update this.updateSongList this.songs}}
-{{did-update this.updateRequestList this.requests}}
-
 <HeadLayout />
+<span
+  {{did-insert this.updateCommandList}}
+  {{did-insert this.updateTimerList}}
+  {{did-insert this.updateSongList}}
+  {{did-insert this.updateRequestList}}
+  {{did-update this.updateCommandList this.commands}}
+  {{did-update this.updateTimerList this.timers}}
+  {{did-update this.updateSongList this.songs}}
+  {{did-update this.updateRequestList this.requests}}
+  {{did-insert this.setBorder}}
+></span>
 {{#if this.currentUser.hideMenu}}
   {{#unless this.isOverlay}}
     <header class="m-0 p-0" id="headerA" aria-label="overlay only header" role="toolbar" draggable={{true}} {{on "dragstart" this.dragWindow}}  {{on "dragend" this.dropWindow}} data-tauri-drag-region={{true}} >
@@ -240,4 +242,4 @@
     {{outlet}}
   </main>
 {{/if}}
-{{did-insert this.setBorder}}
+<div id="ember-bootstrap-wormhole"></div>
