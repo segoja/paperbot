@@ -1,18 +1,13 @@
-
-  <style>
-    {{#if this.globalConfig.config.defOverlay.font}}
-      body * {
-        font-family: {{this.globalConfig.config.defOverlay.font}}!important;
-      }
-    {{/if}}
-    {{#if this.globalConfig.config.defOverlay.qCss}}
-      {{valid-css this.globalConfig.config.defOverlay.qCss}}
-    {{else}}
-      .chroma .table {
-        text-shadow: 0px 0px 5px #000000;
-        font-size: 1.5em!important;
-        font-weight: 500;
-      }
-    {{/if}}
-  </style>
-  {{valid-html this.overlayContent preview=false}}
+<style>
+  {{#if this.globalConfig.config.defOverlay.font}}
+    body * { font-family:
+    {{this.globalConfig.config.defOverlay.font}}!important; }
+  {{/if}}
+  {{#if this.globalConfig.config.defOverlay.qCss}}
+    {{valid-css this.globalConfig.config.defOverlay.qCss}}
+  {{else}}
+    .chroma .table { text-shadow: 0px 0px 5px #000000; font-size:
+    1.5em!important; font-weight: 500; }
+  {{/if}}
+</style>
+{{valid-html this.overlayContent preview=false}}

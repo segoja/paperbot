@@ -591,7 +591,6 @@ export default class EventsExternalService extends Service {
     return [];
   }
 
-  @tracked lastevent = '';
   @action eventHandler(outputmessage, type, event, provider) {
     this.store
       .query('event', {

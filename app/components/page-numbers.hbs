@@ -1,45 +1,84 @@
-<div class="row g-0 flex-nowrap" id={{this.componentId}} 
+<div
+  class="row g-0 flex-nowrap"
+  id={{this.componentId}}
   {{did-resize this.updateBtnNr}}
   {{did-insert this.updateBtnNr}}
   {{did-update this.updateBtnNr this.contentLength}}
 >
   <div class="col">
     <div class="pagination-centered d-inline-block">
-      <ul class="pagination my-0 {{if @fullBorder "border-top border-bottom"}}">
+      <ul class="pagination my-0 {{if @fullBorder 'border-top border-bottom'}}">
         {{#if this.canStepBackward}}
           <li class="page-item arrow prev enabled-arrow">
-            <a href="#" {{on "click" (fn this.incrementPage -1)}} class="page-link text-secondary {{if @fullBorder "border-top-0 border-bottom-0" "border-0 border-end "}} rounded-0">&laquo;</a>
+            <a
+              href="#"
+              {{on "click" (fn this.incrementPage -1)}}
+              class="page-link text-secondary
+                {{if
+                  @fullBorder
+                  'border-top-0 border-bottom-0'
+                  'border-0 border-end '
+                }}
+                rounded-0"
+            >&laquo;</a>
           </li>
         {{else}}
           <li class="page-item arrow prev disabled">
-            <a href="#" {{on "click" (fn this.incrementPage -1)}} class="page-link text-secondary {{if @fullBorder "border-top-0 border-bottom-0" "border-0 border-end "}} rounded-0">&laquo;</a>
+            <a
+              href="#"
+              {{on "click" (fn this.incrementPage -1)}}
+              class="page-link text-secondary
+                {{if
+                  @fullBorder
+                  'border-top-0 border-bottom-0'
+                  'border-0 border-end '
+                }}
+                rounded-0"
+            >&laquo;</a>
           </li>
         {{/if}}
 
         {{#each this.pageItems as |item|}}
           {{#if item.dots}}
             <li class="page-item dots disabled">
-              <span class="page-link bg-secondary border-secondary border-top-0 border-bottom-0 rounded-0">...</span>
+              <span
+                class="page-link bg-secondary border-secondary border-top-0 border-bottom-0 rounded-0"
+              >...</span>
             </li>
           {{/if}}
           {{#if item.current}}
             <li class="page-item active page-number">
-              <a href="#" class="page-link bg-secondary border-secondary border-top-0 border-bottom-0">{{item.page}}</a>
+              <a
+                href="#"
+                class="page-link bg-secondary border-secondary border-top-0 border-bottom-0"
+              >{{item.page}}</a>
             </li>
           {{else}}
             <li class="page-item page-number">
-              <a href="#" {{on "click" (fn this.pageClicked item.page)}} class="page-link text-secondary border-top-0 border-bottom-0">{{item.page}}</a>
+              <a
+                href="#"
+                {{on "click" (fn this.pageClicked item.page)}}
+                class="page-link text-secondary border-top-0 border-bottom-0"
+              >{{item.page}}</a>
             </li>
           {{/if}}
         {{/each}}
 
         {{#if this.canStepForward}}
           <li class="page-item arrow next enabled-arrow">
-            <a href="#" {{on "click" (fn this.incrementPage 1)}} class="page-link text-secondary border-top-0 border-bottom-0 rounded-0">&raquo;</a>
+            <a
+              href="#"
+              {{on "click" (fn this.incrementPage 1)}}
+              class="page-link text-secondary border-top-0 border-bottom-0 rounded-0"
+            >&raquo;</a>
           </li>
         {{else}}
           <li class="page-item arrow next disabled">
-            <a href="#" {{on "click" (fn this.incrementPage 1)}} class="page-link text-secondary border-top-0 border-bottom-0 rounded-0">&raquo;</a>
+            <a
+              href="#"
+              {{on "click" (fn this.incrementPage 1)}}
+              class="page-link text-secondary border-top-0 border-bottom-0 rounded-0"
+            >&raquo;</a>
           </li>
         {{/if}}
       </ul>
@@ -47,7 +86,9 @@
   </div>
   {{#if @showTotal}}
     <div class="col-auto">
-      <span class="page-link disabled bg-transparent border-0 text-secondary px-2 pt-2">Total: {{this.contentLength}}</span>
+      <span
+        class="page-link disabled bg-transparent border-0 text-secondary px-2 pt-2"
+      >Total: {{this.contentLength}}</span>
     </div>
   {{/if}}
 </div>

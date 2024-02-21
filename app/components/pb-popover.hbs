@@ -1,9 +1,21 @@
 <div id={{this.popoverId}} class="popover-wormhole"></div>
-<BsButton @type={{@btnClass}} @onClick={{this.togglePopover}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
+<BsButton
+  @type={{@btnClass}}
+  @onClick={{this.togglePopover}}
+  title={{@buttonTitle}}
+><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
 {{#if this.visible}}
   {{#in-element this.popoverWormhole insertBefore=null}}
-    <div class={{if this.visible "popover fade bs-popover-start show" "popover fade bs-popover-end hide"}} role="tooltip" {{on "mouseleave" this.togglePopover}}>
-      <div class="popover-body {{@popClass}} my-0 py-1">{{yield}}</div>    
+    <div
+      class={{if
+        this.visible
+        "popover fade bs-popover-start show"
+        "popover fade bs-popover-end hide"
+      }}
+      role="tooltip"
+      {{on "mouseleave" this.togglePopover}}
+    >
+      <div class="popover-body {{@popClass}} my-0 py-1">{{yield}}</div>
     </div>
   {{/in-element}}
 {{/if}}

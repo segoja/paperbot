@@ -1,19 +1,28 @@
 <div class="p-1">
-    <div class="color-picker" role="presentation" {{did-insert this.firstLoad}}>
-        <canvas class="color-block" height="150" width="150"
-            {{on "click" this.blockClick}}
-            {{on "mouseup" this.blockUp}}
-            {{on "mouseMove" this.blockMove}}  
-        >
-        </canvas>
-        <canvas class="color-strip" {{on "click" this.stripClick}}></canvas>
+  <div class="color-picker" role="presentation" {{did-insert this.firstLoad}}>
+    <canvas
+      class="color-block"
+      height="150"
+      width="150"
+      {{on "click" this.blockClick}}
+      {{on "mouseup" this.blockUp}}
+      {{on "mouseMove" this.blockMove}}
+    >
+    </canvas>
+    <canvas class="color-strip" {{on "click" this.stripClick}}></canvas>
+  </div>
+  <div class="row g-0 pt-1">
+    <div class="col-auto"><div
+        class="d-inline-block border rounded color-label h-100"
+      ></div></div>
+    <div class="col ms-2">
+      <BsButton
+        @type="secondary btn-sm w-100"
+        @onClick={{this.applyColor}}
+        title="Apply color"
+      >
+        Apply
+      </BsButton>
     </div>
-    <div class="row g-0 pt-1">
-        <div class="col-auto"><div class="d-inline-block border rounded color-label h-100"></div></div>
-        <div class="col ms-2">
-            <BsButton @type="secondary btn-sm w-100" @onClick={{this.applyColor}} title="Apply color"> 
-                Apply
-            </BsButton>
-        </div>
-    </div>
+  </div>
 </div>

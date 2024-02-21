@@ -1,5 +1,7 @@
 {{#if this.activeSong}}
-  <span title="This song is a request" class={{if this.isPremium "px-2 text-warning" "px-2 text-info"}}
+  <span
+    title="This song is a request"
+    class={{if this.isPremium "px-2 text-warning" "px-2 text-info"}}
   >
     {{#if this.isPlaying}}<FaIcon @icon="lock" />{{/if}}
     <strong>{{this.activeSong.title}}</strong>
@@ -8,4 +10,7 @@
 {{else}}
   <span class="px-2">Select a song</span>
 {{/if}}
-<span {{did-insert this.setActiveSong}} {{did-update this.setActiveSong this.queueHandler.pendingSongs}}></span>
+<span
+  {{did-insert this.setActiveSong}}
+  {{did-update this.setActiveSong this.queueHandler.pendingSongs}}
+></span>

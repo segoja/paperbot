@@ -24,6 +24,7 @@ module.exports = {
   },
   rules: {
     'ember/use-ember-data-rfc-395-imports': 'off',
+    'ember/no-computed-properties-in-native-classes': 'off',
   },
   overrides: [
     // node files
