@@ -39,7 +39,7 @@ export default class SoundboardLoadingComponent extends Component {
           } else {
             this.activeSong = '';
             console.debug(
-              'The first pending request in queue has no lyrics available.'
+              'The first pending request in queue has no lyrics available.',
             );
           }
         });

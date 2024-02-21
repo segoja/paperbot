@@ -34,7 +34,7 @@ export default class PbStreamsComponent extends Component {
     'arrangedContent',
     ['title', 'date', 'channel'],
     'args.queryParamsObj.query',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredContent;
 

@@ -38,7 +38,7 @@ export default class PbSettingsComponent extends Component {
   }
 
   @action changeColor(closefunc, color) {
-    this.globalConfig.config.chromaColor = color.hex;
+    this.globalConfig.config.chromaColor = color;
     closefunc();
   }
 

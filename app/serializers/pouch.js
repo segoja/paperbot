@@ -57,9 +57,12 @@ class Serializer extends RESTSerializer {
 
   _isAttachment(attribute) {
     let recordModelClass = '';
-    if(attribute.type){
-      recordModelClass = typeof attribute.type === 'string' ? attribute.type : this.store.modelFor(attribute.modelName);
-    } 
+    if (attribute.type) {
+      recordModelClass =
+        typeof attribute.type === 'string'
+          ? attribute.type
+          : this.store.modelFor(attribute.modelName);
+    }
     return ['attachment', 'attachments'].indexOf(recordModelClass) !== -1;
   }
 

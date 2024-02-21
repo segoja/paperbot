@@ -32,7 +32,7 @@ export default class PbOverlaysComponent extends Component {
     'arrangedContent',
     ['username'],
     'args.queryParamsObj.query',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredContent;
 
@@ -108,14 +108,14 @@ export default class PbOverlaysComponent extends Component {
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     } else {
       this.currentUser.importRecords(
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     }
   }

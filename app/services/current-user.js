@@ -181,7 +181,7 @@ export default class CurrentUserService extends Service {
       }
     } else {
       console.debug(
-        "It's not tauri or it's already creating the Reader window..."
+        "It's not tauri or it's already creating the Reader window...",
       );
     }
   }
@@ -232,7 +232,7 @@ export default class CurrentUserService extends Service {
       }
     } else {
       console.debug(
-        "It's not tauri or it's already creating the Overlay window..."
+        "It's not tauri or it's already creating the Overlay window...",
       );
     }
   }

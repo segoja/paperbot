@@ -147,7 +147,7 @@ export default class PbCommandComponent extends Component {
             function () {
               this.isPlaying = false;
             },
-            duration
+            duration,
           );
         }
       }

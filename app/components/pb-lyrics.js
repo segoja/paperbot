@@ -140,7 +140,7 @@ export default class PbLyricsComponent extends Component {
         let numLines = songLines.length;
         let longestLine = sortedSongLines[0];
         var lyricsContainers = document.getElementsByClassName(
-          this.args.song.viewMode ? 'fancy-columns' : 'fancy-columns-pre'
+          this.args.song.viewMode ? 'fancy-columns' : 'fancy-columns-pre',
         );
 
         if (lyricsContainers.length > 0) {
@@ -154,7 +154,7 @@ export default class PbLyricsComponent extends Component {
           let lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
           let lineHeightStyle = window.getComputedStyle(
             lyricsContainers[0],
-            null
+            null,
           );
           lineHeightStyle = lineHeightStyle.getPropertyValue('line-height');
           let lineHeight = parseFloat(lineHeightStyle);
@@ -168,7 +168,7 @@ export default class PbLyricsComponent extends Component {
             // console.log('The container dimensions are: '+(container.offsetWidth -24)+'x'+(container.offsetHeight -32)+'px');
             // 24px is the left+right total external padding.
             let numColumns = Math.ceil(
-              (container.offsetWidth - 24) / lineWidth
+              (container.offsetWidth - 24) / lineWidth,
             );
             let optimalColWidth = (container.offsetWidth - 24) / numColumns;
             let currentColWidth =
@@ -194,7 +194,7 @@ export default class PbLyricsComponent extends Component {
 
             let defFontsize = this.getCssStyle(
               document.body,
-              'font-size'
+              'font-size',
             ).replace('px', '');
             console.log('Default font size: ' + defFontsize);
 
@@ -215,12 +215,12 @@ export default class PbLyricsComponent extends Component {
                 if (zoomLevel >= 2.5) {
                   this.args.song.zoomLevel = 2.5;
                   console.debug(
-                    'Tweaked Zoom level 1: ' + this.args.song.zoomLevel + 'em'
+                    'Tweaked Zoom level 1: ' + this.args.song.zoomLevel + 'em',
                   );
                 } else {
                   this.args.song.zoomLevel = zoomLevel;
                   console.debug(
-                    'Tweaked Zoom level 1: ' + this.args.song.zoomLevel + 'em'
+                    'Tweaked Zoom level 1: ' + this.args.song.zoomLevel + 'em',
                   );
                 }
               }
@@ -228,7 +228,7 @@ export default class PbLyricsComponent extends Component {
 
             let finalLineWidth = this.getTextWidth(
               longestLine,
-              this.getCanvasFont(lyricsContainers[0])
+              this.getCanvasFont(lyricsContainers[0]),
             );
 
             if (numColumns < 6) {
@@ -239,12 +239,12 @@ export default class PbLyricsComponent extends Component {
 
             do {
               lyricsContainers = document.getElementsByClassName(
-                this.args.song.viewMode ? 'fancy-columns' : 'fancy-columns-pre'
+                this.args.song.viewMode ? 'fancy-columns' : 'fancy-columns-pre',
               );
               fontDetails = this.getCanvasFont(lyricsContainers[0]);
               fontSize = this.getCssStyle(
                 lyricsContainers[0],
-                'font-size'
+                'font-size',
               ).replace('px', '');
 
               lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
@@ -298,7 +298,9 @@ export default class PbLyricsComponent extends Component {
                   if (lineWidth < optimalColWidth && zoomLevel + 0.025 <= 2) {
                     this.args.song.zoomLevel = zoomLevel + 0.025;
                     console.debug(
-                      'Tweaked Zoom level 2: ' + this.args.song.zoomLevel + 'em'
+                      'Tweaked Zoom level 2: ' +
+                        this.args.song.zoomLevel +
+                        'em',
                     );
                   } else {
                     if (
@@ -309,7 +311,7 @@ export default class PbLyricsComponent extends Component {
                       console.debug(
                         'Tweaked Zoom level 3: ' +
                           this.args.song.zoomLevel +
-                          'em'
+                          'em',
                       );
                     }
                   }
@@ -321,7 +323,9 @@ export default class PbLyricsComponent extends Component {
                     this.args.song.zoomLevel -= 0.25;
                     this.args.song.columns += 1;
                     console.debug(
-                      'Tweaked Zoom level 4: ' + this.args.song.zoomLevel + 'em'
+                      'Tweaked Zoom level 4: ' +
+                        this.args.song.zoomLevel +
+                        'em',
                     );
                   }
                 }
@@ -334,7 +338,7 @@ export default class PbLyricsComponent extends Component {
                 if (finalFontSize > defFontsize && zoomLevel - 0.25 <= 2) {
                   this.args.song.zoomLevel = zoomLevel - 0.25;
                   console.debug(
-                    'Tweaked Zoom level 5: ' + this.args.song.zoomLevel + 'em'
+                    'Tweaked Zoom level 5: ' + this.args.song.zoomLevel + 'em',
                   );
                 }
               }
@@ -348,7 +352,7 @@ export default class PbLyricsComponent extends Component {
                 ) {
                   this.args.song.zoomLevel -= 0.25;
                   console.debug(
-                    'Tweaked Zoom level 6: ' + this.args.song.zoomLevel + 'em'
+                    'Tweaked Zoom level 6: ' + this.args.song.zoomLevel + 'em',
                   );
                 }
               }
@@ -358,13 +362,13 @@ export default class PbLyricsComponent extends Component {
               ) {
                 this.args.song.zoomLevel += 0.025;
                 console.debug(
-                  'Tweaked Zoom level 7: ' + this.args.song.zoomLevel + 'em'
+                  'Tweaked Zoom level 7: ' + this.args.song.zoomLevel + 'em',
                 );
               }
 
               finalLineWidth = this.getTextWidth(
                 longestLine,
-                this.getCanvasFont(lyricsContainers[0])
+                this.getCanvasFont(lyricsContainers[0]),
               );
 
               console.log('=============================');
@@ -374,7 +378,7 @@ export default class PbLyricsComponent extends Component {
               console.log('Height coef: ' + heightCoef + '%');
               console.log('Number of columns: ' + this.args.song.columns);
               console.log(
-                'Container width: ' + (container.offsetWidth - 24) + 'px'
+                'Container width: ' + (container.offsetWidth - 24) + 'px',
               );
               console.log('Optimal column width: ' + optimalColWidth + 'px');
               console.log('Current column width: ' + currentColWidth + 'px');

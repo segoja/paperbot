@@ -311,7 +311,7 @@ export default class PbOverlayComponent extends Component {
     if (this.pendingRequests.length > 0) {
       let visible = this.pendingRequests.slice(
         0,
-        this.globalConfig.config.get('overlayLength') || 5
+        this.globalConfig.config.get('overlayLength') || 5,
       );
       visible.forEach((request) => {
         let entry = this.args.overlay.qItems || this.defaultItem;

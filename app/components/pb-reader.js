@@ -43,7 +43,7 @@ export default class PbReaderComponent extends Component {
     'arrangedContent',
     ['title', 'artist', 'keywords'],
     'songQuery',
-    { conjunction: 'and', sort: false, limit: 20 }
+    { conjunction: 'and', sort: false, limit: 20 },
   )
   filteredSongs;
 
@@ -93,7 +93,7 @@ export default class PbReaderComponent extends Component {
             } else {
               this.activeSong = '';
               console.debug(
-                'The first pending request in queue has no lyrics available.'
+                'The first pending request in queue has no lyrics available.',
               );
             }
           });
@@ -333,7 +333,7 @@ export default class PbReaderComponent extends Component {
         let numLines = songLines.length;
         let longestLine = sortedSongLines[0];
         var lyricsContainers = document.getElementsByClassName(
-          this.currentSong.viewMode ? 'fancy-columns' : 'fancy-columns-pre'
+          this.currentSong.viewMode ? 'fancy-columns' : 'fancy-columns-pre',
         );
 
         if (lyricsContainers.length > 0) {
@@ -347,7 +347,7 @@ export default class PbReaderComponent extends Component {
           let lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
           let lineHeightStyle = window.getComputedStyle(
             lyricsContainers[0],
-            null
+            null,
           );
           lineHeightStyle = lineHeightStyle.getPropertyValue('line-height');
           let lineHeight = parseFloat(lineHeightStyle);
@@ -361,7 +361,7 @@ export default class PbReaderComponent extends Component {
             // console.log('The container dimensions are: '+(container.offsetWidth -24)+'x'+(container.offsetHeight -32)+'px');
             // 24px is the left+right total external padding.
             let numColumns = Math.ceil(
-              (container.offsetWidth - 24) / lineWidth
+              (container.offsetWidth - 24) / lineWidth,
             );
             let optimalColWidth = (container.offsetWidth - 24) / numColumns;
             let currentColWidth =
@@ -387,7 +387,7 @@ export default class PbReaderComponent extends Component {
 
             let defFontsize = this.getCssStyle(
               document.body,
-              'font-size'
+              'font-size',
             ).replace('px', '');
             console.log('Default font size: ' + defFontsize);
 
@@ -408,12 +408,16 @@ export default class PbReaderComponent extends Component {
                 if (zoomLevel >= 2.5) {
                   this.currentSong.zoomLevel = 2.5;
                   console.debug(
-                    'Tweaked Zoom level 1: ' + this.currentSong.zoomLevel + 'em'
+                    'Tweaked Zoom level 1: ' +
+                      this.currentSong.zoomLevel +
+                      'em',
                   );
                 } else {
                   this.currentSong.zoomLevel = zoomLevel;
                   console.debug(
-                    'Tweaked Zoom level 1: ' + this.currentSong.zoomLevel + 'em'
+                    'Tweaked Zoom level 1: ' +
+                      this.currentSong.zoomLevel +
+                      'em',
                   );
                 }
               }
@@ -421,7 +425,7 @@ export default class PbReaderComponent extends Component {
 
             let finalLineWidth = this.getTextWidth(
               longestLine,
-              this.getCanvasFont(lyricsContainers[0])
+              this.getCanvasFont(lyricsContainers[0]),
             );
 
             if (numColumns < 6) {
@@ -434,12 +438,12 @@ export default class PbReaderComponent extends Component {
               lyricsContainers = document.getElementsByClassName(
                 this.currentSong.viewMode
                   ? 'fancy-columns'
-                  : 'fancy-columns-pre'
+                  : 'fancy-columns-pre',
               );
               fontDetails = this.getCanvasFont(lyricsContainers[0]);
               fontSize = this.getCssStyle(
                 lyricsContainers[0],
-                'font-size'
+                'font-size',
               ).replace('px', '');
 
               lineWidth = this.getTextWidth(longestLine, fontDetails) + 40;
@@ -495,7 +499,7 @@ export default class PbReaderComponent extends Component {
                     console.debug(
                       'Tweaked Zoom level 2: ' +
                         this.currentSong.zoomLevel +
-                        'em'
+                        'em',
                     );
                   } else {
                     if (
@@ -506,7 +510,7 @@ export default class PbReaderComponent extends Component {
                       console.debug(
                         'Tweaked Zoom level 3: ' +
                           this.currentSong.zoomLevel +
-                          'em'
+                          'em',
                       );
                     }
                   }
@@ -520,7 +524,7 @@ export default class PbReaderComponent extends Component {
                     console.debug(
                       'Tweaked Zoom level 4: ' +
                         this.currentSong.zoomLevel +
-                        'em'
+                        'em',
                     );
                   }
                 }
@@ -533,7 +537,9 @@ export default class PbReaderComponent extends Component {
                 if (finalFontSize > defFontsize && zoomLevel - 0.25 <= 2) {
                   this.currentSong.zoomLevel = zoomLevel - 0.25;
                   console.debug(
-                    'Tweaked Zoom level 5: ' + this.currentSong.zoomLevel + 'em'
+                    'Tweaked Zoom level 5: ' +
+                      this.currentSong.zoomLevel +
+                      'em',
                   );
                 }
               }
@@ -547,7 +553,9 @@ export default class PbReaderComponent extends Component {
                 ) {
                   this.currentSong.zoomLevel -= 0.25;
                   console.debug(
-                    'Tweaked Zoom level 6: ' + this.currentSong.zoomLevel + 'em'
+                    'Tweaked Zoom level 6: ' +
+                      this.currentSong.zoomLevel +
+                      'em',
                   );
                 }
               }
@@ -557,13 +565,13 @@ export default class PbReaderComponent extends Component {
               ) {
                 this.currentSong.zoomLevel += 0.025;
                 console.debug(
-                  'Tweaked Zoom level 7: ' + this.currentSong.zoomLevel + 'em'
+                  'Tweaked Zoom level 7: ' + this.currentSong.zoomLevel + 'em',
                 );
               }
 
               finalLineWidth = this.getTextWidth(
                 longestLine,
-                this.getCanvasFont(lyricsContainers[0])
+                this.getCanvasFont(lyricsContainers[0]),
               );
 
               console.log('=============================');
@@ -573,7 +581,7 @@ export default class PbReaderComponent extends Component {
               console.log('Height coef: ' + heightCoef + '%');
               console.log('Number of columns: ' + this.currentSong.columns);
               console.log(
-                'Container width: ' + (container.offsetWidth - 24) + 'px'
+                'Container width: ' + (container.offsetWidth - 24) + 'px',
               );
               console.log('Optimal column width: ' + optimalColWidth + 'px');
               console.log('Current column width: ' + currentColWidth + 'px');

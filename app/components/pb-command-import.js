@@ -195,7 +195,7 @@ export default class PbCommandComponent extends Component {
     'commands',
     ['name', 'command', 'soundfile'],
     'filterQuery',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredCommands;
 

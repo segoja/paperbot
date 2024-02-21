@@ -65,7 +65,7 @@ export default class PbReaderComponent extends Component {
     if (this.pendingRequests.length > 0) {
       let visible = this.pendingRequests.slice(
         0,
-        this.globalConfig.config.get('overlayLength') || 5
+        this.globalConfig.config.get('overlayLength') || 5,
       );
       visible.forEach((pendingsong) => {
         title = pendingsong.effectiveTitle;

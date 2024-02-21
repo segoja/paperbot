@@ -39,7 +39,8 @@ export default class ConfigAdapter extends Adapter {
   async wipePrevDbs() {
     const dbs = await window.indexedDB.databases();
     let databases = dbs.filter(
-      (db) => db.name.includes('_pouch_') && db.name.includes('paperbot-config')
+      (db) =>
+        db.name.includes('_pouch_') && db.name.includes('paperbot-config'),
     );
     if (databases.length > 0) {
       databases.forEach(async (oldPouch) => {
@@ -55,14 +56,14 @@ export default class ConfigAdapter extends Adapter {
             .on('complete', async (info) => {
               if (info.ok) {
                 console.debug(
-                  'Application: Replication from old idb is complete, now deleting...'
+                  'Application: Replication from old idb is complete, now deleting...',
                 );
                 oldDb
                   .destroy()
                   .then(function (response) {
                     console.debug(
                       'Application: Deleted old idb database.',
-                      response
+                      response,
                     );
                   })
                   .catch(function (err) {

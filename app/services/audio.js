@@ -99,7 +99,7 @@ export default class AudioService extends Service {
             oldsound.unload();
             this.sounds.delete(item.get('id'));
             console.debug(
-              'Sound ' + item.name + ' already exist, replacing...'
+              'Sound ' + item.name + ' already exist, replacing...',
             );
           }
 
@@ -116,10 +116,10 @@ export default class AudioService extends Service {
               },
               onloaderror: function () {
                 console.debug(
-                  'error loading ' + item.soundfile + ' in the soundboard!'
+                  'error loading ' + item.soundfile + ' in the soundboard!',
                 );
               },
-            })
+            }),
           );
         })
         .catch((binErr) => {
@@ -167,7 +167,7 @@ export default class AudioService extends Service {
                 oldsound.unload();
                 this.sounds.delete(item.get('id'));
                 console.debug(
-                  'Sound ' + item.name + ' already exist, replacing...'
+                  'Sound ' + item.name + ' already exist, replacing...',
                 );
               }
 
@@ -184,10 +184,10 @@ export default class AudioService extends Service {
                   },
                   onloaderror: function () {
                     console.debug(
-                      'error loading ' + src + ' in the soundboard!'
+                      'error loading ' + src + ' in the soundboard!',
                     );
                   },
-                })
+                }),
               );
             })
             .catch((binErr) => {
@@ -231,7 +231,7 @@ export default class AudioService extends Service {
               function () {
                 this.isPlaying = false;
               },
-              duration
+              duration,
             );
           }
         } else {
@@ -251,7 +251,7 @@ export default class AudioService extends Service {
                 function () {
                   this.isPlaying = false;
                 },
-                duration
+                duration,
               );
             }
           }

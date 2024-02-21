@@ -33,7 +33,7 @@ export default class PbTimersComponent extends Component {
     'arrangedContent',
     ['type'],
     'args.queryParamsObj.type',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredByType;
 
@@ -41,7 +41,7 @@ export default class PbTimersComponent extends Component {
     'filteredByType',
     ['name', 'message'],
     'args.queryParamsObj.query',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredContent;
 
@@ -129,14 +129,14 @@ export default class PbTimersComponent extends Component {
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     } else {
       this.currentUser.importRecords(
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     }
   }

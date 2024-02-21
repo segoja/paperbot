@@ -12,7 +12,7 @@ module.exports = function (defaults) {
           global: true,
         },
       },
-    },    
+    },
     'ember-service-worker': {
       versionStrategy: 'every-build',
       enabled: config == 'production',
@@ -38,7 +38,7 @@ module.exports = function (defaults) {
     },
     'ember-bootstrap': {
       bootstrapVersion: 5,
-      importBootstrapCSS: false
+      importBootstrapCSS: false,
     },
     'ember-power-select': {
       theme: 'bootstrap',

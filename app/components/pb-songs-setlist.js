@@ -88,7 +88,7 @@ export default class PbStreamEditPendingComponent extends Component {
         });
       } else {
         console.debug(
-          item.position + '. ' + item.title + ' remained the same.'
+          item.position + '. ' + item.title + ' remained the same.',
         );
       }
       count = Number(count) + 1;

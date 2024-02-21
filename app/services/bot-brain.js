@@ -46,7 +46,7 @@ export default class BotBrainService extends Service {
   @tracked commands = new TrackedArray();
   get commandlist() {
     return this.commands.filter(
-      (command) => command.active && !command.isDeleted
+      (command) => command.active && !command.isDeleted,
     );
   }
 
@@ -83,7 +83,7 @@ export default class BotBrainService extends Service {
     console.debug('Scheduling timers...');
     if (this.currentUser.isTauri) {
       let audioTimersList = this.timersList.filter(
-        (timer) => timer.type == 'audio'
+        (timer) => timer.type == 'audio',
       );
       if ((await audioTimersList.length) > 0) {
         if ((await this.timersList.length) > 0) {

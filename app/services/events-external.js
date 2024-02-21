@@ -129,11 +129,11 @@ export default class EventsExternalService extends Service {
             }
 
             outputmessage = outputmessage.concat(
-              tier + ' for ' + data.event.count + ' months!'
+              tier + ' for ' + data.event.count + ' months!',
             );
             if (data.event.message != '') {
               outputmessage = outputmessage.concat(
-                ' Message: ' + data.event.message
+                ' Message: ' + data.event.message,
               );
             }
           }
@@ -154,7 +154,7 @@ export default class EventsExternalService extends Service {
             data.event.name + ' donated ' + data.event.amount + '!';
           if (data.event.message) {
             outputmessage = outputmessage.concat(
-              ' Message: ' + data.event.message
+              ' Message: ' + data.event.message,
             );
           }
           type = 'donation';
@@ -168,7 +168,7 @@ export default class EventsExternalService extends Service {
             data.event.name + ' cheered ' + data.event.amount + ' bits!';
           if (data.event.message) {
             outputmessage = outputmessage.concat(
-              ' Message: ' + data.event.message
+              ' Message: ' + data.event.message,
             );
           }
           type = 'cheer';
@@ -200,7 +200,7 @@ export default class EventsExternalService extends Service {
             data.event.name + ' redeemed a ' + data.event.item + '!';
           if (data.event.message) {
             outputmessage = outputmessage.concat(
-              ' Message: ' + data.event.message
+              ' Message: ' + data.event.message,
             );
           }
           console.debug(outputmessage);
@@ -253,7 +253,7 @@ export default class EventsExternalService extends Service {
 
           if (data.event.amount > 1) {
             outputmessage = outputmessage.concat(
-              'resubscribed x' + data.event.amount + ' with '
+              'resubscribed x' + data.event.amount + ' with ',
             );
             type = 'resub';
           } else {
@@ -279,11 +279,11 @@ export default class EventsExternalService extends Service {
           }
 
           outputmessage = outputmessage.concat(
-            tier + ' for ' + data.event.count + ' months!'
+            tier + ' for ' + data.event.count + ' months!',
           );
           if (data.event.message != '') {
             outputmessage = outputmessage.concat(
-              ' Message: ' + data.event.message
+              ' Message: ' + data.event.message,
             );
           }
 
@@ -297,7 +297,7 @@ export default class EventsExternalService extends Service {
             data.event.name + ' donated ' + data.event.amount + '!';
           if (data.event.message) {
             outputmessage = outputmessage.concat(
-              ' Message: ' + data.event.message
+              ' Message: ' + data.event.message,
             );
           }
           type = 'donation';
@@ -311,7 +311,7 @@ export default class EventsExternalService extends Service {
             data.event.name + ' cheered ' + data.event.amount + ' bits!';
           if (data.event.message) {
             outputmessage = outputmessage.concat(
-              ' Message: ' + data.event.message
+              ' Message: ' + data.event.message,
             );
           }
           type = 'cheer';
@@ -343,7 +343,7 @@ export default class EventsExternalService extends Service {
             data.event.name + ' redeemed a ' + data.event.item + '!';
           if (data.event.message) {
             outputmessage = outputmessage.concat(
-              ' Message: ' + data.event.message
+              ' Message: ' + data.event.message,
             );
           }
           console.debug(outputmessage);
@@ -474,7 +474,7 @@ export default class EventsExternalService extends Service {
                 // console.log(event);
                 if (event.message) {
                   outputmessage = outputmessage.concat(
-                    ' Message: ' + event.message
+                    ' Message: ' + event.message,
                   );
                 }
                 type = 'donation';
@@ -486,7 +486,7 @@ export default class EventsExternalService extends Service {
                 outputmessage = event.from + ' bought 1 ' + event.product + '!';
                 if (event.message) {
                   outputmessage = outputmessage.concat(
-                    ' Message: ' + event.message
+                    ' Message: ' + event.message,
                   );
                 }
                 type = 'merch';
@@ -537,7 +537,7 @@ export default class EventsExternalService extends Service {
                   event.name + ' has used ' + event.amount + ' bits!';
                 if (event.message) {
                   outputmessage = outputmessage.concat(
-                    ' Message: ' + event.message
+                    ' Message: ' + event.message,
                   );
                 }
                 type = 'cheer';
@@ -556,7 +556,7 @@ export default class EventsExternalService extends Service {
                 // console.log(event);
                 if (event.comment) {
                   outputmessage = outputmessage.concat(
-                    ' Message: ' + event.comment
+                    ' Message: ' + event.comment,
                   );
                 }
                 type = 'superchat';
@@ -606,7 +606,7 @@ export default class EventsExternalService extends Service {
           nextEvent.timestamp = new Date();
           nextEvent.parsedbody = this.parseMessage(
             outputmessage,
-            []
+            [],
           ).toString();
           nextEvent.user = 'event';
           nextEvent.displayname = 'event';
@@ -632,7 +632,7 @@ export default class EventsExternalService extends Service {
               let amount = event.formatted_amount.substring(1);
               let dspA = event.formatted_amount.replace(
                 /(\.[0-9]*[1-9])0+$|\.0*$/,
-                '$1'
+                '$1',
               );
               let donodata = {
                 id: event.id,
@@ -652,7 +652,7 @@ export default class EventsExternalService extends Service {
               let amount = event.displayString.substring(1);
               let dspA = event.displayString.replace(
                 /(\.[0-9]*[1-9])0+$|\.0*$/,
-                '$1'
+                '$1',
               );
               let donodata = {
                 id: event.id,
@@ -693,7 +693,7 @@ export default class EventsExternalService extends Service {
             1,
             '<img class="twitch-emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' +
               i +
-              '/3.0">'
+              '/3.0">',
           );
         }
       }

@@ -40,7 +40,7 @@ export default class PbSongsComponent extends Component {
     'arrangedContent',
     ['type'],
     'args.queryParamsObj.type',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredByType;
 
@@ -48,7 +48,7 @@ export default class PbSongsComponent extends Component {
     'filteredByType',
     ['title', 'artist'],
     'args.queryParamsObj.query',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredContent;
 
@@ -156,14 +156,14 @@ export default class PbSongsComponent extends Component {
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     } else {
       this.currentUser.importRecords(
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     }
   }
