@@ -555,6 +555,29 @@
             />
           </div>
         </div>
+        <div class="form-group row pb-2">
+          <label class="col-md-4">Global soundboard volume</label>
+          <div class="col-sm">
+            <div class="input-group border rounded">
+              <Input
+                @type="range"
+                min="1"
+                max="100"
+                aria-label="Global soundboard volume"
+                @value={{this.globalConfig.config.soundboardVolume}}
+                class="form-control btn-secondary slider w-75 border-0"
+                {{on "change" this.updateVolume}}
+              />
+              <Input
+                @type="number"
+                @value={{this.globalConfig.config.soundboardVolume}}
+                aria-label="Global soundboard volume"
+                class="form-control w-25 border-0 border-start"
+                {{on "change" this.updateVolume}}
+              />
+            </div>
+          </div>
+        </div>
       </BsForm>
     </Modal.body>
     <Modal.footer class="py-2 row g-0 flex-nowrap">

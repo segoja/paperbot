@@ -9,6 +9,7 @@ import { later } from '@ember/runloop';
 export default class AudioService extends Service {
   @service globalConfig;
   @service currentUser;
+  @service twitchChat;
   /**
    * This acts as a register for Sound instances. Sound instances are placed in
    * the register by id, and can be called via audioService.getSound('id')
@@ -25,12 +26,25 @@ export default class AudioService extends Service {
 
   @tracked isEnabled = false;
 
+  constructor() {
+    super(...arguments);
+    this.updateGlobalVolume();
+  }
+
   get SBstatus() {
     return this.isEnabled;
   }
 
   get previewSound() {
     return this.preview;
+  }
+
+
+  async updateGlobalVolume() {
+    const volume = this.globalConfig.config.soundboardVolume;
+    if(Howler){
+      Howler.volume(volume / 100);      
+    }
   }
 
   async loadPreview(src) {
@@ -141,63 +155,57 @@ export default class AudioService extends Service {
    */
 
   async loadSounds(soundElements) {
-    if (this.currentUser.isTauri) {
-      await soundElements.map(async (item) => {
-        if (item.soundfile) {
-          let src = item.soundfile;
-          await invoke('binary_loader', { filepath: src })
-            .then(async (response) => {
-              // We get the file extension to use it for the type
-              let extension = src.split(/[#?]/)[0].split('.').pop().trim();
-              // converted the arraybuffer to a arraybufferview
-              let arrayBufferView = new Uint8Array(await response);
-
-              // console.debug(arrayBufferView);
-              // create a blob from this
-              let blob = new Blob([arrayBufferView], {
-                type: 'data:audio/' + extension,
-              });
-              // then used the .createObjectURL to create a a DOMString containing a URL representing the object given in the parameter
-              let howlSource = URL.createObjectURL(blob);
-              // console.debug(howlSource);
-
-              let itExist = this.sounds.has(await item.get('id'));
-              if (itExist) {
-                let oldsound = this.sounds.get(await item.get('id'));
-                oldsound.unload();
-                this.sounds.delete(item.get('id'));
-                console.debug(
-                  'Sound ' + item.name + ' already exist, replacing...',
-                );
-              }
-
-              // then inatialize the new howl in the sound library
-              this.sounds.set(
-                await item.get('id'),
-                new Howl({
-                  src: [howlSource],
-                  html5: true,
-                  volume: item.volume ? item.volume / 100 : 1,
-                  format: [extension],
-                  onload: function () {
-                    console.debug(src + ' loaded in the soundboard');
-                  },
-                  onloaderror: function () {
-                    console.debug(
-                      'error loading ' + src + ' in the soundboard!',
-                    );
-                  },
-                }),
-              );
-            })
-            .catch((binErr) => {
-              console.debug(src);
-              console.debug(binErr);
-            });
+    if (!this.currentUser.isTauri) return;
+  
+    const soundPromises = soundElements.map(async (item) => {
+      if (!item.soundfile) return;
+  
+      const src = item.soundfile;
+  
+      try {
+        const response = await invoke('binary_loader', { filepath: src });
+  
+        const extension = src.split(/[#?]/)[0].split('.').pop().trim();
+        const arrayBufferView = new Uint8Array(response);
+  
+        const blob = new Blob([arrayBufferView], {
+          type: 'audio/' + extension, // corregido
+        });
+  
+        const howlSource = URL.createObjectURL(blob);
+  
+        const id = await item.get('id');
+        const exists = this.sounds.has(id);
+        if (exists) {
+          const oldsound = this.sounds.get(id);
+          oldsound.unload();
+          this.sounds.delete(id);
+          console.debug(`Sound ${item.name} already exists, replacing...`);
         }
-      });
-      // console.debug(this.sounds);
-    }
+  
+        const howl = new Howl({
+          src: [howlSource],
+          html5: true,
+          volume: item.volume ? item.volume / 100 : 1,
+          format: [extension],
+          onload: function () {
+            console.debug(`${src} loaded in the soundboard`);
+          },
+          onloaderror: function () {
+            console.debug(`Error loading ${src} in the soundboard!`);
+          },
+        });
+    
+        this.sounds.set(id, howl);
+      } catch (err) {
+        console.debug(`Error reading ${src}:`, err);
+        this.twitchChat.brokenAudioCommands.push(item.get('id'));
+      }
+    });
+  
+    await Promise.all(soundPromises);
+  
+    console.debug('Sounds loaded.');
   }
 
   /**

@@ -81,6 +81,7 @@ export default class ConfigModel extends Model {
   @attr('boolean', { defaultValue: false }) clearRequests;
   @attr('boolean', { defaultValue: false }) allowDuplicated;
   @attr('boolean', { defaultValue: false }) isdefault;
+  @attr('number', { defaultValue: 100 }) soundboardVolume;
 
   get switcher() {
     return this.darkmode;

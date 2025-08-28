@@ -13,6 +13,7 @@ export default class PbSettingsComponent extends Component {
   @service currentUser;
   @service session;
   @service store;
+  @service audio;
 
   constructor() {
     super(...arguments);
@@ -96,6 +97,10 @@ export default class PbSettingsComponent extends Component {
         this.queueHandler.fileContent(this.queueHandler.pendingSongs, true);
       }
     });
+  }
+
+  @action updateVolume() {
+    this.audio.updateGlobalVolume();
   }
 
   @action doneEditing() {
