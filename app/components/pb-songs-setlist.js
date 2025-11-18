@@ -84,12 +84,12 @@ export default class PbStreamEditPendingComponent extends Component {
       if (item.position != count) {
         item.position = count;
         item.save().then(() => {
-          console.debug(item.position + '. ' + item.title);
+          // console.debug(item.position + '. ' + item.title);
         });
       } else {
-        console.debug(
+        /*console.debug(
           item.position + '. ' + item.title + ' remained the same.',
-        );
+        );*/
       }
       count = Number(count) + 1;
     });

@@ -79,7 +79,7 @@ export default class PbReaderComponent extends Component {
   @action setActiveSong() {
     if (this.selected) {
       this.activeSong = this.selected;
-      console.debug('Custom selection active...');
+      // console.debug('Custom selection active...');
     } else {
       let requests = this.queueHandler.pendingSongs;
       if (requests.length > 0) {
@@ -89,18 +89,18 @@ export default class PbReaderComponent extends Component {
           first.get('song').then((song) => {
             if (song) {
               this.activeSong = song;
-              console.debug('First request active...');
+              // console.debug('First request active...');
             } else {
               this.activeSong = '';
-              console.debug(
-                'The first pending request in queue has no lyrics available.',
-              );
+              //console.debug(
+              //  'The first pending request in queue has no lyrics available.',
+              //);
             }
           });
         }
       } else {
         this.activeSong = [];
-        console.debug('No requests pending...');
+        // console.debug('No requests pending...');
       }
     }
   }
