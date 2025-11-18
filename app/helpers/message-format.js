@@ -1,6 +1,6 @@
 import { helper } from '@ember/component/helper';
 import { htmlSafe } from '@ember/template';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default helper(function ([message]) {
   //if (!message) { return; } // return nothing when params is empty
@@ -22,7 +22,7 @@ export default helper(function ([message]) {
     case 'system':
       body =
         '<small class="d-none d-md-inline">[' +
-        moment(message.timestamp).format('HH:mm:ss') +
+        dayjs(message.timestamp).format('HH:mm:ss') +
         ']</small><span class="' +
         message.type +
         '" style="color: ' +
@@ -38,7 +38,7 @@ export default helper(function ([message]) {
     case 'action':
       body =
         '<small class="d-none d-md-inline">[' +
-        moment(message.timestamp).format('HH:mm:ss') +
+        dayjs(message.timestamp).format('HH:mm:ss') +
         ']</small><span class="' +
         message.type +
         '" style="color: ' +
@@ -54,7 +54,7 @@ export default helper(function ([message]) {
     case 'chat':
       body =
         '<small class="d-none d-md-inline">[' +
-        moment(message.timestamp).format('HH:mm:ss') +
+        dayjs(message.timestamp).format('HH:mm:ss') +
         ']</small><span class="' +
         message.type +
         '" style="color: ' +
@@ -72,7 +72,7 @@ export default helper(function ([message]) {
     default:
       body =
         '<small class="d-none d-md-inline">[' +
-        moment(message.timestamp).format('HH:mm:ss') +
+        dayjs(message.timestamp).format('HH:mm:ss') +
         ']</small><span class="' +
         message.type +
         '" style="color: ' +

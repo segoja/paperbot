@@ -1,19 +1,60 @@
-<BsButton @type="warning" @onClick={{this.toggleModal}} title="Generate commands"><FaIcon @icon="file-import" />Generate</BsButton>
+<BsButton
+  @type="warning"
+  @onClick={{this.toggleModal}}
+  title="Generate commands"
+><FaIcon @icon="file-import" />Generate<span
+    {{did-insert this.updateRowNr}}
+  ></span></BsButton>
 {{#in-element this.bootstrapWormhole insertBefore=null}}
-  <BsModal @onSubmit={{this.generateCommands}} @onHide={{this.toggleModal}} id={{this.componentId}} @open={{this.isViewing}} @scrollable={{true}} @fullscreen={{false}} @size="xl" as |Modal|>
-    <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
+  <BsModal
+    @onSubmit={{this.generateCommands}}
+    @onHide={{this.toggleModal}}
+    id={{this.componentId}}
+    @open={{this.isViewing}}
+    @scrollable={{true}}
+    @fullscreen={{false}}
+    @size="xl"
+    as |Modal|
+  >
+    <Modal.header
+      @closeButton={{false}}
+      class="p-0 m-0 bg-dark border-0 border-bottom rounded-top"
+    >
       <div class="row g-0 w-100">
-        <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i> Import sound commands.</span></div>
+        <div class="col py-1 ps-3"><span class="h5 text-white"><i
+              class="glyphicon glyphicon-alert"
+            ></i>
+            Import sound commands.</span></div>
         <div class="col-auto">
-          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}} title="Close"><FaIcon @icon="times" /></button>
+          <button
+            type="button"
+            class="btn btn-dark rounded-0 rounded-top-right border-0"
+            {{on "click" (fn this.toggleModal Modal.close)}}
+            title="Close"
+          ><FaIcon @icon="times" /></button>
         </div>
       </div>
     </Modal.header>
     <Modal.body class="listframe" {{did-resize this.updateRowNr}}>
-      <BsForm @model={{this}} @formLayout="inline" class="row g-0 pb-2"  as |form|>
+      <BsForm
+        @model={{this}}
+        @formLayout="inline"
+        class="row g-0 pb-2"
+        as |form|
+      >
         <div class="row g-0 pb-2">
-          <BsButton @type="warning col-auto me-1" @onClick={{this.openCommandsFolder}} title="Select folder"><FaIcon @icon="folder-open" /> Select folder</BsButton>
-          <form.element @controlType="text" class="col" @property="filterQuery" {{on "keydown" this.resetPage}} as |el|>
+          <BsButton
+            @type="warning col-auto me-1"
+            @onClick={{this.openCommandsFolder}}
+            title="Select folder"
+          ><FaIcon @icon="folder-open" /> Select folder</BsButton>
+          <form.element
+            @controlType="text"
+            class="col"
+            @property="filterQuery"
+            {{on "keydown" this.resetPage}}
+            as |el|
+          >
             <el.control
               placeholder="Filter importable commands."
               class="w-100 m-0"
@@ -21,74 +62,126 @@
           </form.element>
         </div>
       </BsForm>
-        {{#if this.commands}}
-          <table class="table table-hover table-condensed">
-            <thead>
-              <tr class="row g-0">
-                <th class="col-6" scope="col">File name</th>
-                <th class="col" scope="col">Command</th>
-                <th class="col" scope="col" colspan="2">Volume</th>
-              </tr>
-              <tr class="border-start row g-0">
-                <th class="col" scope="col" colspan="2"><small class="float-end text-secondary">Bulk actions:</small></th>
-                <td class="col-3 p-0 border-start">
-                  <Input @type="range" min="1" max="100" aria-label="Volume" @value={{this.bulkVolume}}  {{on "change" (fn this.bulkChangeVolume this.bulkVolume)}} class="form-control slider intable w-100 border-0 rounded-0 btn-secondary" />
+      {{#if this.commands}}
+        <table class="table table-hover table-condensed">
+          <thead>
+            <tr class="row g-0">
+              <th class="col-6" scope="col">File name</th>
+              <th class="col" scope="col">Command</th>
+              <th class="col" scope="col" colspan="2">Volume</th>
+            </tr>
+            <tr class="border-start row g-0">
+              <th class="col" scope="col" colspan="2"><small
+                  class="float-end text-secondary"
+                >Bulk actions:</small></th>
+              <td class="col-3 p-0 border-start">
+                <Input
+                  @type="range"
+                  min="1"
+                  max="100"
+                  aria-label="Volume"
+                  @value={{this.bulkVolume}}
+                  {{on "change" (fn this.bulkChangeVolume this.bulkVolume)}}
+                  class="form-control slider intable w-100 border-0 rounded-0 btn-secondary"
+                />
+              </td>
+              <td class="col-auto p-0 formcol">
+                <div class="d-inline-block float-end">
+                  <BsButton
+                    @type={{if
+                      this.isBulk
+                      "outline-success alert alert-success"
+                      "outline-secondary alert alert-secondary"
+                    }}
+                    class="rounded-0 border-top-0 border-bottom-0 px-0 py-2 m-0"
+                    {{on "click" this.bulkSelectAll}}
+                    title={{if this.isBulk "Deselect all" "Select all"}}
+                  >
+                    <FaIcon @icon={{if this.isBulk "check-square" "square"}} />
+                  </BsButton>
+                </div>
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this.pagedCommands as |command|}}
+              <tr
+                class="row g-0
+                  {{if
+                    command.selected
+                    'bg-success bg-opacity-10 border-start'
+                    'border-start'
+                  }}"
+              >
+                <td class="col-6 py-2 position-relative"><div
+                    class="position-absolute d-block text-truncate mw-100"
+                  >{{command.name}}</div></td>
+                <td class="col p-0 m-0 border-start">
+                  <Input
+                    @type="text"
+                    @value={{command.command}}
+                    aria-label="Command"
+                    class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent py-2"
+                    placeholder="Enter command."
+                  />
+                </td>
+                <td class="col-3 p-0 m-0 border-start">
+                  <Input
+                    @type="text"
+                    @value={{command.volume}}
+                    aria-label="Volume"
+                    class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent py-2"
+                    placeholder="Enter volume."
+                  />
                 </td>
                 <td class="col-auto p-0 formcol">
                   <div class="d-inline-block float-end">
-                    <BsButton 
-                      @type={{if this.isBulk  "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
+                    <BsButton
+                      @type={{if
+                        command.selected
+                        "outline-success alert alert-success"
+                        "outline-secondary alert alert-secondary"
+                      }}
                       class="rounded-0 border-top-0 border-bottom-0 px-0 py-2 m-0"
-                      {{on "click" this.bulkSelectAll}}
-                      title={{if this.isBulk "Deselect all" "Select all"}}
+                      @onClick={{fn this.addToImport command}}
+                      title={{if
+                        command.selected
+                        "Deselect command"
+                        "Select command"
+                      }}
                     >
-                      <FaIcon @icon={{if this.isBulk "check-square" "square"}} />
+                      <FaIcon
+                        @icon={{if command.selected "check-square" "square"}}
+                      />
                     </BsButton>
                   </div>
                 </td>
               </tr>
-            </thead>
-            <tbody>
-              {{#each this.pagedCommands as |command|}}
-                <tr class="row g-0 {{if command.selected "bg-success bg-opacity-10 border-start" "border-start"}}">
-                  <td class="col-6 py-2 position-relative"><div class="position-absolute d-block text-truncate mw-100">{{command.name}}</div></td>             
-                  <td class="col p-0 m-0 border-start">
-                    <Input @type="text" @value={{command.command}} aria-label="Command" class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent py-2" placeholder="Enter command." />
-                  </td>
-                  <td class="col-3 p-0 m-0 border-start">
-                    <Input @type="text" @value={{command.volume}} aria-label="Volume" class="form-control m-0 rounded-0 border-0 bg-transparent bg-opacity-50 outline-transparent py-2" placeholder="Enter volume." />
-                  </td>
-                  <td class="col-auto p-0 formcol">
-                    <div class="d-inline-block float-end">
-                      <BsButton
-                        @type={{if command.selected "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
-                        class="rounded-0 border-top-0 border-bottom-0 px-0 py-2 m-0" 
-                        @onClick={{fn this.addToImport command}}
-                        title={{if command.selected "Deselect command" "Select command"}}
-                      >
-                        <FaIcon @icon={{if command.selected "check-square" "square"}} />
-                      </BsButton>
-                    </div>
-                  </td>
-                </tr>
-              {{/each}}
-            </tbody>
-          </table>
-        {{/if}}
+            {{/each}}
+          </tbody>
+        </table>
+      {{/if}}
     </Modal.body>
     <Modal.footer class="py-2 g-0">
       <div class="row g-0 w-100 flex-nowrap">
         <div class="col text-start">
           {{#if this.commands}}
-              <PageNumbers @content={{this.pagedCommands}} @fullBorder={{true}} />
+            <PageNumbers @content={{this.pagedCommands}} @fullBorder={{true}} />
           {{/if}}
         </div>
         <div class="col-sm-auto col text-end">
-          <BsButton @onClick={{this.toggleModal}} @type="danger" title="Cancel import">Cancel</BsButton>
-          <BsButton @onClick={{this.generateCommands}} @type="success" title="Import">Import</BsButton>
+          <BsButton
+            @onClick={{this.toggleModal}}
+            @type="danger"
+            title="Cancel import"
+          >Cancel</BsButton>
+          <BsButton
+            @onClick={{this.generateCommands}}
+            @type="success"
+            title="Import"
+          >Import</BsButton>
         </div>
       </div>
     </Modal.footer>
   </BsModal>
 {{/in-element}}
-{{did-insert this.updateRowNr}}

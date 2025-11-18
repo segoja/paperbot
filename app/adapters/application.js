@@ -1,5 +1,5 @@
 // import config from '../config/environment';
-import { Adapter } from 'ember-pouch';
+import Adapter from './pouch';
 // import { assert } from '@ember/debug';
 // import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
@@ -64,6 +64,7 @@ export default class ApplicationAdapter extends Adapter {
       live: true,
     });
 
+    this.db.setMaxListeners(50);
     // Comment the following declaration if you want to use indexeddb:
     this.isRetrying = false;
     this.retryDelay = 0;
@@ -80,7 +81,7 @@ export default class ApplicationAdapter extends Adapter {
       (db) =>
         db.name.includes('_pouch_') &&
         db.name.includes('paperbot') &&
-        !db.name.includes('paperbot-config')
+        !db.name.includes('paperbot-config'),
     );
     if (databases.length > 0) {
       databases.forEach(async (oldPouch) => {
@@ -96,14 +97,14 @@ export default class ApplicationAdapter extends Adapter {
             .on('complete', async (info) => {
               if (info.ok) {
                 console.debug(
-                  'Application: Replication from old idb is complete, now deleting...'
+                  'Application: Replication from old idb is complete, now deleting...',
                 );
                 oldDb
                   .destroy()
                   .then(function (response) {
                     console.debug(
                       'Application: Deleted old idb database.',
-                      response
+                      response,
                     );
                   })
                   .catch(function (err) {
@@ -127,7 +128,7 @@ export default class ApplicationAdapter extends Adapter {
     if (this.globalConfig.config.canConnect) {
       console.debug(
         'Setting remote couch replication to:' +
-          this.globalConfig.config.cloudUrl
+          this.globalConfig.config.cloudUrl,
       );
       this.remoteDb = new PouchDB(this.globalConfig.config.cloudUrl, {
         fetch: function (url, opts) {
@@ -143,7 +144,7 @@ export default class ApplicationAdapter extends Adapter {
         console.debug('Connected to the cloud.');
         this.replicationFromHandler = this.db.replicate.from(
           this.remoteDb,
-          this.replicationOptions
+          this.replicationOptions,
         );
         this.replicationFromHandler
           .on('change', (change) => {
@@ -166,7 +167,7 @@ export default class ApplicationAdapter extends Adapter {
           })
           .on('denied', (err) => {
             console.debug(
-              'a document failed to replicate from the cloud to local (e.g. due to permissions)'
+              'a document failed to replicate from the cloud to local (e.g. due to permissions)',
             );
             console.debug(err);
           })
@@ -207,7 +208,7 @@ export default class ApplicationAdapter extends Adapter {
 
         this.replicationToHandler = this.db.replicate.to(
           this.remoteDb,
-          this.replicationOptions
+          this.replicationOptions,
         );
         this.replicationToHandler
           .on('change', (change) => {
@@ -229,7 +230,7 @@ export default class ApplicationAdapter extends Adapter {
           })
           .on('denied', () => {
             console.debug(
-              'a document failed to replicate to the cloud (e.g. due to permissions)'
+              'a document failed to replicate to the cloud (e.g. due to permissions)',
             );
           })
           .on('complete', () => {
@@ -294,7 +295,7 @@ export default class ApplicationAdapter extends Adapter {
       .authenticate(
         'authenticator:pouch',
         this.globalConfig.config.username,
-        this.globalConfig.config.password
+        this.globalConfig.config.password,
       )
       .then(() => {
         console.debug('Connection success!');
@@ -314,7 +315,7 @@ export default class ApplicationAdapter extends Adapter {
     return this.db.rel.getAttachment(
       this.getRecordTypeName(model.constructor),
       model.get('id'),
-      model.get(`${attr}.name`)
+      model.get(`${attr}.name`),
     );
   }
 

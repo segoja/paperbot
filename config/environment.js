@@ -74,7 +74,7 @@ module.exports = function (environment) {
     // @TODO document why `contentSecurityPolicy` is needed, as it does not appear used anywhere else
     var remote_couch_hostname = ENV.remote_couch.substring(
       0,
-      ENV.remote_couch.indexOf('/', 9)
+      ENV.remote_couch.indexOf('/', 9),
     );
     ENV.contentSecurityPolicy = {
       'connect-src': "'self' " + remote_couch_hostname,

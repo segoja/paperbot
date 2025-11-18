@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { sort, uniqBy } from '@ember/object/computed';
 import { invoke } from '@tauri-apps/api';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { TrackedArray } from 'tracked-built-ins';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 
@@ -40,7 +40,7 @@ export default class QueueHandlerService extends Service {
     'songList',
     ['title', 'artist', 'keywords'],
     'requestpattern',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredSongs;
 
@@ -76,7 +76,7 @@ export default class QueueHandlerService extends Service {
 
   @action async nextPosition() {
     let positioned = this.pendingSongs.filter(
-      (request) => !isNaN(request.position)
+      (request) => !isNaN(request.position),
     );
     let nextPos = 0;
 
@@ -177,7 +177,7 @@ export default class QueueHandlerService extends Service {
         let song = await item.get('song');
         if (song) {
           let requests = this.pendingSongs.filter(
-            (request) => request.songId == song.get('id')
+            (request) => request.songId == song.get('id'),
           );
 
           let times = requests.length;
@@ -221,7 +221,7 @@ export default class QueueHandlerService extends Service {
         setlist = setlist + '- ' + request.effectiveTitle + '\n';
       });
 
-      let filename = moment().format('YYYYMMDD-HHmmss') + '-setlist.txt';
+      let filename = dayjs().format('YYYYMMDD-HHmmss') + '-setlist.txt';
 
       this.currentUser.download(setlist, filename, 'text/plain');
     }
@@ -242,7 +242,7 @@ export default class QueueHandlerService extends Service {
 
   get updatingQueue() {
     let updating = this.arrangedAscQueue.filter(
-      (request) => request.isSaving || request.isLoading
+      (request) => request.isSaving || request.isLoading,
     );
     if (updating.length > 0) {
       return true;
@@ -534,12 +534,12 @@ export default class QueueHandlerService extends Service {
         if (pendingSongs.length > 0) {
           let visible = pendingSongs.slice(
             0,
-            this.globalConfig.config.get('overlayLength') || 5
+            this.globalConfig.config.get('overlayLength') || 5,
           );
           visible.forEach((pendingsong) => {
             title = pendingsong.effectiveTitle;
             artist = pendingsong.effectiveArtist;
-            time = moment(pendingsong.timestamp).format('YYYY/MM/DD HH:mm:ss');
+            time = dayjs(pendingsong.timestamp).format('YYYY/MM/DD HH:mm:ss');
             user = pendingsong.user;
             let entry =
               this.globalConfig.config.get('defOverlay.qItems') || defaultEntry;

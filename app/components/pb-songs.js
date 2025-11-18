@@ -5,7 +5,7 @@ import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import { tracked } from '@glimmer/tracking';
 import PapaParse from 'papaparse';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { inject as service } from '@ember/service';
 
 export default class PbSongsComponent extends Component {
@@ -40,7 +40,7 @@ export default class PbSongsComponent extends Component {
     'arrangedContent',
     ['type'],
     'args.queryParamsObj.type',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredByType;
 
@@ -48,7 +48,7 @@ export default class PbSongsComponent extends Component {
     'filteredByType',
     ['title', 'artist'],
     'args.queryParamsObj.query',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredContent;
 
@@ -156,14 +156,14 @@ export default class PbSongsComponent extends Component {
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     } else {
       this.currentUser.importRecords(
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     }
   }
@@ -216,7 +216,7 @@ export default class PbSongsComponent extends Component {
         quotes: true,
         quoteChar: '"',
       });
-      let filename = moment().format('YYYYMMDD-HHmmss') + '-songs.csv';
+      let filename = dayjs().format('YYYYMMDD-HHmmss') + '-songs.csv';
 
       this.currentUser.download(csvdata, filename, 'text/csv');
     }

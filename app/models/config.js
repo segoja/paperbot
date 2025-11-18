@@ -1,5 +1,4 @@
-import { Model } from 'ember-pouch';
-import { attr, belongsTo } from '@ember-data/model';
+import Model, { attr, belongsTo } from '@ember-data/model';
 import { readOnly } from '@ember/object/computed';
 
 export default class ConfigModel extends Model {
@@ -82,6 +81,7 @@ export default class ConfigModel extends Model {
   @attr('boolean', { defaultValue: false }) clearRequests;
   @attr('boolean', { defaultValue: false }) allowDuplicated;
   @attr('boolean', { defaultValue: false }) isdefault;
+  @attr('number', { defaultValue: 100 }) soundboardVolume;
 
   get switcher() {
     return this.darkmode;

@@ -1,6 +1,6 @@
 import { helper } from '@ember/component/helper';
 import { htmlSafe } from '@ember/template';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default helper(function ([element]) {
   //if (!element) { return; } // return nothing when params is empty
@@ -14,7 +14,7 @@ export default helper(function ([element]) {
         '" style="color: ' +
         element.color +
         ';"><small>[' +
-        moment(element.timestamp).format('YYYY/MM/DD HH:mm:ss') +
+        dayjs(element.timestamp).format('YYYY/MM/DD HH:mm:ss') +
         '] ' +
         element.user +
         ':</small><br> ' +
@@ -28,7 +28,7 @@ export default helper(function ([element]) {
         '" style="color: ' +
         element.color +
         ';">[' +
-        moment(element.timestamp).format('YYYY/MM/DD HH:mm:ss') +
+        dayjs(element.timestamp).format('YYYY/MM/DD HH:mm:ss') +
         '] ' +
         element.user +
         ':</span></small><br> ' +
@@ -41,7 +41,7 @@ export default helper(function ([element]) {
         '" style="color: ' +
         element.color +
         ';">[' +
-        moment(element.timestamp).format('YYYY/MM/DD HH:mm:ss') +
+        dayjs(element.timestamp).format('YYYY/MM/DD HH:mm:ss') +
         '] ' +
         element.user +
         ':</span></small><br> ' +

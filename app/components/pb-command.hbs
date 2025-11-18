@@ -1,15 +1,35 @@
 <div class="card border-0 rounded-0 flex-fill mh-100">
   <div class="card-header bg-dark p-0 m-0 border-0 border-bottom rounded-0">
     <div class="row g-0">
-      <div class="col py-1 ps-3"><span class="h5 text-white"><span class="d-none d-md-inline">Command:</span> {{@command.name}}</span></div>
+      <div class="col py-1 ps-3"><span class="h5 text-white"><span
+            class="d-none d-md-inline"
+          >Command:</span>
+          {{@command.name}}</span></div>
       <div class="col-auto">
-        <button type="button" class="btn btn-dark rounded-0 border-0" {{on "click" @closeCommand}} title="Close"><FaIcon @icon="xmark" /></button>
+        <button
+          type="button"
+          class="btn btn-dark rounded-0 border-0"
+          {{on "click" @closeCommand}}
+          title="Close"
+        ><FaIcon @icon="xmark" /></button>
       </div>
     </div>
   </div>
   <div class="card-body listframe">
-    <BsForm @formLayout="horizontal" @model={{@command}} @onSubmit={{@saveCommand}} as |form|>
-      <form.element @controlType="text" @label="Name" class="pb-0" placeholder="Type the command name" @property="name" required />
+    <BsForm
+      @formLayout="horizontal"
+      @model={{@command}}
+      @onSubmit={{@saveCommand}}
+      as |form|
+    >
+      <form.element
+        @controlType="text"
+        @label="Name"
+        class="pb-0"
+        placeholder="Type the command name"
+        @property="name"
+        required
+      />
       <div class="row pb-2">
         <label class="form-label col-md-4 col-form-label">Type</label>
         <div class="col-md-8">
@@ -19,7 +39,8 @@
             @selected={{@command.type}}
             @allowClear={{true}}
             @placeholder="Select the command type"
-            @triggerClass="w-100 m-0" as |element|
+            @triggerClass="w-100 m-0"
+            as |element|
           >
             <span class="w-100">{{element}}</span>
           </PowerSelect>
@@ -28,55 +49,153 @@
       <div class="form-group row pb-2">
         <label class="col-md-4">Active</label>
         <div class="col-sm">
-          <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check-inline ps-0" @property="active" />
+          <form.element
+            @controlType="checkbox"
+            @label=""
+            @formLayout="inline"
+            class="form-check-inline ps-0"
+            @property="active"
+          />
         </div>
       </div>
-      {{!-- <form.element @controlType="text" @label="Cooldown" class="pb-2" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
-      {{!-- <form.element @controlType="number" @label="Timer (miliseconds)" class="pb-2" placeholder="Time in miliseconds" @property="timer" required /> --}}
+      {{! <form.element @controlType="text" @label="Cooldown" class="pb-2" placeholder="Cooldown time in seconds" @property="cooldown" required /> 
+      {{!-- <form.element @controlType="number" @label="Timer (miliseconds)" class="pb-2" placeholder="Time in miliseconds" @property="timer" required /> }}
       <div class="form-group row pb-2">
-        <label class="col-md-4">Response:</label>    
+        <label class="col-md-4">Response:</label>
         <div class="col-sm">
-          <Textarea @value={{@command.response}} aria-label="Response" placeholder="Type the command response..." class="form-control"/>
+          <Textarea
+            @value={{@command.response}}
+            aria-label="Response"
+            placeholder="Type the command response..."
+            class="form-control"
+          />
         </div>
       </div>
-      <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
+      <form.element
+        @controlType="text"
+        @property="soundfile"
+        class="pb-2"
+        @label="Sound file"
+        as |el|
+      >
         <div class="input-group">
-          <BsButton @type="secondary" @onClick={{this.playSound}}  disabled={{not this.currentUser.isTauri}} title={{if this.isPreviewLoaded (if this.isPreviewPlaying "Stop sound" "Play sound") "No sound loaded"}}><FaIcon @icon="{{if this.isPreviewLoaded (if this.isPreviewPlaying "stop" "play") "volume-mute"}}" /></BsButton>
+          <BsButton
+            @type="secondary"
+            @onClick={{this.playSound}}
+            disabled={{not this.currentUser.isTauri}}
+            title={{if
+              this.isPreviewLoaded
+              (if this.isPreviewPlaying "Stop sound" "Play sound")
+              "No sound loaded"
+            }}
+          ><FaIcon
+              @icon="{{if
+                this.isPreviewLoaded
+                (if this.isPreviewPlaying 'stop' 'play')
+                'volume-mute'
+              }}"
+            /></BsButton>
           <el.control disabled @placeholder="Select the sound file..." />
-          <BsButton @type="secondary" @onClick={{fn this.getAudioPath @command}} disabled={{not this.currentUser.isTauri}} title="Select sound file">Select file</BsButton>     
+          <BsButton
+            @type="secondary"
+            @onClick={{fn this.getAudioPath @command}}
+            disabled={{not this.currentUser.isTauri}}
+            title="Select sound file"
+          >Select file</BsButton>
         </div>
       </form.element>
       <div class="form-group row pb-2">
-        <label class="col-md-4">Volume %:</label>    
+        <label class="col-md-4">Volume %:</label>
         <div class="col-sm">
           <div class="input-group border rounded">
-            <Input @type="range" min="1" max="100" aria-label="Volume" @value={{@command.volume}} {{on "change" (fn this.adjustVolume @command.volume)}} class="form-control btn-secondary slider w-75 border-0" />
-            <Input @type="text" @value={{@command.volume}} aria-label="Volume" {{on "keyup" (fn this.adjustVolume @command.volume)}} class="form-control w-25 border-0 border-start" />
+            <Input
+              @type="range"
+              min="1"
+              max="100"
+              aria-label="Volume"
+              @value={{@command.volume}}
+              {{on "change" (fn this.adjustVolume @command.volume)}}
+              class="form-control btn-secondary slider w-75 border-0"
+            />
+            <Input
+              @type="text"
+              @value={{@command.volume}}
+              aria-label="Volume"
+              {{on "keyup" (fn this.adjustVolume @command.volume)}}
+              class="form-control w-25 border-0 border-start"
+            />
           </div>
         </div>
       </div>
       <div class="form-group row pb-2">
         <label class="col-md-4">Permissions</label>
         <div class="col-sm">
-          <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check-inline ps-0" @property="admin" />
-          <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check-inline ps-0" @property="mod" />
-          <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check-inline ps-0" @property="sub" />
-          <form.element @controlType="checkbox" @label="VIP" @formLayout="inline"  class="form-check-inline ps-0" @property="vip" />
+          <form.element
+            @controlType="checkbox"
+            @label="Admin"
+            @formLayout="inline"
+            class="form-check-inline ps-0"
+            @property="admin"
+          />
+          <form.element
+            @controlType="checkbox"
+            @label="Mod"
+            @formLayout="inline"
+            class="form-check-inline ps-0"
+            @property="mod"
+          />
+          <form.element
+            @controlType="checkbox"
+            @label="Sub"
+            @formLayout="inline"
+            class="form-check-inline ps-0"
+            @property="sub"
+          />
+          <form.element
+            @controlType="checkbox"
+            @label="VIP"
+            @formLayout="inline"
+            class="form-check-inline ps-0"
+            @property="vip"
+          />
         </div>
       </div>
     </BsForm>
-  </div>  
+  </div>
   <div class="card-footer py-3 bg-transparent">
     <div class="row g-0 w-100 flex-nowrap">
       <div class="col">
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash" @buttonTitle="Delete command" @btnText="Delete" @confirmDescription="Are you sure you want to delete this command?" @targetAction={{@deleteCommand}} />
+        <ButtonConfirm
+          @btnClass="btn btn-danger"
+          @btnIcon="trash"
+          @buttonTitle="Delete command"
+          @btnText="Delete"
+          @confirmDescription="Are you sure you want to delete this command?"
+          @targetAction={{@deleteCommand}}
+        />
       </div>
       <div class="col-auto">
-        <BsButton @type="secondary" {{on "click" @closeCommand}} title="Go back"><FaIcon @icon="right-to-bracket" @flip="horizontal"  /><span class="d-none d-md-inline"> Back</span></BsButton>
-        <BsButton @type={{if this.saving "success" "secondary"}} class="d-none d-md-inline" @onClick={{this.doneEditing}} title="Save command">
+        <BsButton
+          @type="secondary"
+          {{on "click" @closeCommand}}
+          title="Go back"
+        ><FaIcon @icon="right-to-bracket" @flip="horizontal" /><span
+            class="d-none d-md-inline"
+          > Back</span></BsButton>
+        <BsButton
+          @type={{if this.saving "success" "secondary"}}
+          class="d-none d-md-inline"
+          @onClick={{this.doneEditing}}
+          title="Save command"
+        >
           <FaIcon @icon="save" @pulse={{this.saving}} />
         </BsButton>
-        <BsButton @type="success" @onClick={{@saveAndReturnCommand}} title="Save & return"><FaIcon @icon="save" /> Save<span class="d-none d-md-inline"> & Return</span></BsButton>   
+        <BsButton
+          @type="success"
+          @onClick={{@saveAndReturnCommand}}
+          title="Save & return"
+        ><FaIcon @icon="save" />
+          Save<span class="d-none d-md-inline"> & Return</span></BsButton>
       </div>
     </div>
   </div>

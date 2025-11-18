@@ -1,81 +1,196 @@
 <div class="card border-0 rounded-0 flex-fill h-100 mh-100">
   <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-0">
     <div class="row g-0">
-      <div class="col py-1 ps-3"><span class="h5 text-white"><span class="d-none d-md-inline">Song:</span> {{@song.title}}</span></div>
+      <div class="col py-1 ps-3"><span class="h5 text-white"><span
+            class="d-none d-md-inline"
+          >Song:</span>
+          {{@song.title}}</span></div>
       <div class="col-auto">
-        <button type="button" class="btn btn-dark rounded-0 border-0" {{on "click" @closeSong}} title="Close"><FaIcon @icon="xmark" /></button>
+        <button
+          type="button"
+          class="btn btn-dark rounded-0 border-0"
+          {{on "click" @closeSong}}
+          title="Close"
+        ><FaIcon @icon="xmark" /></button>
       </div>
     </div>
   </div>
-  <div class="card-header pb-0">  
+  <div class="card-header pb-0">
     <ul class="nav nav-tabs border-bottom-0">
       {{#each this.tabList as |tab|}}
         <li class="nav-item">
-          <a href="#"
+          <a
+            href="#"
             {{on "click" (fn this.tabSwitch tab)}}
-            class={{if (eq this.activeTab tab) "nav-link active" "nav-link"}} 
+            class={{if (eq this.activeTab tab) "nav-link active" "nav-link"}}
           >
-            <span class="text-capitalize">{{tab}}</span>          
+            <span class="text-capitalize">{{tab}}</span>
           </a>
         </li>
       {{/each}}
-    </ul>  
+    </ul>
   </div>
-  <div class={{if (eq this.activeTab "main") "card-body listframe" "card-body listframe d-none"}}>
-    <BsForm @formLayout="inline" @model={{@song}} @onSubmit={{@saveSong}} as |form|>
+  <div
+    class={{if
+      (eq this.activeTab "main")
+      "card-body listframe"
+      "card-body listframe d-none"
+    }}
+  >
+    <BsForm
+      @formLayout="inline"
+      @model={{@song}}
+      @onSubmit={{@saveSong}}
+      as |form|
+    >
       <div class="row">
         <div class="col-12">
-          <form.element @controlType="text" @label="Title" class="pb-2" @formLayout="inline" placeholder="Type the song title" @property="title" /> 
-          <form.element @controlType="text" @label="Artist" class="pb-2" @formLayout="inline" placeholder="Type the song artist" @property="artist" /> 
-          <form.element @controlType="power-select" @property="type" @formLayout="inline" class="pb-2" @label="Type" @options={{this.songTypes}} as |element| >
-            <element.control placeholder="Select the song type" @allowClear={{true}} />
+          <form.element
+            @controlType="text"
+            @label="Title"
+            class="pb-2"
+            @formLayout="inline"
+            placeholder="Type the song title"
+            @property="title"
+          />
+          <form.element
+            @controlType="text"
+            @label="Artist"
+            class="pb-2"
+            @formLayout="inline"
+            placeholder="Type the song artist"
+            @property="artist"
+          />
+          <form.element
+            @controlType="power-select"
+            @property="type"
+            @formLayout="inline"
+            class="pb-2"
+            @label="Type"
+            @options={{this.songTypes}}
+            as |element|
+          >
+            <element.control
+              placeholder="Select the song type"
+              @allowClear={{true}}
+            />
           </form.element>
-          {{!-- <form.element @controlType="text" @label="Account" class="pb-2" @formLayout="inline" placeholder="Select the twitch account you want to link the song" @property="account" /> --}}
+          {{! <form.element @controlType="text" @label="Account" class="pb-2" @formLayout="inline" placeholder="Select the twitch account you want to link the song" @property="account" /> }}
           <div class="form-group row py-2">
             <label class="col-4">Active</label>
             <div class="col">
-              <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check-inline ps-0 float-start" @property="active" />
+              <form.element
+                @controlType="checkbox"
+                @label=""
+                @formLayout="inline"
+                class="form-check-inline ps-0 float-start"
+                @property="active"
+              />
             </div>
           </div>
           <div class="form-group row pb-2">
-            <label class="col-md-4">Keywords:</label>    
+            <label class="col-md-4">Keywords:</label>
             <div class="col-sm">
-              <Textarea @value={{@song.keywords}} aria-label="Keywords" placeholder="Type words or phrases related to the song" class="form-control"/>
+              <Textarea
+                @value={{@song.keywords}}
+                aria-label="Keywords"
+                placeholder="Type words or phrases related to the song"
+                class="form-control"
+              />
             </div>
           </div>
           <div class="form-group row pb-2">
             <label class="col-md-4">Permissions</label>
             <div class="col-sm">
-              <form.element @controlType="checkbox" @label="Admin" @formLayout="inline" class="form-check-inline ps-0" @property="admin" />
-              <form.element @controlType="checkbox" @label="Mod" @formLayout="inline" class="form-check-inline ps-0" @property="mod" />
-              <form.element @controlType="checkbox" @label="Sub" @formLayout="inline" class="form-check-inline ps-0" @property="sub" />
-              <form.element @controlType="checkbox" @label="VIP" @formLayout="inline" class="form-check-inline ps-0" @property="vip" />
+              <form.element
+                @controlType="checkbox"
+                @label="Admin"
+                @formLayout="inline"
+                class="form-check-inline ps-0"
+                @property="admin"
+              />
+              <form.element
+                @controlType="checkbox"
+                @label="Mod"
+                @formLayout="inline"
+                class="form-check-inline ps-0"
+                @property="mod"
+              />
+              <form.element
+                @controlType="checkbox"
+                @label="Sub"
+                @formLayout="inline"
+                class="form-check-inline ps-0"
+                @property="sub"
+              />
+              <form.element
+                @controlType="checkbox"
+                @label="VIP"
+                @formLayout="inline"
+                class="form-check-inline ps-0"
+                @property="vip"
+              />
             </div>
           </div>
         </div>
       </div>
     </BsForm>
   </div>
-  
-  <div class={{if (eq this.activeTab "lyrics") "card-body listframe h-100 px-0 pb-0 pt-2" "card-body listframe d-none"}}>
+
+  <div
+    class={{if
+      (eq this.activeTab "lyrics")
+      "card-body listframe h-100 px-0 pb-0 pt-2"
+      "card-body listframe d-none"
+    }}
+  >
     <PbLyrics @song={{@song}} @saveSong={{@saveSong}} />
   </div>
-  
-  <div class={{if (eq this.activeTab "metrics") "card-body listframe h-100" "card-body listframe d-none"}}>
+
+  <div
+    class={{if
+      (eq this.activeTab "metrics")
+      "card-body listframe h-100"
+      "card-body listframe d-none"
+    }}
+  >
     <p>Coming soon... </p>
   </div>
-  
+
   <div class="card-footer py-3 bg-transparent">
     <div class="row">
       <div class="col">
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash" @btnText="Delete" @buttonTitle="Delete song" @confirmDescription="Are you sure you want to delete this song?" @targetAction={{@deleteSong}} />
+        <ButtonConfirm
+          @btnClass="btn btn-danger"
+          @btnIcon="trash"
+          @btnText="Delete"
+          @buttonTitle="Delete song"
+          @confirmDescription="Are you sure you want to delete this song?"
+          @targetAction={{@deleteSong}}
+        />
       </div>
       <div class="col-auto">
-        <BsButton @type="secondary" {{on "click" @closeSong}} title="Go back"><FaIcon @icon="right-to-bracket" @flip="horizontal"  /><span class="d-none d-md-inline"> Back</span></BsButton>
-        <BsButton @type={{if this.saving "success" "secondary"}} class="d-none d-md-inline" @onClick={{this.doneEditing}} title="Save song">
+        <BsButton
+          @type="secondary"
+          {{on "click" @closeSong}}
+          title="Go back"
+        ><FaIcon @icon="right-to-bracket" @flip="horizontal" /><span
+            class="d-none d-md-inline"
+          > Back</span></BsButton>
+        <BsButton
+          @type={{if this.saving "success" "secondary"}}
+          class="d-none d-md-inline"
+          @onClick={{this.doneEditing}}
+          title="Save song"
+        >
           <FaIcon @icon="save" @pulse={{this.saving}} />
         </BsButton>
-        <BsButton @type="success" @onClick={{@saveAndReturnSong}} title="Save & return"><FaIcon @icon="save" /> Save<span class="d-none d-md-inline"> & Return</span></BsButton>   
+        <BsButton
+          @type="success"
+          @onClick={{@saveAndReturnSong}}
+          title="Save & return"
+        ><FaIcon @icon="save" />
+          Save<span class="d-none d-md-inline"> & Return</span></BsButton>
       </div>
     </div>
   </div>

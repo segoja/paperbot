@@ -1,18 +1,40 @@
-<div role="button" class="nav-link border-0 rounded-0 d-inline-block" title="Help" {{on "click" this.toggleModal}}>
+<div
+  role="button"
+  class="nav-link border-0 rounded-0 d-inline-block"
+  title="Help"
+  {{on "click" this.toggleModal}}
+>
   <span class="d-inline-block">Help</span>
 </div>
 
 {{#in-element this.bootstrapWormhole insertBefore=null}}
-  <BsModal @size="md" @open={{this.globalConfig.showFirstRun}} @onHide={{this.toggleModal}} as |Modal|>
-    <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
+  <BsModal
+    @size="md"
+    @open={{this.globalConfig.showFirstRun}}
+    @onHide={{this.toggleModal}}
+    as |Modal|
+  >
+    <Modal.header
+      @closeButton={{false}}
+      class="p-0 m-0 bg-dark border-0 border-bottom rounded-top"
+    >
       <div class="row g-0 w-100">
         <div class="col py-0 ps-0">
           <ul class="nav nav-tabs border-bottom-0">
             {{#each this.tabList as |tab|}}
               <li class="nav-item">
-                <a href="#"
+                <a
+                  href="#"
                   {{on "click" (fn this.tabSwitch tab)}}
-                  class={{if (eq this.activeTab tab) (if (eq this.activeTab "welcome") "nav-link active border-start-0 pb-2 pt-1" "nav-link active  pb-2 pt-1") "nav-link  pb-2 pt-1"}} 
+                  class={{if
+                    (eq this.activeTab tab)
+                    (if
+                      (eq this.activeTab "welcome")
+                      "nav-link active border-start-0 pb-2 pt-1"
+                      "nav-link active  pb-2 pt-1"
+                    )
+                    "nav-link  pb-2 pt-1"
+                  }}
                 >
                   <span class="text-capitalize">
                     {{tab}}
@@ -20,10 +42,15 @@
                 </a>
               </li>
             {{/each}}
-          </ul> 
+          </ul>
         </div>
         <div class="col-auto">
-          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal)}} title="Close"><FaIcon @icon="times" class="d-inline text-light"/></button>
+          <button
+            type="button"
+            class="btn btn-dark rounded-0 rounded-top-right border-0"
+            {{on "click" (fn this.toggleModal Modal)}}
+            title="Close"
+          ><FaIcon @icon="times" class="d-inline text-light" /></button>
         </div>
       </div>
     </Modal.header>
@@ -31,25 +58,90 @@
       {{#if (eq this.activeTab "welcome")}}
         <div class="row">
           <div class="col">
-            <p><strong>Paperbot</strong> is a simple chat bot made with Twitch musicians in mind. It allows you to save and organize <LinkTo @route="songs.index" {{on "click" (fn this.toggleModal Modal.close)}}>your songs</LinkTo>, arrange setlists, display them in your <LinkTo @route="overlays.index" {{on "click" (fn this.toggleModal Modal.close)}}>stream overlay</LinkTo>, create <LinkTo @route="commands.index" {{on "click" (fn this.toggleModal Modal.close)}}>custom commands</LinkTo> and <LinkTo @route="timers.index" {{on "click" (fn this.toggleModal Modal.close)}}>timers</LinkTo>, take song requests from the chat and get your lyrics and chords on screen for every song as you move through the queue/setlist.</p>
+            <p><strong>Paperbot</strong>
+              is a simple chat bot made with Twitch musicians in mind. It allows
+              you to save and organize
+              <LinkTo
+                @route="songs.index"
+                {{on "click" (fn this.toggleModal Modal.close)}}
+              >your songs</LinkTo>, arrange setlists, display them in your
+              <LinkTo
+                @route="overlays.index"
+                {{on "click" (fn this.toggleModal Modal.close)}}
+              >stream overlay</LinkTo>, create
+              <LinkTo
+                @route="commands.index"
+                {{on "click" (fn this.toggleModal Modal.close)}}
+              >custom commands</LinkTo>
+              and
+              <LinkTo
+                @route="timers.index"
+                {{on "click" (fn this.toggleModal Modal.close)}}
+              >timers</LinkTo>, take song requests from the chat and get your
+              lyrics and chords on screen for every song as you move through the
+              queue/setlist.</p>
           </div>
         </div>
       {{/if}}
       {{#if (eq this.activeTab "tips")}}
         <div class="row">
           <div class="col">
-            <p>For the bot to work properly the first thing you need to do is to add a client with your Twitch username and oauth key. You can do this from the <LinkTo @route="clients.index" {{on "click" (fn this.toggleModal Modal.close)}}>Clients menu</LinkTo>.</p>
-            <p>Once this is done you create a new <LinkTo @route="streams.index" {{on "click" (fn this.toggleModal Modal.close)}}>stream</LinkTo> session and set the clients to use for the bot and the chat (they can be the same). You can also set a default client for bot and chat for all the stream sessions you start in the <strong>Local Settings</strong>  <FaIcon @icon="wrench" class="d-inline text-info"/></p>
-            <p>You can also sync the bot data among multiple devices setting up the cloud functionality in the <strong>Cloud settings</strong> <FaIcon @icon="cloud" class="d-inline text-info"/></p>
-            <p>Explore the application and click on the question mark icons <FaIcon @icon="question-circle" class="d-inline text-info" /> to get contextual help and discover other functionalities.</p>
+            <p>For the bot to work properly the first thing you need to do is to
+              add a client with your Twitch username and oauth key. You can do
+              this from the
+              <LinkTo
+                @route="clients.index"
+                {{on "click" (fn this.toggleModal Modal.close)}}
+              >Clients menu</LinkTo>.</p>
+            <p>Once this is done you create a new
+              <LinkTo
+                @route="streams.index"
+                {{on "click" (fn this.toggleModal Modal.close)}}
+              >stream</LinkTo>
+              session and set the clients to use for the bot and the chat (they
+              can be the same). You can also set a default client for bot and
+              chat for all the stream sessions you start in the
+              <strong>Local Settings</strong>
+              <FaIcon @icon="wrench" class="d-inline text-info" /></p>
+            <p>You can also sync the bot data among multiple devices setting up
+              the cloud functionality in the
+              <strong>Cloud settings</strong>
+              <FaIcon @icon="cloud" class="d-inline text-info" /></p>
+            <p>Explore the application and click on the question mark icons
+              <FaIcon @icon="question-circle" class="d-inline text-info" />
+              to get contextual help and discover other functionalities.</p>
           </div>
         </div>
       {{/if}}
       {{#if (eq this.activeTab "about")}}
         <div class="row">
           <div class="col text-justify">
-            <p><strong>Paperbot</strong> is made on my spare time. I started the project long time ago when I was a semi-active streamer on Twitch and was learning <strong>Rust</strong>, <strong>Emberjs</strong> and <strong>Tauri</strong>. I've been updating it since then adding features I missed in the different apps I used for my streams back in the day with the goal of giving something back to the music community. It's far from perfect, but it works somehow.</p>
-            <p>If you have any questions/suggestions or find something not working properly feel free to report it on <a href="https://github.com/segoja/paperbot/issues" target="_blank" rel="noopener noreferrer"  title="Paperbot issues on Github"> the project github page</a> or on <a href="https://discord.gg/akrmpCfPYr" target="_blank" rel="noopener noreferrer" title="Discord invite link" >my discord server</a> in the #paperbot channel.</p>
+            <p><strong>Paperbot</strong>
+              is made on my spare time. I started the project long time ago when
+              I was a semi-active streamer on Twitch and was learning
+              <strong>Rust</strong>,
+              <strong>Emberjs</strong>
+              and
+              <strong>Tauri</strong>. I've been updating it since then adding
+              features I missed in the different apps I used for my streams back
+              in the day with the goal of giving something back to the music
+              community. It's far from perfect, but it works somehow.</p>
+            <p>If you have any questions/suggestions or find something not
+              working properly feel free to report it on
+              <a
+                href="https://github.com/segoja/paperbot/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Paperbot issues on Github"
+              > the project github page</a>
+              or on
+              <a
+                href="https://discord.gg/akrmpCfPYr"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Discord invite link"
+              >my discord server</a>
+              in the #paperbot channel.</p>
           </div>
         </div>
       {{/if}}
@@ -57,12 +149,22 @@
     <Modal.footer class="py-2">
       <div class="row w-100 g-0 flex-nowrap">
         <div class="col-auto pt-2">
-          <a href="https://github.com/segoja/paperbot" class="btn btn-sm btn-secondary" target="_blank" rel="noopener noreferrer" title="Paperbot on Github">
+          <a
+            href="https://github.com/segoja/paperbot"
+            class="btn btn-sm btn-secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Paperbot on Github"
+          >
             <FaIcon @icon="github" @prefix="fab" />
             <span>Paperbot {{this.currentVersion}}</span>
           </a>
         </div>
-        <div class="col"><BsButton @onClick={{this.toggleModal}} @type="success float-end" title="Close help">Got it!</BsButton></div>
+        <div class="col"><BsButton
+            @onClick={{this.toggleModal}}
+            @type="success float-end"
+            title="Close help"
+          >Got it!</BsButton></div>
       </div>
     </Modal.footer>
   </BsModal>

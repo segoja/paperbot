@@ -35,12 +35,12 @@ export default class SoundboardLoadingComponent extends Component {
         first.get('song').then((song) => {
           if (song) {
             this.activeSong = song;
-            console.debug('First request active...');
+            // console.debug('First request active...');
           } else {
             this.activeSong = '';
-            console.debug(
-              'The first pending request in queue has no lyrics available.'
-            );
+            //console.debug(
+            //  'The first pending request in queue has no lyrics available.',
+            //);
           }
         });
       }

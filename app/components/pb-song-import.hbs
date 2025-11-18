@@ -1,23 +1,62 @@
-<BsButton @type="warning" @onClick={{this.toggleModal}} title="Generate songs from your text files"><FaIcon @icon="file-import" />Generate</BsButton>
+<BsButton
+  @type="warning"
+  @onClick={{this.toggleModal}}
+  title="Generate songs from your text files"
+><FaIcon @icon="file-import" />Generate<span
+    {{did-insert this.updateRowNr}}
+  ></span></BsButton>
 {{#in-element this.bootstrapWormhole insertBefore=null}}
-  <BsModal @onSubmit={{this.generateSongs}} @onHide={{this.toggleModal}} id={{this.componentId}} @open={{this.isViewing}} @scrollable={{true}} @fullscreen={{false}} @size="xl" as |Modal|>
-    <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
+  <BsModal
+    @onSubmit={{this.generateSongs}}
+    @onHide={{this.toggleModal}}
+    id={{this.componentId}}
+    @open={{this.isViewing}}
+    @scrollable={{true}}
+    @fullscreen={{false}}
+    @size="xl"
+    as |Modal|
+  >
+    <Modal.header
+      @closeButton={{false}}
+      class="p-0 m-0 bg-dark border-0 border-bottom rounded-top"
+    >
       <div class="row g-0 w-100">
-        <div class="col py-1 ps-3"><span class="h5 text-white"><i class="glyphicon glyphicon-alert"></i> Import songs from your text files</span></div>
+        <div class="col py-1 ps-3"><span class="h5 text-white"><i
+              class="glyphicon glyphicon-alert"
+            ></i>
+            Import songs from your text files</span></div>
         <div class="col-auto">
-          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal.close)}} title="Close"><FaIcon @icon="times" /></button>
+          <button
+            type="button"
+            class="btn btn-dark rounded-0 rounded-top-right border-0"
+            {{on "click" (fn this.toggleModal Modal.close)}}
+            title="Close"
+          ><FaIcon @icon="times" /></button>
         </div>
       </div>
     </Modal.header>
     <Modal.body class="listframe" {{did-resize this.updateRowNr}}>
-      <BsForm @model={{this}} @formLayout="inline" class="row g-0"  as |form|>
+      <BsForm @model={{this}} @formLayout="inline" class="row g-0" as |form|>
         <div class="row g-0 pb-2">
           {{#if this.currentUser.isTauri}}
-            <BsButton @type="warning col-auto me-1" @onClick={{this.openSongsFolder}} title="Select folder"><FaIcon @icon="folder-open" /> Select folder</BsButton>
+            <BsButton
+              @type="warning col-auto me-1"
+              @onClick={{this.openSongsFolder}}
+              title="Select folder"
+            ><FaIcon @icon="folder-open" /> Select folder</BsButton>
           {{else}}
-            {{#let (file-queue name="textqueue" onFileAdded=this.openSongsFolder) as |queue|}}
-              <label role="button" for="upload-songs" tabindex="0" class="btn btn-warning col-auto me-1" title="Import songs by text files">
-                  Select text files
+            {{#let
+              (file-queue name="textqueue" onFileAdded=this.openSongsFolder)
+              as |queue|
+            }}
+              <label
+                role="button"
+                for="upload-songs"
+                tabindex="0"
+                class="btn btn-warning col-auto me-1"
+                title="Import songs by text files"
+              >
+                Select text files
               </label>
               <input
                 type="file"
@@ -27,19 +66,32 @@
                 hidden
                 multiple
                 {{queue.selectFile}}
-              >
+              />
             {{/let}}
           {{/if}}
-          
-          <form.element @controlType="text" class="col" @property="separator" {{on "change" this.generateList}} {{on "keyup" this.generateList}}  as |el|>
+
+          <form.element
+            @controlType="text"
+            class="col"
+            @property="separator"
+            {{on "change" this.generateList}}
+            {{on "keyup" this.generateList}}
+            as |el|
+          >
             <el.control
               placeholder="Enter the artist/song separator string to process filenames"
               class="w-100 m-0"
             />
-          </form.element>      
+          </form.element>
         </div>
         <div class="row g-0">
-          <form.element @controlType="text" class="col" @property="filterQuery" {{on "keyup" this.resetPage}} as |el|>
+          <form.element
+            @controlType="text"
+            class="col"
+            @property="filterQuery"
+            {{on "keyup" this.resetPage}}
+            as |el|
+          >
             <el.control
               placeholder="Filter importable songs."
               class="w-100 m-0"
@@ -47,82 +99,166 @@
           </form.element>
         </div>
       </BsForm>
-        {{#if this.songs}}
-          <table class="table table-condensed table-hover">
-            <thead>
-              <tr class="row g-0">
-                {{#if this.separator}}<th class="col-lg-5 d-lg-table-cell d-none" scope="col">Artist</th>{{/if}}
-                <th class="col" scope="col">Title</th>
-                <th class="col-3 col-lg-2 pe-0" scope="col"><span class="float-start unwrappable">Type</span></th>
-                <th class="col-auto" scope="col"><span class="float-end unwrappable">Select</span></th>
-              </tr>
-              <tr class="border-start row g-0">
-                {{#if this.separator}}<th class="col-lg-5 d-lg-table-cell d-none" scope="col"></th>{{/if}}
-                <th class="col" scope="col"><small class="float-end text-secondary unwrappable">Bulk actions:</small></th>
-                <th class="col-3 col-lg-2 p-0">
-                  <BsForm @model={{this}} @formLayout="inline" class="input-group row g-0 alert alert-secondary m-0 p-0 border-top-0 border-bottom-0 rounded-0" as |form|>
-                    <form.element @controlType="power-select" @property="bulkType" class="rounded-0 col ms-auto" @options={{@songTypes}} @onChange={{this.bulkChangeType}} as |element| >
-                      <element.control @triggerClass="intable rounded-0" @allowClear={{true}} @placeholder="Select type" as |option|>
-                        <span class="w-100">{{option}}</span>
-                      </element.control>
-                    </form.element>                        
-                  </BsForm>
-                </th>
-                <th class="col-auto p-0 formcol" scope="col">
-                    <BsButton 
-                      @type={{if this.isBulk "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
-                      class="rounded-0 border-top-0 border-bottom-0 border-start-0 px-0 py-2 m-0"
-                      {{on "click" this.bulkSelectAll}}
-                      title={{if this.isBulk "Deselect all" "Select all"}}
+      {{#if this.songs}}
+        <table class="table table-condensed table-hover">
+          <thead>
+            <tr class="row g-0">
+              {{#if this.separator}}<th
+                  class="col-lg-5 d-lg-table-cell d-none"
+                  scope="col"
+                >Artist</th>{{/if}}
+              <th class="col" scope="col">Title</th>
+              <th class="col-3 col-lg-2 pe-0" scope="col"><span
+                  class="float-start unwrappable"
+                >Type</span></th>
+              <th class="col-auto" scope="col"><span
+                  class="float-end unwrappable"
+                >Select</span></th>
+            </tr>
+            <tr class="border-start row g-0">
+              {{#if this.separator}}<th
+                  class="col-lg-5 d-lg-table-cell d-none"
+                  scope="col"
+                ></th>{{/if}}
+              <th class="col" scope="col"><small
+                  class="float-end text-secondary unwrappable"
+                >Bulk actions:</small></th>
+              <th class="col-3 col-lg-2 p-0">
+                <BsForm
+                  @model={{this}}
+                  @formLayout="inline"
+                  class="input-group row g-0 alert alert-secondary m-0 p-0 border-top-0 border-bottom-0 rounded-0"
+                  as |form|
+                >
+                  <form.element
+                    @controlType="power-select"
+                    @property="bulkType"
+                    class="rounded-0 col ms-auto"
+                    @options={{@songTypes}}
+                    @onChange={{this.bulkChangeType}}
+                    as |element|
+                  >
+                    <element.control
+                      @triggerClass="intable rounded-0"
+                      @allowClear={{true}}
+                      @placeholder="Select type"
+                      as |option|
                     >
-                      <FaIcon @icon={{if this.isBulk "check-square" "square"}} />
-                    </BsButton> 
-                </th>
-              </tr>              
-            </thead>
-            <tbody>
-              {{#each this.pagedSongs as |song|}}                
-                <tr class={{if song.selected "bg-success bg-opacity-10 border-start row g-0" "border-start row g-0"}}>                    
-                  {{#if this.separator}}<td class="col-lg-5 d-lg-table-cell d-none"><div class="unwrappable">{{song.artist}}</div></td>{{/if}}
-                  <td class="col"><div class="position-absolute d-block text-truncate w-100">{{song.title}}</div></td>
-                  <td class="col-3 col-lg-2 p-0 formcol border-start-0 border-end-0">  
-                    <BsForm @model={{song}} @formLayout="inline" class="input-group row g-0 alert {{if song.selected "alert-success" "alert-secondary"}} m-0 p-0 border-top-0 border-bottom-0 rounded-0" as |form|>
-                      <form.element @controlType="power-select" @property="type" class="rounded-0 col ms-auto bg-opacity-10" @options={{@songTypes}} @onChange={{fn (mut song.type)}} as |element| >
-                        <element.control @triggerClass={{if song.selected "intable selected rounded-0 bg-transparent" "intable rounded-0"}} @allowClear={{true}} @placeholder="Select type" as |option|>
-                          <span class="w-100 bg-transparent">{{option}}</span>
-                        </element.control>
-                      </form.element>
-                    </BsForm>
-                  </td>
-                  <td class="col-auto p-0 formcol"> 
-                      <BsButton
-                        @type={{if song.selected "outline-success alert alert-success" "outline-secondary alert alert-secondary"}}
-                        class="rounded-0 border-top-0 border-bottom-0 border-start-0 px-0 py-2 m-0" 
-                        @onClick={{fn this.addToImport song}}
-                        title={{if song.selected "Deselect song" "Select song"}}
+                      <span class="w-100">{{option}}</span>
+                    </element.control>
+                  </form.element>
+                </BsForm>
+              </th>
+              <th class="col-auto p-0 formcol" scope="col">
+                <BsButton
+                  @type={{if
+                    this.isBulk
+                    "outline-success alert alert-success"
+                    "outline-secondary alert alert-secondary"
+                  }}
+                  class="rounded-0 border-top-0 border-bottom-0 border-start-0 px-0 py-2 m-0"
+                  {{on "click" this.bulkSelectAll}}
+                  title={{if this.isBulk "Deselect all" "Select all"}}
+                >
+                  <FaIcon @icon={{if this.isBulk "check-square" "square"}} />
+                </BsButton>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this.pagedSongs as |song|}}
+              <tr
+                class={{if
+                  song.selected
+                  "bg-success bg-opacity-10 border-start row g-0"
+                  "border-start row g-0"
+                }}
+              >
+                {{#if this.separator}}<td
+                    class="col-lg-5 d-lg-table-cell d-none"
+                  ><div class="unwrappable">{{song.artist}}</div></td>{{/if}}
+                <td class="col"><div
+                    class="position-absolute d-block text-truncate w-100"
+                  >{{song.title}}</div></td>
+                <td
+                  class="col-3 col-lg-2 p-0 formcol border-start-0 border-end-0"
+                >
+                  <BsForm
+                    @model={{song}}
+                    @formLayout="inline"
+                    class="input-group row g-0 alert
+                      {{if song.selected 'alert-success' 'alert-secondary'}}
+                      m-0 p-0 border-top-0 border-bottom-0 rounded-0"
+                    as |form|
+                  >
+                    <form.element
+                      @controlType="power-select"
+                      @property="type"
+                      class="rounded-0 col ms-auto bg-opacity-10"
+                      @options={{@songTypes}}
+                      @onChange={{fn (mut song.type)}}
+                      as |element|
+                    >
+                      <element.control
+                        @triggerClass={{if
+                          song.selected
+                          "intable selected rounded-0 bg-transparent"
+                          "intable rounded-0"
+                        }}
+                        @allowClear={{true}}
+                        @placeholder="Select type"
+                        as |option|
                       >
-                        <FaIcon @icon={{if song.selected "check-square" "square"}} />
-                      </BsButton>
-                  </td>
-                </tr>
-              {{/each}}
-            </tbody>
-          </table>
-        {{/if}}
+                        <span class="w-100 bg-transparent">{{option}}</span>
+                      </element.control>
+                    </form.element>
+                  </BsForm>
+                </td>
+                <td class="col-auto p-0 formcol">
+                  <BsButton
+                    @type={{if
+                      song.selected
+                      "outline-success alert alert-success"
+                      "outline-secondary alert alert-secondary"
+                    }}
+                    class="rounded-0 border-top-0 border-bottom-0 border-start-0 px-0 py-2 m-0"
+                    @onClick={{fn this.addToImport song}}
+                    title={{if song.selected "Deselect song" "Select song"}}
+                  >
+                    <FaIcon
+                      @icon={{if song.selected "check-square" "square"}}
+                    />
+                  </BsButton>
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{/if}}
     </Modal.body>
     <Modal.footer class="py-2 g-0">
       <div class="row g-0 w-100 flex-nowrap">
         <div class="col text-start">
           {{#if this.songs}}
-            <div class="d-block w-100"><PageNumbers @content={{this.pagedSongs}} @fullBorder={{true}} /></div>
+            <div class="d-block w-100"><PageNumbers
+                @content={{this.pagedSongs}}
+                @fullBorder={{true}}
+              /></div>
           {{/if}}
         </div>
         <div class="col-auto text-end">
-          <BsButton @onClick={{this.toggleModal}} @type="danger" title="Cancel import">Cancel</BsButton>
-          <BsButton @onClick={{this.generateSongs}} @type="success" title="Import">Import</BsButton>
+          <BsButton
+            @onClick={{this.toggleModal}}
+            @type="danger"
+            title="Cancel import"
+          >Cancel</BsButton>
+          <BsButton
+            @onClick={{this.generateSongs}}
+            @type="success"
+            title="Import"
+          >Import</BsButton>
         </div>
       </div>
     </Modal.footer>
   </BsModal>
 {{/in-element}}
-{{did-insert this.updateRowNr}}

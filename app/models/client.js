@@ -1,5 +1,4 @@
-import { attr, hasMany } from '@ember-data/model';
-import { Model } from 'ember-pouch';
+import Model, { attr, hasMany } from '@ember-data/model';
 
 export default class ClientModel extends Model {
   @attr('string', { defaultValue: '' }) type;

@@ -1,29 +1,76 @@
 {{#if @stream.events}}
-  <div id="events" class="card rounded-0 {{if this.globalConfig.config.cpanevents "h-100"}} border border-top-0 overflow-hidden m-0 p-0 h-effects">
+  <div
+    id="events"
+    class="card rounded-0
+      {{if this.globalConfig.config.cpanevents 'h-100'}}
+      border border-top-0 overflow-hidden m-0 p-0 h-effects"
+  >
     <div class="card-header rounded-0 p-0 m-0">
       <div class="row g-0">
-        <div class="col align-self-center pe-0 ps-2 py-0"><h6 class="my-0 py-1 dragula-handle">Events</h6></div>
+        <div class="col align-self-center pe-0 ps-2 py-0"><h6
+            class="my-0 py-1 dragula-handle"
+          >Events</h6></div>
         <BsButtonGroup class="col-auto px-0" as |bg|>
-          <bg.button @type="outline-secondary btn-sm rounded-0 border-0" @onClick={{this.togglePan}} title={{if this.globalConfig.config.cpanevents "Minimize events" "Maximize events"}}><FaIcon @icon={{if this.globalConfig.config.cpanevents "window-minimize" "window-maximize"}} /></bg.button>
+          <bg.button
+            @type="outline-secondary btn-sm rounded-0 border-0"
+            @onClick={{this.togglePan}}
+            title={{if
+              this.globalConfig.config.cpanevents
+              "Minimize events"
+              "Maximize events"
+            }}
+          ><FaIcon
+              @icon={{if
+                this.globalConfig.config.cpanevents
+                "window-minimize"
+                "window-maximize"
+              }}
+            /></bg.button>
         </BsButtonGroup>
       </div>
     </div>
-    <div class="card-body {{if this.globalConfig.config.cpanevents "h-100" "d-none"}} flex-fill overflow-hidden p-0 h-effects">
-      <BsCollapse class="row g-0 h-100 overflow-hidden h-effects" @collapsed={{not this.globalConfig.config.cpanevents}}>
-          <div class="col-md eventsframe px-2" {{scroll-position position=this.scrollEventsPosition relative=true}} id="eventlist">
-            {{#each this.eventsExternal.arrangedEvents as |event|}}
-              <div class="alert alert-dark {{event.type}} d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1 rounded-1">
-                <div class="row">
-                  <div class="col">
-                    {{#if event.platform}}{{svg-jar event.platform class=(concat "event-platform align-middle "  event.platform)}}{{/if}}
-                    <small>{{nicer-date event.timestamp format="YYYY/MM/DD HH:mm:ss"}}</small> - 
-                    <span class="alert-heading h6 d-inline">{{event.parsedbody}}</span>
-                  </div>
+    <div
+      class="card-body
+        {{if this.globalConfig.config.cpanevents 'h-100' 'd-none'}}
+        flex-fill overflow-hidden p-0 h-effects"
+    >
+      <BsCollapse
+        class="row g-0 h-100 overflow-hidden h-effects"
+        @collapsed={{not this.globalConfig.config.cpanevents}}
+      >
+        <div
+          class="col-md eventsframe px-2"
+          {{scroll-position position=this.scrollEventsPosition relative=true}}
+          id="eventlist"
+        >
+          {{#each this.eventsExternal.arrangedEvents as |event|}}
+            <div
+              class="alert alert-dark
+                {{event.type}}
+                d-flex flex-column w-100 text-decoration-none py-0 px-2 my-1 rounded-1"
+            >
+              <div class="row">
+                <div class="col">
+                  {{#if event.platform}}{{svg-jar
+                      event.platform
+                      class=(concat
+                        "event-platform align-middle " event.platform
+                      )
+                    }}{{/if}}
+                  <small>{{nicer-date
+                      event.timestamp
+                      format="YYYY/MM/DD HH:mm:ss"
+                    }}</small>
+                  -
+                  <span
+                    class="alert-heading h6 d-inline"
+                  >{{event.parsedbody}}</span>
                 </div>
               </div>
-            {{/each}}
-          </div>
-      </BsCollapse> 
+            </div>
+          {{/each}}
+        </div>
+      </BsCollapse>
     </div>
   </div>
 {{/if}}

@@ -1,13 +1,26 @@
-<BsButton @type="btn btn-outline-secondary text-black p-0 border-0 rounded-0 btn-window" title={{this.cloudText}} >
-  <span class={{this.cloudColor}}><FaIcon @icon="cloud" class="svg-cloud" @size="lg" /></span>
-    <div class="sync-activity mx-0">
-      {{#if this.globalConfig.config.canConnect}}
-        {{#unless this.showArrows}}
-          <span class={{unless this.isCloudSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-up" @size="sm" /></span>
-          <span class={{unless this.isLocalSynced "blinkcolor"}}><FaIcon @icon="long-arrow-alt-down" @size="sm" /></span>
-        {{/unless}}
-      {{else}} 
-        <span class=""><FaIcon @icon="cancel" @size="sm" /></span>
-      {{/if}}
-    </div> 
+<BsButton
+  @type="btn btn-outline-secondary text-black p-0 border-0 rounded-0 btn-window"
+  title={{this.cloudText}}
+>
+  <span class={{this.cloudColor}}><FaIcon
+      @icon="cloud"
+      class="svg-cloud"
+      @size="lg"
+    /></span>
+  <div class="sync-activity mx-0">
+    {{#if this.globalConfig.config.canConnect}}
+      {{#unless this.showArrows}}
+        <span class={{unless this.isCloudSynced "blinkcolor"}}><FaIcon
+            @icon="long-arrow-alt-up"
+            @size="sm"
+          /></span>
+        <span class={{unless this.isLocalSynced "blinkcolor"}}><FaIcon
+            @icon="long-arrow-alt-down"
+            @size="sm"
+          /></span>
+      {{/unless}}
+    {{else}}
+      <span class=""><FaIcon @icon="cancel" @size="sm" /></span>
+    {{/if}}
+  </div>
 </BsButton>

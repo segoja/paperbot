@@ -169,7 +169,7 @@ export default class ChordParser extends Helper {
                   /<\/strong>/g,
                   '</strong><strong class="chord" id="chordId' +
                     this.idCounter +
-                    '">'
+                    '">',
                 ) + '</strong>';
               // console.log(subchord);
               this.idCounter++;

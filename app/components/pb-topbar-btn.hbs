@@ -1,16 +1,39 @@
 {{#in-element this.topbarWormholeSmall insertBefore=null}}
-  <BsButton @type="{{@type}} btn-window p-0 border-0 rounded-0" @onClick={{this.toggleModal}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
+  <BsButton
+    @type="{{@type}} btn-window p-0 border-0 rounded-0"
+    @onClick={{this.toggleModal}}
+    title={{@buttonTitle}}
+  ><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
 {{/in-element}}
 {{#in-element this.topbarWormholeFull insertBefore=null}}
-  <BsButton @type="{{@type}} btn-window p-0 border-0 rounded-0" @onClick={{this.toggleModal}} title={{@buttonTitle}}><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
+  <BsButton
+    @type="{{@type}} btn-window p-0 border-0 rounded-0"
+    @onClick={{this.toggleModal}}
+    title={{@buttonTitle}}
+  ><FaIcon @icon={{@btnIcon}} />{{@btnText}}</BsButton>
 {{/in-element}}
 {{#in-element this.modalWormhole insertBefore=null}}
-  <BsModal @size="md" @open={{this.visible}} @onHide={{this.toggleModal}} as |Modal|>
-    <Modal.header @closeButton={{false}} class="p-0 m-0 bg-dark border-0 border-bottom rounded-top">
+  <BsModal
+    @size="md"
+    @open={{this.visible}}
+    @onHide={{this.toggleModal}}
+    as |Modal|
+  >
+    <Modal.header
+      @closeButton={{false}}
+      class="p-0 m-0 bg-dark border-0 border-bottom rounded-top"
+    >
       <div class="row g-0 w-100">
-        <div class="col py-1 ps-3"><span class="h5 text-white">{{@buttonTitle}}</span></div>
+        <div class="col py-1 ps-3"><span
+            class="h5 text-white"
+          >{{@buttonTitle}}</span></div>
         <div class="col-auto">
-          <button type="button" class="btn btn-dark rounded-0 rounded-top-right border-0" {{on "click" (fn this.toggleModal Modal)}} title="Close"><FaIcon @icon="times" /></button>
+          <button
+            type="button"
+            class="btn btn-dark rounded-0 rounded-top-right border-0"
+            {{on "click" (fn this.toggleModal Modal)}}
+            title="Close"
+          ><FaIcon @icon="times" /></button>
         </div>
       </div>
     </Modal.header>
@@ -18,7 +41,11 @@
       {{yield}}
     </Modal.body>
     <Modal.footer class="py-2">
-      <BsButton @onClick={{this.toggleModal}} @type="success" title="Ok">Ok</BsButton>
+      <BsButton
+        @onClick={{this.toggleModal}}
+        @type="success"
+        title="Ok"
+      >Ok</BsButton>
     </Modal.footer>
   </BsModal>
 {{/in-element}}

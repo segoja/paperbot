@@ -149,7 +149,7 @@ export default class PbStreamEditComponent extends Component {
       },
       function () {
         console.debug('Error disconnecting!');
-      }
+      },
     );
     if (this.eventsExternal.connected) {
       this.eventsExternal.disconnectClient();

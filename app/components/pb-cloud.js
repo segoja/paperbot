@@ -133,7 +133,7 @@ export default class PbCloudComponent extends Component {
         this.isSaving = false;
         // this.visible = false;
       },
-      500
+      500,
     );
   }
 
@@ -148,7 +148,7 @@ export default class PbCloudComponent extends Component {
           },
           (error) => {
             console.log('Could not disconnect!', error);
-          }
+          },
         );
         // this.globalConfig.config.autoConnect = true;
         // this.globalConfig.config.save();

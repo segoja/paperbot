@@ -1,59 +1,162 @@
 <div class="card border-0 rounded-0 flex-fill mh-100">
   <div class="card-header bg-dark m-0 p-0 border-0 border-bottom rounded-0">
     <div class="row g-0">
-      <div class="col py-1 ps-3"><span class="h5 text-white"><span class="d-none d-md-inline">Timer:</span> {{@timer.name}}</span></div>
+      <div class="col py-1 ps-3"><span class="h5 text-white"><span
+            class="d-none d-md-inline"
+          >Timer:</span>
+          {{@timer.name}}</span></div>
       <div class="col-auto">
-        <button type="button" class="btn btn-dark rounded-0 border-0" {{on "click" @closeTimer}} title="Close"><FaIcon @icon="xmark" /></button>
+        <button
+          type="button"
+          class="btn btn-dark rounded-0 border-0"
+          {{on "click" @closeTimer}}
+          title="Close"
+        ><FaIcon @icon="xmark" /></button>
       </div>
     </div>
   </div>
   <div class="card-body listframe">
-    <BsForm @formLayout="horizontal" @model={{@timer}} @onSubmit={{@saveTimer}} as |form|>
-      <form.element @controlType="text" @label="Name" class="pb-2" placeholder="Type the timer name" @property="name" required /> 
-      <form.element @controlType="power-select" @property="type" @label="Type" class="pb-2" @options={{@timerTypes}} as |element| >
-        <element.control placeholder="Select the timer type" @allowClear={{true}} />
+    <BsForm
+      @formLayout="horizontal"
+      @model={{@timer}}
+      @onSubmit={{@saveTimer}}
+      as |form|
+    >
+      <form.element
+        @controlType="text"
+        @label="Name"
+        class="pb-2"
+        placeholder="Type the timer name"
+        @property="name"
+        required
+      />
+      <form.element
+        @controlType="power-select"
+        @property="type"
+        @label="Type"
+        class="pb-2"
+        @options={{@timerTypes}}
+        as |element|
+      >
+        <element.control
+          placeholder="Select the timer type"
+          @allowClear={{true}}
+        />
       </form.element>
       <div class="form-group row pb-2">
         <label class="col-md-4">Active</label>
         <div class="col-sm">
-          <form.element @controlType="checkbox" @label="" @formLayout="inline" class="form-check-inline ps-0" @property="active" />
+          <form.element
+            @controlType="checkbox"
+            @label=""
+            @formLayout="inline"
+            class="form-check-inline ps-0"
+            @property="active"
+          />
         </div>
       </div>
       <div class="form-group row pb-2">
-        <label class="col-md-4">Message:</label>    
+        <label class="col-md-4">Message:</label>
         <div class="col-sm">
-          <Textarea @value={{@timer.message}} placeholder="Type the timer message..." rows="4" aria-label="Message" class="form-control"/>
+          <Textarea
+            @value={{@timer.message}}
+            placeholder="Type the timer message..."
+            rows="4"
+            aria-label="Message"
+            class="form-control"
+          />
         </div>
       </div>
-      <form.element @controlType="text" @property="soundfile" class="pb-2" @label="Sound file" as |el|>
+      <form.element
+        @controlType="text"
+        @property="soundfile"
+        class="pb-2"
+        @label="Sound file"
+        as |el|
+      >
         <div class="input-group">
-          <BsButton @type="secondary" @onClick={{this.playSound}} disabled={{not this.currentUser.isTauri}} title={{if this.isPreviewLoaded (if this.isPreviewPlaying "Stop sound" "Play sound") "No sound loaded"}}><FaIcon @icon="{{if this.isPreviewLoaded (if this.isPreviewPlaying "stop" "play") "volume-mute"}}" /></BsButton>
+          <BsButton
+            @type="secondary"
+            @onClick={{this.playSound}}
+            disabled={{not this.currentUser.isTauri}}
+            title={{if
+              this.isPreviewLoaded
+              (if this.isPreviewPlaying "Stop sound" "Play sound")
+              "No sound loaded"
+            }}
+          ><FaIcon
+              @icon="{{if
+                this.isPreviewLoaded
+                (if this.isPreviewPlaying 'stop' 'play')
+                'volume-mute'
+              }}"
+            /></BsButton>
           <el.control disabled @placeholder="Select the sound file..." />
-          <BsButton @type="secondary" @onClick={{fn this.getAudioPath @timer}} disabled={{not this.currentUser.isTauri}} title="Select sound file">Select file</BsButton>
+          <BsButton
+            @type="secondary"
+            @onClick={{fn this.getAudioPath @timer}}
+            disabled={{not this.currentUser.isTauri}}
+            title="Select sound file"
+          >Select file</BsButton>
         </div>
       </form.element>
       <div class="form-group row pb-2">
-        <label class="col-md-4">Volume %:</label>    
+        <label class="col-md-4">Volume %:</label>
         <div class="col-sm">
           <div class="input-group border rounded">
-            <Input @type="range" min="1" max="100" aria-label="Volume" @value={{@timer.volume}}  {{on "change" (fn this.adjustVolume @timer.volume)}} class="form-control btn-secondary slider w-75 border-0" />
-            <Input @type="text" @value={{@timer.volume}} aria-label="Volume" {{on "keyup" (fn this.adjustVolume @timer.volume)}} class="form-control w-25 border-0 border-start" />
+            <Input
+              @type="range"
+              min="1"
+              max="100"
+              aria-label="Volume"
+              @value={{@timer.volume}}
+              {{on "change" (fn this.adjustVolume @timer.volume)}}
+              class="form-control btn-secondary slider w-75 border-0"
+            />
+            <Input
+              @type="text"
+              @value={{@timer.volume}}
+              aria-label="Volume"
+              {{on "keyup" (fn this.adjustVolume @timer.volume)}}
+              class="form-control w-25 border-0 border-start"
+            />
           </div>
         </div>
       </div>
     </BsForm>
-  </div>  
-  <div class="card-footer py-3 bg-transparent">    
+  </div>
+  <div class="card-footer py-3 bg-transparent">
     <div class="row">
       <div class="col">
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash" @btnText="Delete" @buttonTitle="Delete timer" @confirmDescription="Are you sure you want to delete this timer?" @targetAction={{@deleteTimer}} />
+        <ButtonConfirm
+          @btnClass="btn btn-danger"
+          @btnIcon="trash"
+          @btnText="Delete"
+          @buttonTitle="Delete timer"
+          @confirmDescription="Are you sure you want to delete this timer?"
+          @targetAction={{@deleteTimer}}
+        />
       </div>
       <div class="col-auto">
-        <BsButton @type="secondary" {{on "click" @closeTimer}}><FaIcon @icon="right-to-bracket" @flip="horizontal" title="Go back"/><span class="d-none d-md-inline"> Back</span></BsButton>
-        <BsButton @type={{if this.saving "success" "secondary"}} class="d-none d-md-inline" @onClick={{this.doneEditing}} title="Save timer">
+        <BsButton @type="secondary" {{on "click" @closeTimer}}><FaIcon
+            @icon="right-to-bracket"
+            @flip="horizontal"
+            title="Go back"
+          /><span class="d-none d-md-inline"> Back</span></BsButton>
+        <BsButton
+          @type={{if this.saving "success" "secondary"}}
+          class="d-none d-md-inline"
+          @onClick={{this.doneEditing}}
+          title="Save timer"
+        >
           <FaIcon @icon="save" @pulse={{this.saving}} />
         </BsButton>
-        <BsButton @type="success" @onClick={{@saveAndReturnTimer}} title="Save & return"><FaIcon @icon="save" /> Save<span class="d-none d-md-inline"> & Return</span></BsButton>   
+        <BsButton
+          @type="success"
+          @onClick={{@saveAndReturnTimer}}
+          title="Save & return"
+        ><FaIcon @icon="save" />
+          Save<span class="d-none d-md-inline"> & Return</span></BsButton>
       </div>
     </div>
   </div>

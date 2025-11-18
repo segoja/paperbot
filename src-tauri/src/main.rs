@@ -19,9 +19,14 @@ async fn file_writer(filepath: String, filecontent: String) -> Result<(), String
   Ok(())
 }
 
+
+// TODO: Add error handling to the binary_loader function
 #[tauri::command]
-async fn binary_loader(filepath: String) -> Vec<u8> {
-  tokio::fs::read(filepath).await.unwrap().to_owned()
+async fn binary_loader(filepath: String) -> Result<Vec<u8>, String> {
+  match tokio::fs::read(filepath).await {
+    Ok(bytes) => Ok(bytes),
+    Err(err) => Err(format!("Error loading file: {}", err)),
+  }
 }
 
 #[tauri::command]

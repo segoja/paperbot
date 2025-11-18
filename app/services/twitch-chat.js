@@ -2,8 +2,7 @@ import Service, { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { htmlSafe } from '@ember/template';
 import { action } from '@ember/object';
-import { assign } from '@ember/polyfills';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import tmi from 'tmi.js';
 import emoteParser from 'tmi-emote-parse';
@@ -73,12 +72,17 @@ export default class TwitchChatService extends Service {
   @tracked commands = new TrackedArray();
   get commandlist() {
     return this.commands.filter(
-      (command) => command.active && !command.isDeleted
+      (command) => command.active && !command.isDeleted,
     );
   }
 
+  @tracked brokenAudioCommands = new TrackedArray();
   get audiocommandslist() {
-    return this.commandlist.filter((command) => command.type == 'audio');
+    return this.commandlist.filter(
+      (command) =>
+        command.type == 'audio' &&
+        !this.brokenAudioCommands.includes(command.id),
+    );
   }
 
   @tracked lastTimerId = '';
@@ -110,7 +114,7 @@ export default class TwitchChatService extends Service {
     // console.debug(this.globalBadges);
     // console.debug(this.channelBadges);
     if (this.channelBadges > 0) {
-      pack = assign(this.globalBadges, this.channelBadges);
+      pack = Object.assign(this.globalBadges, this.channelBadges);
     }
     return pack;
   }
@@ -178,7 +182,7 @@ export default class TwitchChatService extends Service {
       let key = this.cryptoData.newKey(this.botUsername);
       let pass = this.cryptoData.decrypt(
         options.identity.password.toString(),
-        key
+        key,
       );
 
       this.botPassword = pass.replace(/oauth:/g, '');
@@ -203,7 +207,7 @@ export default class TwitchChatService extends Service {
         (error) => {
           console.debug('error connecting bot client!', error);
           this.botConnected = false;
-        }
+        },
       );
       return this.botConnected;
     }
@@ -215,7 +219,7 @@ export default class TwitchChatService extends Service {
       let key = this.cryptoData.newKey(this.chatUsername);
       let pass = this.cryptoData.decrypt(
         options.identity.password.toString(),
-        key
+        key,
       );
 
       this.chatPassword = pass.replace(/oauth:/g, '');
@@ -234,7 +238,7 @@ export default class TwitchChatService extends Service {
         (error) => {
           console.debug('error connecting chat client!', error);
           this.chatConnected = false;
-        }
+        },
       );
       return this.chatConnected;
     }
@@ -275,7 +279,7 @@ export default class TwitchChatService extends Service {
     console.debug('Scheduling timers...');
     if (this.currentUser.isTauri) {
       let audioTimersList = this.timersList.filter(
-        (timer) => timer.type == 'audio'
+        (timer) => timer.type == 'audio',
       );
       if ((await audioTimersList.length) > 0) {
         if ((await this.timersList.length) > 0) {
@@ -396,7 +400,7 @@ export default class TwitchChatService extends Service {
 
     this.lastmessage = {
       id: tags['id'] ? tags['id'].toString() : 'system',
-      timestamp: moment().format(),
+      timestamp: dayjs().format(),
       body: msg ? msg.toString() : null,
       parsedbody: this.parseMessage(msg.toString(), tags['emotes']).toString(),
       user: tags['username'] ? tags['username'].toString() : this.botUsername,
@@ -409,7 +413,7 @@ export default class TwitchChatService extends Service {
       csscolor: tags['color']
         ? htmlSafe('color: ' + tags['color'])
         : htmlSafe(
-            'color: ' + this.setDefaultColor(tags['username']).toString()
+            'color: ' + this.setDefaultColor(tags['username']).toString(),
           ),
       badges: tags['badges'] ? tags['badges'] : null,
       htmlbadges: tags['badges-raw']
@@ -444,7 +448,7 @@ export default class TwitchChatService extends Service {
           if (this.filteredSongs.length > 0) {
             var bestmatch = await this.filteredSongs.shift();
             let hasBeenRequested = this.queueHandler.songqueue.find(
-              (item) => item.fullText === bestmatch.fullText
+              (item) => item.fullText === bestmatch.fullText,
             );
             if (
               (await hasBeenRequested) &&
@@ -454,7 +458,7 @@ export default class TwitchChatService extends Service {
                 target,
                 '/me The song ' +
                   bestmatch.fullText +
-                  ' has already been requested!'
+                  ' has already been requested!',
               );
             } else {
               if (bestmatch.active) {
@@ -489,7 +493,7 @@ export default class TwitchChatService extends Service {
                     await bestmatch.save();
 
                     console.debug(
-                      bestmatch.fullText + ' added at position ' + nextPosition
+                      bestmatch.fullText + ' added at position ' + nextPosition,
                     );
                     this.queueHandler.scrollPendingPosition = 0;
                     this.queueHandler.scrollPlayedPosition = 0;
@@ -501,7 +505,7 @@ export default class TwitchChatService extends Service {
                       '/me @' +
                         tags['username'] +
                         ' requested the song ' +
-                        bestmatch.fullText
+                        bestmatch.fullText,
                     );
                   });
                 } else {
@@ -509,7 +513,7 @@ export default class TwitchChatService extends Service {
                     target,
                     '/me @' +
                       tags['username'] +
-                      ' you are not allowed to request that song.'
+                      ' you are not allowed to request that song.',
                   );
                 }
               } else {
@@ -517,7 +521,7 @@ export default class TwitchChatService extends Service {
                   target,
                   "/me I coudln't infer the song @" +
                     tags['username'] +
-                    '. Try again!'
+                    '. Try again!',
                 );
               }
             }
@@ -526,7 +530,7 @@ export default class TwitchChatService extends Service {
               target,
               '/me @' +
                 tags['username'] +
-                ' that song is not in the songlist. Try again!'
+                ' that song is not in the songlist. Try again!',
             );
           }
         }
@@ -545,7 +549,7 @@ export default class TwitchChatService extends Service {
     'queueHandler.songList',
     ['title', 'artist', 'keywords'],
     'requestpattern',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredSongs;
 
@@ -585,7 +589,7 @@ export default class TwitchChatService extends Service {
               var bestmatch = await this.filteredSongs.shift();
 
               let hasBeenRequested = this.queueHandler.songqueue.find(
-                (item) => item.fullText === bestmatch.fullText
+                (item) => item.fullText === bestmatch.fullText,
               );
               if (
                 (await hasBeenRequested) &&
@@ -595,7 +599,7 @@ export default class TwitchChatService extends Service {
                   target,
                   '/me The song ' +
                     bestmatch.fullText +
-                    ' has already been requested!'
+                    ' has already been requested!',
                 );
               } else {
                 if (bestmatch.active) {
@@ -633,7 +637,7 @@ export default class TwitchChatService extends Service {
                       console.debug(
                         bestmatch.fullText +
                           ' added at position ' +
-                          nextPosition
+                          nextPosition,
                       );
 
                       this.queueHandler.scrollPendingPosition = 0;
@@ -646,7 +650,7 @@ export default class TwitchChatService extends Service {
                         '/me @' +
                           tags['username'] +
                           ' requested the song ' +
-                          bestmatch.fullText
+                          bestmatch.fullText,
                       );
                     });
                   } else {
@@ -654,7 +658,7 @@ export default class TwitchChatService extends Service {
                       target,
                       '/me @' +
                         tags['username'] +
-                        ' you are not allowed to request that song.'
+                        ' you are not allowed to request that song.',
                     );
                   }
                 } else {
@@ -662,7 +666,7 @@ export default class TwitchChatService extends Service {
                     target,
                     "/me I coudln't infer the song @" +
                       tags['username'] +
-                      '. Try again!'
+                      '. Try again!',
                   );
                 }
               }
@@ -671,7 +675,7 @@ export default class TwitchChatService extends Service {
                 target,
                 '/me @' +
                   tags['username'] +
-                  ' that song is not in the songlist. Try again!'
+                  ' that song is not in the songlist. Try again!',
               );
             }
           }
@@ -695,7 +699,7 @@ export default class TwitchChatService extends Service {
             this.audio.SBstatus
           ) {
             let quietTime = Number(
-              commandName.toLowerCase().replace(/!ykq/g, '').trim()
+              commandName.toLowerCase().replace(/!ykq/g, '').trim(),
             );
             this.audio.isEnabled = false;
             console.debug(quietTime);
@@ -706,7 +710,7 @@ export default class TwitchChatService extends Service {
                 }, quietTime * 1000);
                 this.botclient.say(
                   target,
-                  '/me Enjoy the silence a little bit...'
+                  '/me Enjoy the silence a little bit...',
                 );
               } else {
                 this.botclient.say(target, '/me Enjoy the silence...');
@@ -767,7 +771,7 @@ export default class TwitchChatService extends Service {
                 await firstSong.save();
 
                 console.debug(
-                  firstSong.fullText + ' added at position ' + nextPosition
+                  firstSong.fullText + ' added at position ' + nextPosition,
                 );
 
                 this.queueHandler.scrollPendingPosition = 0;
@@ -780,14 +784,14 @@ export default class TwitchChatService extends Service {
                   '/me @' +
                     tags['username'] +
                     ' randomly requested the song ' +
-                    firstSong.fullText
+                    firstSong.fullText,
                 );
               });
             }
           } else {
             this.botclient.say(
               target,
-              '/me There are no songs available to add.'
+              '/me There are no songs available to add.',
             );
           }
           // !next or!nextsong  show the last song played:
@@ -800,7 +804,7 @@ export default class TwitchChatService extends Service {
             if (firstSong) {
               this.botclient.say(
                 target,
-                '/me Next song is: ' + firstSong.fullText
+                '/me Next song is: ' + firstSong.fullText,
               );
             }
           } else {
@@ -821,13 +825,13 @@ export default class TwitchChatService extends Service {
             if (firstSong) {
               this.botclient.say(
                 target,
-                '/me Last played song was: ' + firstSong.fullText
+                '/me Last played song was: ' + firstSong.fullText,
               );
             }
           } else {
             this.botclient.say(
               target,
-              '/me There are no songs in the played list.'
+              '/me There are no songs in the played list.',
             );
           }
           // !current or !song show the song the streamer is playing:
@@ -897,7 +901,7 @@ export default class TwitchChatService extends Service {
                 targetLastSong.destroyRecord().then(() => {
                   this.botclient.say(
                     target,
-                    '/me the song ' + songname + ' has been removed.'
+                    '/me the song ' + songname + ' has been removed.',
                   );
                 });
               } else {
@@ -905,7 +909,7 @@ export default class TwitchChatService extends Service {
                   target,
                   '/me The user @' +
                     targetUser +
-                    " doesn't have any song in the queue."
+                    " doesn't have any song in the queue.",
                 );
               }
             } else {
@@ -915,7 +919,7 @@ export default class TwitchChatService extends Service {
               if (targetUser) {
                 this.botclient.say(
                   target,
-                  "/me you don't have permissions to delete someone else's songs."
+                  "/me you don't have permissions to delete someone else's songs.",
                 );
               } else {
                 let userLastSong = await this.queueHandler.pendingSongs
@@ -926,13 +930,13 @@ export default class TwitchChatService extends Service {
                   userLastSong.destroyRecord().then(() => {
                     this.botclient.say(
                       target,
-                      '/me the song ' + songname + ' has been removed.'
+                      '/me the song ' + songname + ' has been removed.',
                     );
                   });
                 } else {
                   this.botclient.say(
                     target,
-                    "/me you don't have songs in the queue."
+                    "/me you don't have songs in the queue.",
                   );
                 }
               }
@@ -998,7 +1002,7 @@ export default class TwitchChatService extends Service {
                   }
                 } else {
                   console.debug(
-                    'Not authorized to use ' + command.name + ' command.'
+                    'Not authorized to use ' + command.name + ' command.',
                   );
                 }
                 /*}*/
@@ -1228,7 +1232,7 @@ export default class TwitchChatService extends Service {
             1,
             '<img class="twitch-emoticon" src="http://static-cdn.jtvnw.net/emoticons/v1/' +
               i +
-              '/3.0">'
+              '/3.0">',
           );
         }
       }
@@ -1249,7 +1253,7 @@ export default class TwitchChatService extends Service {
       headers: new Headers(headers),
     };
     return fetch(base + endpoint + '?' + this.formQuerystring(qs), opts).then(
-      (res) => res.json()
+      (res) => res.json(),
     );
   }
   kraken(opts) {
@@ -1307,7 +1311,7 @@ export default class TwitchChatService extends Service {
       console.debug(userstate);
       // Do your stuff.
       this.chateventHandler(
-        '<strong>@' + username + '</strong> has been banned.'
+        '<strong>@' + username + '</strong> has been banned.',
       );
     });
 
@@ -1316,7 +1320,7 @@ export default class TwitchChatService extends Service {
       console.debug(userstate);
       // Do your stuff.
       this.chateventHandler(
-        '<strong>@' + username + '</strong> has been unbanned.'
+        '<strong>@' + username + '</strong> has been unbanned.',
       );
     });
 
@@ -1325,14 +1329,14 @@ export default class TwitchChatService extends Service {
       console.debug(userstate);
       // Do your stuff.
       this.chateventHandler(
-        '<strong>@' + username + '</strong> started a chant!'
+        '<strong>@' + username + '</strong> started a chant!',
       );
     });
 
     client.on('clearchat', (channel) => {
       // Do your stuff.
       this.chateventHandler(
-        '<strong>' + channel + '</strong> room has been cleared.'
+        '<strong>' + channel + '</strong> room has been cleared.',
       );
     });
 
@@ -1378,7 +1382,7 @@ export default class TwitchChatService extends Service {
           target +
           '</strong> with <strong>' +
           viewers +
-          '</strong> viewers'
+          '</strong> viewers',
       );
     });
 
@@ -1397,9 +1401,9 @@ export default class TwitchChatService extends Service {
             '</strong> deleted <strong>@' +
             username +
             '</strong> message: ' +
-            deletedMessage
+            deletedMessage,
         );
-      }
+      },
     );
 
     // Someone got modded
@@ -1410,7 +1414,7 @@ export default class TwitchChatService extends Service {
           channel +
           '</strong> modded <strong>@' +
           username +
-          '</strong>!'
+          '</strong>!',
       );
     });
 
@@ -1486,7 +1490,7 @@ export default class TwitchChatService extends Service {
           channel +
           ' stopped hosting the stream with ' +
           viewers +
-          ' viewers'
+          ' viewers',
       );
     });
 
@@ -1518,7 +1522,7 @@ export default class TwitchChatService extends Service {
           ' got upgraded to ' +
           userstate['msg-param-cumulative-months'] +
           '.',
-        'gift'
+        'gift',
       );
     });
 
@@ -1533,7 +1537,7 @@ export default class TwitchChatService extends Service {
           userstate['bits'] +
           ' and the message: ' +
           message,
-        'cheer'
+        'cheer',
       );
     });
 
@@ -1554,7 +1558,7 @@ export default class TwitchChatService extends Service {
           viewers +
           ' viewers. The raid is autohost? ' +
           autohost,
-        'host'
+        'host',
       );
     });
 
@@ -1568,7 +1572,7 @@ export default class TwitchChatService extends Service {
           ' with ' +
           viewers +
           ' viewers.',
-        'raid'
+        'raid',
       );
     });
 
@@ -1606,9 +1610,9 @@ export default class TwitchChatService extends Service {
             ". They've subscribed for " +
             tags['msg-param-cumulative-months'] +
             ' months!',
-          'resub'
+          'resub',
         );
-      }
+      },
     );
 
     client.on(
@@ -1620,9 +1624,9 @@ export default class TwitchChatService extends Service {
         console.debug(userstate);
         this.eventHandler(
           '@' + username + ' gifted ' + numbOfSubs + ' subs.',
-          'gift'
+          'gift',
         );
-      }
+      },
     );
 
     client.on(
@@ -1634,9 +1638,9 @@ export default class TwitchChatService extends Service {
         console.debug(userstate);
         this.eventHandler(
           '@' + username + ' gifted @' + recipient + ' a sub.',
-          'gift'
+          'gift',
         );
-      }
+      },
     );
 
     client.on(
@@ -1670,16 +1674,16 @@ export default class TwitchChatService extends Service {
         }
         this.eventHandler(
           '@' + username + ' subscribed to ' + channel + ' with ' + plan + '.',
-          'sub'
+          'sub',
         );
-      }
+      },
     );
   }
 
   @action chateventHandler(notice) {
     this.lastmessage = {
       id: 'system',
-      timestamp: moment().format(),
+      timestamp: dayjs().format(),
       body: null,
       parsedbody: this.parseMessage(notice, []).toString(),
       user: '[Info]',
@@ -1700,7 +1704,7 @@ export default class TwitchChatService extends Service {
   @action eventHandler(event, type) {
     this.lastevent = {
       id: 'event',
-      timestamp: moment().format(),
+      timestamp: dayjs().format(),
       parsedbody: this.parseMessage(event, []).toString(),
       user: 'event',
       displayname: 'event',

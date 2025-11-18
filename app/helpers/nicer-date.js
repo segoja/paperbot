@@ -1,5 +1,5 @@
 import Helper from '@ember/component/helper';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { isEmpty } from '@ember/utils';
 
 export default class r extends Helper {
@@ -11,7 +11,7 @@ export default class r extends Helper {
         format = hash.format;
       }
 
-      return moment(date).format(format);
+      return dayjs(date).format(format);
     }
   }
 }

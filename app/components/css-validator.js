@@ -30,7 +30,7 @@ function validateAtrule(node) {
       Object.assign(error, {
         atrule,
         ...(node.loc && node.loc.start),
-      })
+      }),
     );
 
     return errors;
@@ -41,8 +41,8 @@ function validateAtrule(node) {
       atrule,
       node.prelude,
       (node.prelude && node.prelude.loc && node.prelude.loc.start) ||
-        (node.loc && node.loc.start)
-    )
+        (node.loc && node.loc.start),
+    ),
   );
 
   if (node.block && node.block.children) {
@@ -53,8 +53,8 @@ function validateAtrule(node) {
             atrule,
             child.property,
             child.value,
-            child.loc && child.loc.start
-          )
+            child.loc && child.loc.start,
+          ),
         );
       }
     });
@@ -72,7 +72,7 @@ function validateAtrulePrelude(atrule, prelude, preludeLoc) {
       Object.assign(error, {
         atrule,
         ...preludeLoc,
-      })
+      }),
     );
   } else if (
     (error = isTargetError(syntax.matchAtrulePrelude(atrule, prelude).error))
@@ -84,7 +84,7 @@ function validateAtrulePrelude(atrule, prelude, preludeLoc) {
           details: error.message,
           message: 'Invalid value for `@' + atrule + '` prelude',
         }),
-      })
+      }),
     );
   }
 
@@ -97,7 +97,7 @@ function validateAtruleDescriptor(atrule, descriptor, value, descriptorLoc) {
 
   if (
     (error = isTargetError(
-      syntax.checkAtruleDescriptorName(atrule, descriptor)
+      syntax.checkAtruleDescriptorName(atrule, descriptor),
     ))
   ) {
     errors.push(
@@ -105,12 +105,12 @@ function validateAtruleDescriptor(atrule, descriptor, value, descriptorLoc) {
         atrule,
         descriptor,
         ...descriptorLoc,
-      })
+      }),
     );
   } else {
     if (
       (error = isTargetError(
-        syntax.matchAtruleDescriptor(atrule, descriptor, value).error
+        syntax.matchAtruleDescriptor(atrule, descriptor, value).error,
       ))
     ) {
       errors.push(
@@ -121,7 +121,7 @@ function validateAtruleDescriptor(atrule, descriptor, value, descriptorLoc) {
             details: error.message,
             message: 'Invalid value for `' + descriptor + '` descriptor',
           }),
-        })
+        }),
       );
     }
   }
@@ -142,7 +142,7 @@ function validateDeclaration(property, value, valueLoc) {
       Object.assign(error, {
         property,
         ...valueLoc,
-      })
+      }),
     );
   } else if (
     (error = isTargetError(syntax.matchProperty(property, value).error))
@@ -154,7 +154,7 @@ function validateDeclaration(property, value, valueLoc) {
           details: error.message,
           message: 'Invalid value for `' + property + '` property',
         }),
-      })
+      }),
     );
   }
 
@@ -171,8 +171,8 @@ function validateRule(node) {
           ...validateDeclaration(
             child.property,
             child.value,
-            child.loc && child.loc.start
-          )
+            child.loc && child.loc.start,
+          ),
         );
       }
     });

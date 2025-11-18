@@ -1,5 +1,4 @@
-import { attr } from '@ember-data/model';
-import { Model } from 'ember-pouch';
+import Model, { attr } from '@ember-data/model';
 
 export default class AudiofileModel extends Model {
   @attr('string', { defaultValue: '' }) name;

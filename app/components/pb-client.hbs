@@ -1,62 +1,167 @@
 <div class="card border-0 rounded-0 flex-fill mh-100">
-  <div class="card-header bg-dark p-0 m-0 border-0 border-bottom rounded-0 flex-fill mh-100">
+  <div
+    class="card-header bg-dark p-0 m-0 border-0 border-bottom rounded-0 flex-fill mh-100"
+  >
     <div class="row g-0">
-      <div class="col py-1 ps-3"><span class="h5 text-white"><span class="d-none d-md-inline">Client:</span> {{@client.username}}</span></div>
+      <div class="col py-1 ps-3"><span class="h5 text-white"><span
+            class="d-none d-md-inline"
+          >Client:</span>
+          {{@client.username}}</span></div>
       <div class="col-auto">
-        <button type="button" class="btn btn-dark rounded-0 border-0" {{on "click" @closeClient}} title="Close"><FaIcon @icon="xmark" /></button>
+        <button
+          type="button"
+          class="btn btn-dark rounded-0 border-0"
+          {{on "click" @closeClient}}
+          title="Close"
+        ><FaIcon @icon="xmark" /></button>
       </div>
     </div>
   </div>
   <div class="card-body listframe">
-    <BsForm @formLayout="horizontal" @model={{@client}} @onSubmit={{@saveClient}} as |form|>
-      <form.element @controlType="text" @label="Username" placeholder="Username" class="pb-2" @property="username" required />  
-      
+    <BsForm
+      @formLayout="horizontal"
+      @model={{@client}}
+      @onSubmit={{@saveClient}}
+      as |form|
+    >
+      <form.element
+        @controlType="text"
+        @label="Username"
+        placeholder="Username"
+        class="pb-2"
+        @property="username"
+        required
+      />
+
       <div class="form-group row pb-2">
         <div class="col-md-4 col-form-label">
           <label class="control-label">Oauth</label>
           <span role="button" id="twitch-oauth-info">
-            <FaIcon @icon="question-circle" class="text-info" role="presentation" />
+            <FaIcon
+              @icon="question-circle"
+              class="text-info"
+              role="presentation"
+            />
           </span>
-          <BsPopover @triggerEvents={{this.globalConfig.popoverevents}} @triggerElement="#twitch-oauth-info" @delayHide={{this.globalConfig.ttdelay}} class="ppover" as |po|>
-            <div role="dialog" class="p-3 alert alert-dismissible m-0" {{on "mouseleave" po.close}}>
-              <p class="my-0">Get your Oauth key <a href="https://twitchapps.com/tmi/" target="_blank" rel="noopener noreferrer" {{on "click" po.close}}>Here</a></p>
+          <BsPopover
+            @triggerEvents={{this.globalConfig.popoverevents}}
+            @triggerElement="#twitch-oauth-info"
+            @delayHide={{this.globalConfig.ttdelay}}
+            class="ppover"
+            as |po|
+          >
+            <div
+              role="dialog"
+              class="p-3 alert alert-dismissible m-0"
+              {{on "mouseleave" po.close}}
+            >
+              <p class="my-0">Get your Oauth by selecting Bot Chat Token and copying ACCESS TOKEN from
+                <a
+                  href="https://twitchtokengenerator.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  {{on "click" po.close}}
+                >Here</a></p>
             </div>
           </BsPopover>
         </div>
         <div class="col-md-8">
-          <div class="input-group">
+          <div
+            class="input-group"
             {{did-insert this.setOauth}}
             {{did-update this.setOauth @client}}
-            <Input @type={{if this.isMasked "password" "text"}} aria-label="Oauth string" @value={{this.oauth}} autocomplete="current-oauth" class="form-control" disabled={{this.isMasked}} placeholder="Paste your Oauth here including Oauth: "/>
-            <button type="button" class="btn btn-outline-secondary" {{on "click" this.toggleMask}} title="Show password"><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
+          >
+            <Input
+              @type={{if this.isMasked "password" "text"}}
+              aria-label="Oauth string"
+              @value={{this.oauth}}
+              autocomplete="current-oauth"
+              class="form-control"
+              disabled={{this.isMasked}}
+              placeholder="Paste your Oauth here including Oauth: "
+            />
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              {{on "click" this.toggleMask}}
+              title="Show password"
+            ><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
           </div>
         </div>
       </div>
 
-      <form.element @controlType="text" @label="Channel" placeholder="Channel" class="pb-2" @property="channel" required />  
-      
+      <form.element
+        @controlType="text"
+        @label="Channel"
+        placeholder="Channel"
+        class="pb-2"
+        @property="channel"
+        required
+      />
+
       <div class="form-group row pb-2">
         <label class="col-md-4">Advanced Settings</label>
         <div class="col-sm">
-          <form.element @controlType="checkbox" @label="Debug" @formLayout="inline" @property="debug" class="form-check-inline ps-0" />
-          <form.element @controlType="checkbox" @label="Reconnect" @formLayout="inline" @property="reconnect" class="form-check-inline ps-0" />
-          <form.element @controlType="checkbox" @label="Secure" @formLayout="inline" @property="secure" class="form-check-inline ps-0" />
+          <form.element
+            @controlType="checkbox"
+            @label="Debug"
+            @formLayout="inline"
+            @property="debug"
+            class="form-check-inline ps-0"
+          />
+          <form.element
+            @controlType="checkbox"
+            @label="Reconnect"
+            @formLayout="inline"
+            @property="reconnect"
+            class="form-check-inline ps-0"
+          />
+          <form.element
+            @controlType="checkbox"
+            @label="Secure"
+            @formLayout="inline"
+            @property="secure"
+            class="form-check-inline ps-0"
+          />
         </div>
       </div>
     </BsForm>
-  </div>  
+  </div>
   <div class="card-footer py-3 bg-transparent">
     <div class="row g-1 w-100 flex-nowrap">
       <div class="col">
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash" @buttonTitle="Delete client" @btnText="Delete" @confirmDescription="Are you sure you want to delete this client?" @targetAction={{@deleteClient}} />
+        <ButtonConfirm
+          @btnClass="btn btn-danger"
+          @btnIcon="trash"
+          @buttonTitle="Delete client"
+          @btnText="Delete"
+          @confirmDescription="Are you sure you want to delete this client?"
+          @targetAction={{@deleteClient}}
+        />
       </div>
       <div class="col-auto">
-        <BsButton @type="secondary" title="Go back" {{on "click" @closeClient}}><FaIcon @icon="right-to-bracket" @flip="horizontal"  /><span class="d-none d-md-inline"> Back</span></BsButton>
-        <BsButton @type={{if this.saving "success" "secondary"}} title="Save client" class="d-none d-md-inline" @onClick={{this.doneEditing}}>
+        <BsButton
+          @type="secondary"
+          title="Go back"
+          {{on "click" @closeClient}}
+        ><FaIcon @icon="right-to-bracket" @flip="horizontal" /><span
+            class="d-none d-md-inline"
+          > Back</span></BsButton>
+        <BsButton
+          @type={{if this.saving "success" "secondary"}}
+          title="Save client"
+          class="d-none d-md-inline"
+          @onClick={{this.doneEditing}}
+        >
           <FaIcon @icon="save" @pulse={{this.saving}} />
         </BsButton>
-        <BsButton @type="success" @onClick={{@saveAndReturnClient}} title="Save & return"><FaIcon @icon="save" /> Save<span class="d-none d-md-inline"> & Return</span></BsButton>   
+        <BsButton
+          @type="success"
+          @onClick={{@saveAndReturnClient}}
+          title="Save & return"
+        ><FaIcon @icon="save" />
+          Save<span class="d-none d-md-inline"> & Return</span></BsButton>
       </div>
-    </div>    
+    </div>
   </div>
 </div>

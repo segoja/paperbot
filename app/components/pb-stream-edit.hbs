@@ -1,26 +1,94 @@
 {{#if @isEditing}}
   <div class="card-body listframe">
-    <BsForm @formLayout="horizontal" @model={{@stream}} @onSubmit={{this.doneAndReturnEditing}} as |form|>
-      <form.element @controlType="text" @label="Stream Title" class="pb-2" placeholder="Stream title" @property="title" required />
-      <form.element @controlType="text" @label="Stream Channel" class="pb-2" placeholder="Stream channel" @property="channel" required />
-      
+    <BsForm
+      @formLayout="horizontal"
+      @model={{@stream}}
+      @onSubmit={{this.doneAndReturnEditing}}
+      as |form|
+    >
+      <form.element
+        @controlType="text"
+        @label="Stream Title"
+        class="pb-2"
+        placeholder="Stream title"
+        @property="title"
+        required
+      />
+      <form.element
+        @controlType="text"
+        @label="Stream Channel"
+        class="pb-2"
+        placeholder="Stream channel"
+        @property="channel"
+        required
+      />
+
       <div class="form-group row pb-2">
         <label class="col-md-4">Stream Monitoring</label>
         <div class="col-sm">
-          <form.element @controlType="checkbox" @label="Chat Logging" @formLayout="inline" @property="savechat" class="form-check-inline ps-0"  />
-          <form.element @controlType="checkbox" @label="Event Logging" @formLayout="inline" @property="events"class="form-check-inline ps-0" as |checkbox|>
-            <checkbox.control disabled={{this.globalCOnfig.config.canGetEvents}} />
+          <form.element
+            @controlType="checkbox"
+            @label="Chat Logging"
+            @formLayout="inline"
+            @property="savechat"
+            class="form-check-inline ps-0"
+          />
+          <form.element
+            @controlType="checkbox"
+            @label="Event Logging"
+            @formLayout="inline"
+            @property="events"
+            class="form-check-inline ps-0"
+            as |checkbox|
+          >
+            <checkbox.control
+              disabled={{this.globalCOnfig.config.canGetEvents}}
+            />
           </form.element>
-          <form.element @controlType="checkbox" @label="Song Request System" @formLayout="inline" @property="requests" class="form-check-inline ps-0"  />
+          <form.element
+            @controlType="checkbox"
+            @label="Song Request System"
+            @formLayout="inline"
+            @property="requests"
+            class="form-check-inline ps-0"
+          />
         </div>
-      </div>    
-      <form.element @controlType="power-select" class="pb-2" @property="botclient" @label="Bot Client" @options={{@clients}} selected={{this.globalConfig.config.defbotclient}} @onChange={{@setBotClient}} required as |client|>
-        <client.control @allowClear={{true}} @placeholder="Select the Bot Client for the stream" as |option|>
+      </div>
+      <form.element
+        @controlType="power-select"
+        class="pb-2"
+        @property="botclient"
+        @label="Bot Client"
+        @options={{@clients}}
+        selected={{this.globalConfig.config.defbotclient}}
+        @onChange={{@setBotClient}}
+        required
+        as |client|
+      >
+        <client.control
+          @allowClear={{true}}
+          @placeholder="Select the Bot Client for the stream"
+          as |option|
+        >
           {{option.username}}
         </client.control>
-      </form.element> 
-      <form.element @controlType="power-select" class="pb-2" @property="chatclient" @label="Chat Client" @options={{@clients}} selected={{this.globalConfig.config.defchatclient}}  @onChange={{@setChatClient}}  required as |client|>
-        <client.control @allowClear={{true}} @placeholder="Select the Chat Client for the stream" as |option|>
+      </form.element>
+      <form.element
+        @controlType="power-select"
+        class="pb-2"
+        @property="chatclient"
+        @label="Chat Client"
+        @options={{@clients}}
+        selected={{this.globalConfig.config.defchatclient}}
+        @onChange={{@setChatClient}}
+        required
+        as |client|
+      >
+        <client.control
+          @allowClear={{true}}
+          @placeholder="Select the Chat Client for the stream"
+          as |option|
+        >
           {{option.username}}
         </client.control>
       </form.element>
@@ -29,63 +97,169 @@
   <div class="card-footer py-3 bg-transparent">
     <div class="row">
       <div class="col">
-        <ButtonConfirm @btnClass="btn btn-danger" @btnIcon="trash" @btnText="Delete" @buttonTitle="Delete stream" @confirmDescription="Are you sure you want to delete this stream?" @targetAction={{@deleteStream}} />
+        <ButtonConfirm
+          @btnClass="btn btn-danger"
+          @btnIcon="trash"
+          @btnText="Delete"
+          @buttonTitle="Delete stream"
+          @confirmDescription="Are you sure you want to delete this stream?"
+          @targetAction={{@deleteStream}}
+        />
       </div>
       <div class="col-auto">
-        <BsButton @type="secondary" {{on "click" @returnStream}} title="Go back"><FaIcon @icon="right-to-bracket" @flip="horizontal"  /><span class="d-none d-md-inline"> Back</span></BsButton>
-        <BsButton @type={{if this.saving "success" "secondary"}} class="d-none d-md-inline" @onClick={{this.doneEditing}} title="Save stream">
+        <BsButton
+          @type="secondary"
+          {{on "click" @returnStream}}
+          title="Go back"
+        ><FaIcon @icon="right-to-bracket" @flip="horizontal" /><span
+            class="d-none d-md-inline"
+          > Back</span></BsButton>
+        <BsButton
+          @type={{if this.saving "success" "secondary"}}
+          class="d-none d-md-inline"
+          @onClick={{this.doneEditing}}
+          title="Save stream"
+        >
           <FaIcon @icon="save" @pulse={{this.saving}} />
         </BsButton>
-        <BsButton @type="success" @onClick={{this.doneAndReturnEditing}} title="Save & return"><FaIcon @icon="save" /> Save<span class="d-none d-md-inline"> & Return</span></BsButton>   
+        <BsButton
+          @type="success"
+          @onClick={{this.doneAndReturnEditing}}
+          title="Save & return"
+        ><FaIcon @icon="save" />
+          Save<span class="d-none d-md-inline"> & Return</span></BsButton>
       </div>
-    </div>      
+    </div>
   </div>
 {{else}}
   <div class="card-body p-0 stream-menu">
     <div class="row g-0 bg-dark">
       {{#if this.currentUser.isTauri}}
-        <BsButton class="btn-sm col-auto col-sm-auto border rounded-0" @type={{if this.audio.SBstatus "warning" "secondary"}} @onClick={{this.audio.toggle}} title="Enable/disable soundboard">
-          {{on-key "ctrl+KeyM" this.audio.toggle}}  
-          <FaIcon @icon={{if this.audio.SBstatus "volume-up" "volume-mute"}} /> Soundboard
+        <BsButton
+          class="btn-sm col-auto col-sm-auto border rounded-0"
+          @type={{if this.audio.SBstatus "warning" "secondary"}}
+          @onClick={{this.audio.toggle}}
+          title="Enable/disable soundboard"
+        >
+          {{on-key "ctrl+KeyM" this.audio.toggle}}
+          <FaIcon @icon={{if this.audio.SBstatus "volume-up" "volume-mute"}} />
+          Soundboard
         </BsButton>
       {{/if}}
       <div class="col">
-        <div class="row g-0">  
-          <BsButton class="btn-sm col-12 col-sm border rounded-0 px-1 py-1 m-0" @type={{if @stream.requests (if this.currentUser.updateQueueOverlay "info" "secondary") "secondary"}} @onClick={{this.queueWriter}} title={{if @stream.requests (if this.currentUser.updateQueueOverlay "Reject requests" "Accept requests") "Requests are disabled"}}>
-            {{#if @stream.requests}} {{on-key "ctrl+KeyN" this.queueWriter}} {{/if}}
+        <div class="row g-0">
+          <BsButton
+            class="btn-sm col-12 col-sm border rounded-0 px-1 py-1 m-0"
+            @type={{if
+              @stream.requests
+              (if this.currentUser.updateQueueOverlay "info" "secondary")
+              "secondary"
+            }}
+            @onClick={{this.queueWriter}}
+            title={{if
+              @stream.requests
+              (if
+                this.currentUser.updateQueueOverlay
+                "Reject requests"
+                "Accept requests"
+              )
+              "Requests are disabled"
+            }}
+          >
+            {{#if @stream.requests}}
+              {{on-key "ctrl+KeyN" this.queueWriter}}
+            {{/if}}
             {{#unless @stream.requests}}
-              <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>Please, enable the <em>Song Request System</em></BsTooltip>
+              <BsTooltip @delayHide={{this.globalConfig.ttdelay}}>Please, enable
+                the
+                <em>Song Request System</em></BsTooltip>
             {{/unless}}
-            <FaIcon @icon={{if @stream.requests (if this.currentUser.updateQueueOverlay "file-alt" "file") "file"}} /> Requests
-          </BsButton>          
+            <FaIcon
+              @icon={{if
+                @stream.requests
+                (if this.currentUser.updateQueueOverlay "file-alt" "file")
+                "file"
+              }}
+            />
+            Requests
+          </BsButton>
           {{#if this.disableBotButton}}
-            <BsButton class="btn-sm col-12 col-sm border rounded-0 text-truncate" @type={{if this.isConnected "primary" "secondary"}} disabled={{this.disableBotButton}} title={{if this.isConnected "Disconnect bot" "Connect bot"}}><FaIcon @icon="play" /> {{if this.isConnected "Disconnect" "Connect"}}</BsButton>
-          {{else}}      
-            <BsButton class="btn-sm col-12 col-sm border rounded-0 text-truncate" disabled={{not this.canConnect}} @type={{if this.isConnected "primary" "secondary"}} @onClick={{fn (if this.isConnected this.disconnectClients this.connectBot)}} title={{if this.isConnected "Disconnect" "Connect"}}>
-              <FaIcon @icon={{if this.isConnected "stop" "play"}} /> {{if this.isConnected "Disconnect" "Connect"}}
+            <BsButton
+              class="btn-sm col-12 col-sm border rounded-0 text-truncate"
+              @type={{if this.isConnected "primary" "secondary"}}
+              disabled={{this.disableBotButton}}
+              title={{if this.isConnected "Disconnect bot" "Connect bot"}}
+            ><FaIcon @icon="play" />
+              {{if this.isConnected "Disconnect" "Connect"}}</BsButton>
+          {{else}}
+            <BsButton
+              class="btn-sm col-12 col-sm border rounded-0 text-truncate"
+              disabled={{not this.canConnect}}
+              @type={{if this.isConnected "primary" "secondary"}}
+              @onClick={{fn
+                (if this.isConnected this.disconnectClients this.connectBot)
+              }}
+              title={{if this.isConnected "Disconnect" "Connect"}}
+            >
+              <FaIcon @icon={{if this.isConnected "stop" "play"}} />
+              {{if this.isConnected "Disconnect" "Connect"}}
             </BsButton>
           {{/if}}
         </div>
       </div>
       <div class="col">
-        <div class="row g-0"> 
-          <BsButton class="btn-sm col-12 col-sm text-truncate border rounded-0" @type="danger" @onClick={{this.finishStream}} disabled={{if this.isConnected false (if @stream.finished this.disconnectButton true)}} title="Stop & save"><FaIcon @icon="flag-checkered" /> Stop & Save</BsButton>
-          <BsButton class="btn-sm col col-sm text-editstream text-truncate border rounded-0" @type="warning" @onClick={{@editStream}} title="Edit stream"><FaIcon @icon="edit" /> Edit Stream</BsButton>
+        <div class="row g-0">
+          <BsButton
+            class="btn-sm col-12 col-sm text-truncate border rounded-0"
+            @type="danger"
+            @onClick={{this.finishStream}}
+            disabled={{if
+              this.isConnected
+              false
+              (if @stream.finished this.disconnectButton true)
+            }}
+            title="Stop & save"
+          ><FaIcon @icon="flag-checkered" /> Stop & Save</BsButton>
+          <BsButton
+            class="btn-sm col col-sm text-editstream text-truncate border rounded-0"
+            @type="warning"
+            @onClick={{@editStream}}
+            title="Edit stream"
+          ><FaIcon @icon="edit" /> Edit Stream</BsButton>
         </div>
       </div>
       <div class="col-auto">
         <div class="row g-0 h-100">
-          <BsButton class="btn-sm col-12 col-sm border rounded-0 h-100 ps-2 pe-3" @type={{if this.globalConfig.config.cpansetlist "info" "secondary"}} @onClick={{this.toggleSetlist}} title={{if this.globalConfig.config.cpansetlist "Hide setlist/queue" "Show setlist/queue"}} disabled={{if (or (not this.isConnected) @stream.finished) true}}>
+          <BsButton
+            class="btn-sm col-12 col-sm border rounded-0 h-100 ps-2 pe-3"
+            @type={{if this.globalConfig.config.cpansetlist "info" "secondary"}}
+            @onClick={{this.toggleSetlist}}
+            title={{if
+              this.globalConfig.config.cpansetlist
+              "Hide setlist/queue"
+              "Show setlist/queue"
+            }}
+            disabled={{if (or (not this.isConnected) @stream.finished) true}}
+          >
             <div class="row g-0">
               <div class="col-auto">
-                {{svg-jar (if this.globalConfig.config.cpansetlist "setlist-close" "setlist-open") class="setlist-icon align-middle" }}
+                {{svg-jar
+                  (if
+                    this.globalConfig.config.cpansetlist
+                    "setlist-close"
+                    "setlist-open"
+                  )
+                  class="setlist-icon align-middle"
+                }}
                 <span class="position-relative opacity-75">
-                  <small class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger">
+                  <small
+                    class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger"
+                  >
                     {{this.queueHandler.pendingSongs.length}}
                   </small>
                 </span>
               </div>
-            </div>  
+            </div>
           </BsButton>
         </div>
       </div>
@@ -100,30 +274,76 @@
     {{#if this.isConnected}}
       <div class="card-body p-0 m-0 flex-fill d-flex h-100 overflow-hidden">
         <div class="row flex-fill d-flex h-100 g-0 overflow-hidden">
-          <div class="col h-100 border-0 border-top m-0 p-0 position-relative w-effects">
-              <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents (if this.globalConfig.config.cpanmessages (if this.twitchChat.botConnected "h-35" "h-100") "h-full-events")) "d-none"}} border h-effects">
+          <div
+            class="col h-100 border-0 border-top m-0 p-0 position-relative w-effects"
+          >
+            <div
+              class="row m-0 p-0
+                {{if
+                  @stream.events
+                  (if
+                    this.globalConfig.config.cpanevents
+                    (if
+                      this.globalConfig.config.cpanmessages
+                      (if this.twitchChat.botConnected 'h-35' 'h-100')
+                      'h-full-events'
+                    )
+                  )
+                  'd-none'
+                }}
+                border h-effects"
+            >
+              <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
+                <PbStreamEditEvents @stream={{@stream}} />
+              </div>
+            </div>
+            {{#if this.twitchChat.botConnected}}
+              <div
+                class="row m-0 p-0
+                  {{if
+                    @stream.events
+                    (if
+                      this.globalConfig.config.cpanevents 'h-65' 'h-full-chat'
+                    )
+                    'h-100'
+                  }}
+                  border h-effects"
+              >
                 <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
-                  <PbStreamEditEvents @stream={{@stream}} />
+                  <PbStreamEditChat @stream={{@stream}} />
                 </div>
               </div>
-              {{#if this.twitchChat.botConnected}}
-                <div class="row m-0 p-0 {{if @stream.events (if this.globalConfig.config.cpanevents "h-65" "h-full-chat") "h-100"}} border h-effects">
-                  <div class="col h-100 border m-0 p-0 overflow-hidden h-effects">
-                    <PbStreamEditChat @stream={{@stream}} />
-                  </div>
-                </div>
-              {{/if}}
-              {{#if @stream.requests}}
-                {{on-key "ctrl+Period" this.queueHandler.nextSong}}
-                {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
-                {{on-key "ctrl+KeyQ" this.queueHandler.modPressed event="keypress"}} 
-                {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}
-              {{/if}}
+            {{/if}}
+            {{#if @stream.requests}}
+              {{on-key "ctrl+Period" this.queueHandler.nextSong}}
+              {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
+              {{on-key
+                "ctrl+KeyQ"
+                this.queueHandler.modPressed
+                event="keypress"
+              }}
+              {{on-key
+                "ctrl+KeyQ"
+                this.queueHandler.modNotPressed
+                event="keyup"
+              }}
+            {{/if}}
           </div>
-          <div class={{if this.globalConfig.config.cpansetlist "d-none d-md-block col-md-6 col-lg-4 h-100 border m-0 p-0 w-effects" "d-none w-effects"}}>
+          <div
+            class={{if
+              this.globalConfig.config.cpansetlist
+              "d-none d-md-block col-md-6 col-lg-4 h-100 border m-0 p-0 w-effects"
+              "d-none w-effects"
+            }}
+          >
             <PbSongsSetlist @isStream={{true}} />
           </div>
-          <PbSongsSetlistOffc @toggleSetlist={{this.toggleSetlist}} @isStream={{true}} @isSetlist={{this.globalConfig.config.cpansetlist}} @offcClass="d-md-none pt-offc-custom-stream border-0 bg-transparent px-0" />
+          <PbSongsSetlistOffc
+            @toggleSetlist={{this.toggleSetlist}}
+            @isStream={{true}}
+            @isSetlist={{this.globalConfig.config.cpansetlist}}
+            @offcClass="d-md-none pt-offc-custom-stream border-0 bg-transparent px-0"
+          />
         </div>
       </div>
     {{/if}}

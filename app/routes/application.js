@@ -38,7 +38,7 @@ export default class ApplicationRoute extends Route {
   }
 
   afterModel(model) {
-    this.headData.title = 'Paperbot, a Twitch.tv bot by Papercat84';
+    this.headData.title = 'Paperbot, a Twitch.tv bot by Javier Sevilla';
 
     if (this.currentUser.isTauri) {
       let currentWindow = getCurrent();

@@ -4,7 +4,7 @@ import { sort, alias } from '@ember/object/computed';
 import pagedArray from 'ember-cli-pagination/computed/paged-array';
 import computedFilterByQuery from 'ember-cli-filter-by-query';
 import PapaParse from 'papaparse';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
@@ -32,7 +32,7 @@ export default class PbClientsComponent extends Component {
     'arrangedContent',
     ['username', 'channel'],
     'args.queryParamsObj.query',
-    { conjunction: 'and', sort: false }
+    { conjunction: 'and', sort: false },
   )
   filteredContent;
 
@@ -108,14 +108,14 @@ export default class PbClientsComponent extends Component {
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     } else {
       this.currentUser.importRecords(
         reference,
         extension,
         recordType,
-        response
+        response,
       );
     }
   }
@@ -154,7 +154,7 @@ export default class PbClientsComponent extends Component {
         quotes: true,
         quoteChar: '"',
       });
-      let filename = moment().format('YYYYMMDD-HHmmss') + '-clients.csv';
+      let filename = dayjs().format('YYYYMMDD-HHmmss') + '-clients.csv';
 
       this.currentUser.download(csvdata, filename, 'text/csv');
     }

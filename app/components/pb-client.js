@@ -34,7 +34,7 @@ export default class PbClientComponent extends Component {
         // console.debug('New key: '+key);
         let oldOauth = this.cryptoData.decrypt(
           this.args.client.oauth,
-          this.args.client.publicKey
+          this.args.client.publicKey,
         );
         // console.debug('Old oauth: '+oldOauth);
 

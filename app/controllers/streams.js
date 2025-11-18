@@ -35,7 +35,7 @@ export default class StreamsController extends Controller {
     if (this.globalConfig.defbotclient != null) {
       var botclient = await this.store.peekRecord(
         'client',
-        this.globalConfig.defbotclient
+        this.globalConfig.defbotclient,
       );
       if (botclient) {
         console.debug(this.globalConfig.defbotclient);
@@ -47,7 +47,7 @@ export default class StreamsController extends Controller {
     if (this.globalConfig.defchatclient != null) {
       var chatclient = await this.store.peekRecord(
         'client',
-        this.globalConfig.defchatclient
+        this.globalConfig.defchatclient,
       );
       if (chatclient) {
         console.debug(this.globalConfig.defchatclient);

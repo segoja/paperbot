@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {
   appWindow,
   getCurrent,
@@ -73,13 +73,13 @@ export default class ApplicationController extends Controller {
             //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
             let position = new PhysicalPosition(
               this.globalConfig.config.mainPosX,
-              this.globalConfig.config.mainPosY
+              this.globalConfig.config.mainPosY,
             );
             currentWindow.setPosition(position);
             //}
             let size = new PhysicalSize(
               this.globalConfig.config.mainWidth,
-              this.globalConfig.config.mainHeight
+              this.globalConfig.config.mainHeight,
             );
             currentWindow.setSize(size);
             //}
@@ -132,13 +132,13 @@ export default class ApplicationController extends Controller {
               //if(this.globalConfig.config.mainPosX === 0 && this.globalConfig.config.mainPosY === 0){
               let position = new PhysicalPosition(
                 this.globalConfig.config.mainPosX,
-                this.globalConfig.config.mainPosY
+                this.globalConfig.config.mainPosY,
               );
               currentWindow.setPosition(position);
               //}
               let size = new PhysicalSize(
                 this.globalConfig.config.mainWidth,
-                this.globalConfig.config.mainHeight
+                this.globalConfig.config.mainHeight,
               );
               currentWindow.setSize(size);
               //}
@@ -185,7 +185,7 @@ export default class ApplicationController extends Controller {
                 this.globalConfig.config.mainHeight = response.payload.height;
                 // console.debug('Resizing Main');
               }
-            }.bind(this)
+            }.bind(this),
           );
 
           currentWindow.listen(
@@ -196,7 +196,7 @@ export default class ApplicationController extends Controller {
                 this.globalConfig.config.mainPosY = response.payload.y;
                 // console.debug('Moving Main');
               }
-            }.bind(this)
+            }.bind(this),
           );
 
           if (this.globalConfig.config.mainMax) {
@@ -213,7 +213,7 @@ export default class ApplicationController extends Controller {
                 this.globalConfig.config.readerHeight = response.payload.height;
                 // console.debug('Resizing reader');
               }
-            }.bind(this)
+            }.bind(this),
           );
 
           currentWindow.listen(
@@ -224,7 +224,7 @@ export default class ApplicationController extends Controller {
                 this.globalConfig.config.readerPosY = response.payload.y;
                 // console.debug('Moving reader');
               }
-            }.bind(this)
+            }.bind(this),
           );
 
           if (this.globalConfig.config.readerMax) {
@@ -242,7 +242,7 @@ export default class ApplicationController extends Controller {
                   response.payload.height;
                 // console.debug('Resizing overlay');
               }
-            }.bind(this)
+            }.bind(this),
           );
 
           currentWindow.listen(
@@ -253,7 +253,7 @@ export default class ApplicationController extends Controller {
                 this.globalConfig.config.overlayPosY = response.payload.y;
                 // console.debug('Moving overlay');
               }
-            }.bind(this)
+            }.bind(this),
           );
         }
       }
@@ -265,7 +265,7 @@ export default class ApplicationController extends Controller {
         'tauri://destroyed',
         function () {
           console.debug('destroyed?');
-        }.bind(this)
+        }.bind(this),
       );
 
       currentWindow.listen(
@@ -273,7 +273,7 @@ export default class ApplicationController extends Controller {
         function () {
           console.debug('Close requested with Alt-F4');
           this.closeWindow();
-        }.bind(this)
+        }.bind(this),
       );
 
       currentWindow.listen(
@@ -283,7 +283,7 @@ export default class ApplicationController extends Controller {
             this.minimized = false;
             console.debug('Unminimizing...');
           }
-        }.bind(this)
+        }.bind(this),
       );
 
       currentWindow.once('tauri://error', function (e) {
@@ -314,7 +314,7 @@ export default class ApplicationController extends Controller {
       () => {
         console.debug('Server is not connected.');
         isOnline = false;
-      }
+      },
     );
     return isOnline;
   }
@@ -418,7 +418,7 @@ export default class ApplicationController extends Controller {
   }
 
   @action handleExport() {
-    let filename = moment().format('YYYYMMDD-HHmmss') + '-paperbot-backup.json';
+    let filename = dayjs().format('YYYYMMDD-HHmmss') + '-paperbot-backup.json';
     let type = 'application/json';
     let adapter = this.store.adapterFor('application');
     adapter.db.allDocs(
@@ -430,11 +430,11 @@ export default class ApplicationController extends Controller {
           let data = JSON.stringify(
             doc.rows.map(({ doc }) => doc),
             null,
-            '  '
+            '  ',
           );
           this.currentUser.download(data, filename, type);
         }
-      }
+      },
     );
   }
 
@@ -622,7 +622,7 @@ export default class ApplicationController extends Controller {
                     reader.close();
                   });
                 },
-                0
+                0,
               );
             } else {
               currentconfig.showLyrics = true;
@@ -682,7 +682,7 @@ export default class ApplicationController extends Controller {
                     overlay.close();
                   });
                 },
-                0
+                0,
               );
             } else {
               if (this.isWinOverlayAllowed) {
@@ -708,7 +708,7 @@ export default class ApplicationController extends Controller {
         if (!this.globalConfig.config.mainMax) {
           this.globalConfig.config.save().then(() => {
             console.debug(
-              "Saved Main size before minimize when wasn't maximized"
+              "Saved Main size before minimize when wasn't maximized",
             );
             currentWindow.minimize();
             console.debug('Main Minimized.');
@@ -722,7 +722,7 @@ export default class ApplicationController extends Controller {
         if (!this.globalConfig.config.readerMax) {
           this.globalConfig.config.save().then(() => {
             console.debug(
-              "Saved Reader size before minimize when wasn't maximized"
+              "Saved Reader size before minimize when wasn't maximized",
             );
             currentWindow.minimize();
             console.debug('Reader Minimized.');
@@ -887,7 +887,7 @@ export default class ApplicationController extends Controller {
                 }
               });
             },
-            0
+            0,
           );
         }
       });

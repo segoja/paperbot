@@ -67,6 +67,7 @@ export default class PbCommandComponent extends Component {
               // command.save();
               //this.audio.removeFromRegister('sound', 'preview');
               this.audio.loadPreview(path).then(() => {
+                console.debug(this.audio.previewSound);
                 this.audio.previewSound.once('load', () => {
                   this.isLoaded = true;
                 });
@@ -147,7 +148,7 @@ export default class PbCommandComponent extends Component {
             function () {
               this.isPlaying = false;
             },
-            duration
+            duration,
           );
         }
       }
