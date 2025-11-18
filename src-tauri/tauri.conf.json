@@ -9,12 +9,9 @@
   },
   "package": {
     "productName": "Paperbot",
-    "version": "0.9.6"
+    "version": "0.9.7"
   },
   "tauri": {
-    "allowlist": {
-      "all": true
-    },
     "bundle": {
       "active": true,
       "category": "Utility",
@@ -52,7 +49,7 @@
     },
     "updater": {
       "active": false
-    },   
+    },
    "allowlist": {
       "all": true,
       "fs": {
@@ -66,7 +63,7 @@
         "removeDir": true,
         "removeFile": true,
         "renameFile": true
-      }, 
+      },
       "shell": {
         "all": true,
         "execute": true,
@@ -111,7 +108,7 @@
         "startDragging": true,
         "print": true
       }
-    },    
+    },
     "windows": [
       {
         "label": "Main",
@@ -123,7 +120,7 @@
         "resizable": true,
         "fullscreen": false,
         "decorations": false
-      }     
+      }
     ],
     "security": {
       "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: img-src: script-src: 'self' 'unsafe-eval' 'unsafe-inline'"
