@@ -78,7 +78,11 @@ export default class TwitchChatService extends Service {
 
   @tracked brokenAudioCommands = new TrackedArray();
   get audiocommandslist() {
-    return this.commandlist.filter((command) => command.type == 'audio' && !this.brokenAudioCommands.includes(command.id));
+    return this.commandlist.filter(
+      (command) =>
+        command.type == 'audio' &&
+        !this.brokenAudioCommands.includes(command.id),
+    );
   }
 
   @tracked lastTimerId = '';

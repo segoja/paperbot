@@ -35,7 +35,7 @@
     {{! song listing }}
     <div class="card h-100 flex-fill rounded-0">
       <div class="card-header px-2">
-        <div class="row g-1">
+        <div class="row g-0 g-md-1">
           <div class="col">
             <div class="input-group g-0">
               <div class="col">
@@ -95,8 +95,8 @@
               </div>
             </div>
           </div>
-          <div class="d-lg-none col-12 col-lg-auto text-end">
-            <div class="row g-1 me-auto float-end">
+          <div class="d-lg-none col-12 col-lg-auto text-end mt-2">
+            <div class="row g-0 g-md-1 me-auto float-end">
               <BsButton
                 @type="secondary btn-sm col-auto"
                 @onClick={{this.autoAdjust}}
@@ -190,11 +190,11 @@
                 <FaIcon @icon="save" @pulse={{this.saving}} />
               </BsButton>
               <BsButton
-                @type="info btn-sm col-auto ms-1 ps-1"
+                @type="info btn-sm col-auto ms-0 ms-md-1 ps-0 ps-md-1"
                 @onClick={{this.toggleSetlist}}
                 title="Queue/Setlist manager"
               >
-                <div class="row g-0">
+                <div class="row g-0 g-md-1">
                   <div class="col-auto">
                     {{svg-jar
                       (if this.isSetlist "setlist-close" "setlist-open")
@@ -219,7 +219,7 @@
             </div>
           </div>
           <div class="d-none d-lg-block col-lg-auto">
-            <div class="row g-1">
+            <div class="row g-0 g-md-1">
               <BsButton
                 @type="secondary col-auto"
                 @onClick={{this.autoAdjust}}
@@ -316,7 +316,7 @@
                 <FaIcon @icon="save" @pulse={{this.saving}} />
               </BsButton>
               <BsButton
-                @type="info col-auto ms-1 ps-1"
+                @type="info col-auto ms-0 ms-md-1 ps-0 ps-md-1"
                 @onClick={{this.toggleSetlist}}
                 title="Queue/Setlist manager"
               >

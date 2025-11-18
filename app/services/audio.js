@@ -39,11 +39,10 @@ export default class AudioService extends Service {
     return this.preview;
   }
 
-
   async updateGlobalVolume() {
     const volume = this.globalConfig.config.soundboardVolume;
-    if(Howler){
-      Howler.volume(volume / 100);      
+    if (Howler) {
+      Howler.volume(volume / 100);
     }
   }
 
@@ -156,24 +155,24 @@ export default class AudioService extends Service {
 
   async loadSounds(soundElements) {
     if (!this.currentUser.isTauri) return;
-  
+
     const soundPromises = soundElements.map(async (item) => {
       if (!item.soundfile) return;
-  
+
       const src = item.soundfile;
-  
+
       try {
         const response = await invoke('binary_loader', { filepath: src });
-  
+
         const extension = src.split(/[#?]/)[0].split('.').pop().trim();
         const arrayBufferView = new Uint8Array(response);
-  
+
         const blob = new Blob([arrayBufferView], {
           type: 'audio/' + extension, // corregido
         });
-  
+
         const howlSource = URL.createObjectURL(blob);
-  
+
         const id = await item.get('id');
         const exists = this.sounds.has(id);
         if (exists) {
@@ -182,7 +181,7 @@ export default class AudioService extends Service {
           this.sounds.delete(id);
           console.debug(`Sound ${item.name} already exists, replacing...`);
         }
-  
+
         const howl = new Howl({
           src: [howlSource],
           html5: true,
@@ -195,16 +194,16 @@ export default class AudioService extends Service {
             console.debug(`Error loading ${src} in the soundboard!`);
           },
         });
-    
+
         this.sounds.set(id, howl);
       } catch (err) {
         console.debug(`Error reading ${src}:`, err);
         this.twitchChat.brokenAudioCommands.push(item.get('id'));
       }
     });
-  
+
     await Promise.all(soundPromises);
-  
+
     console.debug('Sounds loaded.');
   }
 
