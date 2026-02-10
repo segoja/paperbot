@@ -16,11 +16,13 @@ export default class PbStreamEditComponent extends Component {
   @tracked saving = false;
 
   get optsbot() {
-    return this.args.stream.botclient.get('optsgetter');
+    const opts = this.args.stream.botOpts;
+    return opts;
   }
 
   get optschat() {
-    return this.args.stream.chatclient.get('optsgetter');
+    const opts = this.args.stream.chatOpts;
+    return opts;
   }
 
   @tracked message = '';
@@ -125,9 +127,10 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.botUsername = this.args.stream.botName || '';
       this.twitchChat.chatUsername = this.args.stream.chatName || '';
 
-      this.twitchChat.connector(this.optsbot, 'bot').then(() => {
-        let opts = this.optchat || this.optsbot;
-        this.twitchChat.connector(opts, 'chat');
+      this.twitchChat.connector(this.optsbot, 'bot', this.args.stream.botKey).then(() => {
+        const opts = this.optschat || this.optsbot;
+        const pKey = this.args.stream.chatKey|| this.args.stream.botKey;
+        this.twitchChat.connector(opts, 'chat', pKey);
       });
     }
     if (

@@ -82,7 +82,7 @@ export default class PbClientComponent extends Component {
 
   @action doneEditing() {
     let password = this.password();
-    if (password != '') {
+    if (password) {
       this.args.client.oauth = password;
     }
 

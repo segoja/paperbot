@@ -24,6 +24,10 @@ export default class StreamModel extends Model {
 
   @readOnly('botclient.username') botName;
   @readOnly('chatclient.username') chatName;
+  @readOnly('botclient.optsgetter') botOpts;
+  @readOnly('chatclient.optsgetter') chatOpts;
+  @readOnly('botclient.publicKey') botKey;
+  @readOnly('chatclient.publicKey') chatKey;
 
   @attr('string') rev;
 }

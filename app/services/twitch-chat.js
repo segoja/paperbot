@@ -143,10 +143,8 @@ export default class TwitchChatService extends Service {
     super(...arguments);
   }
 
-  async connector(opts, clientType) {
+  async connector(opts, clientType, pKey) {
     // We check what kind of client is connecting
-    console.debug('The channel is: ' + this.channel);
-
     if (clientType === 'bot') {
       if (this.botConnected === true) {
         this.botclient.disconnect();
@@ -172,19 +170,18 @@ export default class TwitchChatService extends Service {
         this.chatConnected = true;
       }
     }
-
     let options = opts;
 
     if (!this.botConnected && clientType === 'bot') {
       // this.channel = options.channels.toString();
       this.botUsername = options.identity.username.toString();
 
-      let key = this.cryptoData.newKey(this.botUsername);
+      let key = pKey;
+      const rawPass = structuredClone(options.identity.password);
       let pass = this.cryptoData.decrypt(
-        options.identity.password.toString(),
+        rawPass.toString(),
         key,
       );
-
       this.botPassword = pass.replace(/oauth:/g, '');
 
       options.identity.password = this.botPassword;
@@ -216,12 +213,12 @@ export default class TwitchChatService extends Service {
       // this.channel = options.channels.toString();
       this.chatUsername = options.identity.username.toString();
 
-      let key = this.cryptoData.newKey(this.chatUsername);
+      let key = pKey;
+      const rawPass = structuredClone(options.identity.password);
       let pass = this.cryptoData.decrypt(
-        options.identity.password.toString(),
+        rawPass.toString(),
         key,
       );
-
       this.chatPassword = pass.replace(/oauth:/g, '');
 
       options.identity.password = this.chatPassword;
@@ -954,8 +951,8 @@ export default class TwitchChatService extends Service {
                 (String(commandName).endsWith(command.name) ||
                   String(commandName).startsWith(command.name + ' '))
               ) {
-                /*if (self) { 
-                    return;  
+                /*if (self) {
+                    return;
                   } else {*/
                 if (this.commandPermissionHandler(command, tags) === true) {
                   switch (command.type) {
