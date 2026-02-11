@@ -34,9 +34,7 @@ export default class OverlayController extends Controller {
     // collect the children before deletion
     var childrenList = [];
 
-    await this.model.configs.slice().forEach((config) => {
-      childrenList.push(config);
-    });
+    childrenList.push(...(await this.model.configs));
 
     var processed = all(childrenList);
     return processed;
@@ -45,14 +43,14 @@ export default class OverlayController extends Controller {
   @action deleteOverlay() {
     //Wait for children to be destroyed then destroy the overlay
     this.unlinkChildren().then((children) => {
-      this.model.destroyRecord().then(() => {
+      this.model.destroyRecord().then(async () => {
         console.debug('Unlinking children..');
         this.currentUser.isViewing = false;
         if (children.length > 0) {
-          console.debug('Unlinking chidren...');
-          children.map(async (child) => {
-            return await child.save();
-          });
+          const uniqueChildren = [ ...new Map(children.map(child => [child.id, child])).values() ];
+          for (let i = 0; i < uniqueChildren.length; i++) {
+            await uniqueChildren[i].save();
+          }
         }
         this.router.transitionTo('overlays');
       });

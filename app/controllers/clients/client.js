@@ -30,29 +30,14 @@ export default class ClientController extends Controller {
     return this.globalConfig.get('config');
   }
 
-  async unlinkChildren() {
+  async unlinkChildren(client) {
     // collect the children before deletion
     var childrenList = [];
 
-    var botclientstreams = await this.model.botclientstreams;
-    botclientstreams.forEach(async (stream) => {
-      childrenList.push(stream);
-    });
-
-    var chatclientstreams = await this.model.chatclientstreams;
-    chatclientstreams.forEach(async (stream) => {
-      childrenList.push(stream);
-    });
-
-    var botclientconfigs = await this.model.botclientconfigs;
-    botclientconfigs.forEach(async (config) => {
-      childrenList.push(config);
-    });
-
-    var chatclientconfigs = await this.model.chatclientconfigs;
-    chatclientconfigs.forEach(async (config) => {
-      childrenList.push(config);
-    });
+    childrenList.push(...(await client.botclientstreams));
+    childrenList.push(...(await client.chatclientstreams));
+    childrenList.push(...(await client.botclientconfigs));
+    childrenList.push(...(await client.chatclientconfigs));
 
     var processed = all(childrenList);
     return processed;
@@ -60,20 +45,14 @@ export default class ClientController extends Controller {
 
   @action deleteClient() {
     //Wait for children to be destroyed then destroy the client
-    this.unlinkChildren().then((children) => {
+    this.unlinkChildren(this.model).then((children) => {
       console.debug('Children unlinked?');
-      this.model.destroyRecord().then(() => {
+      this.model.destroyRecord().then(async () => {
         this.currentUser.isViewing = false;
-        var prevchildId = '';
-        children.map(async (child) => {
-          // We check for duplicated in the child list.
-          // Makes no sense to save same model twice without changes (if you do you will get error).
-          if (prevchildId != child.id) {
-            console.debug('The id of the child: ' + child.id);
-            prevchildId = child.id;
-            return await child.save();
-          }
-        });
+        const uniqueChildren = [ ...new Map(children.map(child => [child.id, child])).values() ];
+        for (let i = 0; i < uniqueChildren.length; i++) {
+          await uniqueChildren[i].save();
+        }
         this.router.transitionTo('clients');
       });
     });

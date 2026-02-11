@@ -53,21 +53,10 @@ export default class ClientController extends Controller {
     // collect the children before deletion
     var childrenList = [];
 
-    await client.botclientstreams.slice().forEach((stream) => {
-      childrenList.push(stream);
-    });
-
-    await client.chatclientstreams.slice().forEach((stream) => {
-      childrenList.push(stream);
-    });
-
-    await client.botclientconfigs.slice().forEach((config) => {
-      childrenList.push(config);
-    });
-
-    await client.chatclientconfigs.slice().forEach((config) => {
-      childrenList.push(config);
-    });
+    childrenList.push(...(await client.botclientstreams));
+    childrenList.push(...(await client.chatclientstreams));
+    childrenList.push(...(await client.botclientconfigs));
+    childrenList.push(...(await client.chatclientconfigs));
 
     var processed = all(childrenList);
     return processed;
@@ -77,18 +66,13 @@ export default class ClientController extends Controller {
     //Wait for children to be destroyed then destroy the client
     this.unlinkChildren(client).then((children) => {
       console.debug('Children unlinked?');
-      client.destroyRecord().then(() => {
+      client.destroyRecord().then(async () => {
+        console.debug('Client deleted...');
         this.currentUser.isViewing = false;
-        var prevchildId = null;
-        children.map(async (child) => {
-          // We check for duplicated in the child list.
-          // Makes no sense to save same model twice without changes (if you do you will get error).
-          if (prevchildId != child.id) {
-            console.debug('The id of the child: ' + child.id);
-            prevchildId = child.id;
-            return child.save();
-          }
-        });
+        const uniqueChildren = [ ...new Map(children.map(child => [child.id, child])).values() ];
+        for (let i = 0; i < uniqueChildren.length; i++) {
+          await uniqueChildren[i].save();
+        }
         this.router.transitionTo('clients');
       });
     });
