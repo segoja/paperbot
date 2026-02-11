@@ -178,10 +178,7 @@ export default class TwitchChatService extends Service {
 
       let key = pKey;
       const rawPass = structuredClone(options.identity.password);
-      let pass = this.cryptoData.decrypt(
-        rawPass.toString(),
-        key,
-      );
+      let pass = this.cryptoData.decrypt(rawPass.toString(), key);
       this.botPassword = pass.replace(/oauth:/g, '');
 
       options.identity.password = this.botPassword;
@@ -215,10 +212,7 @@ export default class TwitchChatService extends Service {
 
       let key = pKey;
       const rawPass = structuredClone(options.identity.password);
-      let pass = this.cryptoData.decrypt(
-        rawPass.toString(),
-        key,
-      );
+      let pass = this.cryptoData.decrypt(rawPass.toString(), key);
       this.chatPassword = pass.replace(/oauth:/g, '');
 
       options.identity.password = this.chatPassword;

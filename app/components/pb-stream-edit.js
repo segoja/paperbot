@@ -127,11 +127,13 @@ export default class PbStreamEditComponent extends Component {
       this.twitchChat.botUsername = this.args.stream.botName || '';
       this.twitchChat.chatUsername = this.args.stream.chatName || '';
 
-      this.twitchChat.connector(this.optsbot, 'bot', this.args.stream.botKey).then(() => {
-        const opts = this.optschat || this.optsbot;
-        const pKey = this.args.stream.chatKey|| this.args.stream.botKey;
-        this.twitchChat.connector(opts, 'chat', pKey);
-      });
+      this.twitchChat
+        .connector(this.optsbot, 'bot', this.args.stream.botKey)
+        .then(() => {
+          const opts = this.optschat || this.optsbot;
+          const pKey = this.args.stream.chatKey || this.args.stream.botKey;
+          this.twitchChat.connector(opts, 'chat', pKey);
+        });
     }
     if (
       this.args.stream.events &&
