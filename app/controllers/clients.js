@@ -69,7 +69,9 @@ export default class ClientController extends Controller {
       client.destroyRecord().then(async () => {
         console.debug('Client deleted...');
         this.currentUser.isViewing = false;
-        const uniqueChildren = [ ...new Map(children.map(child => [child.id, child])).values() ];
+        const uniqueChildren = [
+          ...new Map(children.map((child) => [child.id, child])).values(),
+        ];
         for (let i = 0; i < uniqueChildren.length; i++) {
           await uniqueChildren[i].save();
         }

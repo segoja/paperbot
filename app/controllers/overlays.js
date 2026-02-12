@@ -68,7 +68,9 @@ export default class OverlaysController extends Controller {
       overlay.destroyRecord().then(async () => {
         this.currentUser.isViewing = false;
         if (children.length > 0) {
-          const uniqueChildren = [ ...new Map(children.map(child => [child.id, child])).values() ];
+          const uniqueChildren = [
+            ...new Map(children.map((child) => [child.id, child])).values(),
+          ];
           for (let i = 0; i < uniqueChildren.length; i++) {
             await uniqueChildren[i].save();
           }
