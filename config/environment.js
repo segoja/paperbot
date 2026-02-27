@@ -8,6 +8,8 @@ module.exports = function (environment) {
     locationType: 'history',
     emberPouch: {
       saveHasMany: true,
+      eventuallyConsistent: false,
+      //replication: true
     },
     EmberENV: {
       EXTEND_PROTOTYPES: false,

@@ -1,0 +1,129 @@
+{{#in-element this.modalWormhole insertBefore=null}}
+  <BsModal
+    @open={{this.showVaultModal}}
+    @onHide={{this.continueLocked}}
+    @backdrop={{true}}
+    @keyboard={{false}}
+    @size="md"
+    as |Modal|
+  >
+    <Modal.header @closeButton={{false}}>
+      <h5 class="modal-title">{{this.title}}</h5>
+    </Modal.header>
+    <Modal.body>
+      {{#if this.cryptoData.newVaultModal}}
+        <p class="mb-2">It looks like you haven't set a dataset passphrase yet. You can create one now to encrypt your secrets, or continue without unlocking to use Paperbot without encryption.</p>
+      {{else}}
+        <p class="mb-2">Enter your dataset passphrase to unlock encrypted secrets for this session.</p>
+      {{/if}}
+      <BsForm @onSubmit={{this.unlock}} as |form|>
+        <label
+          for="vault-unlock-username"
+          class="visually-hidden"
+        >Username</label>
+        <input
+          id="vault-unlock-username"
+          type="text"
+          name="username"
+          autocomplete="username"
+          value="vault"
+          class="d-none"
+          tabindex="-1"
+          aria-hidden="true"
+        />
+
+        <form.element
+          @controlType="password"
+          @label="Passphrase"
+          @property="passphrase"
+          @onChange={{this.checkPassPhrase}}
+          @disabled={{this.isMigrationForm}}
+          as |el|
+        >
+          <el.control
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+        </form.element>
+      </BsForm>
+      {{#if (and this.errorMessages (not this.isMigrationForm))}}
+        <div class="alert alert-danger py-2 mb-0">
+          {{#each this.errorMessages as |error|}}
+            <div>{{error}}</div>
+          {{/each}}
+        </div>
+      {{/if}}
+      {{#if this.isMigration}}
+        <div class="row py-3">
+          <div class="col">
+            <BsButton @type="warning" class="w-100" @onClick={{this.keepExistingVault}}>
+              Keep Existing Vault
+            </BsButton>
+          </div>
+          <div class="col">
+            <BsButton @type="primary" class="w-100" @onClick={{this.migrateToNewVault}}>
+              Re-Encrypt with New Vault
+            </BsButton>
+          </div>
+        </div>
+        {{#if this.isMigrationForm}}
+          <BsForm @onSubmit={{this.unlock}} as |form|>
+            <label
+              for="existing-vault-unlock-username"
+              class="visually-hidden"
+            >Username</label>
+            <input
+              id="existing-vault-unlock-username"
+              type="text"
+              name="username"
+              autocomplete="username"
+              value="vault"
+              class="d-none"
+              tabindex="-1"
+              aria-hidden="true"
+            />
+
+            <form.element
+              @controlType="password"
+              @label="Existing Vault Passphrase"
+              @property="existingPassphrase"
+              @onChange={{this.checkPassPhrase}}
+              as |el|
+            >
+              <el.control
+                name="password"
+                autocomplete="existing-password"
+                required
+              />
+            </form.element>
+            </BsForm>
+            {{#if this.errorMessages}}
+              <div class="alert alert-danger py-2 mb-0">
+                {{#each this.errorMessages as |error|}}
+                  <div>{{error}}</div>
+                {{/each}}
+              </div>
+            {{/if}}
+        {{/if}}
+      {{/if}}
+    </Modal.body>
+    <Modal.footer>
+      {{#if this.cryptoData.newVaultModal}}
+        <BsButton @type="secondary" @onClick={{this.continueLocked}}>
+          Cancel
+        </BsButton>
+        <BsButton @type="primary" @onClick={{this.addNewVaultMeta}} disabled={{this.invalidPassphrase}}>
+          Encrypt my secrets
+        </BsButton>
+      {{else}}
+        <BsButton @type="secondary" @onClick={{this.continueLocked}}>
+          Continue Locked
+        </BsButton>
+        <BsButton @type="primary" @onClick={{this.unlock}} disabled={{this.invalidPassphrase}}>
+          Unlock
+        </BsButton>
+      {{/if}}
+    </Modal.footer>
+  </BsModal>
+{{/in-element}}

@@ -29,6 +29,7 @@ export default class ApplicationRoute extends Route {
       timers: store.findAll('timer'),
       events: store.findAll('event'),
       requests: store.findAll('request'),
+      vaults: store.findAll('vault'),
     });
   }
 

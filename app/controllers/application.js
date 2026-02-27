@@ -27,6 +27,7 @@ export default class ApplicationController extends Controller {
   @service eventsExternal;
   @service twitchChat;
   @service queueHandler;
+  @service cryptoData;
 
   @tracked collapsed = true;
   @tracked minimized = false;
@@ -46,8 +47,10 @@ export default class ApplicationController extends Controller {
     if (this.currentUser.isTauri) {
       this.minimized = false;
     }
-    // We wipe requests on every app start;
 
+    this.cryptoData.vaultCheck();
+
+    // We wipe requests on every app start;
     this.store.findAll('config').then(async () => {
       let currentconfig = this.store.peekRecord('config', 'ppbconfig');
       if (currentconfig) {
