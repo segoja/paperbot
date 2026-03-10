@@ -14,6 +14,11 @@ export default class CryptoDataService extends Service {
   @tracked showVaultModal = false;
   @tracked newVaultModal = false;
   @tracked unlockError = null;
+  @tracked isUnlocked = false;
+  @tracked unlockedVaultId = null;
+  @tracked vault = null;
+
+  _sessionPassphrase = null;
 
   encrypt(data, key) {
     if (data && key) {
@@ -153,7 +158,7 @@ export default class CryptoDataService extends Service {
       result.migratedConfigFields++;
     }
 
-    if(config.hasDirtyAttributes()) {
+    if(config.hasDirtyAttributes) {
       await config.save();
     }
 
@@ -176,6 +181,7 @@ export default class CryptoDataService extends Service {
    */
   async encryptForVault(passPhrase, data, vault) {
     if (!vault) return data;
+    const effectivePassPhrase = this._resolvePassphrase(passPhrase, vault);
 
     // If already v2 envelope, keep as-is
     if (typeof data === 'string') {
@@ -210,7 +216,7 @@ export default class CryptoDataService extends Service {
 
     const baseKey = await crypto.subtle.importKey(
       'raw',
-      enc.encode(passPhrase),
+      enc.encode(effectivePassPhrase),
       { name: 'PBKDF2' },
       false,
       ['deriveKey']
@@ -241,6 +247,10 @@ export default class CryptoDataService extends Service {
     });
   }
 
+  async newEncryptForVault(data) {
+    if(!this.vault) return data;
+    return await this.encryptForVault(this._sessionPassphrase, data, this.vault);
+  }
 
   /**
    * Decrypts a v2 envelope produced by encryptForVault().
@@ -258,6 +268,7 @@ export default class CryptoDataService extends Service {
    */
   async decryptFromVault(passPhrase, encryptedData, vault) {
     if (!vault) return encryptedData;
+    const effectivePassPhrase = this._resolvePassphrase(passPhrase, vault);
 
     if (!globalThis.crypto?.subtle) {
       throw new Error('WebCrypto not available (window.crypto.subtle missing).');
@@ -300,7 +311,7 @@ export default class CryptoDataService extends Service {
 
     const baseKey = await crypto.subtle.importKey(
       'raw',
-      enc.encode(passPhrase),
+      enc.encode(effectivePassPhrase),
       { name: 'PBKDF2' },
       false,
       ['deriveKey']
@@ -326,8 +337,20 @@ export default class CryptoDataService extends Service {
       throw new Error('Decryption failed (wrong passphrase or corrupted ciphertext).');
     }
 
-    return dec.decode(ptBuf);
+    const data = dec.decode(ptBuf);
+
+    return data;
   }
+
+
+  async newDecryptFromVault(encryptedData) {
+    if(!this.vault) return encryptedData;
+
+    console.debug('Encrypting for vault:', this.vault.vaultId);
+    console.debug('Passphrase:', this._sessionPassphrase);
+    return await this.decryptFromVault(this._sessionPassphrase, encryptedData, this.vault);
+  }
+
 
   /**
    * Create (or overwrite) the dataset vault record fields according to the spec.
@@ -405,36 +428,36 @@ export default class CryptoDataService extends Service {
   }
 
 
-  vaultCheck(){
+  async vaultCheck(){
     console.debug('Checking vault meta...');
-    const vault = this.store.peekRecord('vault', 'ppb-vault');
-      console.debug('Found vault meta:', vault);
-      this.showVaultModal = true;
-      if(vault && vault.vaultId) {
-        this.newVaultModal = false;
-      } else {
-        this.newVaultModal = true;
-      }
+    this.vault = this.store.peekRecord('vault', 'ppb-vault');
+    if(this.vault && this.vault.vaultId) {
+      console.debug('Found vault meta:', this.vault);
+      this.unlockedVaultId = this.vault.vaultId;
+      this.newVaultModal = false;
+    } else {
+      console.debug('No vault meta found.');
+      this.newVaultModal = true;
+    }
+    this.showVaultModal = true;
   }
-
-  get vault() {
-    return this.store.peekRecord('vault', 'ppb-vault');
-  }
-
 
   async unlockCurrentVault(passPhrase) {
     if (!passPhrase) {
+      this.lockCurrentVault();
       this.unlockError = 'Passphrase is required.';
       return false;
     }
 
     const vault = this.vault;
     if (!vault || !vault.vaultId || !vault.vaultSalt) {
+      this.lockCurrentVault();
       this.unlockError = 'Vault metadata is missing.';
       return false;
     }
 
     if (!globalThis.crypto?.subtle) {
+      this.lockCurrentVault();
       this.unlockError = 'WebCrypto not available.';
       return false;
     }
@@ -477,16 +500,46 @@ export default class CryptoDataService extends Service {
       const derivedVaultId = toB64UrlTrim(new Uint8Array(fpBuf));
 
       if (derivedVaultId !== vault.vaultId) {
+        this.lockCurrentVault();
         this.unlockError = 'Invalid passphrase.';
         return false;
       }
 
+      this._sessionPassphrase = passPhrase;
+      this.isUnlocked = true;
+      this.unlockedVaultId = vault.vaultId;
       this.unlockError = null;
       this.showVaultModal = false;
       return true;
     } catch (_) {
+      this.lockCurrentVault();
       this.unlockError = 'Failed to unlock vault.';
       return false;
+    }
+  }
+
+  lockCurrentVault() {
+    this._sessionPassphrase = null;
+    this.isUnlocked = false;
+    this.unlockedVaultId = null;
+  }
+
+  _resolvePassphrase(passPhrase, vault) {
+    if (typeof passPhrase === 'string' && passPhrase.length > 0) {
+      return passPhrase;
+    }
+
+    this._requireUnlocked(vault);
+    return this._sessionPassphrase;
+  }
+
+  _requireUnlocked(vault) {
+    if (!this.isUnlocked || !this._sessionPassphrase) {
+      throw new Error('Vault is locked. Unlock is required for this operation.');
+    }
+
+    if (vault?.vaultId && this.unlockedVaultId && vault.vaultId !== this.unlockedVaultId) {
+      throw new Error('Vault mismatch: current unlocked session belongs to a different vault.');
     }
   }
 }

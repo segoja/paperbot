@@ -16,108 +16,91 @@ export default class PbClientComponent extends Component {
 
   constructor() {
     super(...arguments);
+    this.oauth = this.args.client.oauth;
   }
 
-  @action newKey() {
-    return this.cryptoData.newKey(this.args.client.username);
-  }
 
-  @action password() {
-    let result = '';
-    let key = this.newKey();
-    if (key && this.oauth && !this.args.client.publicKey) {
-      console.debug('Generating new key and encrypted oauth');
-      this.args.client.publicKey = key;
-      result = this.cryptoData.encrypt(this.oauth, key);
-    } else {
-      if (key) {
-        // console.debug('New key: '+key);
-        let oldOauth = this.cryptoData.decrypt(
-          this.args.client.oauth,
-          this.args.client.publicKey,
-        );
-        // console.debug('Old oauth: '+oldOauth);
-
-        if (key != this.args.client.publicKey || this.oauth != oldOauth) {
-          if (this.oauth || oldOauth) {
-            let oauth = oldOauth;
-            let update = false;
-            if (this.oauth != oldOauth && this.oauth) {
-              console.debug('Updating encrypted oauth');
-              oauth = this.oauth;
-              update = true;
-            } else {
-              if (
-                key != this.args.client.publicKey &&
-                this.args.client.publicKey
-              ) {
-                console.debug('Updating key and re-encrypting oauth');
-                update = true;
-              }
-            }
-            if (update) {
-              this.args.client.publicKey = key;
-              result = this.cryptoData.encrypt(oauth, key);
-            } else {
-              console.debug('Nothing to update');
-            }
-          }
-        } else {
-          console.debug('No changes in key nor oauth.');
-        }
-      } else {
-        console.debug('No key generated.');
-      }
+  @action async password() {
+    if(this.cryptoData.isUnlocked){
+      let result = '';
+      result = await this.cryptoData.newEncryptForVault(this.oauth);
+      console.debug('Encrypted oauth: ', result);
+      return result;
     }
-    return result;
+    return this.oauth;
   }
 
-  @action saveAndReturnClient() {
-    let password = this.password();
+  @action async saveAndReturnClient() {
+    let password = await this.password();
     if (password != '') {
+      console.debug('Saving oauth: ', password);
       this.args.client.oauth = password;
     }
-    this.args.saveAndReturnClient();
+    await this.args.saveAndReturnClient();
   }
 
-  @action doneEditing() {
-    let password = this.password();
+  @action async doneEditing() {
+    let password = await this.password();
     if (password) {
       this.args.client.oauth = password;
     }
 
-    this.args.saveClient();
+    await this.args.saveClient();
+    this.isMasked = true;
     this.saving = true;
     later(() => {
       this.saving = false;
-      this.isMasked = true;
-      this.setOauth();
+      this.oauth = this.args.client.oauth;
     }, 500);
   }
 
   @tracked isMasked = true;
 
   @action toggleMask() {
-    this.isMasked = !this.isMasked;
-    if (
-      !this.isMasked &&
-      this.args.client.oauth &&
-      this.args.client.publicKey
-    ) {
-      this.setOauth();
+    if(this.cryptoData.isUnlocked){
+      if (this.isMasked && this.args.client.oauth) {
+        this.setOauth().then(() => {
+          this.isMasked = false
+        });
+      } else {
+        this.isMasked = true;
+      }
+    } else {
+      this.cryptoData.showVaultModal = true;
     }
   }
 
-  @action setOauth() {
-    let oauth = this.decryptPass();
-    if (oauth != '') {
-      this.oauth = oauth;
-    }
-  }
+  @action async setOauth() {
+    try {
+      // Check if client's oauth is encrypted before decrypting
+      const oauthValue = this.args.client.oauth ?? '';
+      if (!oauthValue) {
+        this.oauth = '';
+        return;
+      }
 
-  @action decryptPass() {
-    let data = this.args.client.oauth;
-    let key = this.args.client.publicKey;
-    return this.cryptoData.decrypt(data, key);
+      if (oauthValue.includes('vaultId')) {
+        if (!this.cryptoData.isUnlocked) {
+          this.oauth = '';
+          return;
+        }
+
+        let oauth = await this.cryptoData.newDecryptFromVault(oauthValue);
+        if (oauth) {
+          console.debug('Decrypted oauth: ', oauth);
+          this.oauth = oauth;
+        } else {
+          this.oauth = '';
+          console.debug('Failed to decrypt oauth');
+        }
+      } else {
+        this.oauth = oauthValue;
+      }
+    } catch (error) {
+      this.oauth = '';
+      console.error('Failed to load oauth:', error);
+    }
   }
 }
+
+

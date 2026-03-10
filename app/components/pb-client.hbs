@@ -66,11 +66,7 @@
           </BsPopover>
         </div>
         <div class="col-md-8">
-          <div
-            class="input-group"
-            {{did-insert this.setOauth}}
-            {{did-update this.setOauth @client}}
-          >
+          <div class="input-group">
             <Input
               @type={{if this.isMasked "password" "text"}}
               aria-label="Oauth string"

@@ -48,7 +48,7 @@ export default class ApplicationController extends Controller {
       this.minimized = false;
     }
 
-    this.cryptoData.vaultCheck();
+    // this.cryptoData.vaultCheck();
 
     // We wipe requests on every app start;
     this.store.findAll('config').then(async () => {

@@ -6,6 +6,7 @@ import { client } from 'tmi.js';
 
 export default class VaultManagerComponent extends Component {
   @service cryptoData;
+  @service globalConfig;
   @service store;
 
   @tracked passphrase = '';
@@ -17,22 +18,25 @@ export default class VaultManagerComponent extends Component {
   @tracked isMigrationForm = false;
   @tracked newVaultMeta = {};
 
+  constructor() {
+    super(...arguments);
+    this.cryptoData.vaultCheck();
+  }
 
   get modalWormhole() {
     return document.getElementById('ember-bootstrap-wormhole');
   }
 
   get showVaultModal() {
-    return this.cryptoData.showVaultModal;
+    return this.cryptoData.showVaultModal && !this.globalConfig.showFirstRun;
   }
 
   get title() {
     if(this.cryptoData.newVaultModal) {
       return 'Protect Your Secrets with a Dataset Passphrase';
+    } else {
+      return 'Unlock Vault';
     }
-    return this.cryptoData.unlockAllowCreate
-      ? 'Set Dataset Passphrase'
-      : 'Unlock Vault';
   }
 
   get errorMessages() {
@@ -45,6 +49,7 @@ export default class VaultManagerComponent extends Component {
     let ok = await this.cryptoData.unlockCurrentVault(this.passphrase);
 
     if (ok) {
+      console.debug('Vault unlocked!', ok);
       this.passphrase = "";
     }
   }
@@ -52,49 +57,38 @@ export default class VaultManagerComponent extends Component {
   @action checkPassPhrase(passPhrase) {
     const currentPassphrase = passPhrase;
     this.errors = [];
-    if(currentPassphrase.length < 8) {
-      this.errors.push('Passphrase must be at least 8 characters long.');
-    }
-    if(currentPassphrase.length > 100){
-      this.errors.push('Passphrase must be less than 100 characters.');
-    }
-    if(currentPassphrase.includes(' ')){
-      this.errors.push('Passphrase should not include any spaces.');
-    }
-    if(!(/[A-Za-z]/.test(currentPassphrase))){
-      this.errors.push('Passphrase must include at least one letter.');
-    }
-    if(!(/[0-9]/.test(currentPassphrase))){
-      this.errors.push('Passphrase must include at least one number.');
+    if(this.cryptoData.newVaultModal) {
+      if(currentPassphrase.length < 8) {
+        this.errors.push('Passphrase must be at least 8 characters long.');
+      }
+      if(currentPassphrase.length > 100){
+        this.errors.push('Passphrase must be less than 100 characters.');
+      }
+      if(currentPassphrase.includes(' ')){
+        this.errors.push('Passphrase should not include any spaces.');
+      }
+      if(!(/[A-Za-z]/.test(currentPassphrase))){
+        this.errors.push('Passphrase must include at least one letter.');
+      }
+      if(!(/[0-9]/.test(currentPassphrase))){
+        this.errors.push('Passphrase must include at least one number.');
+      }
     }
     this.invalidPassphrase = (this.errors.length > 0);
     this.passphrase = (this.invalidPassphrase? '' : currentPassphrase);
   }
 
   @action async addNewVaultMeta() {
-    const store = this.store;
     const newVaultMeta = await this.cryptoData.createVaultMeta(this.passphrase);
-    console.log("New Vault meta content generated:", newVaultMeta);
+    console.debug('Creating new vault meta record with newVaultMeta:', newVaultMeta, '...');
+    const newVaultMetaRecord = await this.store.createRecord('vault', { id: "ppb-vault", ...newVaultMeta }).save();
 
-    const existingVaultMeta = await store.peekRecord('vault', 'ppb-vault');
-
-    console.debug('Existing vault meta:', existingVaultMeta);
-
-    if(existingVaultMeta && existingVaultMeta.id === "ppb-vault") {
-      console.debug('Vault meta already exists, please choose which one to keep....');
-      this.errors = ['A vault meta already exists. Please choose which one to keep.'];
-      this.newVaultMeta = newVaultMeta;
-      this.isMigration = true;
-    } else {
-      console.debug('No existing vault meta found, creating new one...');
-      const newVaultMetaRecord = await store.createRecord('vault', { id: "ppb-vault", ...newVaultMeta }).save();
-      console.debug('Created vault meta record:', newVaultMetaRecord);
-
-      await this.cryptoData.migrateCryptoJsToVault(newVaultMetaRecord, this.passphrase);
-
+    if(newVaultMetaRecord) {
       this.passphrase = '';
       this.newVaultMeta = {};
+      console.debug('Created vault meta record:', newVaultMetaRecord);
       this.cryptoData.showVaultModal = false;
+      await this.cryptoData.vaultCheck();
     }
   }
 
