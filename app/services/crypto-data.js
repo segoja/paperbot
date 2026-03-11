@@ -69,18 +69,24 @@ export default class CryptoDataService extends Service {
    * @param {string} passPhrase - passphrase that must match the remote dataset vault
    * @returns {Promise<{migratedClients:number}>}
    */
-  async migrateCryptoJsToVault(vault, passPhrase){
+  async migrateCryptoJsToVault(vault, passPhrase) {
     const result = { migratedClients: 0 };
-    if(!vault) {
+    if (!vault || this.isUnlocked) {
       return result;
     }
-    const clients = (await this.store.findAll('client')).filter(client => client.publicKey);
-    if(clients.length > 0) {
-      for(const client of clients) {
+    const clients = (await this.store.findAll('client')).filter(
+      (client) => client.publicKey,
+    );
+    if (clients.length > 0) {
+      for (const client of clients) {
         const decryptedOAuth = this.decrypt(client.oauth, client.publicKey);
-        if(decryptedOAuth) {
+        if (decryptedOAuth) {
           // console.debug('Migrating CryptoJS encrypted client: ', client.username, decryptedOAuth);
-          client.oauth = await this.encryptForVault(passPhrase, decryptedOAuth, vault);
+          client.oauth = await this.encryptForVault(
+            passPhrase,
+            decryptedOAuth,
+            vault,
+          );
           client.publicKey = '';
           await client.save();
           result.migratedClients++;
@@ -90,16 +96,44 @@ export default class CryptoDataService extends Service {
     return result;
   }
 
+  /**
+   * Migrates old CryptoJS encrypted client to the new remote vault system (config had nothing encrypted in the old system).
+   *
+   * @param {string} client  - the client to migrate
+   * @returns {Promise<boolean>}
+   */
+  async migrateSingleCryptoJsToVault(client) {
+    if (!client || !this.isUnlocked) {
+      return;
+    }
+    const decryptedOAuth = this.decrypt(client.oauth, client.publicKey);
+    if (decryptedOAuth) {
+      console.debug('Migrating CryptoJS encrypted client...');
+      client.oauth = await this.encryptForVault(
+        this._sessionPassphrase,
+        decryptedOAuth,
+        this.vault,
+      );
+      client.publicKey = '';
+      await client.save();
+      return true;
+    }
+    return false;
+  }
 
   isVaultEncrypted(value) {
     if (typeof value !== 'string') return false;
     try {
       const parsed = JSON.parse(value);
-      return !!(parsed && typeof parsed === 'object' && Object.prototype.hasOwnProperty.call(parsed, 'vaultId'));
+      return !!(
+        parsed &&
+        typeof parsed === 'object' &&
+        Object.prototype.hasOwnProperty.call(parsed, 'vaultId')
+      );
     } catch (_) {
       return false;
     }
-  };
+  }
 
   /**
    * Migrates secrets between vaults (like when a user changes their passphrase or when there is already an existing vault in CouchDb conflicting with the local one on the existing device when first starting the app).
@@ -110,22 +144,30 @@ export default class CryptoDataService extends Service {
    */
   async migrateVault(oldPassphrase, newPassphrase, oldVault, newVault) {
     const result = { migratedClients: 0, migratedConfigFields: 0 };
-    if(!oldVault || !newVault) {
+    if (!oldVault || !newVault) {
       return result;
     }
 
     const clients = await this.store.findAll('client');
 
-    if(clients.length > 0) {
-      for(const client of clients) {
+    if (clients.length > 0) {
+      for (const client of clients) {
         // Check if it is encrypted, if not, skip
         let isEncrypted = this.isVaultEncrypted(client.oauth);
-        if(!isEncrypted) {
+        if (!isEncrypted) {
           continue;
         }
-        const decryptedOAuth = await this.decryptFromVault(oldPassphrase, client.oauth, oldVault);
-        if(decryptedOAuth) {
-          client.oauth = await this.encryptForVault(newPassphrase, decryptedOAuth, newVault);
+        const decryptedOAuth = await this.decryptFromVault(
+          oldPassphrase,
+          client.oauth,
+          oldVault,
+        );
+        if (decryptedOAuth) {
+          client.oauth = await this.encryptForVault(
+            newPassphrase,
+            decryptedOAuth,
+            newVault,
+          );
           await client.save();
           result.migratedClients++;
         }
@@ -133,32 +175,64 @@ export default class CryptoDataService extends Service {
     }
 
     const config = this.globalConfig.config;
-    if(!config) {
+    if (!config) {
       return result;
     }
 
-    if(this.isVaultEncrypted(config.username)) {
-      const decryptedUsername = await this.decryptFromVault(oldPassphrase, config.username, oldVault);
-      config.username = await this.encryptForVault(newPassphrase, decryptedUsername, newVault);
+    if (this.isVaultEncrypted(config.username)) {
+      const decryptedUsername = await this.decryptFromVault(
+        oldPassphrase,
+        config.username,
+        oldVault,
+      );
+      config.username = await this.encryptForVault(
+        newPassphrase,
+        decryptedUsername,
+        newVault,
+      );
       result.migratedConfigFields++;
     }
-    if(this.isVaultEncrypted(config.password)) {
-      const decryptedPassword = await this.decryptFromVault(oldPassphrase, config.password, oldVault);
-      config.password = await this.encryptForVault(newPassphrase, decryptedPassword, newVault);
+    if (this.isVaultEncrypted(config.password)) {
+      const decryptedPassword = await this.decryptFromVault(
+        oldPassphrase,
+        config.password,
+        oldVault,
+      );
+      config.password = await this.encryptForVault(
+        newPassphrase,
+        decryptedPassword,
+        newVault,
+      );
       result.migratedConfigFields++;
     }
-    if(this.isVaultEncrypted(config.database)) {
-      const decryptedDatabase = await this.decryptFromVault(oldPassphrase, config.database, oldVault);
-      config.database = await this.encryptForVault(newPassphrase, decryptedDatabase, newVault);
+    if (this.isVaultEncrypted(config.database)) {
+      const decryptedDatabase = await this.decryptFromVault(
+        oldPassphrase,
+        config.database,
+        oldVault,
+      );
+      config.database = await this.encryptForVault(
+        newPassphrase,
+        decryptedDatabase,
+        newVault,
+      );
       result.migratedConfigFields++;
     }
-    if(this.isVaultEncrypted(config.remoteUrl)) {
-      const decryptedRemoteUrl = await this.decryptFromVault(oldPassphrase, config.remoteUrl, oldVault);
-      config.remoteUrl = await this.encryptForVault(newPassphrase, decryptedRemoteUrl, newVault);
+    if (this.isVaultEncrypted(config.remoteUrl)) {
+      const decryptedRemoteUrl = await this.decryptFromVault(
+        oldPassphrase,
+        config.remoteUrl,
+        oldVault,
+      );
+      config.remoteUrl = await this.encryptForVault(
+        newPassphrase,
+        decryptedRemoteUrl,
+        newVault,
+      );
       result.migratedConfigFields++;
     }
 
-    if(config.hasDirtyAttributes) {
+    if (config.hasDirtyAttributes) {
       await config.save();
     }
 
@@ -187,14 +261,23 @@ export default class CryptoDataService extends Service {
     if (typeof data === 'string') {
       try {
         const parsed = JSON.parse(data);
-        if (parsed && parsed.v === 'v2' && parsed.alg === 'AES-GCM' && typeof parsed.ct === 'string') {
+        if (
+          parsed &&
+          parsed.v === 'v2' &&
+          parsed.alg === 'AES-GCM' &&
+          typeof parsed.ct === 'string'
+        ) {
           return data;
         }
-      } catch (_) {}
+      } catch (_) {
+        console.debug('Not a valid v2 envelope');
+      }
     }
 
     if (!globalThis.crypto?.subtle) {
-      throw new Error('WebCrypto not available (window.crypto.subtle missing).');
+      throw new Error(
+        'WebCrypto not available (window.crypto.subtle missing).',
+      );
     }
 
     const plaintext = data == null ? '' : String(data);
@@ -219,7 +302,7 @@ export default class CryptoDataService extends Service {
       enc.encode(effectivePassPhrase),
       { name: 'PBKDF2' },
       false,
-      ['deriveKey']
+      ['deriveKey'],
     );
 
     const aesKey = await crypto.subtle.deriveKey(
@@ -227,13 +310,13 @@ export default class CryptoDataService extends Service {
       baseKey,
       { name: 'AES-GCM', length: 256 },
       false,
-      ['encrypt']
+      ['encrypt'],
     );
 
     const ctBuf = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv },
       aesKey,
-      enc.encode(plaintext)
+      enc.encode(plaintext),
     );
 
     return JSON.stringify({
@@ -248,8 +331,12 @@ export default class CryptoDataService extends Service {
   }
 
   async newEncryptForVault(data) {
-    if(!this.vault) return data;
-    return await this.encryptForVault(this._sessionPassphrase, data, this.vault);
+    if (!this.vault) return data;
+    return await this.encryptForVault(
+      this._sessionPassphrase,
+      data,
+      this.vault,
+    );
   }
 
   /**
@@ -271,7 +358,9 @@ export default class CryptoDataService extends Service {
     const effectivePassPhrase = this._resolvePassphrase(passPhrase, vault);
 
     if (!globalThis.crypto?.subtle) {
-      throw new Error('WebCrypto not available (window.crypto.subtle missing).');
+      throw new Error(
+        'WebCrypto not available (window.crypto.subtle missing).',
+      );
     }
 
     // If it's not JSON or not v2, treat as plaintext (legacy handling should be done elsewhere)
@@ -282,13 +371,20 @@ export default class CryptoDataService extends Service {
       return encryptedData;
     }
 
-    if (!env || env.v !== 'v2' || env.alg !== 'AES-GCM' || typeof env.ct !== 'string') {
+    if (
+      !env ||
+      env.v !== 'v2' ||
+      env.alg !== 'AES-GCM' ||
+      typeof env.ct !== 'string'
+    ) {
       return encryptedData;
     }
 
     // Hard fail on vault mismatch
     if (env.vaultId && vault.vaultId && env.vaultId !== vault.vaultId) {
-      throw new Error('Vault mismatch: secret belongs to a different dataset vault.');
+      throw new Error(
+        'Vault mismatch: secret belongs to a different dataset vault.',
+      );
     }
 
     const fromB64 = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
@@ -314,7 +410,7 @@ export default class CryptoDataService extends Service {
       enc.encode(effectivePassPhrase),
       { name: 'PBKDF2' },
       false,
-      ['deriveKey']
+      ['deriveKey'],
     );
 
     const aesKey = await crypto.subtle.deriveKey(
@@ -322,19 +418,17 @@ export default class CryptoDataService extends Service {
       baseKey,
       { name: 'AES-GCM', length: 256 },
       false,
-      ['decrypt']
+      ['decrypt'],
     );
 
     let ptBuf;
     try {
-      ptBuf = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv },
-        aesKey,
-        ct
-      );
+      ptBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, aesKey, ct);
     } catch (e) {
       // Wrong passphrase or corrupted data
-      throw new Error('Decryption failed (wrong passphrase or corrupted ciphertext).');
+      throw new Error(
+        'Decryption failed (wrong passphrase or corrupted ciphertext).',
+      );
     }
 
     const data = dec.decode(ptBuf);
@@ -342,15 +436,16 @@ export default class CryptoDataService extends Service {
     return data;
   }
 
-
   async newDecryptFromVault(encryptedData) {
-    if(!this.vault) return encryptedData;
-
-    console.debug('Encrypting for vault:', this.vault.vaultId);
-    console.debug('Passphrase:', this._sessionPassphrase);
-    return await this.decryptFromVault(this._sessionPassphrase, encryptedData, this.vault);
+    if (!this.vault) {
+      return encryptedData;
+    }
+    return await this.decryptFromVault(
+      this._sessionPassphrase,
+      encryptedData,
+      this.vault,
+    );
   }
-
 
   /**
    * Create (or overwrite) the dataset vault record fields according to the spec.
@@ -369,7 +464,9 @@ export default class CryptoDataService extends Service {
    */
   async createVaultMeta(passPhrase, opts = {}) {
     if (!globalThis.crypto?.subtle) {
-      throw new Error('WebCrypto not available (window.crypto.subtle missing).');
+      throw new Error(
+        'WebCrypto not available (window.crypto.subtle missing).',
+      );
     }
 
     const iterations = opts.iterations ?? 310000;
@@ -396,7 +493,7 @@ export default class CryptoDataService extends Service {
       enc.encode(passPhrase),
       { name: 'PBKDF2' },
       false,
-      ['deriveBits']
+      ['deriveBits'],
     );
 
     const derivedBits = await crypto.subtle.deriveBits(
@@ -407,7 +504,7 @@ export default class CryptoDataService extends Service {
         hash,
       },
       baseKey,
-      256
+      256,
     );
 
     // vaultId = base64urltrim( SHA-256(derivedKeyBytes) )
@@ -427,12 +524,11 @@ export default class CryptoDataService extends Service {
     };
   }
 
-
-  async vaultCheck(){
+  async vaultCheck() {
     console.debug('Checking vault meta...');
     this.vault = this.store.peekRecord('vault', 'ppb-vault');
-    if(this.vault && this.vault.vaultId) {
-      console.debug('Found vault meta:', this.vault);
+    if (this.vault && this.vault.vaultId) {
+      console.debug('Found vault meta!');
       this.unlockedVaultId = this.vault.vaultId;
       this.newVaultModal = false;
     } else {
@@ -464,13 +560,15 @@ export default class CryptoDataService extends Service {
 
     // Proceed to generate a derived key and check existing vaultId to see if it matches
     try {
-      const fromB64 = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+      const fromB64 = (b64) =>
+        Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
       const toB64 = (u8) => {
         let s = '';
         for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]);
         return btoa(s);
       };
-      const toB64UrlTrim = (u8) => toB64(u8).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+      const toB64UrlTrim = (u8) =>
+        toB64(u8).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 
       const hash = vault.kdfHash || 'SHA-256';
       const iterations = Number(vault.kdfIterations) || 310000;
@@ -482,7 +580,7 @@ export default class CryptoDataService extends Service {
         enc.encode(passPhrase),
         { name: 'PBKDF2' },
         false,
-        ['deriveBits']
+        ['deriveBits'],
       );
 
       const derivedBits = await crypto.subtle.deriveBits(
@@ -493,10 +591,13 @@ export default class CryptoDataService extends Service {
           hash,
         },
         baseKey,
-        256
+        256,
       );
 
-      const fpBuf = await crypto.subtle.digest('SHA-256', new Uint8Array(derivedBits));
+      const fpBuf = await crypto.subtle.digest(
+        'SHA-256',
+        new Uint8Array(derivedBits),
+      );
       const derivedVaultId = toB64UrlTrim(new Uint8Array(fpBuf));
 
       if (derivedVaultId !== vault.vaultId) {
@@ -535,11 +636,19 @@ export default class CryptoDataService extends Service {
 
   _requireUnlocked(vault) {
     if (!this.isUnlocked || !this._sessionPassphrase) {
-      throw new Error('Vault is locked. Unlock is required for this operation.');
+      throw new Error(
+        'Vault is locked. Unlock is required for this operation.',
+      );
     }
 
-    if (vault?.vaultId && this.unlockedVaultId && vault.vaultId !== this.unlockedVaultId) {
-      throw new Error('Vault mismatch: current unlocked session belongs to a different vault.');
+    if (
+      vault?.vaultId &&
+      this.unlockedVaultId &&
+      vault.vaultId !== this.unlockedVaultId
+    ) {
+      throw new Error(
+        'Vault mismatch: current unlocked session belongs to a different vault.',
+      );
     }
   }
 }

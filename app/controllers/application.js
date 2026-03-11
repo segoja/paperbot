@@ -304,7 +304,7 @@ export default class ApplicationController extends Controller {
       });
     }
     this.noSleep = new NoSleep();
-    this.noSleep.enable();
+    //this.noSleep.enable();
   }
 
   get serverStatus() {

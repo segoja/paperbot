@@ -11,6 +11,7 @@ export default class ApplicationRoute extends Route {
   @service globalConfig;
   @service twitchChat;
   @service queueHandler;
+  @service cryptoData;
 
   async beforeModel() {
     super.init(...arguments);
@@ -40,6 +41,7 @@ export default class ApplicationRoute extends Route {
 
   afterModel(model) {
     this.headData.title = 'Paperbot, a Twitch.tv bot by Javier Sevilla';
+    this.cryptoData.vaultCheck();
 
     if (this.currentUser.isTauri) {
       let currentWindow = getCurrent();

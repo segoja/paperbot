@@ -573,9 +573,7 @@ export default class PouchAdapter extends RESTAdapter {
   createdRecords = null;
   async createRecord(store, type, record) {
     await this._init(store, type);
-    console.debug('createRecord record: ', record);
     var data = this._recordToData(store, type, record);
-
 
     let rel = this.db.rel;
 

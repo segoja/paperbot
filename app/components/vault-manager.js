@@ -2,7 +2,6 @@ import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
-import { client } from 'tmi.js';
 
 export default class VaultManagerComponent extends Component {
   @service cryptoData;
@@ -20,7 +19,6 @@ export default class VaultManagerComponent extends Component {
 
   constructor() {
     super(...arguments);
-    this.cryptoData.vaultCheck();
   }
 
   get modalWormhole() {
@@ -32,7 +30,7 @@ export default class VaultManagerComponent extends Component {
   }
 
   get title() {
-    if(this.cryptoData.newVaultModal) {
+    if (this.cryptoData.newVaultModal) {
       return 'Protect Your Secrets with a Dataset Passphrase';
     } else {
       return 'Unlock Vault';
@@ -40,53 +38,65 @@ export default class VaultManagerComponent extends Component {
   }
 
   get errorMessages() {
-    return this.errors
+    return this.errors;
+  }
+
+  @action submitForm() {
+    console.debug('Submitting form...');
+    if (this.cryptoData.newVaultModal) {
+      this.addNewVaultMeta();
+    } else {
+      this.unlock();
+    }
   }
 
   @action async unlock(event) {
-    event?.preventDefault();
-
+    if (event) {
+      event.preventDefault();
+    }
+    if (!this.passphrase) {
+      return;
+    }
     let ok = await this.cryptoData.unlockCurrentVault(this.passphrase);
-
     if (ok) {
       console.debug('Vault unlocked!', ok);
-      this.passphrase = "";
+      this.passphrase = '';
     }
   }
 
   @action checkPassPhrase(passPhrase) {
     const currentPassphrase = passPhrase;
     this.errors = [];
-    if(this.cryptoData.newVaultModal) {
-      if(currentPassphrase.length < 8) {
+    if (this.cryptoData.newVaultModal) {
+      if (currentPassphrase.length < 8) {
         this.errors.push('Passphrase must be at least 8 characters long.');
       }
-      if(currentPassphrase.length > 100){
+      if (currentPassphrase.length > 100) {
         this.errors.push('Passphrase must be less than 100 characters.');
       }
-      if(currentPassphrase.includes(' ')){
+      if (currentPassphrase.includes(' ')) {
         this.errors.push('Passphrase should not include any spaces.');
       }
-      if(!(/[A-Za-z]/.test(currentPassphrase))){
+      if (!/[A-Za-z]/.test(currentPassphrase)) {
         this.errors.push('Passphrase must include at least one letter.');
       }
-      if(!(/[0-9]/.test(currentPassphrase))){
+      if (!/[0-9]/.test(currentPassphrase)) {
         this.errors.push('Passphrase must include at least one number.');
       }
     }
-    this.invalidPassphrase = (this.errors.length > 0);
-    this.passphrase = (this.invalidPassphrase? '' : currentPassphrase);
+    this.invalidPassphrase = this.errors.length > 0;
+    this.passphrase = this.invalidPassphrase ? '' : currentPassphrase;
   }
 
   @action async addNewVaultMeta() {
     const newVaultMeta = await this.cryptoData.createVaultMeta(this.passphrase);
-    console.debug('Creating new vault meta record with newVaultMeta:', newVaultMeta, '...');
-    const newVaultMetaRecord = await this.store.createRecord('vault', { id: "ppb-vault", ...newVaultMeta }).save();
+    const newVaultMetaRecord = await this.store
+      .createRecord('vault', { id: 'ppb-vault', ...newVaultMeta })
+      .save();
 
-    if(newVaultMetaRecord) {
+    if (newVaultMetaRecord) {
       this.passphrase = '';
       this.newVaultMeta = {};
-      console.debug('Created vault meta record:', newVaultMetaRecord);
       this.cryptoData.showVaultModal = false;
       await this.cryptoData.vaultCheck();
     }
@@ -110,5 +120,9 @@ export default class VaultManagerComponent extends Component {
   @action migrateToNewVault() {
     this.isMigrationForm = true;
     this.errors = [];
+  }
+
+  @action toggleModal() {
+    this.cryptoData.showVaultModal = !this.cryptoData.showVaultModal;
   }
 }

@@ -13,15 +13,19 @@ export default class PbClientComponent extends Component {
   clientTypes = Object.freeze(['twitch', 'youtube', 'discord']);
 
   @tracked oauth = '';
+  @tracked isMasked = true;
 
   constructor() {
     super(...arguments);
     this.oauth = this.args.client.oauth;
   }
 
+  get disabledForm() {
+    return this.args.client.publicKey || this.isMasked;
+  }
 
   @action async password() {
-    if(this.cryptoData.isUnlocked){
+    if (this.cryptoData.isUnlocked) {
       let result = '';
       result = await this.cryptoData.newEncryptForVault(this.oauth);
       console.debug('Encrypted oauth: ', result);
@@ -54,14 +58,16 @@ export default class PbClientComponent extends Component {
     }, 500);
   }
 
-  @tracked isMasked = true;
-
   @action toggleMask() {
-    if(this.cryptoData.isUnlocked){
-      if (this.isMasked && this.args.client.oauth) {
-        this.setOauth().then(() => {
-          this.isMasked = false
-        });
+    if (this.cryptoData.isUnlocked) {
+      if (this.isMasked) {
+        if (this.args.client.oauth) {
+          this.setOauth().then(() => {
+            this.isMasked = false;
+          });
+        } else {
+          this.isMasked = false;
+        }
       } else {
         this.isMasked = true;
       }
@@ -101,6 +107,13 @@ export default class PbClientComponent extends Component {
       console.error('Failed to load oauth:', error);
     }
   }
+
+  @action async reEncryptClient() {
+    if (!this.args.client.publicKey) return;
+    await this.cryptoData
+      .migrateSingleCryptoJsToVault(this.args.client)
+      .then(() => {
+        this.oauth = this.args.client.oauth;
+      });
+  }
 }
-
-

@@ -17,7 +17,7 @@ export default class VaultModel extends Model {
       name: this.kdfName,
       hash: this.kdfHash,
       iterations: this.kdfIterations,
-    }
+    };
   }
 
   @attr('string') rev;
