@@ -19,6 +19,7 @@ export default class VaultManagerComponent extends Component {
 
   constructor() {
     super(...arguments);
+    this.passphrase = '';
   }
 
   get modalWormhole() {
@@ -51,10 +52,12 @@ export default class VaultManagerComponent extends Component {
   }
 
   @action async unlock(event) {
+    console.debug('Unlocking vault...');
     if (event) {
       event.preventDefault();
     }
     if (!this.passphrase) {
+      console.debug('Passphrase is required.');
       return;
     }
     let ok = await this.cryptoData.unlockCurrentVault(this.passphrase);
@@ -89,16 +92,17 @@ export default class VaultManagerComponent extends Component {
   }
 
   @action async addNewVaultMeta() {
+    console.debug('Creating new vault...');
     const newVaultMeta = await this.cryptoData.createVaultMeta(this.passphrase);
     const newVaultMetaRecord = await this.store
       .createRecord('vault', { id: 'ppb-vault', ...newVaultMeta })
       .save();
 
     if (newVaultMetaRecord) {
-      this.passphrase = '';
       this.newVaultMeta = {};
       this.cryptoData.showVaultModal = false;
       await this.cryptoData.vaultCheck();
+      this.unlock();
     }
   }
 

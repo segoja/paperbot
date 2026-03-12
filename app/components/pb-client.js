@@ -85,7 +85,7 @@ export default class PbClientComponent extends Component {
         return;
       }
 
-      if (oauthValue.includes('vaultId')) {
+      if (this.cryptoData.isVaultEncrypted(oauthValue)) {
         if (!this.cryptoData.isUnlocked) {
           this.oauth = '';
           return;

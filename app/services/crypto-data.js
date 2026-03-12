@@ -257,7 +257,7 @@ export default class CryptoDataService extends Service {
     if (!vault) return data;
     const effectivePassPhrase = this._resolvePassphrase(passPhrase, vault);
 
-    // If already v2 envelope, keep as-is
+    // If it's data already encrypted v2 envelope, we return it without further changes.
     if (typeof data === 'string') {
       try {
         const parsed = JSON.parse(data);
@@ -269,11 +269,10 @@ export default class CryptoDataService extends Service {
         ) {
           return data;
         }
-      } catch (_) {
-        console.debug('Not a valid v2 envelope');
+      } catch (error) {
+        console.debug('No JSON envelope, continue encryption...', error);
       }
     }
-
     if (!globalThis.crypto?.subtle) {
       throw new Error(
         'WebCrypto not available (window.crypto.subtle missing).',
@@ -367,7 +366,9 @@ export default class CryptoDataService extends Service {
     let env;
     try {
       env = JSON.parse(encryptedData);
-    } catch (_) {
+      console.debug('Encrypted envelope:', env);
+    } catch (err) {
+      console.debug('Failed to parse JSON envelope', err);
       return encryptedData;
     }
 
@@ -437,9 +438,11 @@ export default class CryptoDataService extends Service {
   }
 
   async newDecryptFromVault(encryptedData) {
+    console.debug('Decrypting from vault...');
     if (!this.vault) {
       return encryptedData;
     }
+
     return await this.decryptFromVault(
       this._sessionPassphrase,
       encryptedData,
@@ -617,6 +620,10 @@ export default class CryptoDataService extends Service {
       this.unlockError = 'Failed to unlock vault.';
       return false;
     }
+  }
+
+  isEncrypted(data) {
+    return data.includes('vaultId');
   }
 
   lockCurrentVault() {

@@ -122,7 +122,7 @@
             Continue Locked
           {{/if}}
         </BsButton>
-        <form.submitButton @type="primary" disabled={{this.invalidPassphrase}} @onClick={{this.submitForm}}>
+        <form.submitButton @type="primary" disabled={{this.invalidPassphrase}}>
           {{#if this.cryptoData.newVaultModal}}
             Encrypt my secrets
           {{else}}
