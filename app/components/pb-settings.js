@@ -23,7 +23,6 @@ export default class PbSettingsComponent extends Component {
   @tracked saving = false;
 
   @tracked externaleventskey = '';
-  @tracked isMaskedEvents = true;
 
   constructor() {
     super(...arguments);
@@ -43,58 +42,9 @@ export default class PbSettingsComponent extends Component {
     return this.isViewing;
   }
 
-  @action toggleEventsMask() {
-    if (this.cryptoData.isUnlocked) {
-      if (this.isMaskedEvents) {
-        if (this.externaleventskey !== '') {
-          this.setUnmasked('externaleventskey').then(() => {
-            this.isMaskedEvents = false;
-          });
-        } else {
-          this.isMaskedEvents = false;
-        }
-      } else {
-        this.isMaskedEvents = true;
-      }
-    } else {
-      this.cryptoData.showVaultModal = true;
-    }
-  }
-
-  @action async setUnmasked(property) {
-    console.debug('Unmasking ' + property);
-    try {
-      // Check if client's oauth is encrypted before decrypting
-      const maskedValue = structuredClone(this[property]) ?? '';
-      if (!maskedValue) {
-        this[property] = '';
-        return;
-      }
-
-      if (this.cryptoData.isVaultEncrypted(maskedValue)) {
-        if (!this.cryptoData.isUnlocked) {
-          this[property] = '';
-          return;
-        }
-        console.debug('maskedValue: ', maskedValue);
-
-        let data = await this.cryptoData.newDecryptFromVault(maskedValue);
-        console.debug('Decrypted data: ', data);
-
-        if (data) {
-          this[property] = data;
-        } else {
-          this[property] = '';
-          console.debug('Failed to decrypt oauth');
-        }
-      } else {
-        console.debug('Unmasked ' + property + ': ', maskedValue);
-        this[property] = maskedValue;
-      }
-    } catch (error) {
-      this[property] = '';
-      console.error('Failed to load' + property + ':', error);
-    }
+  get externalStatus() {
+    console.debug(this.externaleventskey);
+    return this.externaleventskey;
   }
 
   @action changeColor(closefunc, color) {
@@ -169,8 +119,11 @@ export default class PbSettingsComponent extends Component {
       );
       if (!isEncryptedEvents) {
         console.debug('Encrypting external events key...');
-        this.globalConfig.config.externaleventskey =
-          await this.cryptoData.newEncryptForVault(this.externaleventskey);
+        const encryptedData = await this.cryptoData.newEncryptForVault(
+          this.externaleventskey,
+        );
+        this.globalConfig.config.externaleventskey = encryptedData;
+        this.externaleventskey = encryptedData;
       }
     }
 

@@ -1,0 +1,20 @@
+<div class="col-12 col-lg" {{did-insert this.updateValue}} {{did-update this.updateValue @value}}>
+  <div class="input-group">
+    <Input
+      @type={{if this.isMasked "password" "text"}}
+      aria-label={{this.label}}
+      @value={{this.value}}
+      autocomplete="current-oauth"
+      class="form-control rounded-0"
+      disabled={{this.isMasked}}
+      placeholder={{this.placeholder}}
+      {{on "change" this.onChange}}
+    />
+    <button
+      type="button"
+      class="btn btn-outline-secondary rounded-start-0"
+      {{on "click" this.toggleMask}}
+      title={{this.title}}
+    ><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
+  </div>
+</div>

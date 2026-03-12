@@ -270,7 +270,7 @@ export default class CryptoDataService extends Service {
           return data;
         }
       } catch (error) {
-        console.debug('No JSON envelope, continue encryption...', error);
+        console.debug('No JSON envelope, continue encryption...');
       }
     }
     if (!globalThis.crypto?.subtle) {

@@ -116,25 +116,13 @@
                 <el.control @inline={{true}} @horizontalLabelGridClass="me-0" />
                 <el.label @horizontalLabelGridClass="me-0" />
               </form.element>
-              <div class="col-12 col-lg">
-                <div class="input-group">
-                  <Input
-                    @type={{if this.isMaskedEvents "password" "text"}}
-                    aria-label="Oauth string"
-                    @value={{this.externaleventskey}}
-                    autocomplete="current-oauth"
-                    class="form-control rounded-0"
-                    disabled={{this.isMaskedEvents}}
-                    placeholder="Oauth token"
-                  />
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary rounded-start-0"
-                    {{on "click" this.toggleEventsMask}}
-                    title="Show password"
-                  ><FaIcon @icon={{if this.isMaskedEvents "pen" "lock"}} /></button>
-                </div>
-              </div>
+              <EncryptedFormControl
+                @value={{this.externaleventskey}}
+                @label="Oauth string"
+                @placeholder="Oauth token"
+                @title="Show password"
+                @onChange={{fn (mut this.externaleventskey)}}
+              />
             </div>
           </div>
         </div>
