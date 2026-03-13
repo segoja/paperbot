@@ -13,6 +13,31 @@ export default class VaultManagerComponent extends Component {
     super(...arguments);
   }
 
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this.isMasked = true;
+    this.value = '';
+  }
+
+  get groupClass() {
+    const inputClass = this.args.size
+      ? 'input-group-' + this.args.size
+      : 'input-group';
+    return inputClass;
+  }
+
+  get inputClass() {
+    let inputClass = 'form-control';
+    if (this.args.isFormGroup) {
+      inputClass += ' rounded-0';
+    }
+    return inputClass + ' ' + this.args.inputClass;
+  }
+
+  get autocomplete() {
+    return this.args.autocomplete || 'off';
+  }
+
   get label() {
     return this.args.label || 'Label';
   }
@@ -29,65 +54,27 @@ export default class VaultManagerComponent extends Component {
     return this.errors;
   }
 
-  @action updateValue() {
-    this.value = this.args.value;
+  @action async updateValue() {
+    // console.debug('Updating value');
     this.isMasked = true;
+    this.value = await this.cryptoData.newDecryptFromVault(this.args.value);
   }
 
   @action onChange() {
+    // console.debug('Changing value...');
+    this.changed = true;
     this.args.onChange(this.value);
   }
 
-  @action toggleMask() {
-    if (this.cryptoData.isUnlocked) {
-      if (this.isMasked) {
-        if (this.value !== '') {
-          this.setUnmasked().then(() => {
-            this.isMasked = false;
-          });
-        } else {
-          this.isMasked = false;
-        }
-      } else {
-        this.isMasked = true;
+  @action async toggleMask() {
+    if (this.isMasked) {
+      if (this.value) {
+        this.value = await this.cryptoData.newDecryptFromVault(this.value);
       }
+      this.isMasked = false;
     } else {
-      this.cryptoData.showVaultModal = true;
-    }
-  }
-
-  @action async setUnmasked() {
-    try {
-      // Check if value is encrypted before decrypting
-      const maskedValue = structuredClone(this.value) ?? '';
-      if (!maskedValue) {
-        this.value = '';
-        return;
-      }
-
-      if (this.cryptoData.isVaultEncrypted(maskedValue)) {
-        if (!this.cryptoData.isUnlocked) {
-          this.value = '';
-          return;
-        }
-
-        let unmaskedValue =
-          await this.cryptoData.newDecryptFromVault(maskedValue);
-
-        if (unmaskedValue) {
-          console.debug('Decrypted and Unmasked...');
-          this.value = unmaskedValue;
-        } else {
-          this.value = '';
-          console.debug('Failed to decrypt...');
-        }
-      } else {
-        console.debug('Unmasked...');
-        this.value = maskedValue;
-      }
-    } catch (error) {
-      this.value = '';
-      console.error('Failed to load:', error);
+      this.isMasked = true;
+      this.value = await this.cryptoData.newDecryptFromVault(this.args.value);
     }
   }
 }

@@ -6,6 +6,7 @@ import { inject as service } from '@ember/service';
 
 export default class PbCloudComponent extends Component {
   @service cloudState;
+  @service cryptoData;
   @service globalConfig;
   @service currentUser;
   @service session;
@@ -159,7 +160,23 @@ export default class PbCloudComponent extends Component {
     }
   }
 
-  @action doneEditing() {
+  @action async doneEditing() {
+    const remoteUrl = this.globalConfig.config.remoteUrl;
+    this.globalConfig.config.remoteUrl =
+      await this.cryptoData.newEncryptForVault(remoteUrl);
+
+    const database = this.globalConfig.config.database;
+    this.globalConfig.config.database =
+      await this.cryptoData.newEncryptForVault(database);
+
+    const username = this.globalConfig.config.username;
+    this.globalConfig.config.username =
+      await this.cryptoData.newEncryptForVault(username);
+
+    const password = this.globalConfig.config.password;
+    this.globalConfig.config.password =
+      await this.cryptoData.newEncryptForVault(password);
+
     this.globalConfig.config.save().then(() => {
       this.saving = true;
       later(() => {

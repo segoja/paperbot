@@ -1,7 +1,8 @@
 import { tracked } from '@glimmer/tracking';
 import Service from '@ember/service';
-
+import { inject as service } from '@ember/service';
 export default class CloudStateService extends Service {
+  @service cryptoData;
   @tracked cloudPush = false;
   @tracked cloudPull = false;
   @tracked online = false;
@@ -41,5 +42,19 @@ export default class CloudStateService extends Service {
     this.online = false;
     this.couchError = true;
     this.connectionError = true;
+  }
+
+  async getCloudUlr(config) {
+    let dbUrl = '';
+    if (config.cloudType == 'cloudstation') {
+      const database = await this.cryptoData.newDecryptFromVault(
+        config.database,
+      );
+      dbUrl = 'https://my.cloudstation.com/' + database;
+    }
+    if (this.cloudType == 'custom') {
+      dbUrl = await this.cryptoData.newDecryptFromVault(config.remoteUrl);
+    }
+    return dbUrl;
   }
 }

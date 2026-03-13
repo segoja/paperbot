@@ -116,13 +116,17 @@
                 <el.control @inline={{true}} @horizontalLabelGridClass="me-0" />
                 <el.label @horizontalLabelGridClass="me-0" />
               </form.element>
-              <EncryptedFormControl
-                @value={{this.externaleventskey}}
-                @label="Oauth string"
-                @placeholder="Oauth token"
-                @title="Show password"
-                @onChange={{fn (mut this.externaleventskey)}}
-              />
+              <div class="col-12 col-lg">
+                <EncryptedFormControl
+                  @value={{this.globalConfig.config.externaleventskey}}
+                  @label="External API string"
+                  @placeholder="External API token"
+                  @title="Show API token"
+                  @isFormGroup={{true}}
+                  @onChange={{fn (mut this.globalConfig.config.externaleventskey)}}
+                  @updateTrigger={{this.globalConfig.config.rev}}
+                />
+              </div>
             </div>
           </div>
         </div>

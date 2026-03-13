@@ -330,7 +330,9 @@ export default class CryptoDataService extends Service {
   }
 
   async newEncryptForVault(data) {
-    if (!this.vault) return data;
+    if (!data) return null;
+    if (!this.vault || !this.isUnlocked) return data;
+
     return await this.encryptForVault(
       this._sessionPassphrase,
       data,
@@ -363,12 +365,12 @@ export default class CryptoDataService extends Service {
     }
 
     // If it's not JSON or not v2, treat as plaintext (legacy handling should be done elsewhere)
+
     let env;
     try {
       env = JSON.parse(encryptedData);
-      console.debug('Encrypted envelope:', env);
     } catch (err) {
-      console.debug('Failed to parse JSON envelope', err);
+      console.debug('The data is not encrypted, returned as is...');
       return encryptedData;
     }
 
@@ -439,7 +441,7 @@ export default class CryptoDataService extends Service {
 
   async newDecryptFromVault(encryptedData) {
     console.debug('Decrypting from vault...');
-    if (!this.vault) {
+    if (!this.vault || !this.isUnlocked) {
       return encryptedData;
     }
 
@@ -643,9 +645,8 @@ export default class CryptoDataService extends Service {
 
   _requireUnlocked(vault) {
     if (!this.isUnlocked || !this._sessionPassphrase) {
-      throw new Error(
-        'Vault is locked. Unlock is required for this operation.',
-      );
+      console.debug('Vault is locked. Unlock is required for this operation.');
+      this.showVaultModal = true;
     }
 
     if (

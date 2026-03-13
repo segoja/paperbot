@@ -855,8 +855,8 @@ export default class TwitchChatService extends Service {
           }
           // !queue lists the songs in queue:
         } else if (
-          String(commandName).startsWith('!queue') ||
-          String(commandName).startsWith('!sq')
+          String(commandName) === '!queue' ||
+          String(commandName) === '!sq'
         ) {
           if ((await this.queueHandler.pendingSongs.length) > 0) {
             let count = 0;

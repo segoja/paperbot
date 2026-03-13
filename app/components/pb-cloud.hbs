@@ -117,94 +117,74 @@
           {{#if this.globalConfig.config.isCustomCloud}}
             <div class="row pb-3">
               <div class="col">
-                <div class="input-group input-group-sm">
-                  <div class="input-group-text border-default"><FaIcon
-                      @icon="link"
-                      @size="sm"
-                    /></div>
-                  <Input
-                    class={{if
-                      this.cloudState.isCloudError
-                      "form-control is-invalid"
-                      "form-control"
-                    }}
-                    @value={{this.globalConfig.config.remoteUrl}}
-                    aria-label="Remote url"
-                    @type="text"
-                    placeholder="Enter remote url"
-                    autocomplete="remoteUrl"
-                    disabled={{this.globalConfig.config.isCloudDisabled}}
-                  />
-                </div>
+                <EncryptedFormControl
+                  @size="sm"
+                  @preIcon="link"
+                  @class={{if this.cloudState.isCloudError "is-invalid"}}
+                  @label="Remote url"
+                  @placeholder="Enter remote url"
+                  @title="Show remote url"
+                  @autocomplete="remoteUrl"
+                  @isFormGroup={{false}}
+                  @value={{this.globalConfig.config.remoteUrl}}
+                  @onChange={{fn (mut this.globalConfig.config.remoteUrl)}}
+                  @updateTrigger={{this.globalConfig.config.rev}}
+                  @disabled={{this.cloudState.isCloudDisabled}}
+                />
               </div>
             </div>
           {{/if}}
           <div class="row pb-3">
             <div class="col">
-              <div class="input-group input-group-sm">
-                <div class="input-group-text border-default"><FaIcon
-                    @icon="user"
-                    @size="sm"
-                  /></div>
-                <Input
-                  class={{if
-                    this.cloudState.isCloudError
-                    "form-control is-invalid"
-                    "form-control"
-                  }}
-                  @value={{this.globalConfig.config.username}}
-                  aria-label="Username"
-                  @type="text"
-                  placeholder="Enter remote username"
-                  autocomplete="username"
-                  disabled={{this.globalConfig.config.isCloudDisabled}}
-                />
-              </div>
+              <EncryptedFormControl
+                @size="sm"
+                @preIcon="user"
+                @class={{if this.cloudState.isCloudError "is-invalid"}}
+                @label="Username"
+                @placeholder="Enter remote username"
+                @title="Show username"
+                @autocomplete="username"
+                @isFormGroup={{false}}
+                @value={{this.globalConfig.config.username}}
+                @onChange={{fn (mut this.globalConfig.config.username)}}
+                @updateTrigger={{this.globalConfig.config.rev}}
+                @disabled={{this.cloudState.isCloudDisabled}}
+              />
             </div>
             <div class="col">
-              <div class="input-group input-group-sm">
-                <div class="input-group-text border-default"><FaIcon
-                    @icon="key"
-                    @size="sm"
-                  /></div>
-                <Input
-                  class={{if
-                    this.cloudState.isCloudError
-                    "form-control is-invalid"
-                    "form-control"
-                  }}
-                  @value={{this.globalConfig.config.password}}
-                  aria-label="Password"
-                  @type="password"
-                  placeholder="Enter remote password"
-                  autocomplete="current-password"
-                  disabled={{this.globalConfig.config.isCloudDisabled}}
-                />
-              </div>
+              <EncryptedFormControl
+                @size="sm"
+                @preIcon="key"
+                @class={{if this.cloudState.isCloudError "is-invalid"}}
+                @label="Password"
+                @placeholder="Enter remote password"
+                @title="Show password"
+                @autocomplete="current-password"
+                @isFormGroup={{false}}
+                @value={{this.globalConfig.config.password}}
+                @onChange={{fn (mut this.globalConfig.config.password)}}
+                @updateTrigger={{this.globalConfig.config.rev}}
+                @disabled={{this.cloudState.isCloudDisabled}}
+              />
             </div>
           </div>
           {{#unless this.globalConfig.config.isCustomCloud}}
             <div class="row pb-3">
               <div class="col">
-                <div class="input-group input-group-sm">
-                  <div class="input-group-text border-default"><FaIcon
-                      @icon="database"
-                      @size="sm"
-                    /></div>
-                  <Input
-                    class={{if
-                      this.cloudState.isCloudError
-                      "form-control is-invalid"
-                      "form-control"
-                    }}
-                    @value={{this.globalConfig.config.database}}
-                    aria-label="Database name"
-                    @type="text"
-                    placeholder="Enter database name"
-                    autocomplete="database"
-                    disabled={{this.globalConfig.config.isCloudDisabled}}
-                  />
-                </div>
+                <EncryptedFormControl
+                  @size="sm"
+                  @preIcon="database"
+                  @class={{if this.cloudState.isCloudError "is-invalid"}}
+                  @label="Database name"
+                  @placeholder="Enter database name"
+                  @title="Show database name"
+                  @autocomplete="database"
+                  @isFormGroup={{false}}
+                  @value={{this.globalConfig.config.database}}
+                  @onChange={{fn (mut this.globalConfig.config.database)}}
+                  @updateTrigger={{this.globalConfig.config.rev}}
+                  @disabled={{this.cloudState.isCloudDisabled}}
+                />
               </div>
             </div>
           {{/unless}}

@@ -16,6 +16,7 @@ import { TrackedArray } from 'tracked-built-ins';
 import NoSleep from 'nosleep.js';
 
 export default class ApplicationController extends Controller {
+  @service cryptoData;
   @service cloudState;
   @service currentUser;
   @service audio;
@@ -27,7 +28,6 @@ export default class ApplicationController extends Controller {
   @service eventsExternal;
   @service twitchChat;
   @service queueHandler;
-  @service cryptoData;
 
   @tracked collapsed = true;
   @tracked minimized = false;
@@ -552,10 +552,11 @@ export default class ApplicationController extends Controller {
   }
 
   @action saveSettings() {
-    return this.globalConfig.config.save().then((config) => {
+    return this.globalConfig.config.save().then(async (config) => {
+      const cloudUrl = await this.cloudState.getCloudUlr(config);
       if (!this.cloudState.online) {
         if (
-          config.cloudUrl &&
+          cloudUrl &&
           config.username &&
           config.password &&
           config.autoConnect

@@ -66,24 +66,15 @@
           </BsPopover>
         </div>
         <div class="col-md-8">
-          <div class="input-group">
-            <Input
-              @type={{if this.isMasked "password" "text"}}
-              aria-label="Oauth string"
-              @value={{this.oauth}}
-              autocomplete="current-oauth"
-              class="form-control"
-              disabled={{this.disabledForm}}
-              placeholder="Paste your Oauth here including Oauth: "
-            />
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              {{on "click" this.toggleMask}}
-              title="Show password"
-              disabled={{@client.publicKey}}
-            ><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
-          </div>
+          <EncryptedFormControl
+            @value={{@client.oauth}}
+            @label="Oauth string"
+            @placeholder="Paste your Oauth here including Oauth: "
+            @title="Show oauth"
+            @onChange={{fn (mut @client.oauth)}}
+            @disabledButton={{@client.publicKey}}
+            @updateTrigger={{@client.rev}}
+          />
         </div>
       </div>
 
@@ -164,7 +155,7 @@
         </BsButton>
         <BsButton
           @type="success"
-          @onClick={{@saveAndReturnClient}}
+          @onClick={{this.saveAndReturnClient}}
           title="Save & return"
         ><FaIcon @icon="save" />
           Save<span class="d-none d-md-inline"> & Return</span></BsButton>

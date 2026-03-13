@@ -20,6 +20,7 @@ export default class ApplicationAdapter extends Adapter {
   @service refreshIndicator;
   @service store;
   @service router;
+  @service cryptoData;
 
   @service globalConfig;
 
@@ -117,7 +118,7 @@ export default class ApplicationAdapter extends Adapter {
     }
     /*if(){
             console.log(dbInfo.adapter);
-            //this.olddb = new PouchDB(db.name, { adapter: 'idb', attachments: true });            
+            //this.olddb = new PouchDB(db.name, { adapter: 'idb', attachments: true });
             //window.indexedDB.deleteDatabase(db.name);
           }*/
   }
@@ -126,11 +127,13 @@ export default class ApplicationAdapter extends Adapter {
     console.debug('Trying to set remote couch replication...');
     // If we have specified a remote CouchDB instance, then replicate our local database to it
     if (this.globalConfig.config.canConnect) {
-      console.debug(
-        'Setting remote couch replication to:' +
-          this.globalConfig.config.cloudUrl,
+      console.debug('Setting remote couch replication...');
+
+      const cloudUrl = await this.cloudState.getCloudUlr(
+        this.globalConfig.config,
       );
-      this.remoteDb = new PouchDB(this.globalConfig.config.cloudUrl, {
+
+      this.remoteDb = new PouchDB(cloudUrl, {
         fetch: function (url, opts) {
           opts.credentials = 'include';
           return PouchDB.fetch(url, opts);
@@ -290,13 +293,17 @@ export default class ApplicationAdapter extends Adapter {
   }
 
   async connectRemote() {
-    console.debug('Connecting to: ' + this.globalConfig.config.cloudUrl);
+    console.debug('Connecting to remote...');
+    const username = await this.cryptoData.newDecryptFromVault(
+      this.globalConfig.config.username,
+    );
+    const password = await this.cryptoData.newDecryptFromVault(
+      this.globalConfig.config.password,
+    );
+    console.debug('Credentials:', username, password);
+
     this.session
-      .authenticate(
-        'authenticator:pouch',
-        this.globalConfig.config.username,
-        this.globalConfig.config.password,
-      )
+      .authenticate('authenticator:pouch', username, password)
       .then(() => {
         console.debug('Connection success!');
         this.cloudState.online = true;

@@ -94,17 +94,6 @@ export default class ConfigModel extends Model {
   @attr('string', { defaultValue: '' }) password;
   @attr('boolean', { defaultValue: false }) autoConnect;
 
-  get cloudUrl() {
-    let dbUrl = '';
-    if (this.cloudType == 'cloudstation') {
-      dbUrl = 'https://my.cloudstation.com/' + this.database;
-    }
-    if (this.cloudType == 'custom') {
-      dbUrl = this.remoteUrl;
-    }
-    return dbUrl;
-  }
-
   get isCloudDisabled() {
     return this.cloudType == 'disabled';
   }
@@ -114,7 +103,7 @@ export default class ConfigModel extends Model {
   }
 
   get canConnect() {
-    if (this.cloudUrl && this.username && this.password) {
+    if ((this.database || this.remoteUrl) && this.username && this.password) {
       return true;
     }
     return false;

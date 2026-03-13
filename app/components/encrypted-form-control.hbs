@@ -1,20 +1,24 @@
-<div class="col-12 col-lg" {{did-insert this.updateValue}} {{did-update this.updateValue @value}}>
-  <div class="input-group">
-    <Input
-      @type={{if this.isMasked "password" "text"}}
-      aria-label={{this.label}}
-      @value={{this.value}}
-      autocomplete="current-oauth"
-      class="form-control rounded-0"
-      disabled={{this.isMasked}}
-      placeholder={{this.placeholder}}
-      {{on "change" this.onChange}}
-    />
-    <button
-      type="button"
-      class="btn btn-outline-secondary rounded-start-0"
-      {{on "click" this.toggleMask}}
-      title={{this.title}}
-    ><FaIcon @icon={{if this.isMasked "pen" "lock"}} /></button>
-  </div>
+<div class={{concat "input-group "this.groupClass}} {{did-insert this.updateValue}} {{did-update this.updateValue @updateTrigger}}>
+  {{#if @preIcon}}
+    <div class="input-group-text border-default">
+      <FaIcon @icon={{@preIcon}} @size={{@size}} />
+    </div>
+  {{/if}}
+  <Input
+    @type={{if this.isMasked "password" "text"}}
+    @value={{this.value}}
+    aria-label={{this.label}}
+    autocomplete={{this.autocomplete}}
+    class={{this.inputClass}}
+    disabled={{this.disabled}}
+    placeholder={{this.placeholder}}
+    {{on "keyup" this.onChange}}
+  />
+  <button
+    type="button"
+    class="btn btn-outline-secondary rounded-start-0"
+    disabled={{@disabled}}
+    title={{this.title}}
+    {{on "click" this.toggleMask}}
+  ><FaIcon @icon={{if this.isMasked "eye" "eye-slash"}} /></button>
 </div>

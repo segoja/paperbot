@@ -22,16 +22,15 @@ export default class PbSettingsComponent extends Component {
   @tracked isViewing = true;
   @tracked saving = false;
 
-  @tracked externaleventskey = '';
-
   constructor() {
     super(...arguments);
     this.isViewing = false;
-    this.externaleventskey = this.globalConfig.config.externaleventskey;
   }
 
   willDestroy() {
     super.willDestroy(...arguments);
+    this.saving = false;
+    this.isViewing = false;
   }
 
   get modalWormhole() {
@@ -40,11 +39,6 @@ export default class PbSettingsComponent extends Component {
 
   get showUp() {
     return this.isViewing;
-  }
-
-  get externalStatus() {
-    console.debug(this.externaleventskey);
-    return this.externaleventskey;
   }
 
   @action changeColor(closefunc, color) {
@@ -113,20 +107,11 @@ export default class PbSettingsComponent extends Component {
   }
 
   @action async doneEditing() {
-    if (this.cryptoData.isUnlocked) {
-      const isEncryptedEvents = this.cryptoData.isEncrypted(
-        this.externaleventskey,
-      );
-      if (!isEncryptedEvents) {
-        console.debug('Encrypting external events key...');
-        const encryptedData = await this.cryptoData.newEncryptForVault(
-          this.externaleventskey,
-        );
-        this.globalConfig.config.externaleventskey = encryptedData;
-        this.externaleventskey = encryptedData;
-      }
-    }
+    const externaleventskey = this.globalConfig.config.externaleventskey;
+    this.globalConfig.config.externaleventskey =
+      await this.cryptoData.newEncryptForVault(externaleventskey);
 
+    console.debug('Saving settings...');
     this.globalConfig.config.save().then(() => {
       this.saving = true;
       later(() => {
