@@ -48,8 +48,6 @@ export default class ApplicationController extends Controller {
       this.minimized = false;
     }
 
-    // this.cryptoData.vaultCheck();
-
     // We wipe requests on every app start;
     this.store.findAll('config').then(async () => {
       let currentconfig = this.store.peekRecord('config', 'ppbconfig');
@@ -110,7 +108,8 @@ export default class ApplicationController extends Controller {
               await this.store
                 .adapterFor('application')
                 .configRemote()
-                .then(async () => {
+                .then(async (ok) => {
+                  if(!ok) return;
                   if (this.globalConfig.config.autoConnect) {
                     await this.store.adapterFor('application').connectRemote();
                   }
@@ -120,7 +119,8 @@ export default class ApplicationController extends Controller {
             await this.store
               .adapterFor('application')
               .configRemote()
-              .then(async () => {
+              .then(async (ok) => {
+                if(!ok) return;
                 if (this.globalConfig.config.autoConnect) {
                   await this.store.adapterFor('application').connectRemote();
                 }
@@ -562,10 +562,17 @@ export default class ApplicationController extends Controller {
           config.autoConnect
         ) {
           console.debug('Setting remote backup...');
-          this.store.adapterFor('application').configRemote();
-          if (!this.session.isAuthenticated) {
-            this.store.adapterFor('application').connectRemote();
-          }
+          this.store
+          .adapterFor('application')
+          .configRemote()
+          .then((ok) => {
+            if (!ok) return;
+            if (!this.session.isAuthenticated) {
+              this.store
+              .adapterFor('application')
+              .connectRemote();
+            }
+          });
         }
       }
     });

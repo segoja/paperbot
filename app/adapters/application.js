@@ -124,10 +124,16 @@ export default class ApplicationAdapter extends Adapter {
   }
 
   async configRemote() {
-    console.debug('Trying to set remote couch replication...');
+    const ok = await this.cryptoData.ensureUnlocked();
+
+    if (!ok) {
+      return false;
+    }
+
+    console.debug('Trying to config remote couch replication...');
     // If we have specified a remote CouchDB instance, then replicate our local database to it
     if (this.globalConfig.config.canConnect) {
-      console.debug('Setting remote couch replication...');
+      console.debug('Configuring remote couch replication...');
 
       const cloudUrl = await this.cloudState.getCloudUlr(
         this.globalConfig.config,
@@ -195,8 +201,10 @@ export default class ApplicationAdapter extends Adapter {
                     this.replicationToHandler.cancel();
                   }
                   console.debug('Retrying... A');
-                  this.configRemote();
-                  this.connectRemote();
+                  this.configRemote().then((ok) => {
+                    if(!ok){ return; }
+                    this.connectRemote();
+                  });
                   this.isRetrying = false;
                 }, this.retryDelay);
               }
@@ -255,8 +263,10 @@ export default class ApplicationAdapter extends Adapter {
                     this.replicationToHandler.cancel();
                   }
                   console.debug('Retrying... B');
-                  this.configRemote();
-                  this.connectRemote();
+                  this.configRemote().then((ok) => {
+                    if (!ok) return;
+                    this.connectRemote();
+                  })
                   this.isRetrying = false;
                 }, this.retryDelay);
               }
@@ -294,13 +304,13 @@ export default class ApplicationAdapter extends Adapter {
 
   async connectRemote() {
     console.debug('Connecting to remote...');
+
     const username = await this.cryptoData.newDecryptFromVault(
       this.globalConfig.config.username,
     );
     const password = await this.cryptoData.newDecryptFromVault(
       this.globalConfig.config.password,
     );
-    console.debug('Credentials:', username, password);
 
     this.session
       .authenticate('authenticator:pouch', username, password)

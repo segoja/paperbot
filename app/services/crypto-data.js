@@ -616,6 +616,9 @@ export default class CryptoDataService extends Service {
       this.unlockedVaultId = vault.vaultId;
       this.unlockError = null;
       this.showVaultModal = false;
+
+      this._resolvePendingUnlock(true);
+
       return true;
     } catch (_) {
       this.lockCurrentVault();
@@ -634,6 +637,12 @@ export default class CryptoDataService extends Service {
     this.unlockedVaultId = null;
   }
 
+  cancelUnlock() {
+    this.showVaultModal = false;
+    this.unlockError = null;
+    this._resolvePendingUnlock(false);
+  }
+
   _resolvePassphrase(passPhrase, vault) {
     if (typeof passPhrase === 'string' && passPhrase.length > 0) {
       return passPhrase;
@@ -645,8 +654,7 @@ export default class CryptoDataService extends Service {
 
   _requireUnlocked(vault) {
     if (!this.isUnlocked || !this._sessionPassphrase) {
-      console.debug('Vault is locked. Unlock is required for this operation.');
-      this.showVaultModal = true;
+      throw new Error('Vault is locked. Call ensureUnlocked() before this operation.');
     }
 
     if (
@@ -659,4 +667,35 @@ export default class CryptoDataService extends Service {
       );
     }
   }
+
+  _pendingUnlockPromise = null;
+  _resolveUnlockPromise = null;
+
+  async ensureUnlocked() {
+    if (this.isUnlocked && this._sessionPassphrase) {
+      return true;
+    }
+
+    if (this._pendingUnlockPromise) {
+      return this._pendingUnlockPromise;
+    }
+
+    await this.vaultCheck();
+
+    this._pendingUnlockPromise = new Promise((resolve) => {
+      this._resolveUnlockPromise = resolve;
+    });
+
+    return this._pendingUnlockPromise;
+  }
+
+  _resolvePendingUnlock(result = false) {
+    if (this._resolveUnlockPromise) {
+      this._resolveUnlockPromise(result);
+    }
+
+    this._pendingUnlockPromise = null;
+    this._resolveUnlockPromise = null;
+  }
+
 }

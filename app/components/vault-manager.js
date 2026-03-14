@@ -94,21 +94,23 @@ export default class VaultManagerComponent extends Component {
   @action async addNewVaultMeta() {
     console.debug('Creating new vault...');
     const newVaultMeta = await this.cryptoData.createVaultMeta(this.passphrase);
+
     const newVaultMetaRecord = await this.store
       .createRecord('vault', { id: 'ppb-vault', ...newVaultMeta })
       .save();
 
     if (newVaultMetaRecord) {
       this.newVaultMeta = {};
-      this.cryptoData.showVaultModal = false;
       await this.cryptoData.vaultCheck();
-      this.unlock();
+      await this.cryptoData.unlockCurrentVault(this.passphrase);
+      this.passphrase = '';
     }
   }
 
+
   @action continueLocked() {
     this.passphrase = '';
-    this.cryptoData.showVaultModal = false;
+    this.cryptoData.cancelUnlock();
   }
 
   @action migrateVaultMeta() {
