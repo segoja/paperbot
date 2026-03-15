@@ -654,7 +654,9 @@ export default class CryptoDataService extends Service {
 
   _requireUnlocked(vault) {
     if (!this.isUnlocked || !this._sessionPassphrase) {
-      throw new Error('Vault is locked. Call ensureUnlocked() before this operation.');
+      throw new Error(
+        'Vault is locked. Call ensureUnlocked() before this operation.',
+      );
     }
 
     if (
@@ -697,5 +699,4 @@ export default class CryptoDataService extends Service {
     this._pendingUnlockPromise = null;
     this._resolveUnlockPromise = null;
   }
-
 }

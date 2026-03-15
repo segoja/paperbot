@@ -129,7 +129,8 @@ export default class PbStreamEditComponent extends Component {
 
       this.twitchChat
         .connector(this.optsbot, 'bot', this.args.stream.botKey)
-        .then(() => {
+        .then((ok) => {
+          if (!ok) return;
           const opts = this.optschat || this.optsbot;
           const pKey = this.args.stream.chatKey || this.args.stream.botKey;
           this.twitchChat.connector(opts, 'chat', pKey);

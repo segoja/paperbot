@@ -107,7 +107,6 @@ export default class VaultManagerComponent extends Component {
     }
   }
 
-
   @action continueLocked() {
     this.passphrase = '';
     this.cryptoData.cancelUnlock();

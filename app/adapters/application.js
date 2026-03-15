@@ -202,7 +202,9 @@ export default class ApplicationAdapter extends Adapter {
                   }
                   console.debug('Retrying... A');
                   this.configRemote().then((ok) => {
-                    if(!ok){ return; }
+                    if (!ok) {
+                      return;
+                    }
                     this.connectRemote();
                   });
                   this.isRetrying = false;
@@ -266,7 +268,7 @@ export default class ApplicationAdapter extends Adapter {
                   this.configRemote().then((ok) => {
                     if (!ok) return;
                     this.connectRemote();
-                  })
+                  });
                   this.isRetrying = false;
                 }, this.retryDelay);
               }

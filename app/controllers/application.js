@@ -109,7 +109,7 @@ export default class ApplicationController extends Controller {
                 .adapterFor('application')
                 .configRemote()
                 .then(async (ok) => {
-                  if(!ok) return;
+                  if (!ok) return;
                   if (this.globalConfig.config.autoConnect) {
                     await this.store.adapterFor('application').connectRemote();
                   }
@@ -120,7 +120,7 @@ export default class ApplicationController extends Controller {
               .adapterFor('application')
               .configRemote()
               .then(async (ok) => {
-                if(!ok) return;
+                if (!ok) return;
                 if (this.globalConfig.config.autoConnect) {
                   await this.store.adapterFor('application').connectRemote();
                 }
@@ -563,16 +563,14 @@ export default class ApplicationController extends Controller {
         ) {
           console.debug('Setting remote backup...');
           this.store
-          .adapterFor('application')
-          .configRemote()
-          .then((ok) => {
-            if (!ok) return;
-            if (!this.session.isAuthenticated) {
-              this.store
-              .adapterFor('application')
-              .connectRemote();
-            }
-          });
+            .adapterFor('application')
+            .configRemote()
+            .then((ok) => {
+              if (!ok) return;
+              if (!this.session.isAuthenticated) {
+                this.store.adapterFor('application').connectRemote();
+              }
+            });
         }
       }
     });

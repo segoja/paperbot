@@ -144,10 +144,17 @@ export default class TwitchChatService extends Service {
   }
 
   async connector(opts, clientType, pKey) {
+    if (!pKey) {
+      const ok = await this.cryptoData.ensureUnlocked();
+      if (!ok) {
+        return false;
+      }
+    }
+
     // We check what kind of client is connecting
     if (clientType === 'bot') {
       if (this.botConnected === true) {
-        this.botclient.disconnect();
+        await this.botclient?.disconnect();
       }
       if (
         this.chatUsername === opts.identity.username.toString() &&
@@ -160,14 +167,16 @@ export default class TwitchChatService extends Service {
 
     if (clientType === 'chat') {
       if (this.chatConnected === true) {
-        this.chatclient.disconnect();
+        await this.chatclient?.disconnect();
       }
       if (
         this.botUsername === opts.identity.username.toString() &&
         this.botConnected
       ) {
         console.debug('chat client is the same of the bot, enabling chat...');
+        this.chatclient = this.botclient;
         this.chatConnected = true;
+        return true;
       }
     }
     let options = opts;
@@ -182,9 +191,7 @@ export default class TwitchChatService extends Service {
       if (pKey) {
         pass = this.cryptoData.decrypt(rawPass.toString(), key);
       } else {
-        if (this.cryptoData.isUnlocked) {
-          pass = await this.cryptoData.newDecryptFromVault(rawPass.toString());
-        }
+        pass = await this.cryptoData.newDecryptFromVault(rawPass.toString());
       }
       this.botPassword = pass.replace(/oauth:/g, '');
 
@@ -198,7 +205,7 @@ export default class TwitchChatService extends Service {
       this.botclient.on('disconnected', this.unloadSoundboard);
       this.botclient.on('message', this.messageHandler);
       // Connect the client
-      this.botclient.connect().then(
+      await this.botclient.connect().then(
         (success) => {
           console.debug('bot client connected!', success);
           this.botConnected = true;
@@ -223,9 +230,7 @@ export default class TwitchChatService extends Service {
       if (pKey) {
         pass = this.cryptoData.decrypt(rawPass.toString(), key);
       } else {
-        if (this.cryptoData.isUnlocked) {
-          pass = await this.cryptoData.newDecryptFromVault(rawPass.toString());
-        }
+        pass = await this.cryptoData.newDecryptFromVault(rawPass.toString());
       }
       this.chatPassword = pass.replace(/oauth:/g, '');
 
@@ -234,7 +239,7 @@ export default class TwitchChatService extends Service {
       this.chatclient = new tmi.client(options);
 
       // Connect the client
-      this.chatclient.connect().then(
+      await this.chatclient.connect().then(
         (success) => {
           console.debug('chat client connected!', success);
           this.chatConnected = true;
@@ -252,17 +257,22 @@ export default class TwitchChatService extends Service {
   async disconnector() {
     var isDisconnected = false;
     if (this.botConnected === true) {
-      this.botclient.disconnect().then(() => {
+      await this.botclient?.disconnect().then(() => {
         this.audio.audioSwitch(false);
         this.botConnected = false;
         this.channel = '';
+        console.debug('The bot client got disconnected!');
+        if (this.chatUsername === this.botUsername) {
+          this.chatConnected = false;
+          this.chatUsername = '';
+          console.debug('The chat client got disconnected!');
+        }
         this.botUsername = '';
         isDisconnected = true;
-        console.debug('The bot client got disconnected!');
       });
     }
     if (this.chatConnected === true) {
-      this.chatclient.disconnect().then(() => {
+      await this.chatclient?.disconnect().then(() => {
         this.audio.audioSwitch(false);
         this.chatConnected = false;
         this.channel = '';
@@ -330,7 +340,7 @@ export default class TwitchChatService extends Service {
         let time = this.globalConfig.config.timerTime * 60 * 1000;
         console.debug('Scheduling the timer ' + timer.name + '...');
         this.activeTimers[timer.id] = {
-          action: await later(() => {
+          action: later(async () => {
             if (this.msglist.length > 0) {
               let diff = this.msglist.length - this.lastTimerPos;
 
@@ -350,7 +360,7 @@ export default class TwitchChatService extends Service {
                 } else {
                   this.lastTimerOrder = order;
                 }
-                this.botclient.say(this.channel, timer.message);
+                await this.botclient.say(this.channel, timer.message);
                 if (timer.type === 'audio' && this.currentUser.isTauri) {
                   this.audio.playSound(timer);
                 }
@@ -397,7 +407,9 @@ export default class TwitchChatService extends Service {
   @action async messageHandler(target, tags, msg, self) {
     /*console.debug('__________________________');
     console.debug(msg);
-    console.debug(tags); */
+    console.debug(tags);
+    console.debug(self);
+    console.debug(this.lastmessage);*/
     // this.parseBadges(tags['badges']);
 
     //let badges = tags.filter(tag => tag.startsWith('badges=')).join('').replace(/badges=|\/1/g, '').split(',');
@@ -459,7 +471,7 @@ export default class TwitchChatService extends Service {
               (await hasBeenRequested) &&
               !this.globalConfig.config.allowDuplicated
             ) {
-              this.botclient.say(
+              await this.botclient.say(
                 target,
                 '/me The song ' +
                   bestmatch.fullText +
@@ -470,7 +482,8 @@ export default class TwitchChatService extends Service {
                 if (this.commandPermissionHandler(bestmatch, tags) === true) {
                   let nextPosition = await this.queueHandler.nextPosition();
 
-                  this.lastsongrequest = this.store.createRecord('request');
+                  this.lastsongrequest =
+                    await this.store.createRecord('request');
                   this.lastsongrequest.chatid = tags['id']
                     ? tags['id'].toString()
                     : 'songsys';
@@ -505,7 +518,7 @@ export default class TwitchChatService extends Service {
                     this.queueHandler.lastsongrequest = this.lastsongrequest;
 
                     // changing this could break the reader.
-                    this.botclient.say(
+                    await this.botclient.say(
                       target,
                       '/me @' +
                         tags['username'] +
@@ -514,7 +527,7 @@ export default class TwitchChatService extends Service {
                     );
                   });
                 } else {
-                  this.botclient.say(
+                  await this.botclient.say(
                     target,
                     '/me @' +
                       tags['username'] +
@@ -522,7 +535,7 @@ export default class TwitchChatService extends Service {
                   );
                 }
               } else {
-                this.botclient.say(
+                await this.botclient.say(
                   target,
                   "/me I coudln't infer the song @" +
                     tags['username'] +
@@ -531,7 +544,7 @@ export default class TwitchChatService extends Service {
               }
             }
           } else {
-            this.botclient.say(
+            await this.botclient.say(
               target,
               '/me @' +
                 tags['username'] +
@@ -558,9 +571,10 @@ export default class TwitchChatService extends Service {
   )
   filteredSongs;
 
-  @action sendMessage() {
-    if (this.message) {
-      this.chatclient.say(this.channel, this.message);
+  @action async sendMessage() {
+    if (this.message && this.chatConnected) {
+      console.log(this.message);
+      await this.chatclient?.say(this.channel, this.message);
       this.message = '';
     }
   }
@@ -568,9 +582,7 @@ export default class TwitchChatService extends Service {
   // Called every time a message comes in
   @action async commandHandler(target, tags, msg, self) {
     // Ignore messages from the bot so you don't create command infinite loops
-    if (self) {
-      return;
-    }
+    console.debug('Self command: ', self);
     // Remove whitespace from chat message
     const commandName = msg.trim().toLowerCase();
     if (String(commandName).startsWith('!')) {
@@ -600,7 +612,7 @@ export default class TwitchChatService extends Service {
                 (await hasBeenRequested) &&
                 !this.globalConfig.config.allowDuplicated
               ) {
-                this.botclient.say(
+                await this.botclient.say(
                   target,
                   '/me The song ' +
                     bestmatch.fullText +
@@ -650,7 +662,7 @@ export default class TwitchChatService extends Service {
                       this.queueHandler.lastsongrequest = this.lastsongrequest;
 
                       // changing this could break the reader.
-                      this.botclient.say(
+                      await this.botclient.say(
                         target,
                         '/me @' +
                           tags['username'] +
@@ -659,7 +671,7 @@ export default class TwitchChatService extends Service {
                       );
                     });
                   } else {
-                    this.botclient.say(
+                    await this.botclient.say(
                       target,
                       '/me @' +
                         tags['username'] +
@@ -667,7 +679,7 @@ export default class TwitchChatService extends Service {
                     );
                   }
                 } else {
-                  this.botclient.say(
+                  await this.botclient.say(
                     target,
                     "/me I coudln't infer the song @" +
                       tags['username'] +
@@ -676,7 +688,7 @@ export default class TwitchChatService extends Service {
                 }
               }
             } else {
-              this.botclient.say(
+              await this.botclient.say(
                 target,
                 '/me @' +
                   tags['username'] +
@@ -686,7 +698,7 @@ export default class TwitchChatService extends Service {
           }
           console.debug(`* Executed ${commandName} command`);
         } else {
-          this.botclient.say(target, '/me Requests are disabled.');
+          await this.botclient.say(target, '/me Requests are disabled.');
         }
       } else {
         if (
@@ -713,17 +725,17 @@ export default class TwitchChatService extends Service {
                 later(() => {
                   this.audio.isEnabled = true;
                 }, quietTime * 1000);
-                this.botclient.say(
+                await this.botclient.say(
                   target,
                   '/me Enjoy the silence a little bit...',
                 );
               } else {
-                this.botclient.say(target, '/me Enjoy the silence...');
+                await this.botclient.say(target, '/me Enjoy the silence...');
               }
             } else {
-              this.botclient.say(target, '/me Enjoy the silence...');
+              await this.botclient.say(target, '/me Enjoy the silence...');
             }
-            //this.botclient.say(target, '/me MrDestructoid enjoy the silence...');
+            //await this.botclient.say(target, '/me MrDestructoid enjoy the silence...');
             if (
               this.lastSoundCommand != null &&
               this.lastSoundCommand.isPlaying
@@ -784,7 +796,7 @@ export default class TwitchChatService extends Service {
                 this.queueHandler.lastsongrequest = this.lastsongrequest;
 
                 // changing this could break the reader.
-                this.botclient.say(
+                await this.botclient.say(
                   target,
                   '/me @' +
                     tags['username'] +
@@ -794,7 +806,7 @@ export default class TwitchChatService extends Service {
               });
             }
           } else {
-            this.botclient.say(
+            await this.botclient.say(
               target,
               '/me There are no songs available to add.',
             );
@@ -807,13 +819,16 @@ export default class TwitchChatService extends Service {
           if ((await this.queueHandler.pendingSongs.length) > 1) {
             let firstSong = this.queueHandler.pendingSongs[1];
             if (firstSong) {
-              this.botclient.say(
+              await this.botclient.say(
                 target,
                 '/me Next song is: ' + firstSong.fullText,
               );
             }
           } else {
-            this.botclient.say(target, '/me There are no songs to play next.');
+            await this.botclient.say(
+              target,
+              '/me There are no songs to play next.',
+            );
           }
           // !last,!lastsong or !lastplayed show the last song played:
         } else if (
@@ -828,13 +843,13 @@ export default class TwitchChatService extends Service {
           if ((await this.queueHandler.playedSongs.length) > 0) {
             let firstSong = this.queueHandler.playedSongs.get('firstObject');
             if (firstSong) {
-              this.botclient.say(
+              await this.botclient.say(
                 target,
                 '/me Last played song was: ' + firstSong.fullText,
               );
             }
           } else {
-            this.botclient.say(
+            await this.botclient.say(
               target,
               '/me There are no songs in the played list.',
             );
@@ -848,10 +863,16 @@ export default class TwitchChatService extends Service {
           if ((await this.queueHandler.pendingSongs.length) > 0) {
             let firstSong = this.queueHandler.pendingSongs.get('firstObject');
             if (firstSong) {
-              this.botclient.say(target, '/me Playing: ' + firstSong.fullText);
+              await this.botclient.say(
+                target,
+                '/me Playing: ' + firstSong.fullText,
+              );
             }
           } else {
-            this.botclient.say(target, '/me There are no songs in the queue.');
+            await this.botclient.say(
+              target,
+              '/me There are no songs in the queue.',
+            );
           }
           // !queue lists the songs in queue:
         } else if (
@@ -861,7 +882,7 @@ export default class TwitchChatService extends Service {
           if ((await this.queueHandler.pendingSongs.length) > 0) {
             let count = 0;
             /*
-            this.botclient.say(target, "/me Songs in queue:");
+            await this.botclient.say(target, "/me Songs in queue:");
             this.queueHandler.pendingSongs.forEach(async (item)=>{
               if(count < 6){
                 count = Number(count) + 1;
@@ -876,9 +897,12 @@ export default class TwitchChatService extends Service {
                 message += '#' + count + '. ' + item.title + ' ';
               }
             });
-            this.botclient.say(target, '/me ' + message);
+            await this.botclient.say(target, '/me ' + message);
           } else {
-            this.botclient.say(target, '/me There are no songs in the queue.');
+            await this.botclient.say(
+              target,
+              '/me There are no songs in the queue.',
+            );
           }
           // !ws removes the last song the user requested. Allows one param (mods only), to delete the last request from another user.
         } else if (String(commandName).startsWith('!ws')) {
@@ -903,14 +927,14 @@ export default class TwitchChatService extends Service {
                 .find((item) => item.user == targetUser);
               if (targetLastSong) {
                 let songname = targetLastSong.fullText;
-                targetLastSong.destroyRecord().then(() => {
-                  this.botclient.say(
+                targetLastSong.destroyRecord().then(async () => {
+                  await this.botclient.say(
                     target,
                     '/me the song ' + songname + ' has been removed.',
                   );
                 });
               } else {
-                this.botclient.say(
+                await this.botclient.say(
                   target,
                   '/me The user @' +
                     targetUser +
@@ -922,7 +946,7 @@ export default class TwitchChatService extends Service {
                 ? tags['username'].toString()
                 : this.botUsername;
               if (targetUser) {
-                this.botclient.say(
+                await this.botclient.say(
                   target,
                   "/me you don't have permissions to delete someone else's songs.",
                 );
@@ -932,14 +956,14 @@ export default class TwitchChatService extends Service {
                   .find((item) => item.user == commandUser);
                 if (userLastSong) {
                   let songname = userLastSong.fullText;
-                  userLastSong.destroyRecord().then(() => {
-                    this.botclient.say(
+                  userLastSong.destroyRecord().then(async () => {
+                    await this.botclient.say(
                       target,
                       '/me the song ' + songname + ' has been removed.',
                     );
                   });
                 } else {
-                  this.botclient.say(
+                  await this.botclient.say(
                     target,
                     "/me you don't have songs in the queue.",
                   );
@@ -947,11 +971,17 @@ export default class TwitchChatService extends Service {
               }
             }
           } else {
-            this.botclient.say(target, '/me There are no songs to be removed.');
+            await this.botclient.say(
+              target,
+              '/me There are no songs to be removed.',
+            );
           }
         } else {
           if ((await this.commandlist.length) > 0) {
-            this.commandlist.forEach((command) => {
+            this.commandlist.forEach(async (command) => {
+              if (String(command.response).startsWith(command.name)) {
+                return;
+              }
               if (
                 String(commandName).startsWith(command.name) &&
                 command.name != '' &&
@@ -974,11 +1004,11 @@ export default class TwitchChatService extends Service {
                       let answer = answerraw.replace(/\$param/g, param).trim();
 
                       if (isNaN(command.timer)) {
-                        this.botclient.say(target, answer);
+                        await this.botclient.say(target, answer);
                         console.debug(`* Executed ${command.name} command`);
                       } else {
-                        later(() => {
-                          this.botclient.say(target, answer);
+                        later(async () => {
+                          await this.botclient.say(target, answer);
                           console.debug(`* Executed ${command.name} command`);
                         }, command.timer);
                       }
@@ -994,11 +1024,11 @@ export default class TwitchChatService extends Service {
                     }
                     default: {
                       if (isNaN(command.timer)) {
-                        this.botclient.say(target, command.response);
+                        await this.botclient.say(target, command.response);
                         console.debug(`* Executed ${command.name} command`);
                       } else {
-                        later(() => {
-                          this.botclient.say(target, command.response);
+                        later(async () => {
+                          await this.botclient.say(target, command.response);
                           console.debug(`* Executed ${command.name} command`);
                         }, command.timer);
                       }
