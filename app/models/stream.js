@@ -7,6 +7,7 @@ export default class StreamModel extends Model {
   @attr('boolean', { defaultValue: false }) savechat;
   @attr('boolean', { defaultValue: false }) events;
   @attr('boolean', { defaultValue: false }) requests;
+  @attr('boolean', { defaultValue: false }) midi;
   @attr('boolean', { defaultValue: false }) finished;
   @attr('date') date;
 

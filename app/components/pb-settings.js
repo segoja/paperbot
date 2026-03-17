@@ -15,6 +15,7 @@ export default class PbSettingsComponent extends Component {
   @service session;
   @service store;
   @service audio;
+  @service midi;
 
   externalEventServices = ['StreamLabs', 'StreamElements'];
   overlayTypes = Object.freeze(['disabled', 'file', 'window']);
@@ -25,6 +26,7 @@ export default class PbSettingsComponent extends Component {
   constructor() {
     super(...arguments);
     this.isViewing = false;
+    this.setupMidi();
   }
 
   willDestroy() {
@@ -104,6 +106,20 @@ export default class PbSettingsComponent extends Component {
 
   @action updateVolume() {
     this.audio.updateGlobalVolume();
+  }
+
+  @action
+  async setupMidi() {
+    await this.midi.initMidi();
+
+    let outputs = this.midi.getAvailableMidiOutputs();
+    console.log(outputs);
+
+    if (outputs.length) {
+      this.midi.selectMidiDevice(outputs[0].id);
+    }
+
+    this.midi.setKeyAndMode('C', 'dorian');
   }
 
   @action async doneEditing() {

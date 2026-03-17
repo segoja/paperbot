@@ -1,0 +1,23 @@
+<div class="row g-0 bg-dark">
+  <BsButton
+    class="btn-sm col-auto text-truncate border rounded-0"
+    @type={{if this.noFilters "secondary" "success"}}
+    @onClick={{this.toggleMute}}
+    disabled={{(not @isConnected)}}
+    title="Toggle chords"
+  >{{svg-jar "midi" class="svg-inline--fa" width="1em" fill="white"}} Midi</BsButton>
+  <BsButton
+    class="btn-sm col text-truncate border rounded-0"
+    @type={{if this.noChords "secondary" "danger"}}
+    @onClick={{this.toggleChords}}
+    disabled={{this.noFilters}}
+    title="Toggle chords"
+  ><FaIcon @icon="cancel" /> Exclude Chords</BsButton>
+  <BsButton
+    class="btn-sm col text-truncate border rounded-0"
+    @type={{if this.noNotes "secondary" "danger"}}
+    @onClick={{this.toggleNotes}}
+    disabled={{this.noFilters}}
+    title="Toggle notes"
+  ><FaIcon @icon="cancel" /> Exclude Notes</BsButton>
+</div>

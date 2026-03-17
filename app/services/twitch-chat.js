@@ -20,6 +20,7 @@ export default class TwitchChatService extends Service {
   @service currentUser;
   @service store;
   @service cryptoData;
+  @service midi;
 
   @tracked botclient;
   @tracked chatclient;
@@ -890,7 +891,7 @@ export default class TwitchChatService extends Service {
               }
             });
             */
-            let message = 'Songs in queue: ';
+            let message = 'First 6 songs in queue: ';
             this.queueHandler.pendingSongs.forEach(async (item) => {
               if (count < 6) {
                 count = Number(count) + 1;
@@ -975,6 +976,12 @@ export default class TwitchChatService extends Service {
               target,
               '/me There are no songs to be removed.',
             );
+          }
+        } else if (String(commandName).startsWith('!midi ')) {
+          let userMidi = commandName.replace(/!midi/g, '').toUpperCase().trim();
+          const response = this.midi.inputHandler(userMidi);
+          if (typeof response === 'string') {
+            await this.botclient.say(target, '/me ' + response);
           }
         } else {
           if ((await this.commandlist.length) > 0) {

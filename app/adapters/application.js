@@ -126,9 +126,7 @@ export default class ApplicationAdapter extends Adapter {
   async configRemote() {
     const ok = await this.cryptoData.ensureUnlocked();
 
-    if (!ok) {
-      return false;
-    }
+    if (!ok) return false;
 
     console.debug('Trying to config remote couch replication...');
     // If we have specified a remote CouchDB instance, then replicate our local database to it
@@ -160,7 +158,7 @@ export default class ApplicationAdapter extends Adapter {
             // yo, something changed!
             // console.debug(change);
             this.cloudState.setPull(change);
-            console.debug('Getting changes from the cloud...');
+            console.debug('Getting changes from the cloud...', change);
           })
           .on('paused', (info) => {
             // replication was paused, usually because of a lost connection
@@ -305,6 +303,9 @@ export default class ApplicationAdapter extends Adapter {
   }
 
   async connectRemote() {
+    const ok = await this.cryptoData.ensureUnlocked();
+    if (!ok) return;
+
     console.debug('Connecting to remote...');
 
     const username = await this.cryptoData.newDecryptFromVault(

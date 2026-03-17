@@ -42,7 +42,7 @@
             as |checkbox|
           >
             <checkbox.control
-              disabled={{this.globalCOnfig.config.canGetEvents}}
+              disabled={{this.globalConfig.config.canGetEvents}}
             />
           </form.element>
           <form.element
@@ -50,6 +50,13 @@
             @label="Song Request System"
             @formLayout="inline"
             @property="requests"
+            class="form-check-inline ps-0"
+          />
+          <form.element
+            @controlType="checkbox"
+            @label="Chat MIDI Input"
+            @formLayout="inline"
+            @property="midi"
             class="form-check-inline ps-0"
           />
         </div>
@@ -264,6 +271,9 @@
         </div>
       </div>
     </div>
+    {{#if @stream.midi}}
+      <PbMidiControls @isConnected={{this.isConnected}} />
+    {{/if}}
     {{#unless @stream.finished}}
       {{#if this.currentUser.isTauri}}
         <SoundboardLoading />
