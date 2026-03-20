@@ -94,6 +94,32 @@ export default class ConfigModel extends Model {
   @attr('string', { defaultValue: '' }) password;
   @attr('boolean', { defaultValue: false }) autoConnect;
 
+  get vaultIds() {
+    let result = [];
+
+    if (this.remoteUrl?.includes('vaultId')) {
+      const envelope = JSON.parse(this.remoteUrl);
+      result.push(envelope.vaultId);
+    }
+    if (this.database?.includes('vaultId')) {
+      const envelope = JSON.parse(this.database);
+      result.push(envelope.vaultId);
+    }
+    if (this.username?.includes('vaultId')) {
+      const envelope = JSON.parse(this.username);
+      result.push(envelope.vaultId);
+    }
+    if (this.password?.includes('vaultId')) {
+      const envelope = JSON.parse(this.password);
+      result.push(envelope.vaultId);
+    }
+
+    // remove duplicated vaultIds from the array:
+    result = Array.from(new Set(result));
+
+    return result;
+  }
+
   get isCloudDisabled() {
     return this.cloudType == 'disabled';
   }

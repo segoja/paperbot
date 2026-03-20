@@ -3,11 +3,27 @@ import Adapter from './pouch';
 // import { assert } from '@ember/debug';
 // import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
-
-import PouchDB from 'pouchdb-core';
-
 import { later } from '@ember/runloop';
 import { tracked } from '@glimmer/tracking';
+
+import PouchDB from 'pouchdb-core';
+import PouchDBFind from 'pouchdb-find';
+import PouchDBRelational from 'relational-pouch';
+import idb from 'pouchdb-adapter-idb';
+import indexeddb from 'pouchdb-adapter-indexeddb';
+import HttpPouch from 'pouchdb-adapter-http';
+import mapreduce from 'pouchdb-mapreduce';
+import replication from 'pouchdb-replication';
+import auth from 'pouchdb-authentication';
+
+PouchDB.plugin(PouchDBFind)
+  .plugin(PouchDBRelational)
+  .plugin(idb)
+  .plugin(indexeddb)
+  .plugin(HttpPouch)
+  .plugin(mapreduce)
+  .plugin(replication)
+  .plugin(auth);
 
 /*
   // Pouchdb Modules and plugins loaded are shared in the app, so we only need to load plugins once.
@@ -61,8 +77,6 @@ export default class ApplicationAdapter extends Adapter {
     // Comment the following declaration if you want to use indexeddb:
     this.db = new PouchDB('paperbot', {
       adapter: 'idb',
-      attachments: true,
-      live: true,
     });
 
     this.db.setMaxListeners(50);
@@ -90,7 +104,7 @@ export default class ApplicationAdapter extends Adapter {
         let dnInfo = await oldDb.info();
         if (dnInfo.adapter == 'idb') {
           oldDb.replicate
-            .to(this.db, { live: false, retry: false, attachments: true })
+            .to(this.db, { live: true, retry: true })
             .on('error', async (err) => {
               console.debug('Application: Something exploded while copying');
               console.debug(await err.error);
@@ -123,12 +137,73 @@ export default class ApplicationAdapter extends Adapter {
           }*/
   }
 
+  async detectFirstSyncVaultConflict(remoteDb) {
+    const localVaultRecord = this.store.peekRecord('vault', 'ppb-vault');
+    const localVault = localVaultRecord ? localVaultRecord.serialize() : null;
+    console.debug('localVault: ', localVault);
+
+    let remoteVault = null;
+    try {
+      console.debug('RemoteDb.rel: ', this.db);
+      let result = await remoteDb.get('vault_2_ppb-vault');
+      console.debug('result: ', result);
+      remoteVault = result ?? null;
+      remoteVault = {
+        id: remoteVault._id,
+        ...remoteVault.data,
+        rev: remoteVault._rev,
+      };
+    } catch (error) {
+      console.debug('error: ', error);
+      remoteVault = null;
+    }
+
+    console.debug('remoteVault: ', remoteVault);
+
+    const hasConflict =
+      localVault &&
+      remoteVault &&
+      localVault.vaultId &&
+      remoteVault.vaultId &&
+      localVault.vaultId !== remoteVault.vaultId;
+
+    return {
+      localVault,
+      remoteVault,
+      hasConflict,
+    };
+  }
+
   async configRemote() {
-    const ok = await this.cryptoData.ensureUnlocked();
+    console.debug('Configuring remote...');
+    const isRemoteUrlEncrypted = this.cryptoData.isVaultEncrypted(
+      this.globalConfig.config.remoteUrl,
+    );
+    console.debug('isRemoteUrlEncrypted: ', isRemoteUrlEncrypted);
+    const isDatabaseEncrypted = this.cryptoData.isVaultEncrypted(
+      this.globalConfig.config.database,
+    );
+    console.debug('isDatabaseEncrypted: ', isDatabaseEncrypted);
 
-    if (!ok) return false;
+    if (isRemoteUrlEncrypted || isDatabaseEncrypted) {
+      console.debug('Url or database is encrypted...');
+      /*if (!this.cryptoData.vault) {
+        console.debug('There is no vault...');
+        return false;
+      }*/
 
-    console.debug('Trying to config remote couch replication...');
+      const ok = await this.cryptoData.ensureUnlocked();
+
+      console.debug('ok: ', ok);
+      if (!ok) {
+        console.debug('Vault is not unlocked...');
+        return false;
+      } else {
+        console.debug('Vault is unlocked...');
+      }
+    } else {
+      console.debug('Nothing is encrypted...');
+    }
     // If we have specified a remote CouchDB instance, then replicate our local database to it
     if (this.globalConfig.config.canConnect) {
       console.debug('Configuring remote couch replication...');
@@ -147,136 +222,168 @@ export default class ApplicationAdapter extends Adapter {
       this.replicationFromHandler = null;
       this.replicationToHandler = null;
 
-      this.remoteDb.on('loggedin', () => {
-        console.debug('Connected to the cloud.');
-        this.replicationFromHandler = this.db.replicate.from(
-          this.remoteDb,
-          this.replicationOptions,
-        );
-        this.replicationFromHandler
-          .on('change', (change) => {
-            // yo, something changed!
-            // console.debug(change);
-            this.cloudState.setPull(change);
-            console.debug('Getting changes from the cloud...', change);
-          })
-          .on('paused', (info) => {
-            // replication was paused, usually because of a lost connection
-            this.cloudState.setPull(!info);
-            this.cloudState.couchError = true;
-          })
-          .on('active', (info) => {
-            // replication was resumed
-            this.retryDelay = 0;
-            this.cloudState.setPull(true);
-            this.cloudState.couchError = false;
-            console.debug(info);
-          })
-          .on('denied', (err) => {
-            console.debug(
-              'a document failed to replicate from the cloud to local (e.g. due to permissions)',
-            );
-            console.debug(err);
-          })
-          .on('complete', (info) => {
-            // replication was canceled!
-            console.debug('Replication from cloud is over');
-            console.debug(info);
-          })
-          .on('error', async (err) => {
-            // totally unhandled error (shouldn't happen)
-            this.cloudState.online = false;
-            this.cloudState.couchError = true;
-            if (err) {
-              console.debug(err.error);
-              if ((await err.error) === 'unauthorized' && !this.isRetrying) {
-                this.isRetrying = true;
-                later(() => {
-                  if (this.replicationFromHandler) {
-                    this.replicationFromHandler.cancel();
-                  }
-                  if (this.replicationToHandler) {
-                    this.replicationToHandler.cancel();
-                  }
-                  console.debug('Retrying... A');
-                  this.configRemote().then((ok) => {
-                    if (!ok) {
-                      return;
-                    }
-                    this.connectRemote();
-                  });
-                  this.isRetrying = false;
-                }, this.retryDelay);
-              }
-              if (this.retryDelay === 0) {
-                this.retryDelay = 1000;
-              } else {
-                this.retryDelay = this.retryDelay * 3;
-              }
+      this.remoteDb.on('loggedin', async () => {
+        await this.detectFirstSyncVaultConflict(this.remoteDb).then(
+          async (conflictData) => {
+            // console.debug('hasConflict', conflict);
+            if (conflictData.hasConflict) {
+              // await this.cloudState.setOffline();
+              this.cryptoData.conflictData = conflictData;
+              this.cryptoData.showVaultModal = true;
+              //return false;
             }
-            // this.session.invalidate();//mark error by loggin out
-          });
+            console.debug('Connected to the cloud.');
 
-        this.replicationToHandler = this.db.replicate.to(
-          this.remoteDb,
-          this.replicationOptions,
-        );
-        this.replicationToHandler
-          .on('change', (change) => {
-            // yo, something changed!
-            // console.debug(change);
-            this.cloudState.setPush(change);
-            if (change) {
-              console.debug('Pushing changes to the cloud...');
-            }
-          })
-          .on('paused', (info) => {
-            this.cloudState.setPush(!info);
-            this.cloudState.couchError = true;
-          })
-          .on('active', () => {
-            this.retryDelay = 0;
-            this.cloudState.setPush(true);
-            this.cloudState.couchError = false;
-          })
-          .on('denied', () => {
-            console.debug(
-              'a document failed to replicate to the cloud (e.g. due to permissions)',
-            );
-          })
-          .on('complete', () => {
-            // replication was canceled!
-            console.debug('Replication to the cloud is over');
-          })
-          .on('error', async (err) => {
-            this.cloudState.online = false;
-            this.cloudState.couchError = true;
-            if (err) {
-              console.debug(err.error);
-              if ((await err.error) === 'unauthorized' && !this.isRetrying) {
-                this.isRetrying = true;
-                later(() => {
-                  if (this.replicationFromHandler) {
-                    this.replicationFromHandler.cancel();
-                  }
-                  if (this.replicationToHandler) {
-                    this.replicationToHandler.cancel();
-                  }
-                  console.debug('Retrying... B');
-                  this.configRemote().then((ok) => {
-                    if (!ok) return;
-                    this.connectRemote();
+            await this.db.replicate
+              .from(this.remoteDb)
+              .then(() => {
+                console.debug('Synced with the cloud.');
+                if (!this.cryptoData.vault) {
+                  this.cryptoData.vaultCheck();
+                } else {
+                  this.cryptoData.ensureUnlocked();
+                }
+
+                this.replicationFromHandler = this.db.replicate.from(
+                  this.remoteDb,
+                  this.replicationOptions,
+                );
+                this.replicationFromHandler
+                  .on('change', (change) => {
+                    // yo, something changed!
+                    // console.debug(change);
+                    this.cloudState.setPull(change);
+                    console.debug('Getting changes from the cloud...');
+                  })
+                  .on('paused', (info) => {
+                    // replication was paused, usually because of a lost connection
+                    this.cloudState.setPull(!info);
+                    this.cloudState.couchError = true;
+                  })
+                  .on('active', (info) => {
+                    // replication was resumed
+                    this.retryDelay = 0;
+                    this.cloudState.setPull(true);
+                    this.cloudState.couchError = false;
+                    console.debug(info);
+                  })
+                  .on('denied', (err) => {
+                    console.debug(
+                      'a document failed to replicate from the cloud to local (e.g. due to permissions)',
+                    );
+                    console.debug(err);
+                  })
+                  .on('complete', (info) => {
+                    // replication was canceled!
+                    console.debug('Replication from cloud is over');
+                    console.debug(info);
+                  })
+                  .on('error', async (err) => {
+                    // totally unhandled error (shouldn't happen)
+                    this.cloudState.online = false;
+                    this.cloudState.couchError = true;
+                    if (err) {
+                      console.debug(err.error);
+                      if (
+                        (await err.error) === 'unauthorized' &&
+                        !this.isRetrying
+                      ) {
+                        this.isRetrying = true;
+                        later(() => {
+                          if (this.replicationFromHandler) {
+                            this.replicationFromHandler.cancel();
+                          }
+                          if (this.replicationToHandler) {
+                            this.replicationToHandler.cancel();
+                          }
+                          console.debug('Retrying... A');
+                          this.configRemote().then((ok) => {
+                            if (!ok) {
+                              return;
+                            }
+                            this.connectRemote();
+                          });
+                          this.isRetrying = false;
+                        }, this.retryDelay);
+                      }
+                      if (this.retryDelay === 0) {
+                        this.retryDelay = 1000;
+                      } else {
+                        this.retryDelay = this.retryDelay * 3;
+                      }
+                    }
+                    // this.session.invalidate();//mark error by loggin out
                   });
-                  this.isRetrying = false;
-                }, this.retryDelay);
-              }
-              if (this.retryDelay === 0) {
-                this.retryDelay = 1000;
-              } else {
-                this.retryDelay = this.retryDelay * 3;
-              }
-            }
-          });
+
+                this.replicationToHandler = this.db.replicate.to(
+                  this.remoteDb,
+                  this.replicationOptions,
+                );
+                this.replicationToHandler
+                  .on('change', (change) => {
+                    // yo, something changed!
+                    // console.debug(change);
+                    this.cloudState.setPush(change);
+                    if (change) {
+                      console.debug('Pushing changes to the cloud...');
+                    }
+                  })
+                  .on('paused', (info) => {
+                    this.cloudState.setPush(!info);
+                    this.cloudState.couchError = true;
+                  })
+                  .on('active', () => {
+                    this.retryDelay = 0;
+                    this.cloudState.setPush(true);
+                    this.cloudState.couchError = false;
+                  })
+                  .on('denied', () => {
+                    console.debug(
+                      'a document failed to replicate to the cloud (e.g. due to permissions)',
+                    );
+                  })
+                  .on('complete', () => {
+                    // replication was canceled!
+                    console.debug('Replication to the cloud is over');
+                  })
+                  .on('error', async (err) => {
+                    this.cloudState.online = false;
+                    this.cloudState.couchError = true;
+                    if (err) {
+                      console.debug(err.error);
+                      if (
+                        (await err.error) === 'unauthorized' &&
+                        !this.isRetrying
+                      ) {
+                        this.isRetrying = true;
+                        later(() => {
+                          if (this.replicationFromHandler) {
+                            this.replicationFromHandler.cancel();
+                          }
+                          if (this.replicationToHandler) {
+                            this.replicationToHandler.cancel();
+                          }
+                          console.debug('Retrying... B');
+                          this.configRemote().then((ok) => {
+                            if (!ok) return;
+                            this.connectRemote();
+                          });
+                          this.isRetrying = false;
+                        }, this.retryDelay);
+                      }
+                      if (this.retryDelay === 0) {
+                        this.retryDelay = 1000;
+                      } else {
+                        this.retryDelay = this.retryDelay * 3;
+                      }
+                    }
+                  });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          },
+        );
       });
 
       this.remoteDb.on('loggedout', () => {
@@ -303,8 +410,28 @@ export default class ApplicationAdapter extends Adapter {
   }
 
   async connectRemote() {
-    const ok = await this.cryptoData.ensureUnlocked();
-    if (!ok) return;
+    const isPassEnCrypted = this.cryptoData.isVaultEncrypted(
+      this.globalConfig.config.password,
+    );
+    const isUserEnCrypted = this.cryptoData.isVaultEncrypted(
+      this.globalConfig.config.username,
+    );
+
+    if (isPassEnCrypted || isUserEnCrypted) {
+      console.debug('Pass or user or encrypted...');
+      if (!this.cryptoData.vault) return false;
+
+      const ok = await this.cryptoData.ensureUnlocked();
+
+      if (!ok) {
+        console.debug('Vault is not unlocked, cancelled...');
+        return false;
+      } else {
+        console.debug('Vault is unlocked...');
+      }
+    } else {
+      console.debug('Pass and user are not encrypted...');
+    }
 
     console.debug('Connecting to remote...');
 

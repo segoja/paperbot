@@ -55,9 +55,11 @@ export default class VaultManagerComponent extends Component {
   }
 
   @action async updateValue() {
-    // console.debug('Updating value');
     this.isMasked = true;
-    this.value = await this.cryptoData.newDecryptFromVault(this.args.value);
+    const value = await this.cryptoData.newDecryptFromVault(this.args.value);
+    if (value) {
+      this.value = value;
+    }
   }
 
   @action onChange() {

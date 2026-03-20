@@ -26,20 +26,20 @@ export default class PbOffcanvasComponent extends Component {
     if (this.args.isVisible) {
       let offcanvas = document.getElementById(this.offcId);
       console.debug('Opening offcanvas...');
-      offcanvas.classList.add('showing');
+      offcanvas?.classList?.add('showing');
       later(() => {
         let oldoffcanvas = document.getElementById(this.offcId);
-        oldoffcanvas.classList.add('show');
-        oldoffcanvas.classList.remove('showing');
+        oldoffcanvas?.classList?.add('show');
+        oldoffcanvas?.classList?.remove('showing');
       }, 300);
     } else {
       let offcanvas = document.getElementById(this.offcId);
       console.debug('Hiding offcanvas...');
-      offcanvas.classList.add('hiding');
+      offcanvas?.classList?.add('hiding');
       later(() => {
         let oldoffcanvas = document.getElementById(this.offcId);
-        oldoffcanvas.classList.remove('hiding');
-        oldoffcanvas.classList.remove('show');
+        oldoffcanvas?.classList?.remove('hiding');
+        oldoffcanvas?.classList?.remove('show');
       }, 300);
     }
   }

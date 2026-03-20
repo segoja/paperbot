@@ -516,6 +516,7 @@ export default class PouchAdapter extends RESTAdapter {
 
   async _findRecord(recordTypeName, id) {
     let payload = await this.db.rel.find(recordTypeName, id);
+    console.debug('_findRecord payload: ', payload);
     // Ember Data chokes on empty payload, this function throws
     // an error when the requested data is not found
     if (typeof payload === 'object' && payload !== null) {

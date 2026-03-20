@@ -116,11 +116,16 @@ export default class PbCloudComponent extends Component {
     this.session.invalidate();
     if (!this.isOnline) {
       if (this.globalConfig.config.canConnect) {
-        console.debug('Setting remote backup...');
+        console.debug('Setting remote syncing...');
         this.store
           .adapterFor('application')
           .configRemote()
-          .then(() => {
+          .then((ok) => {
+            if (!ok) {
+              console.debug(`Config didn't work`);
+              return;
+            }
+            console.debug('All good, connecting...');
             this.store.adapterFor('application').connectRemote();
           });
       }

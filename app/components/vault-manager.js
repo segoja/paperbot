@@ -9,17 +9,21 @@ export default class VaultManagerComponent extends Component {
   @service store;
 
   @tracked passphrase = '';
-  @tracked existingPassphrase = '';
+  @tracked remotePassphrase = '';
 
   @tracked invalidPassphrase = true;
   @tracked errors = [];
-  @tracked isMigration = false;
   @tracked isMigrationForm = false;
   @tracked newVaultMeta = {};
+  @tracked keepLocalVault = false;
 
   constructor() {
     super(...arguments);
     this.passphrase = '';
+  }
+
+  get isMigration() {
+    return this.cryptoData?.conflictData?.hasConflict;
   }
 
   get modalWormhole() {
@@ -32,8 +36,11 @@ export default class VaultManagerComponent extends Component {
 
   get title() {
     if (this.cryptoData.newVaultModal) {
-      return 'Protect Your Secrets with a Dataset Passphrase';
+      return 'Protect Your Secrets with a Passphrase';
     } else {
+      if (this.isMigration) {
+        return 'Update Passphrase';
+      }
       return 'Unlock Vault';
     }
   }
@@ -47,7 +54,15 @@ export default class VaultManagerComponent extends Component {
     if (this.cryptoData.newVaultModal) {
       this.addNewVaultMeta();
     } else {
-      this.unlock();
+      if (this.isMigration) {
+        if (this.keepLocalVault) {
+          this.migrateToNewVault();
+        } else {
+          this.migrateToRemoteVault();
+        }
+      } else {
+        this.unlock();
+      }
     }
   }
 
@@ -70,7 +85,7 @@ export default class VaultManagerComponent extends Component {
   @action checkPassPhrase(passPhrase) {
     const currentPassphrase = passPhrase;
     this.errors = [];
-    if (this.cryptoData.newVaultModal) {
+    if (this.cryptoData.newVaultModal || this.isMigrationForm) {
       if (currentPassphrase.length < 8) {
         this.errors.push('Passphrase must be at least 8 characters long.');
       }
@@ -89,6 +104,10 @@ export default class VaultManagerComponent extends Component {
     }
     this.invalidPassphrase = this.errors.length > 0;
     this.passphrase = this.invalidPassphrase ? '' : currentPassphrase;
+  }
+
+  @action checkRemotePassPhrase(passPhrase) {
+    this.remotePassphrase = passPhrase;
   }
 
   @action async addNewVaultMeta() {
@@ -112,18 +131,52 @@ export default class VaultManagerComponent extends Component {
     this.cryptoData.cancelUnlock();
   }
 
-  @action migrateVaultMeta() {
-    this.isMigration = false;
-    this.isMigrationForm = false;
+  @action async migrateToRemoteVault() {
+    // this.cryptoData.conflictData = null;
+    let localPassphrase = this.passphrase;
+    let remotePassphrase = this.remotePassphrase;
+    let remoteVault = this.cryptoData.conflictData.remoteVault;
+    let localVault = this.cryptoData.conflictData.localVault;
+    await this.cryptoData
+      .migrateVault(localPassphrase, remotePassphrase, localVault, remoteVault)
+      .then((result) => {
+        if (result.migrated) {
+          this.isMigrationForm = false;
+          this.cryptoData.conflictData = null;
+          this.errors = [];
+          this.unlock();
+        }
+      });
   }
 
-  @action keepExistingVault() {
+  @action async migrateToNewVault() {
+    // this.cryptoData.conflictData = null;
+    let localPassphrase = this.passphrase;
+    let remotePassphrase = this.remotePassphrase;
+    let remoteVault = this.cryptoData.conflictData.remoteVault;
+    let localVault = this.cryptoData.conflictData.localVault;
+    await this.cryptoData
+      .migrateVault(remotePassphrase, localPassphrase, remoteVault, localVault)
+      .then((result) => {
+        if (result.migrated) {
+          this.isMigrationForm = false;
+          this.keepLocalVault = false;
+          this.cryptoData.conflictData = null;
+          this.errors = [];
+          this.unlock();
+        }
+      });
+  }
+
+  @action async applyRemoteVault() {
     this.isMigrationForm = true;
+    this.keepLocalVault = false;
     this.errors = [];
   }
 
-  @action migrateToNewVault() {
+  @action async applyLocalVault() {
     this.isMigrationForm = true;
+    this.keepLocalVault = true;
     this.errors = [];
   }
 

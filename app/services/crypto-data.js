@@ -18,6 +18,8 @@ export default class CryptoDataService extends Service {
   @tracked unlockedVaultId = null;
   @tracked vault = null;
 
+  @tracked conflictData = null;
+
   _sessionPassphrase = null;
 
   encrypt(data, key) {
@@ -143,7 +145,12 @@ export default class CryptoDataService extends Service {
    * @returns {Promise<{migratedClients:number, migratedConfigFields:number}>}
    */
   async migrateVault(oldPassphrase, newPassphrase, oldVault, newVault) {
-    const result = { migratedClients: 0, migratedConfigFields: 0 };
+    const result = {
+      migratedClients: 0,
+      migratedConfigFields: 0,
+      migrated: false,
+    };
+
     if (!oldVault || !newVault) {
       return result;
     }
@@ -151,12 +158,17 @@ export default class CryptoDataService extends Service {
     const clients = await this.store.findAll('client');
 
     if (clients.length > 0) {
-      for (const client of clients) {
+      for (let client of clients) {
         // Check if it is encrypted, if not, skip
         let isEncrypted = this.isVaultEncrypted(client.oauth);
-        if (!isEncrypted) {
+        if (!isEncrypted || client.oauth.includes(newVault.vaultId)) {
           continue;
         }
+        console.debug('Target vaultId: ', newVault.vaultId);
+        console.debug('Previous vaultId: ', oldVault.vaultId);
+        console.debug('client: ', client.id);
+        console.debug('client saved vaultId: ', client.vaultId);
+        console.debug('oldPassphrase: ', oldPassphrase);
         const decryptedOAuth = await this.decryptFromVault(
           oldPassphrase,
           client.oauth,
@@ -171,6 +183,8 @@ export default class CryptoDataService extends Service {
           await client.save();
           result.migratedClients++;
         }
+        console.debug('Migrated client: ', client.id);
+        console.debug('New client vaultId: ', client.vaultId);
       }
     }
 
@@ -179,7 +193,10 @@ export default class CryptoDataService extends Service {
       return result;
     }
 
-    if (this.isVaultEncrypted(config.username)) {
+    if (
+      this.isVaultEncrypted(config.username) &&
+      !config.username.includes(newVault.vaultId)
+    ) {
       const decryptedUsername = await this.decryptFromVault(
         oldPassphrase,
         config.username,
@@ -192,7 +209,10 @@ export default class CryptoDataService extends Service {
       );
       result.migratedConfigFields++;
     }
-    if (this.isVaultEncrypted(config.password)) {
+    if (
+      this.isVaultEncrypted(config.password) &&
+      !config.password.includes(newVault.vaultId)
+    ) {
       const decryptedPassword = await this.decryptFromVault(
         oldPassphrase,
         config.password,
@@ -205,7 +225,10 @@ export default class CryptoDataService extends Service {
       );
       result.migratedConfigFields++;
     }
-    if (this.isVaultEncrypted(config.database)) {
+    if (
+      this.isVaultEncrypted(config.database) &&
+      !config.database.includes(newVault.vaultId)
+    ) {
       const decryptedDatabase = await this.decryptFromVault(
         oldPassphrase,
         config.database,
@@ -218,7 +241,10 @@ export default class CryptoDataService extends Service {
       );
       result.migratedConfigFields++;
     }
-    if (this.isVaultEncrypted(config.remoteUrl)) {
+    if (
+      this.isVaultEncrypted(config.remoteUrl) &&
+      !config.remoteUrl.includes(newVault.vaultId)
+    ) {
       const decryptedRemoteUrl = await this.decryptFromVault(
         oldPassphrase,
         config.remoteUrl,
@@ -234,6 +260,19 @@ export default class CryptoDataService extends Service {
 
     if (config.hasDirtyAttributes) {
       await config.save();
+    }
+
+    if (this.vault?.id) {
+      this.vault.v = newVault.v;
+      this.vault.vaultId = newVault.vaultId;
+      this.vault.vaultSalt = newVault.vaultSalt;
+      this.vault.alg = newVault.alg;
+      this.vault.kdfName = newVault.kdfName;
+      this.vault.kdfHash = newVault.kdfHash;
+      this.vault.kdfIterations = newVault.kdfIterations;
+      this.vault.updatedAt = newVault.updatedAt;
+      await this.vault.save();
+      result.migrated = true;
     }
 
     return result;
@@ -255,7 +294,8 @@ export default class CryptoDataService extends Service {
    */
   async encryptForVault(passPhrase, data, vault) {
     if (!vault) return data;
-    const effectivePassPhrase = this._resolvePassphrase(passPhrase, vault);
+    // const effectivePassPhrase = this._resolvePassphrase(passPhrase, vault);
+    const effectivePassPhrase = passPhrase;
 
     // If it's data already encrypted v2 envelope, we return it without further changes.
     if (typeof data === 'string') {
@@ -356,12 +396,14 @@ export default class CryptoDataService extends Service {
    */
   async decryptFromVault(passPhrase, encryptedData, vault) {
     if (!vault) return encryptedData;
-    const effectivePassPhrase = this._resolvePassphrase(passPhrase, vault);
+    //const effectivePassPhrase = this._resolvePassphrase(passPhrase, vault);
+    const effectivePassPhrase = passPhrase;
 
     if (!globalThis.crypto?.subtle) {
-      throw new Error(
-        'WebCrypto not available (window.crypto.subtle missing).',
+      console.error(
+        '[CryptoDataService] WebCrypto not available (window.crypto.subtle missing).',
       );
+      return false;
     }
 
     // If it's not JSON or not v2, treat as plaintext (legacy handling should be done elsewhere)
@@ -370,7 +412,9 @@ export default class CryptoDataService extends Service {
     try {
       env = JSON.parse(encryptedData);
     } catch (err) {
-      console.debug('The data is not encrypted, returned as is...');
+      console.debug(
+        '[CryptoDataService] The data is not encrypted, returned as is...',
+      );
       return encryptedData;
     }
 
@@ -380,14 +424,18 @@ export default class CryptoDataService extends Service {
       env.alg !== 'AES-GCM' ||
       typeof env.ct !== 'string'
     ) {
+      console.debug(
+        '[CryptoDataService] The data is not encrypted for this app, returned as is...',
+      );
       return encryptedData;
     }
 
     // Hard fail on vault mismatch
     if (env.vaultId && vault.vaultId && env.vaultId !== vault.vaultId) {
-      throw new Error(
-        'Vault mismatch: secret belongs to a different dataset vault.',
+      console.error(
+        '[CryptoDataService] Vault mismatch: secret belongs to a different dataset vault.',
       );
+      return false;
     }
 
     const fromB64 = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
@@ -398,10 +446,12 @@ export default class CryptoDataService extends Service {
     const hash = env.kdf?.hash ?? vault.kdf?.hash ?? 'SHA-256';
 
     if (env.kdf?.name && env.kdf.name !== 'PBKDF2') {
-      throw new Error(`Unsupported KDF: ${env.kdf.name}`);
+      console.error(`[CryptoDataService] Unsupported KDF: ${env.kdf.name}`);
+      return false;
     }
     if (env.alg !== 'AES-GCM') {
-      throw new Error(`Unsupported algorithm: ${env.alg}`);
+      console.error(`[CryptoDataService] Unsupported algorithm: ${env.alg}`);
+      return false;
     }
 
     const salt = fromB64(env.salt);
@@ -429,9 +479,10 @@ export default class CryptoDataService extends Service {
       ptBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, aesKey, ct);
     } catch (e) {
       // Wrong passphrase or corrupted data
-      throw new Error(
-        'Decryption failed (wrong passphrase or corrupted ciphertext).',
+      console.error(
+        '[CryptoDataService] failed (wrong passphrase or corrupted ciphertext).',
       );
+      return false;
     }
 
     const data = dec.decode(ptBuf);
@@ -440,7 +491,7 @@ export default class CryptoDataService extends Service {
   }
 
   async newDecryptFromVault(encryptedData) {
-    console.debug('Decrypting from vault...');
+    // console.debug('Decrypting from vault...');
     if (!this.vault || !this.isUnlocked) {
       return encryptedData;
     }
@@ -674,19 +725,34 @@ export default class CryptoDataService extends Service {
   _resolveUnlockPromise = null;
 
   async ensureUnlocked() {
+    // if (!this.vault) return false;
     if (this.isUnlocked && this._sessionPassphrase) {
       return true;
     }
 
+    console.debug('Step 1...');
+
     if (this._pendingUnlockPromise) {
+      console.debug('Step A...', this._pendingUnlockPromise);
       return this._pendingUnlockPromise;
     }
 
+    console.debug('Step 2...');
+
     await this.vaultCheck();
 
+    console.debug('Step 3...');
+
     this._pendingUnlockPromise = new Promise((resolve) => {
+      console.debug('Step 4...', resolve);
       this._resolveUnlockPromise = resolve;
     });
+
+    /*if (!this.vault) {
+      console.debug('Step 5...');
+      this._resolvePendingUnlock(false);
+      return false;
+    }*/
 
     return this._pendingUnlockPromise;
   }

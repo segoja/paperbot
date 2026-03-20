@@ -44,5 +44,13 @@ export default class ClientModel extends Model {
     return opts;
   }
 
+  get vaultId() {
+    if (this.oauth.includes('vaultId')) {
+      const envelope = JSON.parse(this.oauth);
+      return envelope.vaultId;
+    }
+    return null;
+  }
+
   @attr('string') rev;
 }

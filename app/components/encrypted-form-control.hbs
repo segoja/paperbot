@@ -1,4 +1,4 @@
-<div class={{concat "input-group "this.groupClass}} {{did-insert this.updateValue}} {{did-update this.updateValue @updateTrigger this.cryptoData.isUnlocked}}>
+<div class={{concat "input-group "this.groupClass}} {{did-insert this.updateValue}} {{did-update this.updateValue @updateTrigger this.cryptoData.isUnlocked  this.cryptoData.vault.rev}}>
   {{#if @preIcon}}
     <div class="input-group-text border-default">
       <FaIcon @icon={{@preIcon}} @size={{@size}} />

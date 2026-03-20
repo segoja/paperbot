@@ -124,7 +124,7 @@
                   @label="Remote url"
                   @placeholder="Enter remote url"
                   @title="Show remote url"
-                  @autocomplete="remoteUrl"
+                  @autocomplete="url"
                   @isFormGroup={{false}}
                   @value={{this.globalConfig.config.remoteUrl}}
                   @onChange={{fn (mut this.globalConfig.config.remoteUrl)}}
@@ -159,7 +159,7 @@
                 @label="Password"
                 @placeholder="Enter remote password"
                 @title="Show password"
-                @autocomplete="current-password"
+                @autocomplete="password"
                 @isFormGroup={{false}}
                 @value={{this.globalConfig.config.password}}
                 @onChange={{fn (mut this.globalConfig.config.password)}}

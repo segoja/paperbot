@@ -8,7 +8,7 @@ module.exports = function (environment) {
     locationType: 'history',
     emberPouch: {
       saveHasMany: true,
-      eventuallyConsistent: false,
+      eventuallyConsistent: true,
       //replication: true
     },
     EmberENV: {

@@ -50,11 +50,13 @@ export default class CloudStateService extends Service {
       const database = await this.cryptoData.newDecryptFromVault(
         config.database,
       );
-      dbUrl = 'https://my.cloudstation.com/' + database;
+      if (database) dbUrl = 'https://my.cloudstation.com/' + database;
     }
     if (this.cloudType == 'custom') {
-      dbUrl = await this.cryptoData.newDecryptFromVault(config.remoteUrl);
+      const url = await this.cryptoData.newDecryptFromVault(config.remoteUrl);
+      if (url) dbUrl = url;
     }
+    console.debug('dbUrl: ', dbUrl);
     return dbUrl;
   }
 }
