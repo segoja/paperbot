@@ -1,21 +1,6 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import { Note, Chord, Scale } from 'tonal';
-
-const SUPPORTED_MODES = new Set([
-  'ionian',
-  'dorian',
-  'phrygian',
-  'lydian',
-  'mixolydian',
-  'aeolian',
-  'locrian',
-]);
-
-const MODE_ALIASES = {
-  major: 'ionian',
-  minor: 'aeolian',
-};
+import { Note, Chord, Scale, ScaleType } from 'tonal';
 
 const DEFAULT_MIDI_DEVICE_NAME = 'XPIANO88';
 const DEFAULT_CHORD_OCTAVE = 2;
@@ -101,6 +86,55 @@ export default class MidiService extends Service {
     }));
   }
 
+  getAvailableModes() {
+    return ScaleType.all()
+      .map((scale) => scale.name)
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b));
+  }
+
+  get availableModes() {
+    return this.getAvailableModes();
+  }
+
+  get selectedModeOption() {
+    console.debug('modes', this.availableModes);
+    return this.availableModes.find((option) => option === this.mode) ?? null;
+  }
+
+  getAvailableKeys() {
+    return [
+      { label: 'C', value: 'C' },
+      { label: 'C# / Db', value: 'C#' },
+      { label: 'D', value: 'D' },
+      { label: 'D# / Eb', value: 'D#' },
+      { label: 'E', value: 'E' },
+      { label: 'F', value: 'F' },
+      { label: 'F# / Gb', value: 'F#' },
+      { label: 'G', value: 'G' },
+      { label: 'G# / Ab', value: 'G#' },
+      { label: 'A', value: 'A' },
+      { label: 'A# / Bb', value: 'A#' },
+      { label: 'B', value: 'B' },
+    ];
+  }
+
+  get availableKeys() {
+    const result = this.getAvailableKeys().map((option) => option.label);
+    console.debug('keys', result);
+    return result;
+  }
+
+  get selectedKeyOption() {
+    const list = this.getAvailableKeys();
+    const result = list.find((option) => option.value === this.key) ?? null;
+    return result?.label;
+  }
+
+  formatModeLabel(mode) {
+    return mode.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
   selectMidiDevice(deviceId) {
     if (!this.midiAccess) {
       console.debug('[MidiService] MIDI access is not initialized yet.');
@@ -160,9 +194,7 @@ export default class MidiService extends Service {
     }
 
     if (!normalizedMode) {
-      console.debug(
-        `[MidiService] Invalid mode "${modeText}". Supported modes: ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian.`,
-      );
+      console.debug(`[MidiService] Invalid mode "${modeText}".`);
       return false;
     }
 
@@ -181,7 +213,13 @@ export default class MidiService extends Service {
     if (!firstParam) return false;
 
     if (firstParam === 'info') {
-      return true;
+      return {
+        key: this.key,
+        mode: this.mode,
+        notesEnabled: this.notesEnabled,
+        chordsEnabled: this.chordsEnabled,
+        isMuted: this.isMuted,
+      };
     }
 
     const isNote = this.looksLikeNote(firstParam);
@@ -195,6 +233,7 @@ export default class MidiService extends Service {
 
   playNote(params = []) {
     if (!this.notesEnabled) return 'Single notes are disabled.';
+    if (this.isMuted) return 'Midi output is muted.';
 
     let noteText = params[0];
     let velocity = 90;
@@ -204,15 +243,20 @@ export default class MidiService extends Service {
 
     if (params[1]) {
       duration = Number(params[1]);
-      if (typeof duration === 'number') {
-        duration = duration < 0 && duration < 5 ? 1 : duration;
+      if (Number.isFinite(duration)) {
+        duration = duration < 5 ? 1 : duration;
+      } else {
+        duration = null;
       }
     }
+
     if (params[2]) {
       velocity = Number(params[2]);
-      if (typeof velocity === 'number') {
+      if (Number.isFinite(velocity)) {
         velocity = velocity > 127 ? 127 : velocity;
         velocity = velocity < 0 ? 45 : velocity;
+      } else {
+        velocity = 90;
       }
     }
 
@@ -224,8 +268,9 @@ export default class MidiService extends Service {
     });
   }
 
-  playChord(params) {
+  playChord(params = []) {
     if (!this.chordsEnabled) return 'Chords are disabled.';
+    if (this.isMuted) return 'Midi output is muted.';
 
     let chordText = params[0];
     let velocity = 90;
@@ -235,21 +280,30 @@ export default class MidiService extends Service {
 
     if (params[1]) {
       chordOctave = Number(params[1]);
-      if (typeof chordOctave === 'number') {
+      if (Number.isFinite(chordOctave)) {
         chordOctave = chordOctave > 7 ? 7 : chordOctave;
+        chordOctave = chordOctave < -1 ? -1 : chordOctave;
+      } else {
+        chordOctave = DEFAULT_CHORD_OCTAVE;
       }
     }
+
     if (params[2]) {
       duration = Number(params[2]);
-      if (typeof duration === 'number') {
-        duration = duration < 0 && duration < 5 ? 1 : duration;
+      if (Number.isFinite(duration)) {
+        duration = duration < 5 ? 1 : duration;
+      } else {
+        duration = null;
       }
     }
+
     if (params[3]) {
       velocity = Number(params[3]);
-      if (typeof velocity === 'number') {
+      if (Number.isFinite(velocity)) {
         velocity = velocity > 127 ? 127 : velocity;
         velocity = velocity < 0 ? 45 : velocity;
+      } else {
+        velocity = 90;
       }
     }
 
@@ -262,23 +316,24 @@ export default class MidiService extends Service {
   }
 
   play(inputText, options = {}) {
+    if (this.isMuted) {
+      return 'Midi output is muted.';
+    }
+
     if (!this.selectedOutput) {
       console.debug('[MidiService] No MIDI output has been selected.');
       return false;
     }
 
-    console.debug('[MidiService] options:', options);
-
     const { velocity, channel, duration, chordOctave } = options;
 
     let parsed = this.parsePlayableInput(inputText, { chordOctave });
+
     if (!parsed) {
       const message = `Could not parse playable input "${inputText}".`;
       console.debug(`[MidiService] ${message}`);
       return false;
     }
-
-    // console.debug(`[MidiService] Parsed input "${inputText}" as:`, parsed);
 
     if (!this.isPlayableInCurrentScale(parsed)) {
       const message = `"${inputText}" is outside the current key/mode (${this.key} ${this.mode}).`;
@@ -433,19 +488,15 @@ export default class MidiService extends Service {
 
   parseChord(text, options = {}) {
     let cleaned = text?.trim();
-    console.debug('[MidiService] Received chord name:', cleaned);
 
     if (!cleaned) {
       return null;
     }
 
     let chordOctave = options.chordOctave ?? DEFAULT_CHORD_OCTAVE;
-    console.debug('[MidiService] Chord octave:', chordOctave);
 
-    // Si solo viene la raíz, construir triada diatónica del modo actual
     if (this.isBareChordRoot(cleaned)) {
       let normalizedRoot = this.normalizeKey(cleaned);
-      console.debug('[MidiService] Normalized root:', normalizedRoot);
 
       if (!normalizedRoot) {
         return null;
@@ -454,29 +505,24 @@ export default class MidiService extends Service {
       return this.buildDiatonicTriad(normalizedRoot, chordOctave);
     }
 
-    // Si el acorde viene explícito, respetarlo tal cual
     let normalizedChordName = this.normalizeChordName(cleaned);
-    console.debug('[MidiService] Normalized chord name:', normalizedChordName);
 
     if (!normalizedChordName) {
       return null;
     }
 
     let chord = Chord.get(normalizedChordName);
-    console.debug('[MidiService] Chord:', chord);
 
     if (!chord || !chord.tonic || !chord.notes?.length) {
       return null;
     }
 
     let bassPitchClass = this.extractBassPitchClass(normalizedChordName);
-    console.debug('[MidiService] Bass pitch class:', bassPitchClass);
     let midiNotes = this.chordNotesToMidi(
       chord.notes,
       chordOctave,
       bassPitchClass,
     );
-    console.debug('[MidiService] Midi Notes for chord:', midiNotes);
 
     if (!midiNotes.length) {
       return null;
@@ -503,9 +549,9 @@ export default class MidiService extends Service {
       Note.pitchClass(noteName),
     );
 
-    if (scalePitchClasses.length !== 7) {
+    if (scalePitchClasses.length < 3) {
       console.debug(
-        '[MidiService] Could not build diatonic triad because current scale is invalid:',
+        '[MidiService] Could not build diatonic triad because current scale has fewer than 3 notes:',
         scale,
       );
       return null;
@@ -521,8 +567,8 @@ export default class MidiService extends Service {
 
     let triadPitchClasses = [
       scalePitchClasses[degreeIndex],
-      scalePitchClasses[(degreeIndex + 2) % 7],
-      scalePitchClasses[(degreeIndex + 4) % 7],
+      scalePitchClasses[(degreeIndex + 2) % scalePitchClasses.length],
+      scalePitchClasses[(degreeIndex + 4) % scalePitchClasses.length],
     ];
 
     let midiNotes = this.chordNotesToMidi(triadPitchClasses, chordOctave);
@@ -635,10 +681,14 @@ export default class MidiService extends Service {
       return null;
     }
 
-    let cleaned = modeText.trim().toLowerCase().replace(/\s+/g, '_');
-    let aliased = MODE_ALIASES[cleaned] || cleaned;
+    let cleaned = modeText.trim().toLowerCase().replace(/\s+/g, ' ');
+    let scale = Scale.get(`C ${cleaned}`);
 
-    return SUPPORTED_MODES.has(aliased) ? aliased : null;
+    if (!scale || scale.empty || !scale.notes?.length) {
+      return null;
+    }
+
+    return cleaned;
   }
 
   normalizeKey(keyText) {

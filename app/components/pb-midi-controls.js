@@ -15,15 +15,28 @@ export default class lightSwitchComponent extends Component {
   }
 
   get noChords() {
-    return (
-      this.midi.isMuted || !this.midi.chordsEnabled || !this.args.isConnected
-    );
+    const result = !this.midi.chordsEnabled;
+    return result;
   }
 
   get noNotes() {
-    return (
-      this.midi.isMuted || !this.midi.notesEnabled || !this.args.isConnected
-    );
+    const result = !this.midi.notesEnabled;
+    return result;
+  }
+
+  @action setMidiKey(key) {
+    if (!key) return;
+    console.debug('[MidiService] Setting key to', key);
+    const selectedKey = this.midi
+      .getAvailableKeys()
+      .find((option) => option.label === key);
+
+    this.midi.setKeyAndMode(selectedKey.value, this.midi.mode);
+  }
+  @action setMidiMode(mode) {
+    if (!mode) return;
+    console.debug('[MidiService] Setting mode to', mode);
+    this.midi.setKeyAndMode(this.midi.key, mode);
   }
 
   @action toggleChords() {
