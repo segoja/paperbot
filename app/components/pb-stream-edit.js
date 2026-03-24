@@ -9,6 +9,7 @@ export default class PbStreamEditComponent extends Component {
   @service twitchChat;
   @service youtubeChat;
   @service globalConfig;
+  @service cryptoData;
   @service audio;
   @service currentUser;
   @service queueHandler;
@@ -116,7 +117,7 @@ export default class PbStreamEditComponent extends Component {
 
   // Bot and Chat related actions:
 
-  @action connectBot() {
+  @action async connectBot() {
     if (this.optsbot) {
       if (this.args.stream.channel != '') {
         // this.optsbot.channels = [this.args.stream.channel];
@@ -141,7 +142,9 @@ export default class PbStreamEditComponent extends Component {
       this.globalConfig.config.externaleventskey &&
       this.globalConfig.config.externalevents
     ) {
-      this.eventsExternal.token = this.globalConfig.config.externaleventskey;
+      this.eventsExternal.token = await this.cryptoData.newDecryptFromVault(
+        this.globalConfig.config.externaleventskey,
+      );
       this.eventsExternal.type = this.globalConfig.config.externalevents;
       this.eventsExternal.createClient();
     }

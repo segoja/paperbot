@@ -3,24 +3,35 @@ import { tracked } from '@glimmer/tracking';
 import { Note, Chord, Scale, ScaleType } from 'tonal';
 
 const DEFAULT_MIDI_DEVICE_NAME = 'XPIANO88';
-const DEFAULT_CHORD_OCTAVE = 2;
 
 export default class MidiService extends Service {
   @tracked midiAccess = null;
   @tracked midiOutputs = [];
-  @tracked selectedOutputId = null;
-  @tracked selectedOutput = null;
-  @tracked key = 'D';
-  @tracked mode = 'ionian';
+
+  @tracked selectedNoteOutputId = null;
+  @tracked selectedChordOutputId = null;
+
+  @tracked key = 'C';
+  @tracked mode = 'major';
+  @tracked chordOctave = 2;
 
   @tracked chordsEnabled = false;
   @tracked notesEnabled = false;
   @tracked isMuted = false;
 
   /**
-   * signature -> { notes: number[], velocity: number, timeoutId: number | null }
+   * signature -> {
+   *   notes: number[],
+   *   velocity: number,
+   *   timeoutId: number | null,
+   *   outputId: string | null,
+   *   channel: number,
+   *   type: 'note' | 'chord'
+   * }
    */
   activeVoices = new Map();
+
+  chordOctaves = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8];
 
   constructor() {
     super(...arguments);
@@ -52,8 +63,8 @@ export default class MidiService extends Service {
   refreshMidiOutputs() {
     if (!this.midiAccess) {
       this.midiOutputs = [];
-      this.selectedOutputId = null;
-      this.selectedOutput = null;
+      this.selectedNoteOutputId = null;
+      this.selectedChordOutputId = null;
       return;
     }
 
@@ -67,23 +78,85 @@ export default class MidiService extends Service {
       }),
     );
 
-    if (this.selectedOutputId) {
-      let output = this.midiAccess.outputs.get(this.selectedOutputId);
-      this.selectedOutput = output ?? null;
-
-      if (!output) {
-        this.selectedOutputId = null;
-      }
-    } else {
-      this.selectMidiDeviceByName(DEFAULT_MIDI_DEVICE_NAME);
+    if (
+      this.selectedNoteOutputId &&
+      !this.midiAccess.outputs.get(this.selectedNoteOutputId)
+    ) {
+      this.selectedNoteOutputId = null;
     }
+
+    if (
+      this.selectedChordOutputId &&
+      !this.midiAccess.outputs.get(this.selectedChordOutputId)
+    ) {
+      this.selectedChordOutputId = null;
+    }
+
+    if (!this.selectedNoteOutputId) {
+      this.selectNoteMidiDeviceByName(DEFAULT_MIDI_DEVICE_NAME);
+    }
+
+    if (!this.selectedChordOutputId) {
+      this.selectChordMidiDeviceByName(DEFAULT_MIDI_DEVICE_NAME);
+    }
+  }
+
+  get selectedNoteOutput() {
+    if (!this.midiAccess || !this.selectedNoteOutputId) {
+      return null;
+    }
+
+    return this.midiAccess.outputs.get(this.selectedNoteOutputId) ?? null;
+  }
+
+  get selectedChordOutput() {
+    if (!this.midiAccess || !this.selectedChordOutputId) {
+      return null;
+    }
+
+    return this.midiAccess.outputs.get(this.selectedChordOutputId) ?? null;
   }
 
   getAvailableMidiOutputs() {
     return this.midiOutputs.map((output) => ({
       ...output,
-      selected: output.id === this.selectedOutputId,
+      noteSelected: output.id === this.selectedNoteOutputId,
+      chordSelected: output.id === this.selectedChordOutputId,
     }));
+  }
+
+  get availableMidiOutputOptions() {
+    return this.midiOutputs.map((output) => ({
+      label: output.name,
+      value: output.id,
+    }));
+  }
+
+  get selectedNoteOutputOption() {
+    return (
+      this.availableMidiOutputOptions.find(
+        (option) => option.value === this.selectedNoteOutputId,
+      ) ?? null
+    );
+  }
+
+  get selectedChordOutputOption() {
+    return (
+      this.availableMidiOutputOptions.find(
+        (option) => option.value === this.selectedChordOutputId,
+      ) ?? null
+    );
+  }
+
+  get availableMidiOutputs() {
+    const result = this.midiOutputs;
+    console.debug('[MidiService] availableMidiOutputs', result);
+
+    if (result.length > 0) {
+      return result.map((output) => output.name);
+    }
+
+    return null;
   }
 
   getAvailableModes() {
@@ -98,7 +171,6 @@ export default class MidiService extends Service {
   }
 
   get selectedModeOption() {
-    console.debug('modes', this.availableModes);
     return this.availableModes.find((option) => option === this.mode) ?? null;
   }
 
@@ -120,9 +192,7 @@ export default class MidiService extends Service {
   }
 
   get availableKeys() {
-    const result = this.getAvailableKeys().map((option) => option.label);
-    console.debug('keys', result);
-    return result;
+    return this.getAvailableKeys().map((option) => option.label);
   }
 
   get selectedKeyOption() {
@@ -135,29 +205,17 @@ export default class MidiService extends Service {
     return mode.replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  selectMidiDevice(deviceId) {
-    if (!this.midiAccess) {
-      console.debug('[MidiService] MIDI access is not initialized yet.');
-      return false;
+  getMidiOutputById(deviceId) {
+    if (!this.midiAccess || !deviceId) {
+      return null;
     }
 
-    let output = this.midiAccess.outputs.get(deviceId);
-
-    if (!output) {
-      console.debug(
-        `[MidiService] MIDI device "${deviceId}" was not found among available outputs.`,
-      );
-      return false;
-    }
-
-    this.selectedOutputId = output.id;
-    this.selectedOutput = output;
-    return true;
+    return this.midiAccess.outputs.get(deviceId) ?? null;
   }
 
-  selectMidiDeviceByName(deviceName) {
+  findMidiOutputByName(deviceName) {
     if (!deviceName) {
-      return false;
+      return null;
     }
 
     let normalizedTarget = deviceName.trim().toLowerCase();
@@ -167,21 +225,94 @@ export default class MidiService extends Service {
     });
 
     if (exactMatch) {
-      return this.selectMidiDevice(exactMatch.id);
+      return exactMatch;
     }
 
     let fuzzyMatch = this.midiOutputs.find((output) => {
       return output.name?.trim().toLowerCase().includes(normalizedTarget);
     });
 
-    if (fuzzyMatch) {
-      return this.selectMidiDevice(fuzzyMatch.id);
+    return fuzzyMatch ?? null;
+  }
+
+  selectNoteMidiDevice(deviceId) {
+    if (!this.midiAccess) {
+      console.debug('[MidiService] MIDI access is not initialized yet.');
+      return false;
     }
 
-    console.debug(
-      `[MidiService] MIDI device named "${deviceName}" was not found among available outputs.`,
-    );
-    return false;
+    let output = this.midiAccess.outputs.get(deviceId);
+
+    if (!output) {
+      console.debug(
+        `[MidiService] Note MIDI device "${deviceId}" was not found among available outputs.`,
+      );
+      return false;
+    }
+
+    this.selectedNoteOutputId = output.id;
+    return true;
+  }
+
+  selectChordMidiDevice(deviceId) {
+    if (!this.midiAccess) {
+      console.debug('[MidiService] MIDI access is not initialized yet.');
+      return false;
+    }
+
+    let output = this.midiAccess.outputs.get(deviceId);
+
+    if (!output) {
+      console.debug(
+        `[MidiService] Chord MIDI device "${deviceId}" was not found among available outputs.`,
+      );
+      return false;
+    }
+
+    this.selectedChordOutputId = output.id;
+    return true;
+  }
+
+  selectNoteMidiDeviceByName(deviceName) {
+    let match = this.findMidiOutputByName(deviceName);
+
+    if (!match) {
+      console.debug(
+        `[MidiService] Note MIDI device named "${deviceName}" was not found among available outputs.`,
+      );
+      return false;
+    }
+
+    return this.selectNoteMidiDevice(match.id);
+  }
+
+  selectChordMidiDeviceByName(deviceName) {
+    let match = this.findMidiOutputByName(deviceName);
+
+    if (!match) {
+      console.debug(
+        `[MidiService] Chord MIDI device named "${deviceName}" was not found among available outputs.`,
+      );
+      return false;
+    }
+
+    return this.selectChordMidiDevice(match.id);
+  }
+
+  setSelectedNoteOutput(option) {
+    if (!option?.value) {
+      return false;
+    }
+
+    return this.selectNoteMidiDevice(option.value);
+  }
+
+  setSelectedChordOutput(option) {
+    if (!option?.value) {
+      return false;
+    }
+
+    return this.selectChordMidiDevice(option.value);
   }
 
   setKeyAndMode(keyText, modeText) {
@@ -204,25 +335,25 @@ export default class MidiService extends Service {
   }
 
   inputHandler(textInput) {
+    console.debug('[MidiService] Received input:', textInput);
+
     if (!textInput) return false;
 
     const params = textInput.split(' ');
-    console.debug('[MidiService] Received input:', params);
 
     const firstParam = params[0];
     if (!firstParam) return false;
 
-    if (firstParam === 'info') {
-      return {
-        key: this.key,
-        mode: this.mode,
-        notesEnabled: this.notesEnabled,
-        chordsEnabled: this.chordsEnabled,
-        isMuted: this.isMuted,
-      };
+    if (String(firstParam).toUpperCase() === 'INFO') {
+      // TODO: compose a message with allowed notes and chords in the scale
+      const scale = Scale.get(`${this.key} ${this.mode}`);
+      console.debug('[MidiService] Scale:', scale);
+      const message = `Scale ${this.key} ${this.formatModeLabel(this.mode)}, notes: ${scale.notes}`;
+      console.debug('[MidiService] returning message:' + message);
+      return message;
     }
 
-    const isNote = this.looksLikeNote(firstParam);
+    const isNote = this.looksLikeNote(String(firstParam).toUpperCase());
 
     if (isNote) {
       return this.playNote(params);
@@ -238,8 +369,8 @@ export default class MidiService extends Service {
     let noteText = params[0];
     let velocity = 90;
     let channel = 0;
-    let duration = null;
-    let chordOctave = DEFAULT_CHORD_OCTAVE;
+    let duration = 500;
+    let chordOctave = this.chordOctave;
 
     if (params[1]) {
       duration = Number(params[1]);
@@ -275,16 +406,16 @@ export default class MidiService extends Service {
     let chordText = params[0];
     let velocity = 90;
     let channel = 0;
-    let duration = null;
-    let chordOctave = DEFAULT_CHORD_OCTAVE;
+    let duration = 500;
+    let chordOctave = this.chordOctave;
 
     if (params[1]) {
       chordOctave = Number(params[1]);
       if (Number.isFinite(chordOctave)) {
-        chordOctave = chordOctave > 7 ? 7 : chordOctave;
+        chordOctave = chordOctave > 8 ? 8 : chordOctave;
         chordOctave = chordOctave < -1 ? -1 : chordOctave;
       } else {
-        chordOctave = DEFAULT_CHORD_OCTAVE;
+        chordOctave = this.chordOctave;
       }
     }
 
@@ -307,6 +438,8 @@ export default class MidiService extends Service {
       }
     }
 
+    console.debug('[MidiService] Chord text:', chordText);
+
     return this.play(chordText, {
       velocity,
       channel,
@@ -320,11 +453,6 @@ export default class MidiService extends Service {
       return 'Midi output is muted.';
     }
 
-    if (!this.selectedOutput) {
-      console.debug('[MidiService] No MIDI output has been selected.');
-      return false;
-    }
-
     const { velocity, channel, duration, chordOctave } = options;
 
     let parsed = this.parsePlayableInput(inputText, { chordOctave });
@@ -333,6 +461,21 @@ export default class MidiService extends Service {
       const message = `Could not parse playable input "${inputText}".`;
       console.debug(`[MidiService] ${message}`);
       return false;
+    }
+
+    let output =
+      parsed.type === 'note'
+        ? this.selectedNoteOutput
+        : this.selectedChordOutput;
+
+    if (!output) {
+      const message =
+        parsed.type === 'note'
+          ? 'No MIDI output has been selected for single notes.'
+          : 'No MIDI output has been selected for chords.';
+
+      console.debug(`[MidiService] ${message}`);
+      return message;
     }
 
     if (!this.isPlayableInCurrentScale(parsed)) {
@@ -351,16 +494,17 @@ export default class MidiService extends Service {
     }
 
     if (existing) {
-      this.sendNoteOff(existing.notes, channel);
+      let existingOutput = this.getMidiOutputById(existing.outputId);
+      this.sendNoteOff(existing.notes, existingOutput, existing.channel);
     }
 
-    this.sendNoteOn(parsed.notes, nextVelocity, channel);
+    this.sendNoteOn(parsed.notes, output, nextVelocity, channel);
 
     let timeoutId = null;
 
     if (typeof duration === 'number' && duration > 0) {
       timeoutId = window.setTimeout(() => {
-        this.stopBySignature(parsed.signature, channel);
+        this.stopBySignature(parsed.signature);
       }, duration);
     }
 
@@ -368,6 +512,9 @@ export default class MidiService extends Service {
       notes: parsed.notes,
       velocity: nextVelocity,
       timeoutId,
+      outputId: output.id,
+      channel,
+      type: parsed.type,
     });
 
     return {
@@ -381,7 +528,7 @@ export default class MidiService extends Service {
 
   stop(inputText, channel = 0, options = {}) {
     let parsed = this.parsePlayableInput(inputText, {
-      chordOctave: options.chordOctave ?? DEFAULT_CHORD_OCTAVE,
+      chordOctave: options.chordOctave ?? this.chordOctave,
     });
 
     if (!parsed) {
@@ -391,7 +538,7 @@ export default class MidiService extends Service {
     return this.stopBySignature(parsed.signature, channel);
   }
 
-  stopBySignature(signature, channel = 0) {
+  stopBySignature(signature) {
     let existing = this.activeVoices.get(signature);
 
     if (!existing) {
@@ -402,41 +549,56 @@ export default class MidiService extends Service {
       clearTimeout(existing.timeoutId);
     }
 
-    this.sendNoteOff(existing.notes, channel);
+    let output = this.getMidiOutputById(existing.outputId);
+    this.sendNoteOff(existing.notes, output, existing.channel);
     this.activeVoices.delete(signature);
     return true;
   }
 
-  stopAll(channel = 0) {
+  stopAll() {
     for (let [signature, voice] of this.activeVoices.entries()) {
       if (voice.timeoutId) {
         clearTimeout(voice.timeoutId);
       }
 
-      this.sendNoteOff(voice.notes, channel);
+      let output = this.getMidiOutputById(voice.outputId);
+      this.sendNoteOff(voice.notes, output, voice.channel);
       this.activeVoices.delete(signature);
     }
   }
 
   panic(channel = 0) {
-    this.stopAll(channel);
+    this.stopAll();
 
-    if (this.selectedOutput) {
+    let outputs = [this.selectedNoteOutput, this.selectedChordOutput].filter(
+      Boolean,
+    );
+    let uniqueOutputs = [...new Set(outputs)];
+
+    for (let output of uniqueOutputs) {
       for (let note = 0; note <= 127; note++) {
-        this.selectedOutput.send([0x80 + channel, note, 0]);
+        output.send([0x80 + channel, note, 0]);
       }
     }
   }
 
-  sendNoteOn(notes, velocity, channel = 0) {
+  sendNoteOn(notes, output, velocity, channel = 0) {
+    if (!output) {
+      return;
+    }
+
     for (let note of notes) {
-      this.selectedOutput.send([0x90 + channel, note, velocity]);
+      output.send([0x90 + channel, note, velocity]);
     }
   }
 
-  sendNoteOff(notes, channel = 0) {
+  sendNoteOff(notes, output, channel = 0) {
+    if (!output) {
+      return;
+    }
+
     for (let note of notes) {
-      this.selectedOutput.send([0x80 + channel, note, 0]);
+      output.send([0x80 + channel, note, 0]);
     }
   }
 
@@ -459,7 +621,7 @@ export default class MidiService extends Service {
   }
 
   isBareChordRoot(text) {
-    return /^[A-Ga-g][#b]?$/.test(text.trim());
+    return /^[A-Ga-g](?:#{1,2}|b{1,2})?$/.test(text.trim());
   }
 
   parseNote(text) {
@@ -493,7 +655,7 @@ export default class MidiService extends Service {
       return null;
     }
 
-    let chordOctave = options.chordOctave ?? DEFAULT_CHORD_OCTAVE;
+    let chordOctave = options.chordOctave ?? this.chordOctave;
 
     if (this.isBareChordRoot(cleaned)) {
       let normalizedRoot = this.normalizeKey(cleaned);
@@ -537,7 +699,7 @@ export default class MidiService extends Service {
     };
   }
 
-  buildDiatonicTriad(rootText, chordOctave = DEFAULT_CHORD_OCTAVE) {
+  buildDiatonicTriad(rootText, chordOctave = this.chordOctave) {
     let rootPitchClass = Note.pitchClass(rootText);
 
     if (!rootPitchClass) {
@@ -562,6 +724,11 @@ export default class MidiService extends Service {
     );
 
     if (degreeIndex === -1) {
+      console.debug(
+        '[MidiService] Could not find root pitch class in current scale:',
+        rootPitchClass,
+        scale,
+      );
       return null;
     }
 
@@ -698,7 +865,7 @@ export default class MidiService extends Service {
 
     let cleaned = keyText.trim().replaceAll('♯', '#').replaceAll('♭', 'b');
 
-    let match = cleaned.match(/^([A-Ga-g])([#b]?)$/);
+    let match = cleaned.match(/^([A-Ga-g])((?:#{1,2}|b{1,2})?)$/);
 
     if (!match) {
       return null;
@@ -713,7 +880,7 @@ export default class MidiService extends Service {
   normalizeNoteWithOctave(noteText) {
     let cleaned = noteText.trim().replaceAll('♯', '#').replaceAll('♭', 'b');
 
-    let match = cleaned.match(/^([A-Ga-g])([#b]?)(-?\d+)$/);
+    let match = cleaned.match(/^([A-Ga-g])((?:#{1,2}|b{1,2})?)(-?\d+)$/);
 
     if (!match) {
       return null;
@@ -732,7 +899,7 @@ export default class MidiService extends Service {
 
     let cleaned = chordText.trim().replaceAll('♯', '#').replaceAll('♭', 'b');
 
-    let match = cleaned.match(/^([A-Ga-g])([#b]?)(.*)$/);
+    let match = cleaned.match(/^([A-Ga-g])((?:#{1,2}|b{1,2})?)(.*)$/);
 
     if (!match) {
       return null;

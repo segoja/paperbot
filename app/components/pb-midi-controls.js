@@ -14,13 +14,13 @@ export default class lightSwitchComponent extends Component {
     return this.midi.isMuted || !this.args.isConnected;
   }
 
-  get noChords() {
-    const result = !this.midi.chordsEnabled;
+  get canChords() {
+    const result = this.midi.chordsEnabled;
     return result;
   }
 
-  get noNotes() {
-    const result = !this.midi.notesEnabled;
+  get canNotes() {
+    const result = this.midi.notesEnabled;
     return result;
   }
 
@@ -37,6 +37,16 @@ export default class lightSwitchComponent extends Component {
     if (!mode) return;
     console.debug('[MidiService] Setting mode to', mode);
     this.midi.setKeyAndMode(this.midi.key, mode);
+  }
+
+  @action setMidiChordsOutput(event) {
+    console.debug('Setting chords output to', event);
+    if (event.value) this.midi.setSelectedChordOutput(event);
+  }
+
+  @action setMidiNotesOutput(event) {
+    console.debug('Setting chords output to', event);
+    if (event.value) this.midi.setSelectedNoteOutput(event);
   }
 
   @action toggleChords() {

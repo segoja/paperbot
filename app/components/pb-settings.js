@@ -111,15 +111,14 @@ export default class PbSettingsComponent extends Component {
   @action
   async setupMidi() {
     await this.midi.initMidi();
-
     let outputs = this.midi.getAvailableMidiOutputs();
-    console.log(outputs);
 
     if (outputs.length) {
-      this.midi.selectMidiDevice(outputs[0].id);
+      this.midi.setSelectedChordOutput(outputs[0].id);
+      this.midi.setSelectedNoteOutput(outputs[0].id);
     }
 
-    this.midi.setKeyAndMode('C', 'dorian');
+    this.midi.setKeyAndMode(this.midi.key, this.midi.mode);
   }
 
   @action async doneEditing() {

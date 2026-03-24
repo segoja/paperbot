@@ -42,7 +42,7 @@
             as |checkbox|
           >
             <checkbox.control
-              disabled={{this.globalConfig.config.canGetEvents}}
+              disabled={{not this.globalConfig.config.canGetEvents}}
             />
           </form.element>
           <form.element

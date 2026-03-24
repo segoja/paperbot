@@ -37,6 +37,7 @@
         @formLayout="horizontal"
         @model={{this.globalConfig.config}}
         @onSubmit={{this.doneEditing}}
+        autoComplete="off"
         as |form|
       >
         <form.element
@@ -123,6 +124,7 @@
                   @placeholder="External API token"
                   @title="Show API token"
                   @isFormGroup={{true}}
+                  @autocomplete="externaleventskey"
                   @onChange={{fn (mut this.globalConfig.config.externaleventskey)}}
                   @updateTrigger={{this.globalConfig.config.rev}}
                 />

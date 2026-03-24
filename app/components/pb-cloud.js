@@ -182,6 +182,10 @@ export default class PbCloudComponent extends Component {
     this.globalConfig.config.password =
       await this.cryptoData.newEncryptForVault(password);
 
+    const externaleventskey = this.globalConfig.config.externaleventskey;
+    this.globalConfig.config.externaleventskey =
+      await this.cryptoData.newEncryptForVault(externaleventskey);
+
     this.globalConfig.config.save().then(() => {
       this.saving = true;
       later(() => {

@@ -585,7 +585,9 @@ export default class TwitchChatService extends Service {
     // Ignore messages from the bot so you don't create command infinite loops
     console.debug('Self command: ', self);
     // Remove whitespace from chat message
-    const commandName = msg.trim().toLowerCase();
+    const commandName = msg.trim().startsWith('!midi ')
+      ? msg.trim()
+      : msg.trim().toLowerCase();
     if (String(commandName).startsWith('!')) {
       // If the command is known, let's execute it
       if (String(commandName).startsWith('!sr ')) {
@@ -977,8 +979,11 @@ export default class TwitchChatService extends Service {
               '/me There are no songs to be removed.',
             );
           }
-        } else if (String(commandName).startsWith('!midi ')) {
-          let userMidi = commandName.replace(/!midi/g, '').toUpperCase().trim();
+        } else if (
+          String(commandName).startsWith('!midi ') &&
+          this.currentUser.lastStream.midi
+        ) {
+          let userMidi = commandName.replace(/!midi/g, '').trim();
           const response = this.midi.inputHandler(userMidi);
           if (typeof response === 'string') {
             await this.botclient.say(target, '/me ' + response);

@@ -92,6 +92,7 @@
           @formLayout="horizontal"
           @model={{this.globalConfig.config}}
           @onSubmit={{this.doneEditing}}
+          autoComplete="off"
           as |form|
         >
           <div class="row pb-3">
@@ -124,7 +125,7 @@
                   @label="Remote url"
                   @placeholder="Enter remote url"
                   @title="Show remote url"
-                  @autocomplete="url"
+                  @autocomplete="cloud-url"
                   @isFormGroup={{false}}
                   @value={{this.globalConfig.config.remoteUrl}}
                   @onChange={{fn (mut this.globalConfig.config.remoteUrl)}}
@@ -143,7 +144,7 @@
                 @label="Username"
                 @placeholder="Enter remote username"
                 @title="Show username"
-                @autocomplete="username"
+                @autocomplete="cloud-username"
                 @isFormGroup={{false}}
                 @value={{this.globalConfig.config.username}}
                 @onChange={{fn (mut this.globalConfig.config.username)}}
@@ -159,7 +160,7 @@
                 @label="Password"
                 @placeholder="Enter remote password"
                 @title="Show password"
-                @autocomplete="password"
+                @autocomplete="cloud-password"
                 @isFormGroup={{false}}
                 @value={{this.globalConfig.config.password}}
                 @onChange={{fn (mut this.globalConfig.config.password)}}
@@ -178,7 +179,7 @@
                   @label="Database name"
                   @placeholder="Enter database name"
                   @title="Show database name"
-                  @autocomplete="database"
+                  @autocomplete="cloud-database"
                   @isFormGroup={{false}}
                   @value={{this.globalConfig.config.database}}
                   @onChange={{fn (mut this.globalConfig.config.database)}}

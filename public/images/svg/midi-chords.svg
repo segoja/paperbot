@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 640 640"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="midi-chords.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="true"
+     inkscape:zoom="1"
+     inkscape:cx="162.5"
+     inkscape:cy="289.5"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="1072"
+     inkscape:window-y="479"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1">
+    <inkscape:grid
+       id="grid1"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc. -->
+  <path
+     fill="currentColor"
+     d="m 95.002034,5.0022158 c -49.640525,0 -89.9998182,40.3592932 -89.9998182,89.9998182 V 545.00111 c 0,49.64053 40.3592932,89.99983 89.9998182,89.99983 H 545.00111 c 49.64053,0 89.99983,-40.3593 89.99983,-89.99983 V 95.002034 c 0,-49.640525 -40.3593,-89.9998182 -89.99983,-89.9998182 z M 173.75189,275.00167 c 18.70307,0 33.74992,15.04684 33.74992,33.74994 v 157.49966 c 0,18.70308 -15.04685,33.74994 -33.74992,33.74994 -18.70311,0 -33.74995,-15.04686 -33.74995,-33.74994 V 308.75161 c 0,-18.7031 15.04684,-33.74994 33.74995,-33.74994 z m 258.74946,-16.25025 c 0,-18.70308 15.04684,-33.74993 33.74992,-33.74993 18.70308,0 33.74994,15.04685 33.74994,33.74993 v 247.49985 c 0,18.70308 -15.04686,33.74994 -33.74994,33.74994 -18.70308,0 -33.74992,-15.04686 -33.74992,-33.74994 z M 320.00158,140.00194 c 18.70308,0 33.74993,15.04684 33.74993,33.74995 v 252.49938 c 0,18.70308 -15.04685,33.74994 -33.74993,33.74994 -18.70309,0 -33.74994,-15.04686 -33.74994,-33.74994 V 173.75189 c 0,-18.70311 15.04685,-33.74995 33.74994,-33.74995 z"
+     id="path1"
+     style="stroke-width:1.40623"
+     sodipodi:nodetypes="ssssssssssssssssssssssssssssss" />
+</svg>
