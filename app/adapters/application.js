@@ -140,13 +140,13 @@ export default class ApplicationAdapter extends Adapter {
   async detectFirstSyncVaultConflict(remoteDb) {
     const localVaultRecord = this.store.peekRecord('vault', 'ppb-vault');
     const localVault = localVaultRecord ? localVaultRecord.serialize() : null;
-    console.debug('localVault: ', localVault);
+    // console.debug('localVault: ', localVault);
 
     let remoteVault = null;
     try {
-      console.debug('RemoteDb.rel: ', this.db);
+      // console.debug('RemoteDb.rel: ', this.db);
       let result = await remoteDb.get('vault_2_ppb-vault');
-      console.debug('result: ', result);
+      // console.debug('result: ', result);
       remoteVault = result ?? null;
       remoteVault = {
         id: remoteVault._id,
@@ -158,7 +158,7 @@ export default class ApplicationAdapter extends Adapter {
       remoteVault = null;
     }
 
-    console.debug('remoteVault: ', remoteVault);
+    // console.debug('remoteVault: ', remoteVault);
 
     const hasConflict =
       localVault &&
@@ -179,19 +179,12 @@ export default class ApplicationAdapter extends Adapter {
     const isRemoteUrlEncrypted = this.cryptoData.isVaultEncrypted(
       this.globalConfig.config.remoteUrl,
     );
-    console.debug('isRemoteUrlEncrypted: ', isRemoteUrlEncrypted);
     const isDatabaseEncrypted = this.cryptoData.isVaultEncrypted(
       this.globalConfig.config.database,
     );
-    console.debug('isDatabaseEncrypted: ', isDatabaseEncrypted);
 
     if (isRemoteUrlEncrypted || isDatabaseEncrypted) {
-      console.debug('Url or database is encrypted...');
-      /*if (!this.cryptoData.vault) {
-        console.debug('There is no vault...');
-        return false;
-      }*/
-
+      console.debug('Url or database are encrypted...');
       const ok = await this.cryptoData.ensureUnlocked();
 
       console.debug('ok: ', ok);
@@ -225,7 +218,6 @@ export default class ApplicationAdapter extends Adapter {
       this.remoteDb.on('loggedin', async () => {
         await this.detectFirstSyncVaultConflict(this.remoteDb).then(
           async (conflictData) => {
-            // console.debug('hasConflict', conflict);
             if (conflictData.hasConflict) {
               // await this.cloudState.setOffline();
               this.cryptoData.conflictData = conflictData;
@@ -321,8 +313,6 @@ export default class ApplicationAdapter extends Adapter {
                 );
                 this.replicationToHandler
                   .on('change', (change) => {
-                    // yo, something changed!
-                    // console.debug(change);
                     this.cloudState.setPush(change);
                     if (change) {
                       console.debug('Pushing changes to the cloud...');

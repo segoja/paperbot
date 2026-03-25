@@ -45,7 +45,6 @@ export default class CryptoDataService extends Service {
         padding: CryptoJS.pad.Pkcs7,
       });
       let decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
-      // console.debug('Decrypted UTF8: '+decryptedData);
       return decryptedData;
     }
     return '';
@@ -83,7 +82,6 @@ export default class CryptoDataService extends Service {
       for (const client of clients) {
         const decryptedOAuth = this.decrypt(client.oauth, client.publicKey);
         if (decryptedOAuth) {
-          // console.debug('Migrating CryptoJS encrypted client: ', client.username, decryptedOAuth);
           client.oauth = await this.encryptForVault(
             passPhrase,
             decryptedOAuth,
@@ -110,7 +108,9 @@ export default class CryptoDataService extends Service {
     }
     const decryptedOAuth = this.decrypt(client.oauth, client.publicKey);
     if (decryptedOAuth) {
-      console.debug('Migrating CryptoJS encrypted client...');
+      console.debug(
+        '[CryptoDataService] Migrating CryptoJS encrypted client...',
+      );
       client.oauth = await this.encryptForVault(
         this._sessionPassphrase,
         decryptedOAuth,
@@ -164,11 +164,6 @@ export default class CryptoDataService extends Service {
         if (!isEncrypted || client.oauth.includes(newVault.vaultId)) {
           continue;
         }
-        console.debug('Target vaultId: ', newVault.vaultId);
-        console.debug('Previous vaultId: ', oldVault.vaultId);
-        console.debug('client: ', client.id);
-        console.debug('client saved vaultId: ', client.vaultId);
-        console.debug('oldPassphrase: ', oldPassphrase);
         const decryptedOAuth = await this.decryptFromVault(
           oldPassphrase,
           client.oauth,
@@ -183,14 +178,29 @@ export default class CryptoDataService extends Service {
           await client.save();
           result.migratedClients++;
         }
-        console.debug('Migrated client: ', client.id);
-        console.debug('New client vaultId: ', client.vaultId);
       }
     }
 
     const config = this.globalConfig.config;
     if (!config) {
       return result;
+    }
+
+    if (
+      this.isVaultEncrypted(config.externaleventskey) &&
+      !config.externaleventskey.includes(newVault.vaultId)
+    ) {
+      const decryptedExternaleventskey = await this.decryptFromVault(
+        oldPassphrase,
+        config.externaleventskey,
+        oldVault,
+      );
+      config.externaleventskey = await this.encryptForVault(
+        newPassphrase,
+        decryptedExternaleventskey,
+        newVault,
+      );
+      result.migratedConfigFields++;
     }
 
     if (
@@ -310,7 +320,9 @@ export default class CryptoDataService extends Service {
           return data;
         }
       } catch (error) {
-        console.debug('No JSON envelope, continue encryption...');
+        console.debug(
+          '[CryptoDataService] No JSON envelope, continue encryption...',
+        );
       }
     }
     if (!globalThis.crypto?.subtle) {
@@ -581,14 +593,14 @@ export default class CryptoDataService extends Service {
   }
 
   async vaultCheck() {
-    console.debug('Checking vault meta...');
+    console.debug('[CryptoDataService] Checking vault meta...');
     this.vault = this.store.peekRecord('vault', 'ppb-vault');
     if (this.vault && this.vault.vaultId) {
-      console.debug('Found vault meta!');
+      console.debug('[CryptoDataService] Found vault meta!');
       this.unlockedVaultId = this.vault.vaultId;
       this.newVaultModal = false;
     } else {
-      console.debug('No vault meta found.');
+      console.debug('[CryptoDataService] No vault meta found.');
       this.newVaultModal = true;
     }
     this.showVaultModal = true;
@@ -730,29 +742,14 @@ export default class CryptoDataService extends Service {
       return true;
     }
 
-    console.debug('Step 1...');
-
     if (this._pendingUnlockPromise) {
-      console.debug('Step A...', this._pendingUnlockPromise);
       return this._pendingUnlockPromise;
     }
-
-    console.debug('Step 2...');
-
     await this.vaultCheck();
 
-    console.debug('Step 3...');
-
     this._pendingUnlockPromise = new Promise((resolve) => {
-      console.debug('Step 4...', resolve);
       this._resolveUnlockPromise = resolve;
     });
-
-    /*if (!this.vault) {
-      console.debug('Step 5...');
-      this._resolvePendingUnlock(false);
-      return false;
-    }*/
 
     return this._pendingUnlockPromise;
   }

@@ -30,6 +30,7 @@ export default class TwitchChatService extends Service {
   @tracked scrollPosition = 0;
 
   @tracked message = '';
+  @tracked sentMessages = [];
 
   @tracked msglist = new TrackedArray();
   get messages() {
@@ -574,9 +575,33 @@ export default class TwitchChatService extends Service {
 
   @action async sendMessage() {
     if (this.message && this.chatConnected) {
-      console.log(this.message);
       await this.chatclient?.say(this.channel, this.message);
+      // Add message to the sent messages
+      this.sentMessages.unshift(this.message);
       this.message = '';
+    }
+  }
+
+  @action navigateSentMessages(event) {
+    if (this.sentMessages.length > 0) {
+      // Find position of current message
+      let index = this.sentMessages.indexOf(this.message);
+      // consider if key is ArrowUp or ArrowDown
+      if (event.key === 'ArrowUp') {
+        if (index < this.sentMessages.length - 1) {
+          this.message = this.sentMessages[index + 1];
+        } else {
+          this.message = this.sentMessages[0];
+        }
+      }
+      if (event.key === 'ArrowDown') {
+        // Find position of current message and pick the previous one
+        if (index > 0) {
+          this.message = this.sentMessages[index - 1];
+        } else {
+          this.message = this.sentMessages[this.sentMessages.length - 1];
+        }
+      }
     }
   }
 

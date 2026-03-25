@@ -16,7 +16,7 @@
     @size="md"
     as |Modal|
   >
-    <BsForm @onSubmit={{this.submitForm}} as |form|>
+    <BsForm @onSubmit={{this.submitForm}}  autoComplete="on" as |form|>
       <Modal.header @closeButton={{false}}>
         <h5 class="modal-title">{{this.title}}</h5>
       </Modal.header>
@@ -57,8 +57,8 @@
           as |el|
         >
           <el.control
-            name="current-passphrase"
-            autocomplete="current-passphrase"
+            name="passphrase"
+            autocomplete="passphrase"
             required
           />
         </form.element>

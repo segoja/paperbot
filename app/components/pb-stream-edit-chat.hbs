@@ -71,6 +71,8 @@
           placeholder="Type a message"
           class="mb-0 my-0 py-1 rounded-0 chatinput border-0 border-top border-transparent"
           readonly={{this.inputDisabled}}
+          {{on-key "ArrowUp" this.twitchChat.navigateSentMessages}}
+          {{on-key "ArrowDown" this.twitchChat.navigateSentMessages}}
         />
       </form.element>
     </BsForm>

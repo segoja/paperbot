@@ -345,11 +345,8 @@ export default class MidiService extends Service {
     if (!firstParam) return false;
 
     if (String(firstParam).toUpperCase() === 'INFO') {
-      // TODO: compose a message with allowed notes and chords in the scale
       const scale = Scale.get(`${this.key} ${this.mode}`);
-      console.debug('[MidiService] Scale:', scale);
       const message = `Scale ${this.key} ${this.formatModeLabel(this.mode)}, notes: ${scale.notes}`;
-      console.debug('[MidiService] returning message:' + message);
       return message;
     }
 
