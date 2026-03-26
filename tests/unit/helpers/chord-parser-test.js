@@ -1,17 +1,21 @@
 import { module, test } from 'qunit';
 
+import { setupTest } from 'paperbot/tests/helpers';
 import { chordParser } from 'paperbot/helpers/chord-parser';
 
-function render(content, hash = {}) {
-  return chordParser([content], hash).toString();
-}
+module('Unit | Helper | chord-parser', function (hooks) {
+  setupTest(hooks);
 
-module('Unit | Helper | chord-parser', function () {
   test('it escapes lyric markup while preserving chord markup', function (assert) {
-    let html = render('C\nlyrics <img src=x onerror=1> <b>tag</b>', {
-      key: 0,
-      mode: true,
-    });
+    let service = this.owner.lookup('service:chord-analysis');
+    let html = chordParser(
+      service,
+      ['C\nlyrics <img src=x onerror=1> <b>tag</b>'],
+      {
+        key: 0,
+        mode: true,
+      },
+    ).toString();
 
     let element = document.createElement('div');
     element.innerHTML = html;
@@ -24,8 +28,9 @@ module('Unit | Helper | chord-parser', function () {
   });
 
   test('it resets chord ids on each call', function (assert) {
-    let first = render('C G\nlyrics', { key: 0, mode: true });
-    let second = render('C G\nlyrics', { key: 0, mode: true });
+    let service = this.owner.lookup('service:chord-analysis');
+    let first = chordParser(service, ['C G\nlyrics'], { key: 0, mode: true });
+    let second = chordParser(service, ['C G\nlyrics'], { key: 0, mode: true });
 
     assert.true(first.includes('id="chordId0"'));
     assert.true(first.includes('id="chordId1"'));
@@ -35,7 +40,8 @@ module('Unit | Helper | chord-parser', function () {
   });
 
   test('it closes a trailing chord line into a complete phrase', function (assert) {
-    let html = render('C G', { key: 0, mode: true });
+    let service = this.owner.lookup('service:chord-analysis');
+    let html = chordParser(service, ['C G'], { key: 0, mode: true });
     let element = document.createElement('div');
     element.innerHTML = html;
 
