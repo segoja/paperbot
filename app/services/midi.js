@@ -15,6 +15,9 @@ export default class MidiService extends Service {
   @tracked mode = 'major';
   @tracked chordOctave = 2;
 
+  @tracked noteLength = 1500;
+  @tracked chordLength = 1500;
+
   @tracked chordsEnabled = false;
   @tracked notesEnabled = false;
   @tracked isMuted = false;
@@ -916,6 +919,9 @@ export default class MidiService extends Service {
 
   toggleMute() {
     this.isMuted = !this.isMuted;
+    if (!this.isMuted) {
+      this.stopAll();
+    }
   }
 
   toggleChords() {

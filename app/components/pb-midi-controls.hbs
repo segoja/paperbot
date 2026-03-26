@@ -1,104 +1,141 @@
   <BsForm
-    class="row g-0 bg-dark"
     @formLayout="horizontal"
     @model={{this.midi}}
     as |form|
   >
-    <BsButton
-      class="btn-sm col-auto text-truncate border rounded-0"
-      @type={{if this.noFilters "secondary" "success"}}
-      @onClick={{this.toggleMute}}
-      disabled={{(not @isConnected)}}
-      title="Toggle chords"
-    >{{svg-jar "midi" class="svg-inline--fa" width="1em" fill="white"}} Midi</BsButton>
-    <BsButton
-      class="btn-sm col-auto text-truncate border rounded-0"
-      @type={{if this.canChords "danger" "secondary"}}
-      @onClick={{this.toggleChords}}
-      disabled={{this.noFilters}}
-      title="Toggle chords"
-    >{{svg-jar "midi-chords" class="svg-inline--fa" width="1em"}} Chords</BsButton>
-    <BsButton
-      class="btn-sm col-auto text-truncate border rounded-0"
-      @type={{if this.canNotes "danger" "secondary"}}
-      @onClick={{this.toggleNotes}}
-      disabled={{this.noFilters}}
-      title="Toggle notes"
-    >{{svg-jar "midi-notes" class="svg-inline--fa" width="1em"}}  Notes</BsButton>
-    <form.element
-      @controlType="power-select"
-      @property="selectedKeyOption"
-      @selected={{this.midi.selectedKeyOption}}
-      @onChange={{this.setMidiKey}}
-      @formLayout="inline"
-      class="col border-light"
-      @allowClear={{true}}
-      @options={{this.midi.availableKeys}}
-      required
-      as |type|
-    >
-      <type.control
-        @placeholder="Select key"
-        as |option|
+    <div class="row g-0 bg-secondary">
+      <BsButton
+        class="btn-sm col-auto text-truncate border rounded-0"
+        @type={{if this.noFilters "secondary" "success"}}
+        @onClick={{this.toggleMute}}
+        disabled={{(not @isConnected)}}
+        title="Toggle chords"
+      >{{svg-jar "midi" class="svg-inline--fa" width="1em" fill="white"}} Midi</BsButton>
+      <BsButton
+        class="btn-sm col-auto text-truncate border rounded-0"
+        @type={{if this.canChords "danger" "secondary"}}
+        @onClick={{this.toggleChords}}
+        disabled={{this.noFilters}}
+        title="Toggle chords"
+      >{{svg-jar "midi-chords" class="svg-inline--fa" width="1em"}} Chords</BsButton>
+      <BsButton
+        class="btn-sm col-auto text-truncate border rounded-0"
+        @type={{if this.canNotes "danger" "secondary"}}
+        @onClick={{this.toggleNotes}}
+        disabled={{this.noFilters}}
+        title="Toggle notes"
+      >{{svg-jar "midi-notes" class="svg-inline--fa" width="1em"}}  Notes</BsButton>
+      <form.element
+        @controlType="power-select"
+        @property="selectedKeyOption"
+        @selected={{this.midi.selectedKeyOption}}
+        @onChange={{this.setMidiKey}}
+        @formLayout="inline"
+        class="col btn btn-secondary m-0 p-0 text-start border rounded-0"
+        @allowClear={{true}}
+        @options={{this.midi.availableKeys}}
+        required
+        as |type|
       >
-        {{option}}
-      </type.control>
-    </form.element>
-    <form.element
-      @controlType="power-select"
-      @property="selectedModeOption"
-      @selected={{this.midi.selectedModeOption}}
-      @onChange={{this.setMidiMode}}
-      @formLayout="inline"
-      class="col border-light"
-      @allowClear={{true}}
-      @options={{this.midi.availableModes}}
-      required
-      as |type|
-    >
-      <type.control
-        @placeholder="Select mode"
-        as |option|
+        <type.control
+          @placeholder="Select key"
+          @disabled={{(not @isConnected)}}
+          @triggerClass="border-0 rounded-0"
+          as |option|
+        >
+          {{option}}
+        </type.control>
+      </form.element>
+      <form.element
+        @controlType="power-select"
+        @property="selectedModeOption"
+        @selected={{this.midi.selectedModeOption}}
+        @onChange={{this.setMidiMode}}
+        @formLayout="inline"
+        class="col btn btn-secondary m-0 p-0 text-start border rounded-0"
+        @allowClear={{true}}
+        @options={{this.midi.availableModes}}
+        required
+        as |type|
       >
-        {{option}}
-      </type.control>
-    </form.element>
-    <form.element
-      @controlType="power-select"
-      @property="selectedChordOutputOption"
-      @selected={{this.midi.selectedChordOutputOption}}
-      @onChange={{this.setMidiChordsOutput}}
-      @formLayout="inline"
-      class="col border-light"
-      @allowClear={{true}}
-      @options={{this.midi.availableMidiOutputOptions}}
-      required
-      as |type|
-    >
-      <type.control
-        @placeholder="Midi device for chords"
-        as |option|
+        <type.control
+          @placeholder="Select mode"
+          @disabled={{(not @isConnected)}}
+          @triggerClass="border-0 rounded-0"
+          as |option|
+        >
+          {{option}}
+        </type.control>
+      </form.element>
+      <form.element
+        @controlType="power-select"
+        @property="selectedChordOutputOption"
+        @selected={{this.midi.selectedChordOutputOption}}
+        @onChange={{this.setMidiChordsOutput}}
+        @formLayout="inline"
+        class="col btn btn-secondary m-0 p-0 text-start border rounded-0"
+        @allowClear={{true}}
+        @options={{this.midi.availableMidiOutputOptions}}
+        required
+        as |type|
       >
-        {{option.label}}
-      </type.control>
-    </form.element>
-    <form.element
-      @controlType="power-select"
-      @property="selectedNoteOutputOption"
-      @selected={{this.midi.selectedNoteOutputOption}}
-      @onChange={{this.setMidiNotesOutput}}
-      @formLayout="inline"
-      class="col border-light"
-      @allowClear={{true}}
-      @options={{this.midi.availableMidiOutputOptions}}
-      required
-      as |type|
-    >
-      <type.control
-        @placeholder="Midi device for notes"
-        as |option|
+        <type.control
+          @placeholder="Midi device for chords"
+          @disabled={{(not @isConnected)}}
+          @triggerClass="border-0 rounded-0"
+          as |option|
+        >
+          {{option.label}}
+        </type.control>
+      </form.element>
+      <form.element
+        @controlType="power-select"
+        @property="selectedNoteOutputOption"
+        @selected={{this.midi.selectedNoteOutputOption}}
+        @onChange={{this.setMidiNotesOutput}}
+        @formLayout="inline"
+        class="col btn btn-secondary m-0 p-0 text-start border rounded-0"
+        @allowClear={{true}}
+        @options={{this.midi.availableMidiOutputOptions}}
+        required
+        as |type|
       >
-        {{option.label}}
-      </type.control>
-    </form.element>
+        <type.control
+          @placeholder="Midi device for notes"
+          @disabled={{(not @isConnected)}}
+          @triggerClass="border-0 rounded-0"
+          as |option|
+        >
+          {{option.label}}
+        </type.control>
+      </form.element>
+    </div>
+    <div class="form-group row g-0">
+      <div class="col-sm">
+        <div class="input-group btn-secondary row g-0 rounded-0 border-bottom border-top">
+          <span class="input-group-text col-auto border-0 rounded-0 border-end">Length (ms)</span>
+          <div class="col">
+            <Input
+              @type="range"
+              min="100"
+              step="100"
+              max="5000"
+              aria-label="Global soundboard volume"
+              @value={{this.midi.noteLength}}
+              class="slider border-0 w-100 bg-primary"
+              {{on "change" this.updateLength}}
+            />
+          </div>
+          <div class="col-auto">
+            <Input
+              @type="number"
+              @value={{this.midi.noteLength}}
+              aria-label="Global soundboard volume"
+              class="form-control col-auto border-0 border-start rounded-0"
+              {{on "change" this.updateLength}}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </BsForm>

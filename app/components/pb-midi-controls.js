@@ -60,4 +60,11 @@ export default class lightSwitchComponent extends Component {
   @action toggleMute() {
     this.midi.toggleMute();
   }
+
+  @action updateLength(event) {
+    if (!event.target.value) return;
+    console.debug('Setting length to', event.target.value);
+    this.midi.noteLength = event.target.value;
+    this.midi.chordLength = event.target.value;
+  }
 }

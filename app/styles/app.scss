@@ -770,11 +770,11 @@ svg.setlist-icon {
 .slider {
   -webkit-appearance: none;
   width: 100%;
-  background: var(--bs-form-control-disabled-bg) !important;
+  background: var(--bs-secondary-bg-subtle) !important;
   border: 1px solid #ced4da;
   outline: none;
   padding: 0px;
-  color: var(--bs-form-control-disabled-bg);
+  color: var(--bs-secondary-bg-subtle);
   opacity: 1;
   vertical-align: middle;
   -webkit-transition: 0.2s;
@@ -786,7 +786,7 @@ svg.setlist-icon {
 .slider:active,
 .slider:visited {
   opacity: 1;
-  background: var(--bs-form-control-disabled-bg) !important;
+  background: var(--bs-secondary-bg-subtle) !important;
   box-shadow: none !important;
 }
 
@@ -1400,4 +1400,8 @@ main * {
 div.chat-input.tw-block.tw-pd-b-1.tw-pd-x-1 {
   display: none !important;
   background-color: red !important;
+}
+
+.ember-power-select-trigger[aria-disabled=true] {
+    background-color: rgba(128, 128, 128, 0.25) !important;
 }
