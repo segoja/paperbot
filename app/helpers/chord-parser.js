@@ -1,201 +1,128 @@
-import Helper from '@ember/component/helper';
+import { helper } from '@ember/component/helper';
 import { htmlSafe } from '@ember/template';
 import { isEmpty } from '@ember/utils';
 import * as Transposer from 'chord-transposer';
 
-export default class ChordParser extends Helper {
-  idCounter = 0;
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-  compute(params, hash) {
-    // return nothing when params is empty
-    if (isEmpty(params[0])) {
+function renderChordMode(content, key) {
+  let transposed = Transposer.transpose(content);
+  let steps = Number(key);
+
+  if (!Number.isNaN(steps)) {
+    transposed = transposed.up(steps);
+  }
+
+  let html = '';
+  let pendingChordLine = null;
+  let nextChordId = 0;
+
+  transposed.tokens.forEach((line) => {
+    let hasChord = false;
+    let hasContent = false;
+    let lineHtml = line
+      .map((token) => {
+        if (typeof token === 'object' && token !== null) {
+          hasChord = true;
+          hasContent = true;
+
+          let chordHtml = `<strong class="chord" id="chordId${nextChordId}">${escapeHtml(
+            token.toString(),
+          )}</strong>`;
+          nextChordId += 1;
+          return chordHtml;
+        }
+
+        let text = String(token);
+        hasContent ||= text.trim() !== '';
+        return escapeHtml(text);
+      })
+      .join('');
+
+    if (!hasContent) {
+      if (pendingChordLine !== null) {
+        html += `<div class="phrase"><div class="chords-row">${pendingChordLine}</div></div>`;
+        pendingChordLine = null;
+      }
+
+      html += '<div class="empty-row"><br></div>';
       return;
     }
 
-    let content = params[0];
-    content = content.replace(/\(/g, '�(�');
-    content = content.replace(/\)/g, '�)�');
-    content = content.replace(/\[/g, '�[�');
-    content = content.replace(/\]/g, '�]�');
-    content = content.replace(/\{/g, '�{�');
-    content = content.replace(/\}/g, '�}�');
-    content = content.replace(/-/g, '�-�');
-    content = content.replace(/,/g, '�,�');
-    content = content.replace(/\./g, '�.�');
-    content = content.replace(/\*/g, '�*�');
-    content = content.replace(/\+/g, '�+�');
-    content = content.replace(/\n/g, '�\n�');
-    content = content.replace(/\r/g, '�\r�');
-    content = content.replace(/�/g, ' � ');
-
-    let key = hash.key;
-    let mode = hash.mode;
-    let processed = '';
-
-    try {
-      content = Transposer.transpose(content);
-
-      if (!isNaN(key)) {
-        content = content.up(key);
+    if (hasChord) {
+      if (pendingChordLine !== null) {
+        html += `<div class="phrase"><div class="chords-row">${pendingChordLine}</div></div>`;
       }
 
-      processed = '';
-      if (mode) {
-        if (content.tokens) {
-          content.tokens.map((token) => {
-            if (token.length > 1) {
-              token.map((item) => {
-                if (typeof item === 'object') {
-                  /*let fullName = '';
-                  if (item.root) {
-                    fullName += item.root;
-                  }
-
-                  if (item.suffix) {
-                    fullName += item.suffix;
-                  }
-
-                  if (item.bass) {
-                    fullName += item.bass;
-                  }*/
-
-                  // console.log(chord);
-                  item.root = '<strong>' + item.root;
-                  item.suffix = item.suffix + '</strong>';
-                  if (item.bass) {
-                    item.bass = '<strong>' + item.bass + '</strong>';
-                  }
-                }
-              });
-            }
-          });
-        }
-        // console.log(content);
-        content = content.toString();
-        content = content.replace(/\s�\s\r\s�\s\n\s�\s?/g, '\n');
-        content = content.replace(/\s�\s\n\s�\s\s\s�\s\n\s�\s/g, '\n\n');
-        content = content.replace(/\s�\s\n\s�\s/g, '<br>\n');
-        let lines = content.split('<br>\n');
-
-        let isPhrase = false;
-
-        this.idcounter = 0;
-        lines.forEach((line) => {
-          if (line.replace(/\s/g, '')) {
-            if (line.includes('<strong>') && line.includes('</strong>')) {
-              if (!isPhrase) {
-                isPhrase = true;
-                processed += '<div class="phrase"><div class="chords-row">';
-                // console.log(line);
-                processed += this.chordEnhancer(line);
-                processed += '</div>';
-              } else {
-                processed +=
-                  '</div><div class="phrase"><div class="chords-row">';
-                // console.log(line);
-                processed += this.chordEnhancer(line);
-                processed += '</div></div>';
-                isPhrase = false;
-              }
-            } else {
-              if (isPhrase) {
-                isPhrase = false;
-                processed += '<div class="lyrics-row">' + line + '</div>';
-                processed += '</div>';
-              } else {
-                processed += '<div class="phrase">';
-                processed += '<div class="lyrics-row">' + line + '</div>';
-                processed += '</div>';
-              }
-            }
-          } else {
-            if (isPhrase) {
-              isPhrase = false;
-              processed += '</div><div class="empty-row"><br></div>';
-            } else {
-              processed += '<div class="empty-row"><br></div>';
-            }
-          }
-        });
-      } else {
-        processed = content.toString();
-      }
-      processed = processed.replace(/\s�\s/g, '');
-      processed = processed.replace(/�/g, '');
-      return htmlSafe(processed);
-    } catch (exceptionVar) {
-      if (mode) {
-        console.debug('No chords detected, using basic parsing.');
-
-        content = params[0].toString();
-        content = content.replace(/\r\n?/g, '\n');
-        content = content.replace(/\n\s\n/g, '\n\n');
-        content = content.replace(/\n/g, '<br>\n');
-        // console.log(content);
-        let lines = content.split('<br>\n');
-        // console.debug(lines);
-
-        // console.debug(content);
-        //content = content.replace(regex, `<strong>$1</strong>`);*/
-        lines.forEach((line) => {
-          if (line.replace(/\s/g, '')) {
-            processed += '<div>' + line.replace(/\s/g, '&nbsp') + '</div>';
-          } else {
-            processed += '<div><br></div>';
-          }
-        });
-      } else {
-        processed = params[0].toString();
-      }
-      return htmlSafe(processed);
+      pendingChordLine = lineHtml;
+      return;
     }
+
+    if (pendingChordLine !== null) {
+      html += `<div class="phrase"><div class="chords-row">${pendingChordLine}</div><div class="lyrics-row">${lineHtml}</div></div>`;
+      pendingChordLine = null;
+      return;
+    }
+
+    html += `<div class="phrase"><div class="lyrics-row">${lineHtml}</div></div>`;
+  });
+
+  if (pendingChordLine !== null) {
+    html += `<div class="phrase"><div class="chords-row">${pendingChordLine}</div></div>`;
   }
 
-  chordEnhancer(line) {
-    // let chordLine = line.replace(/\s/g, '&nbsp');
-    let chordLines = line.split('<strong>');
-    // console.log(chordLines);
-    let classified = [];
-    if (chordLines.length > 0) {
-      chordLines.forEach((chord) => {
-        let niceLine = '';
-        // console.log(chord.match(/\<\/strong\>/g));
-        if (chord.includes('</strong>')) {
-          if (chord.match(/<\/strong>/g).length > 1) {
-            let subChords = chord.split('<strong>');
-            subChords.forEach((subchord) => {
-              let idLine =
-                subchord.replace(
-                  /<\/strong>/g,
-                  '</strong><strong class="chord" id="chordId' +
-                    this.idCounter +
-                    '">',
-                ) + '</strong>';
-              // console.log(subchord);
-              this.idCounter++;
-              classified.push(idLine);
-            });
-          } else {
-            //let idLine = chord.replace(/\<strong\>/g, '<strong class="chord" id="chordId'+this.idCounter+'">')+'</strong>';
-            // console.log(chord);
-            let idLine =
-              '<strong class="chord" id="chordId' +
-              this.idCounter +
-              '">' +
-              chord +
-              '</strong>';
-            this.idCounter++;
-            niceLine += idLine;
-          }
-        } else {
-          niceLine += chord;
+  return htmlSafe(html);
+}
+
+function renderPlainMode(content) {
+  return htmlSafe(
+    content
+      .split('\n')
+      .map((line) => {
+        if (line.trim() === '') {
+          return '<div class="empty-row"><br></div>';
         }
-        classified.push(niceLine);
-      });
-      // console.debug(classified);
-      return classified.join('').toString();
-    } else {
-      return line.replace(/<strong>/g, '<strong class="chord">');
+
+        return `<div class="phrase"><div class="lyrics-row">${escapeHtml(line)}</div></div>`;
+      })
+      .join(''),
+  );
+}
+
+export function chordParser([content], hash = {}) {
+  if (isEmpty(content)) {
+    return;
+  }
+
+  let normalizedContent = String(content).replace(/\r\n?/g, '\n');
+
+  try {
+    if (!hash.mode) {
+      let transposed = Transposer.transpose(normalizedContent);
+      let steps = Number(hash.key);
+
+      if (!Number.isNaN(steps)) {
+        transposed = transposed.up(steps);
+      }
+
+      return transposed.toString();
     }
+
+    return renderChordMode(normalizedContent, hash.key);
+  } catch {
+    if (!hash.mode) {
+      return normalizedContent;
+    }
+
+    return renderPlainMode(normalizedContent);
   }
 }
+
+export default helper(chordParser);
