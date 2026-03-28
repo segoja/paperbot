@@ -1,0 +1,120 @@
+
+<div class="col-auto">
+  <div class="btn-group">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      {{on "click" (fn (mut @isEditing) (not @isEditing))}}
+      disabled={{not @currentSong}}
+      title="Edit lyrics"
+    ><FaIcon @icon={{if @isEditing "eye" "pen"}} /></button>
+  </div>
+</div>
+<div class="col-auto">
+  <div class="row g-0">
+    <div class="col-auto">
+      <BsButton
+        @type="secondary btn-responsive"
+        @onClick={{this.autoAdjust}}
+        title="Auto adjust"
+      >
+        <FaIcon
+          @icon={{if this.calculating "spinner" "wand-magic-sparkles"}}
+          @spin={{this.calculating}}
+        />
+      </BsButton>
+    </div>
+    <div class="col-auto">
+      <button
+        type="button"
+        class={{if
+          @currentSong.viewMode
+          "btn btn-primary btn-responsive"
+          "btn btn-secondary btn-responsive"
+        }}
+        {{on "click" this.modeSwitch}}
+        title="View mode"
+      ><FaIcon @icon="paragraph" /></button>
+    </div>
+    <div class="col-auto">
+      <div class="btn-group btn-group-responsive">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          {{on "click" this.downKey}}
+          title="Transpose down"
+        ><FaIcon @icon="down-long" /></button>
+        <span
+          class="btn btn-secondary disabled text-white"
+        >{{@currentSong.transSteps}}</span>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          {{on "click" this.upKey}}
+          title="Transpose up"
+        ><FaIcon @icon="up-long" /></button>
+      </div>
+    </div>
+    <div class="col-auto">
+      <div class="btn-group btn-group-responsive">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          {{on "click" this.resetZoom}}
+          title="Reset zoom"
+        ><FaIcon @icon="undo" /></button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          {{on "click" this.subZoom}}
+          title="Zoom out"
+        ><FaIcon @icon="search-minus" /></button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          {{on "click" this.addZoom}}
+          title="Zoom in"
+        ><FaIcon @icon="search-plus" /></button>
+      </div>
+    </div>
+    <div class="col-auto">
+      <div class="btn-group btn-group-responsive">
+        <button
+          type="button"
+          class="btn btn-secondary
+            {{if (eq @currentSong.columns 0) 'active'}}"
+          {{on "click" this.autoColumn}}
+          title="Reset columns"
+        >
+          <FaIcon @icon="columns" />
+          {{if
+            (gt @currentSong.columns 0)
+            @currentSong.columns
+          }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary px-1"
+          {{on "click" this.lessColumn}}
+          title="Less columns"
+        ><FaIcon @icon="minus" /></button>
+        <button
+          type="button"
+          class="btn btn-secondary px-1"
+          {{on "click" this.moreColumn}}
+          title="More columns"
+        ><FaIcon @icon="plus" /></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{on-key "ctrl+shift+KeyE" (fn (mut @isEditing) (not @isEditing))}}
+
+{{on-key "alt+ArrowUp" this.upKey}}
+{{on-key "alt+ArrowDown" this.downKey}}
+{{on-key "ctrl+KeyM" this.autoAdjust}}
+{{on-key "ctrl+ArrowUp" this.addZoom}}
+{{on-key "ctrl+ArrowDown" this.subZoom}}
+{{on-key "ctrl+ArrowLeft" this.lessColumn}}
+{{on-key "ctrl+ArrowRight" this.moreColumn}}

@@ -1403,6 +1403,13 @@ main * {
   border-color: #4c455d;
 }
 
+@media (max-width: 576px) {
+  .btn-responsive, .btn-group.btn-group-responsive > .btn {
+    @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-border-radius-sm);
+  }
+}
+
+
 div.chat-input.tw-block.tw-pd-b-1.tw-pd-x-1 {
   display: none !important;
   background-color: red !important;

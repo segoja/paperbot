@@ -21,7 +21,8 @@ export default class IndexRoute extends Route {
           this.router.transitionTo('songs.index');
       }
     } else {
-      this.router.transitionTo('songs.index');
+      // this.router.transitionTo('songs.index');
+      this.router.transitionTo('reader');
     }
   }
 }

@@ -28,16 +28,16 @@
 <div
   class="row h-100 flex-fill m-0 p-0"
   {{did-insert this.setActiveSong}}
-  {{did-update this.setActiveSong this.queueHandler.pendingSongs}}
+  {{did-update this.setActiveSong this.queueHandler.firstPendingRequest.id}}
   {{did-update this.setActiveSong this.selected}}
 >
   <div class="col-12 h-100 flex-fill p-0 m-0">
     {{! song listing }}
     <div class="card h-100 flex-fill rounded-0">
       <div class="card-header px-2">
-        <div class="row g-0 g-md-1">
-          <div class="col">
-            <div class="input-group g-0">
+        <div class="row g-1 justify-content-end">
+          <div class="col col-sm-12 col-lg">
+            <div class="input-group flex-nowrap">
               <div class="col">
                 <PowerSelect
                   @searchEnabled={{true}}
@@ -84,113 +84,24 @@
                   />
                 </BsButton>
               </div>
-              <div class="col-auto">
-                <button
-                  type="button"
-                  class="btn btn-secondary col-auto ms-1"
-                  {{on "click" this.toggleEdit}}
-                  disabled={{not this.currentSong}}
-                  title="Edit lyrics"
-                ><FaIcon @icon={{if this.isEditing "eye" "pen"}} /></button>
-              </div>
             </div>
           </div>
-          <div class="d-lg-none col-12 col-lg-auto text-end mt-2">
-            <div class="row g-0 g-md-1 me-auto float-end">
+          <PbReaderToolbar
+            @currentSong={{this.currentSong}}
+            @isEditing={{this.isEditing}}
+          />
+          <div class="col-auto text-end">
+            <div class="row g-0">
               <BsButton
-                @type="secondary btn-sm col-auto"
-                @onClick={{this.autoAdjust}}
-                title="Auto adjust"
-              >
-                <FaIcon
-                  @icon={{if this.calculating "spinner" "wand-magic-sparkles"}}
-                  @spin={{this.calculating}}
-                />
-              </BsButton>
-              <button
-                type="button"
-                class={{if
-                  this.currentSong.viewMode
-                  "btn btn-primary btn-sm col-auto"
-                  "btn btn-secondary btn-sm col-auto"
-                }}
-                {{on "click" this.modeSwitch}}
-                title="View mode"
-              ><FaIcon @icon="paragraph" /></button>
-              <div class="btn-group btn-group-sm col-auto">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.downKey}}
-                  title="Transpose down"
-                ><FaIcon @icon="down-long" /></button>
-                <span
-                  class="btn btn-secondary disabled text-white"
-                >{{this.currentSong.transSteps}}</span>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.upKey}}
-                  title="Transpose up"
-                ><FaIcon @icon="up-long" /></button>
-              </div>
-              <div class="btn-group btn-group-sm col-auto">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.resetZoom}}
-                  title="Reset zoom"
-                ><FaIcon @icon="undo" /></button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.subZoom}}
-                  title="Zoom out"
-                ><FaIcon @icon="search-minus" /></button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.addZoom}}
-                  title="Zoom in"
-                ><FaIcon @icon="search-plus" /></button>
-              </div>
-              <div class="btn-group btn-group-sm col-auto">
-                <button
-                  type="button"
-                  class="btn btn-secondary
-                    {{if (eq this.currentSong.columns 0) 'active'}}"
-                  {{on "click" this.autoColumn}}
-                  title="Reset columns"
-                >
-                  <FaIcon @icon="columns" />
-                  {{if
-                    (gt this.currentSong.columns 0)
-                    this.currentSong.columns
-                  }}
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary px-1"
-                  {{on "click" this.lessColumn}}
-                  title="Less columns"
-                ><FaIcon @icon="minus" /></button>
-                <button
-                  type="button"
-                  class="btn btn-secondary px-1"
-                  {{on "click" this.moreColumn}}
-                  title="More columns"
-                ><FaIcon @icon="plus" /></button>
-              </div>
-              <BsButton
-                @type="{{this.btnState}} btn-sm col-auto"
-                disabled={{not this.currentSong.hasDirtyAttributes}}
+                @type="{{this.btnState}} btn-responsive col-auto"
+                disabled={{this.canSave}}
                 @onClick={{this.doneEditing}}
                 title="Save song"
               >
                 <FaIcon @icon="save" @pulse={{this.saving}} />
               </BsButton>
               <BsButton
-                @type="info btn-sm col-auto ms-0 ms-md-1 ps-0 ps-md-1"
+                @type="info btn-responsive col-auto ms-0 ms-md-1 ps-0 ps-md-1"
                 @onClick={{this.toggleSetlist}}
                 title="Queue/Setlist manager"
               >
@@ -218,135 +129,9 @@
               </BsButton>
             </div>
           </div>
-          <div class="d-none d-lg-block col-lg-auto">
-            <div class="row g-0 g-md-1">
-              <BsButton
-                @type="secondary col-auto"
-                @onClick={{this.autoAdjust}}
-                title="Auto adjust"
-              >
-                <FaIcon
-                  @icon={{if this.calculating "spinner" "wand-magic-sparkles"}}
-                  @spin={{this.calculating}}
-                />
-              </BsButton>
-              <button
-                type="button"
-                class={{if
-                  this.currentSong.viewMode
-                  "btn btn-primary col-auto"
-                  "btn btn-secondary col-auto"
-                }}
-                {{on "click" this.modeSwitch}}
-                title="View mode"
-              ><FaIcon @icon="paragraph" /></button>
-              <div class="btn-group col-auto">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.downKey}}
-                  title="Transpose down"
-                ><FaIcon @icon="down-long" /></button>
-                <span
-                  class="btn btn-secondary disabled text-white"
-                >{{this.currentSong.transSteps}}</span>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.upKey}}
-                  title="Transpose up"
-                ><FaIcon @icon="up-long" /></button>
-              </div>
-              <div class="btn-group col-auto">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.resetZoom}}
-                  title="Reset zoom"
-                ><FaIcon @icon="undo" /></button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.subZoom}}
-                  title="Zoom out"
-                ><FaIcon @icon="search-minus" /></button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  {{on "click" this.addZoom}}
-                  title="Zoom in"
-                ><FaIcon @icon="search-plus" /></button>
-              </div>
-              <div class="btn-group col-auto">
-                <button
-                  type="button"
-                  class="btn btn-secondary
-                    {{if (eq this.currentSong.columns 0) 'active'}}"
-                  {{on "click" this.autoColumn}}
-                  title="Reset columns"
-                >
-                  <FaIcon @icon="columns" />
-                  {{if
-                    (gt this.currentSong.columns 0)
-                    this.currentSong.columns
-                  }}
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary px-1"
-                  {{on "click" this.lessColumn}}
-                  title="Less columns"
-                ><FaIcon @icon="minus" /></button>
-                <button
-                  type="button"
-                  class="btn btn-secondary px-1"
-                  {{on "click" this.moreColumn}}
-                  title="More columns"
-                ><FaIcon @icon="plus" /></button>
-              </div>
-              <BsButton
-                @type="{{this.btnState}}  col-auto"
-                @class={{this.currentSong.hasDirtyAttributes
-                  "btn-warning pulse"
-                }}
-                disabled={{not this.currentSong.hasDirtyAttributes}}
-                @onClick={{this.doneEditing}}
-                title="Save song"
-              >
-                <FaIcon @icon="save" @pulse={{this.saving}} />
-              </BsButton>
-              <BsButton
-                @type="info col-auto ms-0 ms-md-1 ps-0 ps-md-1"
-                @onClick={{this.toggleSetlist}}
-                title="Queue/Setlist manager"
-              >
-                <div class="row g-0">
-                  <div class="col-auto">
-                    {{svg-jar
-                      (if this.isSetlist "setlist-close" "setlist-open")
-                      class="setlist-icon align-middle ms-1"
-                    }}
-                  </div>
-                  <div class="col-auto">
-                    {{#unless this.isSetlist}}
-                      {{#if this.queueHandler.pendingSongs}}
-                        <span class="position-relative opacity-75">
-                          <small
-                            class="position-absolute top-0 start-100 translate-middle badge px-1 py-0 border border-danger ms-2 bg-danger"
-                          >
-                            {{this.queueHandler.pendingSongs.length}}
-                          </small>
-                        </span>
-                      {{/if}}
-                    {{/unless}}
-                  </div>
-                </div>
-              </BsButton>
-            </div>
-          </div>
         </div>
       </div>
-      {{#if this.isEditing}}
+      {{#if (and this.currentSong this.isEditing)}}
         <div class="card-body mx-0 p-0 flex-fill" id="bodycontainer">
           <div class="row flex-fill h-100">
             <div class="col-12 flex-fill px-4">
@@ -379,7 +164,7 @@
         >
           <div class="row m-0 flex-fill mh-100 listframe-reader">
             {{#if this.restore}}
-              {{#if this.currentSong}}
+              {{#if this.currentSong.id}}
                 <style>
                   .fancy-columns-pre, .fancy-columns { font-size:
                   {{this.currentSong.zoomLevel}}em; column-count:
@@ -387,11 +172,7 @@
                 </style>
                 {{#if this.currentSong.viewMode}}
                   <div class="fancy-columns">
-                    {{chord-parser
-                      this.currentSong.lyrics
-                      key=0
-                      mode=this.currentSong.viewMode
-                    }}
+                    {{this.content}}
                   </div>
                 {{else}}
                   <div class="fancy-columns-pre">
@@ -406,7 +187,7 @@
         </div>
       {{/if}}
       <div class="card-footer py-0 my-0 px-2">
-        <PbKeyInfo />
+        <PbKeyInfo @analysis={{this.keyAnalysis}} />
       </div>
     </div>
   </div>
@@ -424,15 +205,7 @@
 {{on-key "ctrl+Comma" this.queueHandler.prevSong}}
 {{on-key "ctrl+KeyL" this.togglePlaying}}
 
-{{on-key "ctrl+shift+KeyE" this.toggleEdit}}
 {{on-key "ctrl+alt+KeyS" this.doneEditing}}
 
-{{on-key "alt+ArrowUp" this.upKey}}
-{{on-key "alt+ArrowDown" this.downKey}}
-{{on-key "ctrl+KeyM" this.autoAdjust}}
-{{on-key "ctrl+ArrowUp" this.addZoom}}
-{{on-key "ctrl+ArrowDown" this.subZoom}}
-{{on-key "ctrl+ArrowLeft" this.lessColumn}}
-{{on-key "ctrl+ArrowRight" this.moreColumn}}
 {{on-key "ctrl+KeyQ" this.queueHandler.modPressed event="keypress"}}
 {{on-key "ctrl+KeyQ" this.queueHandler.modNotPressed event="keyup"}}

@@ -73,6 +73,10 @@ export default class QueueHandlerService extends Service {
   get pendingSongs() {
     return this.arrangedAscQueue.filter((request) => !request.processed);
   }
+  get firstPendingRequest() {
+    if (this.pendingSongs.length === 0) return null;
+    return this.pendingSongs[0];
+  }
 
   @action async nextPosition() {
     let positioned = this.pendingSongs.filter(
@@ -570,7 +574,7 @@ export default class QueueHandlerService extends Service {
     <title>Song queue</title>
     <style>
       .chroma { background-color: ${chroma}!important; }
-      ${styles}      
+      ${styles}
     </style>
   </head>
   <body class="bg-transparent chroma" style="overflow-y: hidden;">

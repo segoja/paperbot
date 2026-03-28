@@ -14,6 +14,7 @@ export function chordParser(chordAnalysis, [content], hash = {}) {
     return analysis.transposedText;
   }
 
+  console.debug('[ChordParserHelper] updating...');
   return htmlSafe(chordAnalysis.renderChordMode(analysis));
 }
 
