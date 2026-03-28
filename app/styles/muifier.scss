@@ -1,0 +1,344 @@
+/* bootstrap-mui-ish-themes.css */
+
+/* =============================
+   Shared base
+============================= */
+:root,
+[data-bs-theme="light"],
+[data-bs-theme="dark"] {
+  --app-font-sans: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* shape */
+  --app-radius-sm: 8px;
+  --app-radius-md: 10px;
+  --app-radius-lg: 14px;
+
+  /* elevation */
+  --app-shadow-1:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+
+  --app-shadow-2:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.08);
+
+  /* transitions */
+  --app-transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.08s ease;
+}
+
+/* =============================
+   Light theme
+============================= */
+[data-bs-theme="light"] {
+  --bs-body-font-family: var(--app-font-sans);
+  --bs-body-font-size: 0.95rem;
+  --bs-body-line-height: 1.5;
+
+  --app-surface: #ffffff;
+  --app-surface-2: #f8f9fa;
+  --app-surface-3: #f1f3f5;
+
+  --app-border: var(--bs-border-color);
+  --app-border-strong: #cfd4da;
+
+  --app-text: var(--bs-body-color);
+  --app-text-muted: #6c757d;
+  --app-text-soft: #adb5bd;
+
+  --app-hover: rgba(var(--bs-primary-rgb), 0.08);
+  --app-focus-ring: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.18);
+
+  --app-navbar-bg: rgba(255, 255, 255, 0.82);
+
+  --app-btn-primary-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* =============================
+   Dark theme
+============================= */
+[data-bs-theme="dark"] {
+  --bs-body-font-family: var(--app-font-sans);
+  --bs-body-font-size: 0.95rem;
+  --bs-body-line-height: 1.5;
+
+  --app-surface: #212529;
+  --app-surface-2: #2b3035;
+  --app-surface-3: #343a40;
+
+  --app-border: var(--bs-border-color);
+  --app-border-strong: #495057;
+
+  --app-text: var(--bs-body-color);
+  --app-text-muted: #adb5bd;
+  --app-text-soft: #6c757d;
+
+  --app-hover: rgba(var(--bs-primary-rgb), 0.15);
+  --app-focus-ring: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.25);
+
+  --app-navbar-bg: rgba(33, 37, 41, 0.82);
+
+  --app-btn-primary-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 2px 10px rgba(var(--bs-primary-rgb), 0.22);
+}
+
+/* =============================
+   Global
+============================= */
+html,
+body {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* =============================
+   Surfaces
+============================= */
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.popover,
+.accordion-item {
+  background: var(--app-surface);
+  color: var(--app-text);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-1);
+}
+
+.card-header,
+.modal-header,
+.modal-footer,
+.dropdown-divider,
+.list-group-item,
+.accordion-button,
+.accordion-body {
+  border-color: var(--app-border);
+}
+
+/* =============================
+   Buttons
+============================= */
+.btn {
+  border-radius: var(--app-radius-md);
+  font-weight: 500;
+  transition: var(--app-transition);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  border: none;
+  box-shadow: var(--app-btn-primary-shadow);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  box-shadow: var(--app-btn-primary-shadow);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background: rgba(var(--bs-primary-rgb), 0.1);
+  color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.btn-light,
+.btn-dark {
+  border-color: var(--app-border);
+}
+
+/* =============================
+   Forms
+============================= */
+.form-control,
+.form-select,
+.input-group-text {
+  min-height: 44px;
+  background: var(--app-surface);
+  color: var(--app-text);
+  border: 1px solid var(--app-border-strong);
+  border-radius: var(--app-radius-md);
+  box-shadow: none;
+  transition: var(--app-transition);
+}
+
+.form-control::placeholder {
+  color: var(--app-text-soft);
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: var(--app-text-muted);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--app-surface);
+  color: var(--app-text);
+  border-color: var(--bs-primary);
+  box-shadow: var(--app-focus-ring);
+}
+
+.input-group-text {
+  background: var(--app-surface-2);
+}
+
+.form-check-input {
+  border-color: var(--app-border-strong);
+}
+
+.form-check-input:focus {
+  box-shadow: var(--app-focus-ring);
+}
+
+.form-floating > .form-control,
+.form-floating > .form-select {
+  height: calc(3.75rem + 2px);
+  min-height: calc(3.75rem + 2px);
+}
+
+/* =============================
+   Navbar
+============================= */
+.navbar {
+  background: var(--app-navbar-bg) !important;
+  border-bottom: 1px solid var(--app-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+}
+
+.navbar,
+.navbar .nav-link,
+.navbar .navbar-brand,
+.navbar .navbar-text {
+  color: var(--app-text);
+}
+
+/* =============================
+   Dropdowns
+============================= */
+.dropdown-menu {
+  padding: 0.5rem;
+}
+
+.dropdown-item {
+  color: var(--app-text);
+  border-radius: var(--app-radius-sm);
+  padding: 0.55rem 0.75rem;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: var(--app-hover);
+  color: var(--app-text);
+}
+
+/* =============================
+   Tables
+============================= */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--app-text);
+  --bs-table-border-color: var(--app-border);
+  vertical-align: middle;
+}
+
+.table thead th {
+  color: var(--app-text-muted);
+  font-weight: 600;
+  border-bottom-color: var(--app-border);
+}
+
+.table tbody tr {
+  background: var(--app-surface);
+}
+
+.table tbody tr + tr td {
+  border-top-color: var(--app-border);
+}
+
+/* =============================
+   List groups
+============================= */
+.list-group {
+  border-radius: var(--app-radius-lg);
+  overflow: hidden;
+}
+
+.list-group-item {
+  background: var(--app-surface);
+  color: var(--app-text);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+/* =============================
+   Accordion
+============================= */
+.accordion {
+  --bs-accordion-bg: var(--app-surface);
+  --bs-accordion-color: var(--app-text);
+  --bs-accordion-border-color: var(--app-border);
+  --bs-accordion-btn-bg: var(--app-surface);
+  --bs-accordion-btn-color: var(--app-text);
+  --bs-accordion-active-bg: var(--app-surface-2);
+  --bs-accordion-active-color: var(--app-text);
+}
+
+/* =============================
+   Alerts / badges
+============================= */
+.alert {
+  border-radius: 12px;
+}
+
+.badge {
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* =============================
+   Focus consistency
+============================= */
+.btn:focus,
+.btn:focus-visible,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus,
+.accordion-button:focus {
+  box-shadow: var(--app-focus-ring);
+}
+
+/* =============================
+   Optional container spacing
+============================= */
+.container,
+.container-fluid {
+  --bs-gutter-x: 1.5rem;
+}

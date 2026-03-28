@@ -2,8 +2,14 @@
 
 @import "bootstrap/scss/_variables.scss";
 @import "ember-power-select";
+/* @import "muifier.scss";
+@import "16bits.scss";*/
 
 $enable-responsive-font-sizes: true;
+
+[data-bs-theme="dark"] {
+  --bs-info-bg-subtle: #1b2a3a;
+}
 
 html,
 body {

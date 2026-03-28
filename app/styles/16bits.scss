@@ -1,0 +1,433 @@
+/* bootstrap-steam2005-ish-pixel-edges.css */
+
+/* =============================
+   Base
+============================= */
+:root,
+[data-bs-theme="light"],
+[data-bs-theme="dark"] {
+  --app-font-sans: Tahoma, Verdana, Arial, sans-serif;
+  --app-font-body: Tahoma, Verdana, Arial, sans-serif;
+
+  --app-radius-step: 4px;
+  --app-radius-step-lg: 6px;
+
+  --app-border-color: rgba(0, 0, 0, 0.28);
+  --app-border-color-strong: rgba(0, 0, 0, 0.4);
+  --app-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --app-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+
+  --app-focus-ring: 0 0 0 2px rgba(var(--bs-primary-rgb), 0.28);
+  --app-hover: rgba(var(--bs-primary-rgb), 0.10);
+  --app-active: rgba(var(--bs-primary-rgb), 0.16);
+
+  --app-transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease,
+    box-shadow 0.12s ease,
+    transform 0.06s ease;
+}
+
+[data-bs-theme="dark"] {
+  --app-border-color: rgba(255, 255, 255, 0.10);
+  --app-border-color-strong: rgba(255, 255, 255, 0.18);
+  --app-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --app-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* =============================
+   Typography
+============================= */
+body {
+  font-family: var(--app-font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.navbar-brand,
+.btn,
+.dropdown-header,
+.card-header,
+.modal-title,
+.accordion-button {
+  font-family: var(--app-font-sans);
+}
+
+/* =============================
+   Pixel-corner helpers
+============================= */
+.pixel-corners-sm,
+.pixel-corners-md,
+.pixel-corners-lg,
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.popover,
+.accordion-item,
+.list-group,
+.btn,
+.form-control,
+.form-select,
+.input-group-text,
+.page-link,
+.nav-tabs .nav-link,
+.nav-pills .nav-link,
+.badge,
+.alert,
+.progress,
+.navbar {
+  border-radius: 0;
+}
+
+.pixel-corners-sm,
+.btn,
+.form-control,
+.form-select,
+.input-group-text,
+.page-link,
+.badge {
+  clip-path: polygon(
+    0 3px,
+    1px 3px,
+    1px 1px,
+    3px 1px,
+    3px 0,
+    calc(100% - 3px) 0,
+    calc(100% - 3px) 1px,
+    calc(100% - 1px) 1px,
+    calc(100% - 1px) 3px,
+    100% 3px,
+    100% calc(100% - 3px),
+    calc(100% - 1px) calc(100% - 3px),
+    calc(100% - 1px) calc(100% - 1px),
+    calc(100% - 3px) calc(100% - 1px),
+    calc(100% - 3px) 100%,
+    3px 100%,
+    3px calc(100% - 1px),
+    1px calc(100% - 1px),
+    1px calc(100% - 3px),
+    0 calc(100% - 3px)
+  );
+}
+
+.pixel-corners-md,
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.popover,
+.accordion-item,
+.list-group,
+.alert,
+.progress,
+.navbar {
+  clip-path: polygon(
+    0 4px,
+    1px 4px,
+    1px 2px,
+    2px 2px,
+    2px 1px,
+    4px 1px,
+    4px 0,
+    calc(100% - 4px) 0,
+    calc(100% - 4px) 1px,
+    calc(100% - 2px) 1px,
+    calc(100% - 2px) 2px,
+    calc(100% - 1px) 2px,
+    calc(100% - 1px) 4px,
+    100% 4px,
+    100% calc(100% - 4px),
+    calc(100% - 1px) calc(100% - 4px),
+    calc(100% - 1px) calc(100% - 2px),
+    calc(100% - 2px) calc(100% - 2px),
+    calc(100% - 2px) calc(100% - 1px),
+    calc(100% - 4px) calc(100% - 1px),
+    calc(100% - 4px) 100%,
+    4px 100%,
+    4px calc(100% - 1px),
+    2px calc(100% - 1px),
+    2px calc(100% - 2px),
+    1px calc(100% - 2px),
+    1px calc(100% - 4px),
+    0 calc(100% - 4px)
+  );
+}
+
+/* =============================
+   Panels and surfaces
+   No cambiamos el fondo de Bootstrap
+============================= */
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.toast,
+.popover,
+.accordion-item,
+.list-group,
+.navbar,
+.table {
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-highlight), var(--app-shadow);
+}
+
+/* Ajuste de separadores internos */
+.card-header,
+.card-footer,
+.modal-header,
+.modal-footer,
+.dropdown-divider,
+.list-group-item,
+.accordion-button,
+.accordion-body {
+  border-color: var(--app-border-color);
+}
+
+/* =============================
+   Buttons
+============================= */
+.btn {
+  border-width: 1px;
+  font-weight: 700;
+  box-shadow: var(--app-highlight), 0 1px 1px rgba(0, 0, 0, 0.16);
+  transition: var(--app-transition);
+}
+
+.btn:hover {
+  transform: translateY(1px);
+}
+
+.btn:active,
+.btn.active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.18);
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info,
+.btn-dark,
+.btn-light {
+  border-color: var(--app-border-color-strong);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-success:hover,
+.btn-outline-success:focus,
+.btn-outline-danger:hover,
+.btn-outline-danger:focus,
+.btn-outline-warning:hover,
+.btn-outline-warning:focus,
+.btn-outline-info:hover,
+.btn-outline-info:focus,
+.btn-outline-dark:hover,
+.btn-outline-dark:focus,
+.btn-outline-light:hover,
+.btn-outline-light:focus {
+  background-color: var(--app-hover);
+}
+
+/* =============================
+   Forms
+============================= */
+.form-control,
+.form-select,
+.input-group-text {
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-highlight);
+  transition: var(--app-transition);
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: var(--app-border-color-strong);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  box-shadow: var(--app-highlight), var(--app-focus-ring);
+}
+
+.form-check-input {
+  border-radius: 0;
+}
+
+/* =============================
+   Navbar
+============================= */
+.navbar {
+  box-shadow: var(--app-highlight), 0 1px 2px rgba(0, 0, 0, 0.22);
+}
+
+.navbar .nav-link {
+  padding: 0.4rem 0.65rem;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus,
+.navbar .nav-link.active {
+  background-color: var(--app-hover);
+}
+
+/* =============================
+   Dropdowns
+============================= */
+.dropdown-menu {
+  padding: 0.35rem;
+}
+
+.dropdown-item {
+  border-radius: 0;
+  padding: 0.45rem 0.65rem;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--app-hover);
+}
+
+/* =============================
+   Tables
+============================= */
+.table {
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-highlight), var(--app-shadow);
+  overflow: hidden;
+}
+
+.table thead th {
+  border-bottom-color: var(--app-border-color-strong);
+}
+
+.table td,
+.table th {
+  border-color: var(--app-border-color);
+}
+
+/* =============================
+   List group / accordion
+============================= */
+.list-group-item.active {
+  border-color: rgba(var(--bs-primary-rgb), 0.45);
+}
+
+.accordion {
+  --bs-accordion-border-radius: 0;
+  --bs-accordion-inner-border-radius: 0;
+}
+
+.accordion-button {
+  box-shadow: none;
+}
+
+/* =============================
+   Pagination / tabs / pills
+============================= */
+.page-link,
+.nav-tabs .nav-link,
+.nav-pills .nav-link {
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-highlight);
+}
+
+.page-link:hover,
+.nav-tabs .nav-link:hover,
+.nav-pills .nav-link:hover {
+  background-color: var(--app-hover);
+}
+
+.page-item.active .page-link,
+.nav-tabs .nav-link.active,
+.nav-pills .nav-link.active {
+  box-shadow: inset 0 0 0 999px rgba(var(--bs-primary-rgb), 0.12);
+}
+
+/* =============================
+   Alerts / badges / progress
+============================= */
+.alert,
+.badge,
+.progress {
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-highlight), var(--app-shadow);
+}
+
+/* =============================
+   Optional helpers
+============================= */
+.pixel-panel {
+  border: 1px solid var(--app-border-color);
+  box-shadow: var(--app-highlight), var(--app-shadow);
+  clip-path: polygon(
+    0 4px,
+    1px 4px,
+    1px 2px,
+    2px 2px,
+    2px 1px,
+    4px 1px,
+    4px 0,
+    calc(100% - 4px) 0,
+    calc(100% - 4px) 1px,
+    calc(100% - 2px) 1px,
+    calc(100% - 2px) 2px,
+    calc(100% - 1px) 2px,
+    calc(100% - 1px) 4px,
+    100% 4px,
+    100% calc(100% - 4px),
+    calc(100% - 1px) calc(100% - 4px),
+    calc(100% - 1px) calc(100% - 2px),
+    calc(100% - 2px) calc(100% - 2px),
+    calc(100% - 2px) calc(100% - 1px),
+    calc(100% - 4px) calc(100% - 1px),
+    calc(100% - 4px) 100%,
+    4px 100%,
+    4px calc(100% - 1px),
+    2px calc(100% - 1px),
+    2px calc(100% - 2px),
+    1px calc(100% - 2px),
+    1px calc(100% - 4px),
+    0 calc(100% - 4px)
+  );
+}
+
+/* Fallback por si algún elemento no se lleva bien con clip-path */
+@supports not (clip-path: polygon(0 0)) {
+  .card,
+  .modal-content,
+  .dropdown-menu,
+  .offcanvas,
+  .toast,
+  .popover,
+  .accordion-item,
+  .list-group,
+  .btn,
+  .form-control,
+  .form-select,
+  .input-group-text,
+  .page-link,
+  .nav-tabs .nav-link,
+  .nav-pills .nav-link,
+  .badge,
+  .alert,
+  .progress,
+  .navbar,
+  .pixel-panel {
+    clip-path: none;
+    border-radius: 4px;
+  }
+}

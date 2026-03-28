@@ -1,0 +1,26 @@
+<div class="fixed-bottom">
+  <button type="button" class="btn btn-info position-absolute bottom-0 start-0 m-2 px-3" id="song-info">
+    <FaIcon @icon="info" role="presentation"/>
+    <BsPopover
+      @triggerEvents={{this.globalConfig.popoverevents}}
+      @placement="top"
+      @triggerElement="#song-info"
+      @delayHide={{this.globalConfig.ttdelay}}
+      class="ppover"
+      as |po|
+    >
+      <div
+        role="dialog"
+        class="p-2 alert alert-dismissible alert-info m-0"
+        {{on "mouseleave" po.close}}
+      >
+      <div class="pb-1">Song most probable keys:</div>
+        <ul>
+          {{#each this.data as |key|}}
+            <li><strong>{{key.name}}</strong>: {{key.chords}}.</li>
+          {{/each}}
+        </ul>
+      </div>
+    </BsPopover>
+  </button>
+</div>
