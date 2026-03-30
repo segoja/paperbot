@@ -22,6 +22,12 @@ export default class PbOffcanvasComponent extends Component {
     super.willDestroy(...arguments);
   }
 
+  get isFloating() {
+    console.debug('[PbOffcanvas] Is floating? ' + this.args.isFloating);
+    return this.args.containerId && !this.args.isFloating ? false : true;
+    // return false;
+  }
+
   @action updateStatus() {
     if (this.args.isVisible) {
       let offcanvas = document.getElementById(this.offcId);
@@ -41,6 +47,22 @@ export default class PbOffcanvasComponent extends Component {
         oldoffcanvas?.classList?.remove('hiding');
         oldoffcanvas?.classList?.remove('show');
       }, 300);
+    }
+  }
+
+  @action updateContainerClass() {
+    if (this.args.containerId) {
+      let container = document.getElementById(this.args.containerId);
+      if (container) {
+        console.debug(
+          'Updating container class for offcanvas: ' + this.args.containerId,
+        );
+        container.setAttribute('class', '');
+        const classes = this.args.containerClass
+          ? this.args.containerClass.split(' ')
+          : [];
+        classes.forEach((cls) => container.classList.add(cls));
+      }
     }
   }
 }

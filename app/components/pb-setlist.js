@@ -8,6 +8,8 @@ export default class PbStreamEditPendingComponent extends Component {
   @service currentUser;
   @service queueHandler;
   @service store;
+  @tracked showPlayed = false;
+  @tracked isOffcanvas = false;
 
   constructor() {
     super(...arguments);
@@ -15,6 +17,30 @@ export default class PbStreamEditPendingComponent extends Component {
 
   willDestroy() {
     super.willDestroy(...arguments);
+  }
+
+  get isReady() {
+    let result = true;
+    if (
+      this.args.containerId &&
+      this.currentUser.showSetlist &&
+      !this.isOffcanvas
+    ) {
+      let elmnt = document.getElementById(this.args.containerId);
+      if (!elmnt) {
+        console.debug(
+          '[PbSetlist] Container element not found for setlist: ',
+          this.args.containerId,
+        );
+        result = false;
+      }
+    }
+    console.debug('[PbSetlist] Is setlist ready? ' + result);
+    return result;
+  }
+
+  get isFloating() {
+    return this.isOffcanvas;
   }
 
   get isRelative() {
@@ -51,7 +77,31 @@ export default class PbStreamEditPendingComponent extends Component {
     return result;
   }
 
-  @tracked showPlayed = false;
+  dynamicWidth() {
+    let elmnt = document.getElementById('bodycontainer');
+    let width = 0;
+    if (elmnt) {
+      width = Number(elmnt.offsetWidth) || 0;
+    }
+    return width;
+  }
+
+  @action updateDisplayType() {
+    const width = this.dynamicWidth();
+    console.debug('[PbSetlist] Checking display type with width: ' + width);
+    // 576px is the breakpoint in Bootstrap, we use that as the threshold for switching to offcanvas
+    this.isOffcanvas = width < 576 ?? false;
+    console.debug(
+      '[PbSetlist] Updated display type. Is floating? ' + this.isOffcanvas,
+      this.isReady,
+    );
+  }
+
+  @action closeSetlist() {
+    if (this.args.isFloating) {
+      this.currentUser.showSetlist = false;
+    }
+  }
 
   @action tabSwitch(tab) {
     // console.log(tab);

@@ -54,6 +54,10 @@ export default class CurrentUserService extends Service {
     return false;
   }
 
+  @action toggleSetlist() {
+    this.showSetlist = !this.showSetlist;
+  }
+
   @action importRecords(reference, extension, recordType, response) {
     // We make an array of properties from the reference header:
     let properties = reference.replace(/"/g, '');

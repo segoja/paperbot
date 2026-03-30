@@ -121,10 +121,6 @@ export default class PbSongsComponent extends Component {
     }
   }
 
-  @action toggleSetlist() {
-    this.currentUser.showSetlist = !this.currentUser.showSetlist;
-  }
-
   @action songToQueue(song, toTop) {
     this.queueHandler.songToQueue(song, toTop);
     this.toTop = toTop;
