@@ -31,6 +31,7 @@ export default class TwitchChatService extends Service {
 
   @tracked message = '';
   @tracked sentMessages = [];
+  @tracked sentCommands = [];
 
   @tracked msglist = new TrackedArray();
   get messages() {
@@ -1016,9 +1017,9 @@ export default class TwitchChatService extends Service {
         } else {
           if ((await this.commandlist.length) > 0) {
             this.commandlist.forEach(async (command) => {
-              if (String(command.response).startsWith(command.name)) {
-                return;
-              }
+              // Prevent custom command responses from triggering other commands.
+              if (String(command.response).trim().startsWith('!')) return;
+
               if (
                 String(commandName).startsWith(command.name) &&
                 command.name != '' &&
@@ -1026,9 +1027,7 @@ export default class TwitchChatService extends Service {
                 (String(commandName).endsWith(command.name) ||
                   String(commandName).startsWith(command.name + ' '))
               ) {
-                /*if (self) {
-                    return;
-                  } else {*/
+
                 if (this.commandPermissionHandler(command, tags) === true) {
                   switch (command.type) {
                     case 'parameterized': {
