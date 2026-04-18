@@ -31,7 +31,6 @@ export default class TwitchChatService extends Service {
 
   @tracked message = '';
   @tracked sentMessages = [];
-  @tracked sentCommands = [];
 
   @tracked msglist = new TrackedArray();
   get messages() {
@@ -1027,7 +1026,6 @@ export default class TwitchChatService extends Service {
                 (String(commandName).endsWith(command.name) ||
                   String(commandName).startsWith(command.name + ' '))
               ) {
-
                 if (this.commandPermissionHandler(command, tags) === true) {
                   switch (command.type) {
                     case 'parameterized': {
