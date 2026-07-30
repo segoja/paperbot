@@ -49,6 +49,14 @@
     <script src="{{rootURL}}assets/vendor.js"></script>
     <script src="{{rootURL}}assets/paperbot.js"></script>
 
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('{{rootURL}}sw.js', {
+          scope: '{{rootURL}}',
+        });
+      }
+    </script>
+
     {{content-for "body-footer"}}
   </body>
 </html>

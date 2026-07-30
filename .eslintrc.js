@@ -40,6 +40,7 @@ module.exports = {
         './config/**/*.js',
         './lib/*/index.js',
         './server/**/*.js',
+        './scripts/**/*.js',
       ],
       parserOptions: {
         sourceType: 'script',
@@ -47,6 +48,12 @@ module.exports = {
       env: {
         browser: false,
         node: true,
+      },
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
       },
       extends: ['plugin:n/recommended'],
     },
