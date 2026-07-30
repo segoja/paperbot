@@ -32,12 +32,6 @@ module.exports = function (environment) {
     },
   };
 
-  ENV['ember-cli-workbox'] = {
-    enabled: environment == 'webapp',
-    debug: true,
-    autoRegister: true,
-  };
-
   ENV.local_couch = 'paperbot';
   ENV.authAdapter = 'application';
 
