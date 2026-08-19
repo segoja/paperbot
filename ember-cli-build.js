@@ -3,7 +3,6 @@
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
-  let config = process.env.EMBER_ENV || 'development';
   let app = new EmberApp(defaults, {
     // Add options here
     autoImport: {
@@ -12,10 +11,6 @@ module.exports = function (defaults) {
           global: true,
         },
       },
-    },
-    'ember-service-worker': {
-      versionStrategy: 'every-build',
-      enabled: config == 'production',
     },
     SRI: {
       // crossorigin: 'anonymous',

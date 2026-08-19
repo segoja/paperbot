@@ -29,7 +29,7 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "ember build --environment=production",
+    "build": "ember build --environment=production && node scripts/generate-service-worker.js",
     "license": "license-checker --summary --failOn GPL",
     "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
     "lint:fix": "concurrently \"npm:lint:*:fix\" --names \"fix:\"",
@@ -103,9 +103,6 @@
     "ember-qunit": "^8.0.1",
     "ember-resize-modifier": "^0.7.1",
     "ember-resolver": "^11.0.1",
-    "ember-service-worker": "^9.0.1",
-    "ember-service-worker-cache-first": "^0.6.3",
-    "ember-service-worker-index": "^0.7.2",
     "ember-simple-auth": "^6.0.0",
     "ember-sortable": "^5.3.3",
     "ember-source": "~5.4.0",
@@ -143,7 +140,8 @@
     "tmi-emote-parse": "^2.0.0",
     "tmi.js": "^1.8.5",
     "tracked-built-ins": "^3.3.0",
-    "webpack": "^5.89.0"
+    "webpack": "^5.89.0",
+    "workbox-build": "^7.4.1"
   },
   "engines": {
     "node": ">= 18"
