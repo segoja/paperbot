@@ -29,8 +29,14 @@ module('Unit | Helper | chord-parser', function (hooks) {
 
   test('it resets chord ids on each call', function (assert) {
     let service = this.owner.lookup('service:chord-analysis');
-    let first = chordParser(service, ['C G\nlyrics'], { key: 0, mode: true });
-    let second = chordParser(service, ['C G\nlyrics'], { key: 0, mode: true });
+    let first = chordParser(service, ['C G\nlyrics'], {
+      key: 0,
+      mode: true,
+    }).toString();
+    let second = chordParser(service, ['C G\nlyrics'], {
+      key: 0,
+      mode: true,
+    }).toString();
 
     assert.true(first.includes('id="chordId0"'));
     assert.true(first.includes('id="chordId1"'));

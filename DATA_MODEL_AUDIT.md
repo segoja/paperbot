@@ -17,6 +17,20 @@ The recommended path is therefore:
 
 At that point, staying on Ember and moving to React become UI-shell choices rather than data-migration projects.
 
+## Stabilization status
+
+The approved critical/high stabilization work was implemented without template or style changes:
+
+- **DM-01:** queue mutations are serialized through one service boundary, positions and playing state are reconciled, and request creation no longer persists a Promise as `position`.
+- **DM-02:** active main-database records now pass runtime contracts before writes/imports, and both databases carry a local schema manifest with a forward-version guard.
+- **DM-03:** backup files are versioned and validated in a staging database before replacement. They intentionally contain only `paperbot`; `paperbot-config` remains device-local. All stored main-record fields, including `client.oauth`, are preserved. Restore disables automatic cloud reconnection so replication cannot immediately merge remote state over the restored database.
+- **DM-04:** eventually-consistent reads now have a bounded timeout, typed not-found errors, shared waiters, and teardown/database-change cleanup.
+- **DM-05:** inferred has-many persistence is disabled, and song/client/overlay deletion uses centralized awaited unlink operations. Cross-database config references are cleared explicitly.
+- **DM-06:** runtime-contract and backup-format regression tests now cover accepted, normalized, duplicate, unsupported, malformed, and forward-incompatible inputs.
+- **DM-07:** streams are loaded by their route and transient events are purged directly at desktop startup instead of being loaded into Ember Data first.
+
+Legacy compatibility correction: runtime validation now rejects only structurally unsafe, non-serializable data. Model-shape drift is reported as warnings, and structurally valid historical main-database record types are preserved opaquely during backup and restore.
+
 ## Audit boundaries and method
 
 This audit covers:
@@ -40,7 +54,7 @@ The repository contains 14 model classes, 219 declared attributes including `rev
 | `paperbot` | `application` | songs, requests, streams, clients, commands, timers, overlays, events, vault metadata | Yes | Yes |
 | `paperbot-config` | `config` | singleton `config/ppbconfig` | No, intentionally device-local | No |
 
-The split is intentional for cloud sync: the UI states that bot settings remain local (`app/components/pb-cloud.hbs:81`). It is not reflected in the backup contract: the single “Export DB” action reads only the application adapter (`app/controllers/application.js:423`), while the adjacent settings UI presents it as a database backup (`app/components/pb-settings.hbs:573`). A restore therefore cannot reconstruct the local configuration.
+The split is intentional for cloud sync and backup: the UI states that bot settings remain local (`app/components/pb-cloud.hbs:81`). The “Export DB” action exports the main `paperbot` database only. Restores deliberately retain the device-local `paperbot-config` database and clear only local default references whose target is absent from the restored main data.
 
 ### Physical document contract
 
@@ -60,7 +74,7 @@ The custom adapter dynamically creates a relational-pouch schema from Ember Data
 
 The `_2_` segment is relational-pouch's string-ID marker, not an application schema version. Paperbot has no persisted application schema version or migration registry.
 
-`config/environment.js:9` enables `saveHasMany`, so both sides of every relationship are serialized. This duplicates relationship truth: for example, a request stores `song`, and a song stores `requests`. Correctness depends on every mutation saving all affected records successfully.
+Historically, `config/environment.js` enabled `saveHasMany`, so both sides of every relationship were serialized. It is now disabled by default; belongs-to foreign keys are the persisted relationship owner while existing legacy fields remain readable.
 
 ### Relationship graph
 
@@ -142,13 +156,13 @@ This makes compatibility accidental. A React rewrite would be especially risky b
 
 Remediation: define versioned `Stored*V1` document codecs, store a database manifest, validate every read/import, and run idempotent migrations before exposing records to the application.
 
-#### DM-03: Backup and restore do not represent the complete application state
+#### DM-03: Main-database restore trusted unvalidated documents and merged state
 
-`handleExport` exports only `paperbot`; `paperbot-config` is omitted. `handleImport` parses arbitrary JSON and calls `bulkDocs(..., { new_edits: false })` without a manifest, type allowlist, shape validation, duplicate policy, compatibility check, preview, or rollback (`app/controllers/application.js:423-469`). Revision trees from the input are trusted verbatim.
+The main-only export is intentional: device configuration must not be included. Previously, `handleImport` parsed arbitrary JSON and called `bulkDocs(..., { new_edits: false })` without a manifest, type allowlist, shape validation, duplicate policy, compatibility check, staging, replacement semantics, or rollback (`app/controllers/application.js:423-469`). Revision trees from the input were trusted verbatim and records absent from a backup survived import.
 
-This can produce an incomplete restore or introduce incompatible documents. It also makes encrypted data restoration ambiguous because the vault metadata is backed up while device-local cloud credentials and settings are not.
+This could introduce incompatible documents and produce a hybrid of current and restored state. Main-record secrets are part of the main data contract: `client.oauth` and vault metadata must be exported exactly as stored, without adding a second backup-encryption mechanism.
 
-Remediation: export a manifest plus separately named datasets for both databases, include checksums and schema versions, validate into a temporary database, report rejected records, and swap/import only after all checks pass. Preserve an explicit “main data only” export only if it is named as such.
+Remediation: export a versioned main-database envelope, validate it into a temporary database, preserve a rollback copy, replace rather than merge, and leave `paperbot-config` untouched apart from removing dangling default references.
 
 #### DM-04: Missing records may leave callers waiting forever
 
@@ -158,7 +172,7 @@ Remediation: return a typed not-found error after a bounded replication wait, ca
 
 #### DM-05: Relationship truth is duplicated and maintained manually
 
-With `saveHasMany: true`, both `song.requests` and `request.song`, both client/stream sides, and both config/default sides are persisted. Delete handlers collect children, destroy the parent, and then save children in separate operations. Implementations differ between grid, detail, and bulk deletion paths (`app/controllers/songs.js:67`, `app/controllers/songs/song.js:50`, `app/components/pb-songs.js:130`).
+With the former `saveHasMany: true` setting, both `song.requests` and `request.song`, both client/stream sides, and both config/default sides were persisted. Delete handlers also collected children, destroyed the parent, and then saved children in separate operations. Implementations differed between grid, detail, and bulk deletion paths (`app/controllers/songs.js:67`, `app/controllers/songs/song.js:50`, `app/components/pb-songs.js:130`).
 
 The config relationships also span `paperbot-config` and `paperbot`, so they cannot be made atomic. A failed second save leaves dangling or stale IDs.
 
@@ -238,18 +252,16 @@ Renaming stored keys immediately would create unnecessary migration risk. Normal
 
 ### Compatibility layer
 
-Introduce TypeScript types and runtime codecs with two deliberately separate representations:
+Introduce JavaScript runtime contracts, documented with JSDoc, with two deliberately separate representations:
 
-```ts
-type StoredDocumentV1<T> = {
-  _id: string;
-  _rev?: string;
-  data: T;
-};
+```js
+/** @template T @typedef {{ _id: string, _rev?: string, data: T }} StoredDocumentV1 */
 
-type DecodeResult<T> =
-  | { ok: true; value: T; warnings: DataWarning[] }
-  | { ok: false; errors: DataError[] };
+/**
+ * @template T
+ * @typedef {({ ok: true, value: T, warnings: DataWarning[] }
+ *   | { ok: false, errors: DataError[] })} DecodeResult
+ */
 ```
 
 `StoredSongV1`, `StoredRequestV1`, and the other stored types must preserve current field names, ID encoding, null behavior, and encrypted-envelope strings. Domain types use consistent names and explicit nullability. Codecs are the only place allowed to coerce legacy values.
@@ -388,7 +400,7 @@ Run a React proof of concept only after all persisted operations are available t
 
 ### Backup, import, and migration
 
-- Export and restore both databases into empty instances and compare normalized contents.
+- Export and restore the main database into an empty instance and compare normalized contents; verify the config database is unchanged.
 - Restore legacy main-only backups with a clear warning and safe local-config behavior.
 - Reject malformed JSON, unknown document types, invalid IDs, unsupported future schema versions, and corrupt envelopes without modifying live data.
 - Interrupt import/migration and verify restart or rollback is safe.

@@ -16,6 +16,7 @@ export default class SongsController extends Controller {
   @service store;
   @service router;
   @service currentUser;
+  @service recordLifecycle;
 
   queryParams = [
     { 'queryParamsObj.page': 'page' },
@@ -64,19 +65,9 @@ export default class SongsController extends Controller {
     song.save();
   }
 
-  @action gridDeleteSong(song) {
-    let requestList = [];
-    song.requests.then((requests) =>
-      requests.forEach((request) => requestList.push(request)),
-    );
-    song.destroyRecord().then(() => {
-      if (requestList.length > 0) {
-        requestList.map((request) => {
-          request.save();
-        });
-      }
-      this.currentUser.isViewing = false;
-    });
+  @action async gridDeleteSong(song) {
+    await this.recordLifecycle.deleteSong(song);
+    this.currentUser.isViewing = false;
   }
 
   @action udpdateRest() {

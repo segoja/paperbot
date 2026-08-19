@@ -12,10 +12,12 @@ export default class ApplicationRoute extends Route {
   @service twitchChat;
   @service queueHandler;
   @service cryptoData;
+  @service dataMigrations;
 
   async beforeModel() {
-    super.init(...arguments);
+    await super.beforeModel(...arguments);
     await this.session.setup();
+    await this.dataMigrations.ensureCurrentSchema();
   }
 
   model() {
@@ -25,10 +27,8 @@ export default class ApplicationRoute extends Route {
       clients: store.findAll('client'),
       overlays: store.findAll('overlay'),
       songs: store.findAll('song'),
-      streams: store.findAll('stream'),
       commands: store.findAll('command'),
       timers: store.findAll('timer'),
-      events: store.findAll('event'),
       requests: store.findAll('request'),
       vaults: store.findAll('vault'),
     });
@@ -39,7 +39,7 @@ export default class ApplicationRoute extends Route {
     controller.setProperties(models);
   }
 
-  afterModel(model) {
+  async afterModel(model) {
     this.headData.title = 'Paperbot, a Twitch.tv bot by Javier Sevilla';
     this.cryptoData.vaultCheck();
 
@@ -50,14 +50,13 @@ export default class ApplicationRoute extends Route {
         currentWindow.label === 'Main' &&
         this.globalConfig.config.clearRequests
       ) {
-        model.requests.map(async (request) => {
+        for (const request of [...model.requests]) {
           await request.destroyRecord();
-        });
+        }
       }
-      if (model.events.length > 0 && currentWindow.label === 'Main') {
-        model.events.map(async (event) => {
-          await event.destroyRecord();
-        });
+      if (currentWindow.label === 'Main') {
+        const adapter = this.store.adapterFor('application');
+        await adapter.purgeType(this.store, this.store.modelFor('event'));
       }
     }
   }

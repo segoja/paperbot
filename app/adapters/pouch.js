@@ -1,5 +1,5 @@
 import RESTAdapter from '@ember-data/adapter/rest';
-import { assert } from '@ember/debug';
+import { NotFoundError } from '@ember-data/adapter/error';
 import { isEmpty } from '@ember/utils';
 import { all, defer } from 'rsvp';
 import { getOwner } from '@ember/owner';
@@ -7,6 +7,7 @@ import { bind, schedule } from '@ember/runloop';
 import { classify, decamelize } from '@ember/string';
 import { pluralize } from 'ember-inflector';
 import { inject as service } from '@ember/service';
+import { assertValidRecordData } from 'paperbot/utils/data-contracts';
 //import BelongsToRelationship from 'ember-data/-private/system/relationships/state/belongs-to';
 
 //BelongsToRelationship.reopen({
@@ -96,6 +97,7 @@ export default class PouchAdapter extends RESTAdapter {
 
   changeDb(db) {
     this._stopChangesListener();
+    this._rejectConsistencyWaiters('Database changed.');
 
     var store = this.store;
     var schema = this._schema || [];
@@ -126,12 +128,13 @@ export default class PouchAdapter extends RESTAdapter {
     var store = this.store;
 
     if (this.waitingForConsistency[change.id]) {
-      let promise = this.waitingForConsistency[change.id];
+      let waiter = this.waitingForConsistency[change.id];
       delete this.waitingForConsistency[change.id];
+      clearTimeout(waiter.timer);
       if (change.deleted) {
-        promise.reject('deleted');
+        waiter.deferred.reject(this._notFoundError(obj.type, obj.id));
       } else {
-        promise.resolve(this._findRecord(obj.type, obj.id));
+        waiter.deferred.resolve(this._findRecord(obj.type, obj.id));
       }
       return;
     }
@@ -191,6 +194,8 @@ export default class PouchAdapter extends RESTAdapter {
 
   willDestroy() {
     this._stopChangesListener();
+    this._rejectConsistencyWaiters('Adapter destroyed.');
+    super.willDestroy(...arguments);
   }
 
   constructor() {
@@ -425,6 +430,27 @@ export default class PouchAdapter extends RESTAdapter {
     return this.db.rel.find(this.getRecordTypeName(type));
   }
 
+  async purgeType(store, type) {
+    await this._init(store, type);
+    const recordTypeName = this.getRecordTypeName(type);
+    const prefix = `${recordTypeName}_`;
+    const result = await this.db.allDocs({
+      startkey: prefix,
+      endkey: `${prefix}\uffff`,
+      include_docs: true,
+    });
+    const documents = result.rows
+      .map((row) => row.doc)
+      .filter((document) => document && !document._deleted)
+      .map((document) => ({
+        _id: document._id,
+        _rev: document._rev,
+        _deleted: true,
+      }));
+    if (documents.length > 0) await this.db.bulkDocs(documents);
+    return documents.length;
+  }
+
   async findMany(store, type, ids) {
     // console.debug('findMany type: ', type);
     await this._init(store, type);
@@ -530,42 +556,64 @@ export default class PouchAdapter extends RESTAdapter {
     }
 
     if (configFlagDisabled(this, 'eventuallyConsistent'))
-      throw new Error(
-        "Document of type '" +
-          recordTypeName +
-          "' with id '" +
-          id +
-          "' not found.",
-      );
+      throw this._notFoundError(recordTypeName, id);
     else return this._eventuallyConsistent(recordTypeName, id);
   }
 
-  //TODO: cleanup promises on destroy or db change?
   waitingForConsistency = null;
+
+  _notFoundError(type, id, reason = 'not found') {
+    return new NotFoundError([
+      {
+        status: '404',
+        title: 'Record not found',
+        detail: `Document of type '${type}' with id '${id}' was ${reason}.`,
+      },
+    ]);
+  }
+
+  _rejectConsistencyWaiters(reason) {
+    if (!this.waitingForConsistency) return;
+    for (const [pouchID, waiter] of Object.entries(
+      this.waitingForConsistency,
+    )) {
+      clearTimeout(waiter.timer);
+      waiter.deferred.reject(new Error(`${reason} Waiting for ${pouchID}`));
+      delete this.waitingForConsistency[pouchID];
+    }
+  }
 
   _eventuallyConsistent(type, id) {
     let pouchID = this.db.rel.makeDocID({ type, id });
-    let defered = defer();
-    this.waitingForConsistency[pouchID] = defered;
+    const existingWaiter = this.waitingForConsistency[pouchID];
+    if (existingWaiter) return existingWaiter.deferred.promise;
+
+    let deferred = defer();
+    const config = getOwner(this).resolveRegistration('config:environment');
+    const timeoutMs = config.emberPouch?.eventuallyConsistentTimeoutMs ?? 10000;
+    const timer = setTimeout(() => {
+      if (!this.waitingForConsistency[pouchID]) return;
+      delete this.waitingForConsistency[pouchID];
+      deferred.reject(
+        this._notFoundError(type, id, 'not found before timeout'),
+      );
+    }, timeoutMs);
+    this.waitingForConsistency[pouchID] = { deferred, timer };
 
     return this.db.rel.isDeleted(type, id).then((deleted) => {
-      //TODO: should we test the status of the promise here? Could it be handled in onChange already?
       if (deleted) {
+        clearTimeout(timer);
         delete this.waitingForConsistency[pouchID];
-        throw new Error(
-          "Document of type '" + type + "' with id '" + id + "' is deleted.",
-        );
+        throw this._notFoundError(type, id, 'deleted');
       } else if (deleted === null) {
-        return defered.promise;
+        return deferred.promise;
       } else {
-        assert('Status should be existing', deleted === false);
-        //TODO: should we reject or resolve the promise? or does JS GC still clean it?
         if (this.waitingForConsistency[pouchID]) {
+          clearTimeout(timer);
           delete this.waitingForConsistency[pouchID];
           return this._findRecord(type, id);
         } else {
-          //findRecord is already handled by onChange
-          return defered.promise;
+          return deferred.promise;
         }
       }
     });
@@ -585,6 +633,7 @@ export default class PouchAdapter extends RESTAdapter {
     this.createdRecords[id] = true;
 
     let typeName = this.getRecordTypeName(type);
+    data = assertValidRecordData(typeName, data);
     try {
       let saved = await rel.save(typeName, data);
       Object.assign(data, saved);
@@ -601,6 +650,7 @@ export default class PouchAdapter extends RESTAdapter {
     await this._init(store, type);
     var data = this._recordToData(store, type, record);
     let typeName = this.getRecordTypeName(type);
+    data = assertValidRecordData(typeName, data);
     let saved = await this.db.rel.save(typeName, data);
     Object.assign(data, saved); //TODO: could only set .rev
     let result = {};

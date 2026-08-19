@@ -482,52 +482,24 @@ export default class TwitchChatService extends Service {
             } else {
               if (bestmatch.active) {
                 if (this.commandPermissionHandler(bestmatch, tags) === true) {
-                  let nextPosition = await this.queueHandler.nextPosition();
+                  this.lastsongrequest = await this.queueHandler.enqueueRequest(
+                    {
+                      song: bestmatch,
+                      chatid: tags['id']?.toString() || 'songsys',
+                      type: tags['message-type'] || null,
+                      user: tags['username']?.toString() || this.botUsername,
+                      displayname:
+                        tags['display-name']?.toString() || this.botUsername,
+                    },
+                  );
 
-                  this.lastsongrequest =
-                    await this.store.createRecord('request');
-                  this.lastsongrequest.chatid = tags['id']
-                    ? tags['id'].toString()
-                    : 'songsys';
-                  this.lastsongrequest.timestamp = new Date();
-                  this.lastsongrequest.type = tags['message-type']
-                    ? tags['message-type']
-                    : null;
-                  this.lastsongrequest.song = bestmatch;
-                  this.lastsongrequest.user = tags['username']
-                    ? tags['username'].toString()
-                    : this.botUsername;
-                  this.lastsongrequest.displayname = tags['display-name']
-                    ? tags['display-name'].toString()
-                    : this.botUsername;
-                  this.lastsongrequest.position = nextPosition;
-
-                  this.lastsongrequest.title = bestmatch.title || '';
-                  this.lastsongrequest.artist = bestmatch.artist || '';
-
-                  this.lastsongrequest.save().then(async () => {
-                    // Song statistics:
-                    bestmatch.times_requested =
-                      Number(bestmatch.times_requested) + 1;
-                    bestmatch.last_requested = new Date();
-                    await bestmatch.save();
-
-                    console.debug(
-                      bestmatch.fullText + ' added at position ' + nextPosition,
-                    );
-                    this.queueHandler.scrollPendingPosition = 0;
-                    this.queueHandler.scrollPlayedPosition = 0;
-                    this.queueHandler.lastsongrequest = this.lastsongrequest;
-
-                    // changing this could break the reader.
-                    await this.botclient.say(
-                      target,
-                      '/me @' +
-                        tags['username'] +
-                        ' requested the song ' +
-                        bestmatch.fullText,
-                    );
-                  });
+                  await this.botclient.say(
+                    target,
+                    '/me @' +
+                      tags['username'] +
+                      ' requested the song ' +
+                      bestmatch.fullText,
+                  );
                 } else {
                   await this.botclient.say(
                     target,
@@ -649,55 +621,23 @@ export default class TwitchChatService extends Service {
               } else {
                 if (bestmatch.active) {
                   if (this.commandPermissionHandler(bestmatch, tags) === true) {
-                    let nextPosition = await this.queueHandler.nextPosition();
+                    this.lastsongrequest =
+                      await this.queueHandler.enqueueRequest({
+                        song: bestmatch,
+                        chatid: tags['id']?.toString() || 'songsys',
+                        type: tags['message-type'] || null,
+                        user: tags['username']?.toString() || this.botUsername,
+                        displayname:
+                          tags['display-name']?.toString() || this.botUsername,
+                      });
 
-                    this.lastsongrequest = this.store.createRecord('request');
-                    this.lastsongrequest.chatid = tags['id']
-                      ? tags['id'].toString()
-                      : 'songsys';
-                    this.lastsongrequest.timestamp = new Date();
-                    this.lastsongrequest.type = tags['message-type']
-                      ? tags['message-type']
-                      : null;
-                    this.lastsongrequest.song = bestmatch;
-                    this.lastsongrequest.user = tags['username']
-                      ? tags['username'].toString()
-                      : this.botUsername;
-                    this.lastsongrequest.displayname = tags['display-name']
-                      ? tags['display-name'].toString()
-                      : this.botUsername;
-                    this.lastsongrequest.processed = false;
-                    this.lastsongrequest.position = nextPosition;
-
-                    this.lastsongrequest.title = bestmatch.title || '';
-                    this.lastsongrequest.artist = bestmatch.artist || '';
-
-                    this.lastsongrequest.save().then(async () => {
-                      // Song statistics:
-                      bestmatch.times_requested =
-                        Number(bestmatch.times_requested) + 1;
-                      bestmatch.last_requested = new Date();
-                      await bestmatch.save();
-
-                      console.debug(
-                        bestmatch.fullText +
-                          ' added at position ' +
-                          nextPosition,
-                      );
-
-                      this.queueHandler.scrollPendingPosition = 0;
-                      this.queueHandler.scrollPlayedPosition = 0;
-                      this.queueHandler.lastsongrequest = this.lastsongrequest;
-
-                      // changing this could break the reader.
-                      await this.botclient.say(
-                        target,
-                        '/me @' +
-                          tags['username'] +
-                          ' requested the song ' +
-                          bestmatch.fullText,
-                      );
-                    });
+                    await this.botclient.say(
+                      target,
+                      '/me @' +
+                        tags['username'] +
+                        ' requested the song ' +
+                        bestmatch.fullText,
+                    );
                   } else {
                     await this.botclient.say(
                       target,
@@ -785,53 +725,22 @@ export default class TwitchChatService extends Service {
             let firstSong = this.queueHandler.availableSongs[position];
 
             if (firstSong) {
-              let nextPosition = await this.queueHandler.nextPosition();
-
-              this.lastsongrequest = this.store.createRecord('request');
-              this.lastsongrequest.chatid = tags['id']
-                ? tags['id'].toString()
-                : 'songsys';
-              this.lastsongrequest.timestamp = new Date();
-              this.lastsongrequest.type = tags['message-type']
-                ? tags['message-type']
-                : null;
-              this.lastsongrequest.song = firstSong;
-              this.lastsongrequest.user = tags['username']
-                ? tags['username'].toString()
-                : this.botUsername;
-              this.lastsongrequest.displayname = tags['display-name']
-                ? tags['display-name'].toString()
-                : this.botUsername;
-              this.lastsongrequest.processed = false;
-              this.lastsongrequest.position = nextPosition;
-
-              this.lastsongrequest.title = firstSong.title || '';
-              this.lastsongrequest.artist = firstSong.artist || '';
-
-              this.lastsongrequest.save().then(async () => {
-                // Song statistics:
-                firstSong.times_requested =
-                  Number(firstSong.times_requested) + 1;
-                firstSong.last_requested = new Date();
-                await firstSong.save();
-
-                console.debug(
-                  firstSong.fullText + ' added at position ' + nextPosition,
-                );
-
-                this.queueHandler.scrollPendingPosition = 0;
-                this.queueHandler.scrollPlayedPosition = 0;
-                this.queueHandler.lastsongrequest = this.lastsongrequest;
-
-                // changing this could break the reader.
-                await this.botclient.say(
-                  target,
-                  '/me @' +
-                    tags['username'] +
-                    ' randomly requested the song ' +
-                    firstSong.fullText,
-                );
+              this.lastsongrequest = await this.queueHandler.enqueueRequest({
+                song: firstSong,
+                chatid: tags['id']?.toString() || 'songsys',
+                type: tags['message-type'] || null,
+                user: tags['username']?.toString() || this.botUsername,
+                displayname:
+                  tags['display-name']?.toString() || this.botUsername,
               });
+
+              await this.botclient.say(
+                target,
+                '/me @' +
+                  tags['username'] +
+                  ' randomly requested the song ' +
+                  firstSong.fullText,
+              );
             }
           } else {
             await this.botclient.say(
@@ -919,7 +828,7 @@ export default class TwitchChatService extends Service {
             });
             */
             let message = 'First 6 songs in queue: ';
-            this.queueHandler.pendingSongs.forEach(async (item) => {
+            this.queueHandler.pendingSongs.forEach((item) => {
               if (count < 6) {
                 count = Number(count) + 1;
                 message += '#' + count + '. ' + item.title + ' ';
@@ -950,17 +859,16 @@ export default class TwitchChatService extends Service {
               this.commandPermissionHandler(internalCommand, tags) === true &&
               targetUser
             ) {
-              let targetLastSong = await this.queueHandler.pendingSongs
+              let targetLastSong = [...this.queueHandler.pendingSongs]
                 .reverse()
                 .find((item) => item.user == targetUser);
               if (targetLastSong) {
                 let songname = targetLastSong.fullText;
-                targetLastSong.destroyRecord().then(async () => {
-                  await this.botclient.say(
-                    target,
-                    '/me the song ' + songname + ' has been removed.',
-                  );
-                });
+                await this.queueHandler.removePending(targetLastSong);
+                await this.botclient.say(
+                  target,
+                  '/me the song ' + songname + ' has been removed.',
+                );
               } else {
                 await this.botclient.say(
                   target,
@@ -979,17 +887,16 @@ export default class TwitchChatService extends Service {
                   "/me you don't have permissions to delete someone else's songs.",
                 );
               } else {
-                let userLastSong = await this.queueHandler.pendingSongs
+                let userLastSong = [...this.queueHandler.pendingSongs]
                   .reverse()
                   .find((item) => item.user == commandUser);
                 if (userLastSong) {
                   let songname = userLastSong.fullText;
-                  userLastSong.destroyRecord().then(async () => {
-                    await this.botclient.say(
-                      target,
-                      '/me the song ' + songname + ' has been removed.',
-                    );
-                  });
+                  await this.queueHandler.removePending(userLastSong);
+                  await this.botclient.say(
+                    target,
+                    '/me the song ' + songname + ' has been removed.',
+                  );
                 } else {
                   await this.botclient.say(
                     target,

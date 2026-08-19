@@ -7,8 +7,9 @@ module.exports = function (environment) {
     rootURL: '/',
     locationType: 'history',
     emberPouch: {
-      saveHasMany: true,
+      saveHasMany: false,
       eventuallyConsistent: true,
+      eventuallyConsistentTimeoutMs: 10000,
       //replication: true
     },
     EmberENV: {

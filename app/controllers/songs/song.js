@@ -8,6 +8,7 @@ export default class SongController extends Controller {
   @service audio;
   @service router;
   @service currentUser;
+  @service recordLifecycle;
 
   @action closeSong() {
     this.currentUser.isViewing = false;
@@ -47,17 +48,9 @@ export default class SongController extends Controller {
     });
   }
 
-  @action deleteSong() {
-    let requestList = [];
-    this.model.requests.forEach((request) => requestList.push(request));
-    this.model.destroyRecord().then(() => {
-      if (requestList.length > 0) {
-        requestList.map((request) => {
-          request.save();
-        });
-      }
-      this.currentUser.isViewing = false;
-      this.router.transitionTo('songs');
-    });
+  @action async deleteSong() {
+    await this.recordLifecycle.deleteSong(this.model);
+    this.currentUser.isViewing = false;
+    this.router.transitionTo('songs');
   }
 }

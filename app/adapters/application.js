@@ -90,6 +90,22 @@ export default class ApplicationAdapter extends Adapter {
     return this;
   }
 
+  createLocalDatabase(name) {
+    const database = new PouchDB(name, { adapter: 'idb' });
+    database.setMaxListeners(50);
+    return database;
+  }
+
+  disconnectRemoteReplication() {
+    this.replicationFromHandler?.cancel();
+    this.replicationToHandler?.cancel();
+    this.replicationFromHandler = null;
+    this.replicationToHandler = null;
+    this.cloudState.setPull(false);
+    this.cloudState.setPush(false);
+    this.cloudState.online = false;
+  }
+
   async wipePrevDbs() {
     const dbs = await window.indexedDB.databases();
     let databases = dbs.filter(

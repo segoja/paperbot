@@ -14,6 +14,7 @@ export default class PbSongsComponent extends Component {
   @service twitchChat;
   @service globalConfig;
   @service store;
+  @service recordLifecycle;
 
   @tracked toTop = false;
 
@@ -126,18 +127,11 @@ export default class PbSongsComponent extends Component {
     this.toTop = toTop;
   }
 
-  @action wipeSongs() {
+  @action async wipeSongs() {
     this.args.queryParamsObj.page = 1;
-    this.filteredContent.forEach((song) => {
-      let requestList = [];
-      song.requests.forEach((request) => requestList.push(request));
-      if (requestList.length > 0) {
-        requestList.forEach((request) => request.destroyRecord());
-      }
-      song.destroyRecord().then(() => {
-        console.debug('Song wiped.');
-      });
-    });
+    for (const song of [...this.filteredContent]) {
+      await this.recordLifecycle.deleteSong(song);
+    }
   }
 
   @action async songImport(file) {

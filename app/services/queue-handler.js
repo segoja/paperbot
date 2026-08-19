@@ -1,7 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { sort, uniqBy } from '@ember/object/computed';
+import { sort } from '@ember/object/computed';
 import { invoke } from '@tauri-apps/api';
 import dayjs from 'dayjs';
 import { TrackedArray } from 'tracked-built-ins';
@@ -28,6 +28,22 @@ export default class QueueHandlerService extends Service {
   @tracked requests = new TrackedArray();
 
   @tracked takesSongRequests = false;
+  @tracked isMutatingQueue = false;
+  _mutationChain = Promise.resolve();
+
+  runQueueMutation(operation) {
+    const run = async () => {
+      this.isMutatingQueue = true;
+      try {
+        return await operation();
+      } finally {
+        this.isMutatingQueue = false;
+      }
+    };
+    const result = this._mutationChain.then(run, run);
+    this._mutationChain = result.catch(() => {});
+    return result;
+  }
 
   get songListExt() {
     return this.store.findAll('song').then((list) => {
@@ -79,19 +95,126 @@ export default class QueueHandlerService extends Service {
   }
 
   @action async nextPosition() {
-    let positioned = this.pendingSongs.filter(
-      (request) => !isNaN(request.position),
-    );
-    let nextPos = 0;
+    const positions = this.pendingSongs
+      .map((request) => Number(request.position))
+      .filter(Number.isFinite);
+    return positions.length === 0 ? 0 : Math.max(...positions) + 1;
+  }
 
-    if (positioned.length > 0) {
-      let lastRequest = await positioned.pop();
-      // console.debug(lastRequest);
-      if (await lastRequest) {
-        nextPos = Number(await lastRequest.position) + 1;
-      }
+  async _saveRequests(requests) {
+    for (const request of requests) {
+      await request.save();
     }
-    return nextPos;
+  }
+
+  async _reconcileQueue() {
+    const byPosition = (left, right) => {
+      const leftPosition = Number.isFinite(Number(left.position))
+        ? Number(left.position)
+        : Number.MAX_SAFE_INTEGER;
+      const rightPosition = Number.isFinite(Number(right.position))
+        ? Number(right.position)
+        : Number.MAX_SAFE_INTEGER;
+      if (leftPosition !== rightPosition) return leftPosition - rightPosition;
+      return new Date(left.timestamp || 0) - new Date(right.timestamp || 0);
+    };
+    const pending = this.songqueue
+      .filter((request) => !request.processed)
+      .sort(byPosition);
+    const played = this.songqueue
+      .filter((request) => request.processed)
+      .sort(byPosition);
+    const playing = [...pending, ...played].filter(
+      (request) => request.isPlaying,
+    );
+    const currentId = playing[0]?.id;
+    const dirty = [];
+
+    for (const [index, request] of pending.entries()) {
+      if (request.position !== index) request.position = index;
+      if (request.isPlaying && request.id !== currentId)
+        request.isPlaying = false;
+      if (request.hasDirtyAttributes) dirty.push(request);
+    }
+    for (const [index, request] of played.entries()) {
+      if (request.position !== index) request.position = index;
+      if (request.isPlaying && request.id !== currentId)
+        request.isPlaying = false;
+      if (request.hasDirtyAttributes) dirty.push(request);
+    }
+    await this._saveRequests(dirty);
+  }
+
+  async enqueueRequest({
+    song = null,
+    chatid = 'songsys',
+    externalId = '',
+    platform = '',
+    type = 'setlist',
+    user = '',
+    displayname = '',
+    donation = 0,
+    donationFormatted = '',
+    isPremium = false,
+    title = '',
+    artist = '',
+    toTop = false,
+  }) {
+    return this.runQueueMutation(async () => {
+      if (externalId) {
+        const existing = this.songqueue.find(
+          (request) => request.externalId === externalId,
+        );
+        if (existing) return existing;
+      }
+      await this._reconcileQueue();
+      let nextPosition = await this.nextPosition();
+
+      if (toTop) {
+        for (const request of this.pendingSongs) {
+          request.position = Number(request.position) + 1;
+          await request.save();
+        }
+        nextPosition = 0;
+      }
+
+      const newRequest = this.store.createRecord('request', {
+        chatid,
+        externalId,
+        platform,
+        timestamp: new Date(),
+        type,
+        user,
+        displayname,
+        processed: false,
+        position: nextPosition,
+        donation: Number(donation) || 0,
+        donationFormatted,
+        isPremium,
+        song,
+        title: title || song?.title || '',
+        artist: artist || song?.artist || '',
+      });
+
+      await newRequest.save();
+      try {
+        if (song) {
+          song.times_requested = Number(song.times_requested || 0) + 1;
+          song.last_requested = new Date();
+          await song.save();
+        }
+      } catch (error) {
+        await newRequest.destroyRecord().catch(() => {});
+        throw error;
+      }
+
+      this.lastsongrequest = newRequest;
+      this.scrollPendingPosition = 0;
+      this.scrollPlayedPosition = 0;
+      await this._reconcileQueue();
+      this.fileContent(this.pendingSongs);
+      return newRequest;
+    });
   }
 
   get playedSongs() {
@@ -120,108 +243,100 @@ export default class QueueHandlerService extends Service {
   }
 
   // Buttons
-  @action togglePlaying(request) {
+  @action async togglePlaying(request) {
     if (request) {
-      this.arrangedAscQueue.map((item) => {
-        if (item.id === request.id) {
-          item.isPlaying = !item.isPlaying;
-        } else {
-          item.isPlaying = false;
+      return this.runQueueMutation(async () => {
+        for (const item of this.arrangedAscQueue) {
+          if (item.id === request.id) {
+            item.isPlaying = !item.isPlaying;
+          } else {
+            item.isPlaying = false;
+          }
+          if (item.hasDirtyAttributes) {
+            await item.save();
+          }
         }
-        if (item.hasDirtyAttributes) {
-          item.save();
-        }
+        await this._reconcileQueue();
       });
     }
   }
 
   @action async removePending(request) {
-    let song = await request.get('song');
-    await request.destroyRecord().then(async () => {
+    return this.runQueueMutation(async () => {
+      let song = await request.get('song');
+      let previousCount;
       if (song) {
-        let times = Number(song.times_requested || 0);
-        if (song.times_requested) {
-          times = times + Number(-1);
-        }
-        song.times_requested = times;
+        previousCount = Number(song.times_requested || 0);
+        song.times_requested = Math.max(0, previousCount - 1);
         await song.save();
       }
-      let count = 0;
-      this.pendingSongs.forEach((item) => {
-        if (!item.isDeleted) {
-          item.position = count;
-          item.save().then(() => {
-            console.debug(item.position + '. ' + item.effectiveTitle);
-          });
-          count = Number(count) + 1;
+      try {
+        await request.destroyRecord();
+      } catch (error) {
+        if (song) {
+          song.times_requested = previousCount;
+          await song.save().catch(() => {});
         }
-      });
+        throw error;
+      }
+      await this._reconcileQueue();
       this.fileContent(this.pendingSongs);
     });
   }
 
   @action async removePlayed(request) {
-    await request.destroyRecord().then(async () => {
-      let count = 0;
-      this.playedSongs.forEach((item) => {
-        item.position = count;
-        item.save().then(() => {
-          console.debug(item.position + '. ' + item.effectiveTitle);
-        });
-        count = Number(count) + 1;
-      });
+    return this.runQueueMutation(async () => {
+      await request.destroyRecord();
+      await this._reconcileQueue();
     });
   }
 
-  @uniqBy('pendingSongs', 'songId') uniquePending;
-
-  @action clearPending() {
-    if (this.pendingSongs.length > 0) {
-      this.uniquePending.forEach(async (item) => {
-        let song = await item.get('song');
-        if (song) {
-          let requests = this.pendingSongs.filter(
-            (request) => request.songId == song.get('id'),
-          );
-
-          let times = requests.length;
-          song.times_requested = Number(song.times_requested) - Number(times);
-          requests.forEach((request) => {
-            request.destroyRecord();
-          });
-          await song.save().then(() => {
-            console.debug(song.title + ' requests adjusted by -' + times);
-          });
-        }
-      });
-    }
-    if (this.pendingSongs.length > 0) {
-      this.pendingSongs.forEach((request) => request.destroyRecord());
-    }
-    this.fileContent(this.pendingSongs);
+  @action async clearPending() {
+    return this.runQueueMutation(async () => {
+      const requests = [...this.pendingSongs];
+      const countsBySong = new Map();
+      for (const request of requests) {
+        const song = await request.get('song');
+        if (!song) continue;
+        const entry = countsBySong.get(song.id) || { song, count: 0 };
+        entry.count++;
+        countsBySong.set(song.id, entry);
+      }
+      for (const { song, count } of countsBySong.values()) {
+        song.times_requested = Math.max(
+          0,
+          Number(song.times_requested || 0) - count,
+        );
+        await song.save();
+      }
+      for (const request of requests) await request.destroyRecord();
+      await this._reconcileQueue();
+      this.fileContent(this.pendingSongs);
+    });
   }
 
-  @action clearPlayed() {
-    if (this.playedSongs.length > 0) {
-      this.playedSongs.forEach((item) => {
-        item.destroyRecord();
-      });
-    }
+  @action async clearPlayed() {
+    return this.runQueueMutation(async () => {
+      for (const request of [...this.playedSongs]) {
+        await request.destroyRecord();
+      }
+      await this._reconcileQueue();
+    });
   }
 
-  @action clearAll() {
-    this.clearPending();
-    this.clearPlayed();
+  @action async clearAll() {
+    await this.clearPending();
+    await this.clearPlayed();
   }
 
   @action exportQueue() {
     if (this.songqueue.length > 0) {
       let setlist = '';
 
-      this.playedSongs.reverse().forEach(async (request) => {
+      [...this.playedSongs].reverse().forEach((request) => {
         setlist = setlist + '+ ' + request.effectiveTitle + '\n';
       });
-      this.pendingSongs.forEach(async (request) => {
+      this.pendingSongs.forEach((request) => {
         setlist = setlist + '- ' + request.effectiveTitle + '\n';
       });
 
@@ -248,54 +363,40 @@ export default class QueueHandlerService extends Service {
     let updating = this.arrangedAscQueue.filter(
       (request) => request.isSaving || request.isLoading,
     );
-    if (updating.length > 0) {
+    if (updating.length > 0 || this.isMutatingQueue) {
       return true;
     }
     return false;
   }
 
   @action async requestStatus(request) {
-    // We use set in order to make sure the context updates properly.
     if (!request.isDeleted && !this.updatingQueue) {
-      request.position = 0;
-      let oldSiblings = [];
-      if (request.processed === true) {
-        // Next line makes the element to get back in the pending list but in the last position:
-        oldSiblings = this.pendingSongs.filter((item) => item.id != request.id);
-      } else {
-        oldSiblings = this.playedSongs;
-      }
+      return this.runQueueMutation(async () => {
+        const wasProcessed = request.processed;
+        request.position = 0;
+        request.processed = !wasProcessed;
+        if (request.processed) request.isPlaying = false;
+        await request.save();
 
-      request.processed = !request.processed;
-      if (request.processed) {
-        request.isPlaying = false;
-      }
-
-      await request.save().then(async () => {
-        console.log('Updated request' + request.position);
-        if (request.processed && request.songId) {
-          this.store
-            .findRecord('song', request.song.get('id'))
-            .then((actualSong) => {
-              if (actualSong.isLoaded) {
-                actualSong.last_played = new Date();
-                actualSong.times_played = Number(actualSong.times_played) + 1;
-                actualSong.save();
-              }
-            });
+        if (!wasProcessed) {
+          const song = await request.get('song');
+          if (song) {
+            const oldPlayed = Number(song.times_played || 0);
+            song.last_played = new Date();
+            song.times_played = oldPlayed + 1;
+            try {
+              await song.save();
+            } catch (error) {
+              request.processed = wasProcessed;
+              await request.save().catch(() => {});
+              throw error;
+            }
+          }
         }
 
-        let count = 0;
-        await oldSiblings.forEach(async (sibling) => {
-          count = Number(count) + 1;
-          sibling.position = count;
-          await sibling.save();
-          //sibling.debug(played.position+'. '+played.effectiveTitle);
-        });
-
+        await this._reconcileQueue();
         this.scrollPlayedPosition = 0;
         this.scrollPendingPosition = 0;
-
         this.fileContent(this.pendingSongs);
       });
     }
@@ -303,187 +404,116 @@ export default class QueueHandlerService extends Service {
 
   @action async externalToQueue(donodata) {
     console.debug('Premium request: ', donodata);
-    if (this.takesSongRequests) {
-      if (this.globalConfig.config.premiumRequests) {
-        if (donodata.amount >= this.globalConfig.config.premiumThreshold) {
-          // donodata.message = '!sr fury heart';
-          // donodata.fullname = 'Papercat the mongoloid'
-          if (donodata.message.startsWith('!sr ')) {
-            this.store
-              .query('request', {
-                filter: { externalId: donodata.id },
-              })
-              .then(async (exist) => {
-                if (exist.length == 0) {
-                  var song = donodata.message.replace(/!sr /g, '');
-                  song = song.replace(/&/g, ' ');
-                  song = song.replace(/\//g, ' ');
-                  song = song.replace(/-/g, ' ');
-                  song = song.replace(/[^a-zA-Z0-9'?! ]/g, '');
-                  //console.log(donodata.fullname+' paid '+donodata.formattedAmount+' to request the song '+song);
-                  this.requestpattern = song;
-                  //if (this.filteredSongs.length > 0) {
-                  let bestmatch = await this.filteredSongs.shift();
-                  //if(bestmatch){
-                  let nextPosition = this.nextPosition();
-
-                  let newRequest = this.store.createRecord('request');
-                  newRequest.chatid = 'songExt';
-                  newRequest.externalId = donodata.id;
-                  newRequest.platform = donodata.platform;
-                  newRequest.timestamp = new Date();
-                  newRequest.type = 'setlist';
-                  newRequest.user = donodata.fullname || donodata.user;
-                  newRequest.displayname = donodata.fullname;
-                  newRequest.processed = false;
-                  newRequest.donation = donodata.amount;
-                  newRequest.donationFormatted = donodata.formattedAmount;
-                  newRequest.isPremium = true;
-                  newRequest.position = nextPosition;
-                  if (bestmatch) {
-                    newRequest.song = bestmatch;
-                    newRequest.title = bestmatch.title || donodata.message;
-                    newRequest.artist = bestmatch.artist || '';
-                  } else {
-                    newRequest.song = '';
-                    newRequest.title = song;
-                    newRequest.artist = '';
-                  }
-                  newRequest.save().then(async () => {
-                    // Song statistics:
-                    if (bestmatch) {
-                      bestmatch.times_requested =
-                        Number(bestmatch.times_requested) + 1;
-                      await bestmatch.save();
-                    }
-                    // console.debug(bestmatch.fullText+' added at position '+nextPosition);
-                    this.lastsongrequest = newRequest;
-                    this.scrollPendingPosition = 0;
-                    this.scrollPlayedPosition = 0;
-                    this.fileContent(this.pendingSongs);
-                  });
-                  this.fileContent(this.pendingSongs);
-                  //}
-                  //}
-                }
-              });
-          }
-        }
-      }
+    if (
+      !this.takesSongRequests ||
+      !this.globalConfig.config.premiumRequests ||
+      Number(donodata.amount) < this.globalConfig.config.premiumThreshold ||
+      !donodata.message?.startsWith('!sr ')
+    ) {
+      return null;
     }
+
+    const existing = await this.store.query('request', {
+      filter: { externalId: donodata.id },
+    });
+    if (existing.length > 0) return existing[0];
+
+    let requestedTitle = donodata.message.replace(/!sr /g, '');
+    requestedTitle = requestedTitle
+      .replace(/&/g, ' ')
+      .replace(/\//g, ' ')
+      .replace(/-/g, ' ')
+      .replace(/[^a-zA-Z0-9'?! ]/g, '');
+    this.requestpattern = requestedTitle;
+    const bestmatch = this.filteredSongs[0] || null;
+
+    return this.enqueueRequest({
+      song: bestmatch,
+      chatid: 'songExt',
+      externalId: donodata.id,
+      platform: donodata.platform,
+      user: donodata.fullname || donodata.user,
+      displayname: donodata.fullname || '',
+      donation: donodata.amount,
+      donationFormatted: donodata.formattedAmount,
+      isPremium: true,
+      title: bestmatch?.title || requestedTitle,
+      artist: bestmatch?.artist || '',
+    });
   }
 
   @action async songToQueue(selected, toTop = false) {
-    if (!this.updatingQueue) {
-      let nextPosition = await this.nextPosition();
-
-      if (toTop) {
-        this.pendingSongs.forEach((request) => {
-          request.position = request.position + 1;
-          request.save().then(() => {
-            // console.debug(request.fullText+' moved to position '+request.position+' in queue.');
-          });
-        });
-        nextPosition = 0;
-      }
-
-      let newRequest = this.store.createRecord('request');
-      newRequest.chatid = 'songsys';
-      newRequest.timestamp = new Date();
-      newRequest.type = 'setlist';
-      newRequest.song = selected;
-      newRequest.user = this.twitchChat.botUsername;
-      if (this.globalConfig.config.defbotclient) {
-        newRequest.user = this.globalConfig.config.defbotclient.get('username');
-      } else {
-        newRequest.displayname = 'setlist';
-      }
-      newRequest.processed = false;
-      newRequest.position = nextPosition;
-      newRequest.title = selected.title || '';
-      newRequest.artist = selected.artist || '';
-
-      newRequest.save().then(async () => {
-        // Song statistics:
-        selected.times_requested = Number(selected.times_requested) + 1;
-        await selected.save();
-
-        // console.debug(selected.fullText+' added at position '+nextPosition);
-        this.lastsongrequest = newRequest;
-        this.scrollPendingPosition = 0;
-        this.scrollPlayedPosition = 0;
-        this.fileContent(this.pendingSongs);
-      });
-      this.fileContent(this.pendingSongs);
+    let user = this.twitchChat.botUsername;
+    let displayname = '';
+    if (this.globalConfig.config.defbotclient) {
+      user = this.globalConfig.config.defbotclient.get('username');
+    } else {
+      displayname = 'setlist';
     }
+    return this.enqueueRequest({
+      song: selected,
+      user,
+      displayname,
+      toTop,
+    });
   }
 
-  @action nextSong() {
+  @action async nextSong() {
     if (this.pendingSongs.length > 0 && !this.updatingQueue) {
-      // For selecting the last element of the array:
-      let firstRequest = this.pendingSongs[0];
-
-      let oldPlayed = this.playedSongs;
-      let count = 0;
-      oldPlayed.forEach((played) => {
-        count = Number(count) + 1;
-        played.position = count;
-        played.isPlaying = false;
-        played.save();
-        //console.debug(played.position+'. '+played.effectiveTitle);
-      });
-
-      firstRequest.position = 0;
-      firstRequest.processed = true;
-      firstRequest.isPlaying = true;
-      firstRequest.save().then(() => {
-        if (!firstRequest.song.get('isDeleted')) {
-          this.store
-            .findRecord('song', firstRequest.song.get('id'))
-            .then(async (song) => {
-              if (await song.isLoaded) {
-                //console.debug(song);
-                song.times_played = Number(song.times_played) + 1;
-                await song.save();
-              }
-            });
+      return this.runQueueMutation(async () => {
+        const firstRequest = this.pendingSongs[0];
+        for (const played of this.playedSongs) {
+          played.isPlaying = false;
+          if (played.hasDirtyAttributes) await played.save();
         }
+
+        firstRequest.position = 0;
+        firstRequest.processed = true;
+        firstRequest.isPlaying = true;
+        await firstRequest.save();
+
+        const song = await firstRequest.get('song');
+        if (song && !song.isDeleted) {
+          song.times_played = Number(song.times_played || 0) + 1;
+          song.last_played = new Date();
+          try {
+            await song.save();
+          } catch (error) {
+            firstRequest.processed = false;
+            firstRequest.isPlaying = false;
+            await firstRequest.save().catch(() => {});
+            throw error;
+          }
+        }
+        await this._reconcileQueue();
         this.scrollPlayedPosition = 0;
         this.scrollPendingPosition = 0;
         this.fileContent(this.pendingSongs);
       });
     }
-    this.fileContent(this.pendingSongs);
+    return null;
   }
 
   @action async prevSong() {
     if (this.playedSongs.length > 0 && !this.updatingQueue) {
-      // For selecting the first element of the array:
+      return this.runQueueMutation(async () => {
+        for (const pending of this.pendingSongs) {
+          pending.isPlaying = false;
+          if (pending.hasDirtyAttributes) await pending.save();
+        }
 
-      let oldPending = this.pendingSongs;
-      let count = 0;
-      oldPending.forEach((pending) => {
-        count = Number(count) + 1;
-        pending.position = count;
-        pending.isPlaying = false;
-        pending.save();
-        //console.debug(pending.position+'. '+pending.effectiveTitle);
-      });
-
-      let lastPlayed = this.playedSongs[0];
-      if (lastPlayed) {
+        const lastPlayed = this.playedSongs[0];
         lastPlayed.position = 0;
         lastPlayed.processed = false;
         lastPlayed.isPlaying = true;
-        lastPlayed.save().then(() => {
-          this.scrollPlayedPosition = 0;
-          this.scrollPendingPosition = 0;
-          this.fileContent(this.pendingSongs);
-        });
-      }
+        await lastPlayed.save();
+        await this._reconcileQueue();
+        this.scrollPlayedPosition = 0;
+        this.scrollPendingPosition = 0;
+        this.fileContent(this.pendingSongs);
+      });
     }
-
-    this.fileContent(this.pendingSongs);
+    return null;
   }
 
   @action fileContent(pendingSongs, firstRun = false) {

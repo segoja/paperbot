@@ -28,6 +28,7 @@ export default class ApplicationController extends Controller {
   @service eventsExternal;
   @service twitchChat;
   @service queueHandler;
+  @service databaseBackup;
 
   @tracked collapsed = true;
   @tracked minimized = false;
@@ -420,53 +421,39 @@ export default class ApplicationController extends Controller {
     }
   }
 
-  @action handleExport() {
+  @action async handleExport() {
     let filename = dayjs().format('YYYYMMDD-HHmmss') + '-paperbot-backup.json';
     let type = 'application/json';
-    let adapter = this.store.adapterFor('application');
-    adapter.db.allDocs(
-      { include_docs: true, attachments: true },
-      (error, doc) => {
-        if (error) {
-          console.error(error);
-        } else {
-          let data = JSON.stringify(
-            doc.rows.map(({ doc }) => doc),
-            null,
-            '  ',
-          );
-          this.currentUser.download(data, filename, type);
-        }
-      },
-    );
+    try {
+      const backup = await this.databaseBackup.exportMainDatabase();
+      this.currentUser.download(
+        JSON.stringify(backup, null, 2),
+        filename,
+        type,
+      );
+    } catch (error) {
+      console.error('Backup export failed.', error);
+      if (error.errors) console.error('Backup export errors:', error.errors);
+    }
   }
 
   @action async handleImport(file) {
     if (file) {
       const response = await file.readAsText();
-      let adapter = this.store.adapterFor('application');
-      let importable = Object.assign([], JSON.parse(response));
-      // importable.shift();
-      /*adapter.db.bulkDocs(importable, {new_edits: false}, (...args) => {
-        console.debug('DONE', args);
-        //window.location.reload(true);
-      });*/
       if (this.currentUser.isTauri) {
-        getAll().forEach((item) => {
+        (await getAll()).forEach((item) => {
           if (item.label != 'Main') {
             item.close();
           }
         });
       }
-      adapter.db
-        .bulkDocs(importable, { new_edits: false })
-        .then(() => {
-          console.debug('Success!');
-          window.location.reload(true);
-        })
-        .catch(() => {
-          console.debug('FAIL!');
-        });
+      try {
+        await this.databaseBackup.replaceMainDatabase(response);
+        window.location.reload(true);
+      } catch (error) {
+        console.error('Backup import failed.', error);
+        if (error.errors) console.error('Backup import errors:', error.errors);
+      }
     }
   }
 
