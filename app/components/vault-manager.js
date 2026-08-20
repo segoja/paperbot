@@ -16,6 +16,7 @@ export default class VaultManagerComponent extends Component {
   @tracked isMigrationForm = false;
   @tracked newVaultMeta = {};
   @tracked keepLocalVault = false;
+  @tracked rememberOnDevice = true;
 
   constructor() {
     super(...arguments);
@@ -34,7 +35,24 @@ export default class VaultManagerComponent extends Component {
     return this.cryptoData.showVaultModal && !this.globalConfig.showFirstRun;
   }
 
+  get canRemember() {
+    return this.cryptoData.vaultCredentialStore.isSupported;
+  }
+
+  get isManaging() {
+    return (
+      this.cryptoData.isUnlocked &&
+      !this.cryptoData.newVaultModal &&
+      !this.isMigration
+    );
+  }
+
+  get isRemembered() {
+    return this.cryptoData.vaultCredentialStore.isRemembered;
+  }
+
   get title() {
+    if (this.isManaging) return 'Vault Security';
     if (this.cryptoData.newVaultModal) {
       return 'Protect Your Secrets with a Passphrase';
     } else {
@@ -75,7 +93,9 @@ export default class VaultManagerComponent extends Component {
       console.debug('Passphrase is required.');
       return;
     }
-    let ok = await this.cryptoData.unlockCurrentVault(this.passphrase);
+    let ok = await this.cryptoData.unlockCurrentVault(this.passphrase, {
+      remember: this.canRemember && this.rememberOnDevice,
+    });
     if (ok) {
       console.debug('Vault unlocked!', ok);
       this.passphrase = '';
@@ -110,6 +130,10 @@ export default class VaultManagerComponent extends Component {
     this.remotePassphrase = passPhrase;
   }
 
+  @action toggleRemember(event) {
+    this.rememberOnDevice = event.target.checked;
+  }
+
   @action async addNewVaultMeta() {
     console.debug('Creating new vault...');
     const newVaultMeta = await this.cryptoData.createVaultMeta(this.passphrase);
@@ -121,13 +145,16 @@ export default class VaultManagerComponent extends Component {
     if (newVaultMetaRecord) {
       this.newVaultMeta = {};
       await this.cryptoData.vaultCheck();
-      await this.cryptoData.unlockCurrentVault(this.passphrase);
+      await this.cryptoData.unlockCurrentVault(this.passphrase, {
+        remember: this.canRemember && this.rememberOnDevice,
+      });
       this.passphrase = '';
     }
   }
 
   @action continueLocked() {
     this.passphrase = '';
+    this.cryptoData.rememberError = null;
     this.cryptoData.cancelUnlock();
   }
 
@@ -137,16 +164,23 @@ export default class VaultManagerComponent extends Component {
     let remotePassphrase = this.remotePassphrase;
     let remoteVault = this.cryptoData.conflictData.remoteVault;
     let localVault = this.cryptoData.conflictData.localVault;
-    await this.cryptoData
-      .migrateVault(localPassphrase, remotePassphrase, localVault, remoteVault)
-      .then((result) => {
-        if (result.migrated) {
-          this.isMigrationForm = false;
-          this.cryptoData.conflictData = null;
-          this.errors = [];
-          this.unlock();
-        }
+    const result = await this.cryptoData.migrateVault(
+      localPassphrase,
+      remotePassphrase,
+      localVault,
+      remoteVault,
+    );
+    if (result.migrated) {
+      this.isMigrationForm = false;
+      this.cryptoData.conflictData = null;
+      this.errors = [];
+      await this.cryptoData.vaultCheck();
+      await this.cryptoData.unlockCurrentVault(remotePassphrase, {
+        remember: this.canRemember && this.rememberOnDevice,
       });
+      this.passphrase = '';
+      this.remotePassphrase = '';
+    }
   }
 
   @action async migrateToNewVault() {
@@ -155,17 +189,24 @@ export default class VaultManagerComponent extends Component {
     let remotePassphrase = this.remotePassphrase;
     let remoteVault = this.cryptoData.conflictData.remoteVault;
     let localVault = this.cryptoData.conflictData.localVault;
-    await this.cryptoData
-      .migrateVault(remotePassphrase, localPassphrase, remoteVault, localVault)
-      .then((result) => {
-        if (result.migrated) {
-          this.isMigrationForm = false;
-          this.keepLocalVault = false;
-          this.cryptoData.conflictData = null;
-          this.errors = [];
-          this.unlock();
-        }
+    const result = await this.cryptoData.migrateVault(
+      remotePassphrase,
+      localPassphrase,
+      remoteVault,
+      localVault,
+    );
+    if (result.migrated) {
+      this.isMigrationForm = false;
+      this.keepLocalVault = false;
+      this.cryptoData.conflictData = null;
+      this.errors = [];
+      await this.cryptoData.vaultCheck();
+      await this.cryptoData.unlockCurrentVault(localPassphrase, {
+        remember: this.canRemember && this.rememberOnDevice,
       });
+      this.passphrase = '';
+      this.remotePassphrase = '';
+    }
   }
 
   @action async applyRemoteVault() {
@@ -182,5 +223,9 @@ export default class VaultManagerComponent extends Component {
 
   @action toggleModal() {
     this.cryptoData.showVaultModal = !this.cryptoData.showVaultModal;
+  }
+
+  @action async forgetDevice() {
+    await this.cryptoData.forgetDevice();
   }
 }

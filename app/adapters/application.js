@@ -244,13 +244,9 @@ export default class ApplicationAdapter extends Adapter {
 
             await this.db.replicate
               .from(this.remoteDb)
-              .then(() => {
+              .then(async () => {
                 console.debug('Synced with the cloud.');
-                if (!this.cryptoData.vault) {
-                  this.cryptoData.vaultCheck();
-                } else {
-                  this.cryptoData.ensureUnlocked();
-                }
+                await this.cryptoData.initializeVault();
 
                 this.replicationFromHandler = this.db.replicate.from(
                   this.remoteDb,

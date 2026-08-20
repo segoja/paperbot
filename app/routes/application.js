@@ -41,7 +41,7 @@ export default class ApplicationRoute extends Route {
 
   async afterModel(model) {
     this.headData.title = 'Paperbot, a Twitch.tv bot by Javier Sevilla';
-    this.cryptoData.vaultCheck();
+    await this.cryptoData.initializeVault();
 
     if (this.currentUser.isTauri) {
       let currentWindow = getCurrent();

@@ -2,7 +2,7 @@
   type="button"
   class="btn btn-outline-secondary text-light p-0 border-0 rounded-0 btn-window"
   {{on "click" this.toggleModal}}
-  title="Local settings"
+  title="Vault security"
 >
   <FaIcon @icon={{if this.cryptoData.isUnlocked "unlock" "lock"}} />
 </button>
@@ -16,73 +16,101 @@
     @size="md"
     as |Modal|
   >
-    <BsForm @onSubmit={{this.submitForm}}  autoComplete="on" as |form|>
+    <BsForm @onSubmit={{this.submitForm}} autoComplete="on" as |form|>
       <Modal.header @closeButton={{false}}>
         <h5 class="modal-title">{{this.title}}</h5>
       </Modal.header>
       <Modal.body>
-        {{#if this.cryptoData.newVaultModal}}
-          <p class="mb-2 text-break">It looks like you haven't set a passphrase yet.</p>
-          <p class="mb-2 text-break">You can create one now to encrypt your chat clients and passwords, or continue without it and use Paperbot without encryption (not recommended).</p>
-          <p class="mb-2 text-break">Once set, the app will ask you to enter your passphrase on every startup.</p>
+        {{#if this.isManaging}}
+          <p class="mb-2">The vault is unlocked for this session.</p>
+          {{#if this.isRemembered}}
+            <p class="mb-0">This browser will unlock it automatically on future
+              visits.</p>
+          {{else}}
+            <p class="mb-0">This browser is not storing the vault passphrase.</p>
+          {{/if}}
+          {{#if this.cryptoData.rememberError}}
+            <div class="alert alert-warning py-2 mt-3 mb-0" role="alert">
+              {{this.cryptoData.rememberError}}
+            </div>
+          {{/if}}
+        {{else if this.cryptoData.newVaultModal}}
+          <p class="mb-2 text-break">It looks like you haven't set a passphrase
+            yet.</p>
+          <p class="mb-2 text-break">You can create one now to encrypt your chat
+            clients and passwords, or continue without it and use Paperbot
+            without encryption (not recommended).</p>
+          <p class="mb-2 text-break">Paperbot can remember it in this browser
+            and unlock the vault automatically.</p>
         {{else}}
           {{#if this.isMigration}}
-            <p class="mb-2 text-break">There is a remote security vault already configured. Because you created a new local security vault before syncing, now you have to pick which one to use and apply globally. Once done all devices will use the same security passphrase for encryption/decryption.</p>
-            <p class="mb-2 text-break">Please enter both passwords to proceed with the migration.</p>
+            <p class="mb-2 text-break">There is a remote security vault already
+              configured. Because you created a new local security vault before
+              syncing, now you have to pick which one to use and apply globally.
+              Once done all devices will use the same security passphrase for
+              encryption/decryption.</p>
+            <p class="mb-2 text-break">Please enter both passwords to proceed
+              with the migration.</p>
           {{else}}
-            <p class="mb-2 text-break">Enter your passphrase to unlock your encrypted clients.</p>
+            <p class="mb-2 text-break">Enter your passphrase to unlock your
+              encrypted clients.</p>
           {{/if}}
         {{/if}}
-        <label
-          for="vault-unlock-username"
-          class="visually-hidden"
-        >Username</label>
-        <input
-          id="vault-unlock-username"
-          type="text"
-          name="username"
-          autocomplete="username"
-          value="vault"
-          class="d-none"
-          tabindex="-1"
-          aria-hidden="true"
-        />
-
-        <form.element
-          @controlType="password"
-          @label="Passphrase"
-          @property="passphrase"
-          @onChange={{this.checkPassPhrase}}
-          @disabled={{this.isMigrationForm}}
-          as |el|
-        >
-          <el.control
-            name="passphrase"
-            autocomplete="passphrase"
-            required
+        {{#unless this.isManaging}}
+          <label
+            for="vault-unlock-username"
+            class="visually-hidden"
+          >Username</label>
+          <input
+            id="vault-unlock-username"
+            type="text"
+            name="username"
+            autocomplete="username"
+            value="vault"
+            class="d-none"
+            tabindex="-1"
+            aria-hidden="true"
           />
-        </form.element>
-        {{#if (and this.errorMessages (not this.isMigrationForm))}}
-          <div class="alert alert-danger py-2 mb-0">
-            {{#each this.errorMessages as |error|}}
-              <div>{{error}}</div>
-            {{/each}}
-          </div>
-        {{/if}}
-        {{#if this.isMigration}}
-          <div class="row py-3">
-            <div class="col-12 col-sm">
-              <BsButton @type="primary" class="w-100" @onClick={{this.applyRemoteVault}}>
-                Apply Remote Vault
-              </BsButton>
+
+          <form.element
+            @controlType="password"
+            @label="Passphrase"
+            @property="passphrase"
+            @onChange={{this.checkPassPhrase}}
+            @disabled={{this.isMigrationForm}}
+            as |el|
+          >
+            <el.control name="passphrase" autocomplete="passphrase" required />
+          </form.element>
+          {{#if (and this.errorMessages (not this.isMigrationForm))}}
+            <div class="alert alert-danger py-2 mb-0">
+              {{#each this.errorMessages as |error|}}
+                <div>{{error}}</div>
+              {{/each}}
             </div>
-            <div class="col-12 col-sm">
-              <BsButton @type="warning" class="w-100" @onClick={{this.applyLocalVault}}>
-                Apply Local Vault
-              </BsButton>
+          {{/if}}
+          {{#if this.isMigration}}
+            <div class="row py-3">
+              <div class="col-12 col-sm">
+                <BsButton
+                  @type="primary"
+                  class="w-100"
+                  @onClick={{this.applyRemoteVault}}
+                >
+                  Apply Remote Vault
+                </BsButton>
+              </div>
+              <div class="col-12 col-sm">
+                <BsButton
+                  @type="warning"
+                  class="w-100"
+                  @onClick={{this.applyLocalVault}}
+                >
+                  Apply Local Vault
+                </BsButton>
+              </div>
             </div>
-          </div>
-          {{#if this.isMigrationForm}}
+            {{#if this.isMigrationForm}}
               <label
                 for="existing-vault-unlock-username"
                 class="visually-hidden"
@@ -118,24 +146,58 @@
                   {{/each}}
                 </div>
               {{/if}}
+            {{/if}}
           {{/if}}
-        {{/if}}
+          {{#if this.canRemember}}
+            <div class="form-check mt-3">
+              <input
+                id="vault-remember-device"
+                class="form-check-input"
+                type="checkbox"
+                checked={{this.rememberOnDevice}}
+                {{on "change" this.toggleRemember}}
+              />
+              <label class="form-check-label" for="vault-remember-device">
+                Remember on this device
+              </label>
+            </div>
+          {{/if}}
+          {{#if this.cryptoData.rememberError}}
+            <div class="alert alert-warning py-2 mt-3 mb-0" role="alert">
+              {{this.cryptoData.rememberError}}
+            </div>
+          {{/if}}
+        {{/unless}}
       </Modal.body>
       <Modal.footer>
-        <BsButton @type="secondary" @onClick={{this.continueLocked}}>
-          {{#if this.cryptoData.newVaultModal}}
-            Cancel
-          {{else}}
-            Continue Locked
+        {{#if this.isManaging}}
+          {{#if this.isRemembered}}
+            <BsButton @type="danger" @onClick={{this.forgetDevice}}>
+              Forget this device
+            </BsButton>
           {{/if}}
-        </BsButton>
-        <form.submitButton @type="primary" disabled={{this.invalidPassphrase}}>
-          {{#if this.cryptoData.newVaultModal}}
-            Encrypt my secrets
-          {{else}}
-            {{#if this.isMigrationForm}}Sync security{{else}}Unlock{{/if}}
-          {{/if}}
-        </form.submitButton>
+          <BsButton @type="secondary" @onClick={{this.continueLocked}}>
+            Close
+          </BsButton>
+        {{else}}
+          <BsButton @type="secondary" @onClick={{this.continueLocked}}>
+            {{#if this.cryptoData.newVaultModal}}
+              Cancel
+            {{else}}
+              Continue Locked
+            {{/if}}
+          </BsButton>
+          <form.submitButton
+            @type="primary"
+            disabled={{this.invalidPassphrase}}
+          >
+            {{#if this.cryptoData.newVaultModal}}
+              Encrypt my secrets
+            {{else}}
+              {{#if this.isMigrationForm}}Sync security{{else}}Unlock{{/if}}
+            {{/if}}
+          </form.submitButton>
+        {{/if}}
       </Modal.footer>
     </BsForm>
   </BsModal>

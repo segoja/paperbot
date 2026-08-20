@@ -10,6 +10,7 @@ export default class CryptoDataService extends Service {
   @service currentUser;
   @service store;
   @service globalConfig;
+  @service vaultCredentialStore;
 
   @tracked showVaultModal = false;
   @tracked newVaultModal = false;
@@ -17,6 +18,7 @@ export default class CryptoDataService extends Service {
   @tracked isUnlocked = false;
   @tracked unlockedVaultId = null;
   @tracked vault = null;
+  @tracked rememberError = null;
 
   @tracked conflictData = null;
 
@@ -597,16 +599,18 @@ export default class CryptoDataService extends Service {
     this.vault = this.store.peekRecord('vault', 'ppb-vault');
     if (this.vault && this.vault.vaultId) {
       console.debug('[CryptoDataService] Found vault meta!');
-      this.unlockedVaultId = this.vault.vaultId;
       this.newVaultModal = false;
+      if (this.isUnlocked && this.unlockedVaultId !== this.vault.vaultId) {
+        this.lockCurrentVault();
+      }
     } else {
       console.debug('[CryptoDataService] No vault meta found.');
       this.newVaultModal = true;
     }
-    this.showVaultModal = true;
+    return this.vault;
   }
 
-  async unlockCurrentVault(passPhrase) {
+  async unlockCurrentVault(passPhrase, options = {}) {
     if (!passPhrase) {
       this.lockCurrentVault();
       this.unlockError = 'Passphrase is required.';
@@ -678,7 +682,21 @@ export default class CryptoDataService extends Service {
       this.isUnlocked = true;
       this.unlockedVaultId = vault.vaultId;
       this.unlockError = null;
-      this.showVaultModal = false;
+      this.rememberError = null;
+
+      if (options.remember === true) {
+        const saved = await this.vaultCredentialStore.save(
+          vault.vaultId,
+          passPhrase,
+        );
+        if (!saved) {
+          this.rememberError = this.vaultCredentialStore.error;
+        }
+      } else if (options.remember === false) {
+        await this.vaultCredentialStore.clear();
+      }
+
+      this.showVaultModal = Boolean(this.rememberError);
 
       this._resolvePendingUnlock(true);
 
@@ -698,6 +716,14 @@ export default class CryptoDataService extends Service {
     this._sessionPassphrase = null;
     this.isUnlocked = false;
     this.unlockedVaultId = null;
+  }
+
+  async forgetDevice() {
+    const cleared = await this.vaultCredentialStore.clear();
+    this.rememberError = this.vaultCredentialStore.error;
+    this.lockCurrentVault();
+    this.showVaultModal = false;
+    return cleared;
   }
 
   cancelUnlock() {
@@ -735,6 +761,48 @@ export default class CryptoDataService extends Service {
 
   _pendingUnlockPromise = null;
   _resolveUnlockPromise = null;
+  _initializationPromise = null;
+
+  async initializeVault({ showPrompt = true } = {}) {
+    if (this._initializationPromise) return this._initializationPromise;
+
+    this._initializationPromise = this._initializeVault(showPrompt).finally(
+      () => {
+        this._initializationPromise = null;
+      },
+    );
+    return this._initializationPromise;
+  }
+
+  async _initializeVault(showPrompt) {
+    await this.vaultCheck();
+
+    if (!this.vault?.vaultId) {
+      if (showPrompt) this.showVaultModal = true;
+      return false;
+    }
+
+    if (
+      this.isUnlocked &&
+      this._sessionPassphrase &&
+      this.unlockedVaultId === this.vault.vaultId
+    ) {
+      return true;
+    }
+
+    const rememberedPassphrase = await this.vaultCredentialStore.load(
+      this.vault.vaultId,
+    );
+    if (rememberedPassphrase) {
+      const unlocked = await this.unlockCurrentVault(rememberedPassphrase);
+      if (unlocked) return true;
+      await this.vaultCredentialStore.clear();
+      this.unlockError = null;
+    }
+
+    if (showPrompt) this.showVaultModal = true;
+    return false;
+  }
 
   async ensureUnlocked() {
     // if (!this.vault) return false;
@@ -745,7 +813,10 @@ export default class CryptoDataService extends Service {
     if (this._pendingUnlockPromise) {
       return this._pendingUnlockPromise;
     }
-    await this.vaultCheck();
+    const restored = await this.initializeVault({ showPrompt: false });
+    if (restored) return true;
+
+    this.showVaultModal = true;
 
     this._pendingUnlockPromise = new Promise((resolve) => {
       this._resolveUnlockPromise = resolve;
